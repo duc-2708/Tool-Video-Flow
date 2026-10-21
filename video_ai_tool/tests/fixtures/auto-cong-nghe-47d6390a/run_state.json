@@ -1,0 +1,305 @@
+{
+  "version": 1,
+  "config": {
+    "discovery": {
+      "category": "công nghệ",
+      "suggestion": {
+        "cluster_id": "f60a1d2f5db6573c",
+        "topic": "SpaceX sẽ thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+        "why_now": "Được VnExpress đưa tin ngày 21/10/2026 dựa trên 1 nguồn tin.",
+        "angle": "Cần research chi tiết về công nghệ cánh tay cơ khí 'đũa gắp' và kế hoạch thu hồi tên lửa Starship của SpaceX.",
+        "suggested_type": "news",
+        "search_queries": {
+          "vi": [
+            "SpaceX thu hồi Starship",
+            "đũa gắp tên lửa Starship",
+            "SpaceX 2026"
+          ],
+          "en": [
+            "SpaceX Starship catch",
+            "Starship chopsticks mechanism",
+            "SpaceX rocket catch"
+          ]
+        },
+        "score": 9,
+        "score_reason": "Công nghệ hàng không vũ trụ mang tính bước ngoặt và thu hút lượng lớn sự quan tâm từ cộng đồng, với 1 nguồn tin chính thống.",
+        "source_urls": [
+          "https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html"
+        ]
+      }
+    },
+    "topic": "SpaceX sẽ thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+    "video_type": "news",
+    "video_format": "tiktok",
+    "duration_sec": 60.0,
+    "voice": "vi-VN-HoaiMyNeural",
+    "source_languages": [
+      "vi",
+      "en"
+    ],
+    "output_language": "vi",
+    "mode": "auto",
+    "youtube_trends": false,
+    "youtube_days": 14,
+    "web_limit": 6,
+    "script_style": "news",
+    "ai_clips": 1,
+    "ai_model": "veo-3.1",
+    "ai_seconds": 4,
+    "render_mode": "final",
+    "ai_failure_action": "skip"
+  },
+  "created_at": "2026-10-21T10:02:33.617695+00:00",
+  "status": "failed",
+  "error": "Bước Kịch bản lỗi: Director chưa đạt; bản nháp: C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\output\\auto-cong-nghe-47d6390a\\edit_plan.draft.json. Cảnh cuối phải dùng fact giải đáp open loop. · Project: C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\output\\auto-cong-nghe-47d6390a",
+  "review_approved": false,
+  "ai_approval": {
+    "count": 1,
+    "model": "veo-3.1",
+    "seconds": 4
+  },
+  "steps": {
+    "research": {
+      "status": "done",
+      "started_at": "2026-10-21T10:02:33.643005+00:00",
+      "finished_at": "2026-10-21T10:04:09.850276+00:00",
+      "elapsed_sec": 96.20727130000887,
+      "attempts": 1,
+      "warnings": [
+        "Nguồn tin bao gồm dữ liệu từ nhiều mốc thời gian khác nhau (2025 và 2026), cần kiểm tra kỹ mốc sự kiện để tránh nhầm lẫn.",
+        "Một số thông tin chi tiết về kế hoạch chuyến bay thử 15 là dự phóng từ phát biểu của CEO.",
+        "fact #1: quote dài 33 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+        "fact #3: quote dài 26 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+        "fact #4: quote dài 28 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+        "fact #7: quote dài 29 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+        "fact #8: quote dài 35 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+        "fact #9: quote dài 42 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+        "fact #10: quote dài 46 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+        "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+        "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+        "Bỏ bài quá ngắn: 243 ký tự, yêu cầu ít nhất 300 ký tự.",
+        "Bỏ URL không phải bài viết cụ thể hoặc là trang chuyên mục/trang chủ.",
+        "Đã tắt YouTube trends trong lượt nghiên cứu này."
+      ],
+      "artifacts": {
+        "brief.json": "d0ee8df328a4c7acc24121fbe2669a02e9bd6050cc29deeeeabc52b50acf4c9e",
+        "sources.json": "7ebdd766f804fd4c18285b2871bc28408093cf4139473edabfb4836515332f2d"
+      },
+      "error": null
+    },
+    "director": {
+      "status": "failed",
+      "started_at": "2026-10-21T10:04:09.880785+00:00",
+      "finished_at": "2026-10-21T10:04:19.983142+00:00",
+      "elapsed_sec": 10.102323099999921,
+      "attempts": 1,
+      "warnings": [],
+      "artifacts": {},
+      "error": "Bước Kịch bản lỗi: Director chưa đạt; bản nháp: C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\output\\auto-cong-nghe-47d6390a\\edit_plan.draft.json. Cảnh cuối phải dùng fact giải đáp open loop."
+    },
+    "assets": {
+      "status": "pending",
+      "started_at": null,
+      "finished_at": null,
+      "elapsed_sec": 0.0,
+      "attempts": 0,
+      "warnings": [],
+      "artifacts": {},
+      "error": null
+    },
+    "ai_video": {
+      "status": "pending",
+      "started_at": null,
+      "finished_at": null,
+      "elapsed_sec": 0.0,
+      "attempts": 0,
+      "warnings": [],
+      "artifacts": {},
+      "error": null
+    },
+    "render": {
+      "status": "pending",
+      "started_at": null,
+      "finished_at": null,
+      "elapsed_sec": 0.0,
+      "attempts": 0,
+      "warnings": [],
+      "artifacts": {},
+      "error": null
+    },
+    "discovery": {
+      "status": "done",
+      "elapsed_sec": 20.814570400005323,
+      "started_at": "2026-10-21T10:02:12.707889+00:00",
+      "finished_at": "2026-10-21T10:02:33.532907+00:00",
+      "attempts": 1,
+      "warnings": [],
+      "artifacts": {},
+      "error": null
+    }
+  },
+  "log": [
+    "Research: Bắt đầu",
+    "Research: Gemini đang sinh truy vấn tự nhiên cho từng ngôn ngữ nguồn…",
+    "Research: Tìm nguồn vi: SpaceX thu hồi Starship",
+    "Research: Đang đọc nguồn: https://www.msn.com/vi-vn/news/other/hành-trình-10-năm-của-starship-và-giấc-mơ-chinh-phục-sao-hỏa/ar-AA2ejexh?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://www.vietnamplus.vn/co-phieu-spacex-tang-hon-5-sau-khi-an-dinh-ngay-phong-starship-lan-thu-14-post1136714.vnp",
+    "Research: Đang đọc nguồn: https://vnreview.vn/threads/starship-chuan-bi-cho-hang-that-len-vu-tru-sau-13-lan-bay-thu.91546/",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-tang-tren-cua-ten-lua-starship-bang-dua-gap-5111820.html",
+    "Research: Đang đọc nguồn: https://www.gate.com/vi/news/detail/spacex-recovers-starship-intact-after-24-days-at-sea-near-christmas-island-23581781",
+    "Research: Tìm nguồn en: SpaceX Starship catch",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-us/money/top-stocks/spacex-earnings-to-detail-ai-wins-starlink-growth-starship-plans-live-coverage/ar-AA2fGlbW?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-gb/technology/space-exploration/spacex-will-attempt-1st-ever-double-starship-rocket-catch-on-next-test-launch-elon-musk-says/ar-AA2fGnf7?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://spacenews.com/spacex-plans-starship-upper-stage-catch-on-next-launch/",
+    "Research: Đang đọc nguồn: https://www.space.com/spacex-starship-flight-5-launch-super-heavy-booster-catch-success-video",
+    "Research: Đang đọc nguồn: https://www.spacex.com/launches/starship-flight-5",
+    "Research: Tìm nguồn vi: đũa gắp tên lửa Starship",
+    "Research: Đang đọc nguồn: https://vietnamnet.vn/sieu-ten-lua-starship-v3-bat-ngo-bi-hoan-phong-o-giay-cuoi-2518155.html",
+    "Research: Đang đọc nguồn: https://baomoi.com/spacex-lan-dau-dua-sieu-ten-lua-starship-vao-quy-dao-trai-dat-c56153124.epi",
+    "Research: Đang đọc nguồn: https://www.msn.com/vi-vn/news/other/hành-trình-10-năm-của-starship-và-giấc-mơ-chinh-phục-sao-hỏa/ar-AA2ejexh?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-tang-tren-cua-ten-lua-starship-bang-dua-gap-5111820.html",
+    "Research: Đang đọc nguồn: https://tapchihangkhong.vn/spacex-su-dung-thanh-cong-dua-gap-ten-lua-lan-thu-hai-3622.html",
+    "Research: Tìm nguồn en: Starship chopsticks mechanism",
+    "Research: Đang đọc nguồn: https://www.yahoo.com/news/spacex-executes-chopsticks-booster-catch-014857840.html",
+    "Research: Đang đọc nguồn: https://www.aol.com/starship-launch-live-spacex-performs-074900207.html",
+    "Research: Đang đọc nguồn: https://www.yahoo.com/news/spacex-catches-super-heavy-booster-231702540.html",
+    "Research: Đang đọc nguồn: https://starship-spacex.fandom.com/wiki/Chopsticks",
+    "Research: Đang đọc nguồn: https://rpnnn.github.io/starship-visualization/",
+    "Research: Tìm nguồn vi: SpaceX 2026",
+    "Research: Đang đọc nguồn: https://www.rfi.fr/vi/quốc-tế/20261020-bromo-ve-eu",
+    "Research: Đang đọc nguồn: https://www.msn.com/vi-vn/news/other/spacex-sẽ-thu-hồi-toàn-bộ-tên-lửa-starship-bằng-đũa-gắp/ar-AA2fHZ49?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://mekongasean.vn/ty-phu-elon-musk-muon-sap-nhap-tesla-va-spacex-60919.html",
+    "Research: Đang đọc nguồn: https://en.wikipedia.org/wiki/2026_in_spaceflight",
+    "Research: Đang đọc nguồn: https://en.wikipedia.org/wiki/2026_SpaceX_lunar_impact",
+    "Research: Tìm nguồn en: SpaceX rocket catch",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-gb/technology/space-exploration/spacex-will-attempt-1st-ever-double-starship-rocket-catch-on-next-test-launch-elon-musk-says/ar-AA2fGnf7?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-us/money/top-stocks/spacex-earnings-to-detail-ai-wins-starlink-growth-starship-plans-live-coverage/ar-AA2fGlbW?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://www.miamiherald.com/news/article317674542.html",
+    "Research: Đang đọc nguồn: https://en.wikipedia.org/wiki/SpaceX_Super_Heavy",
+    "Research: Tìm nguồn vi: SpaceX thu hồi tên lửa Starship bằng đũa gắp cơ khí",
+    "Research: Đang đọc nguồn: https://vietnamnet.vn/spacex-phong-ten-lua-lon-nhat-lich-su-len-vu-tru-buoc-tien-chinh-phuc-sao-hoa-2452456.html",
+    "Research: Đang đọc nguồn: https://vietnamnet.vn/trung-quoc-dat-dot-pha-trong-nganh-vu-tru-voi-cong-nghe-thu-hoi-ten-lua-2534750.html",
+    "Research: Đang đọc nguồn: https://kenh14.vn/lan-dau-tien-trong-lich-su-trung-quoc-thu-hoi-thanh-cong-ten-lua-tai-su-dung-pha-the-doc-quyen-cua-spacex-215260711122223385.chn",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-tang-tren-cua-ten-lua-starship-bang-dua-gap-5111820.html",
+    "Research: Tìm nguồn en: SpaceX catch Starship booster with mechanical arms news",
+    "Research: Đang đọc nguồn: https://247wallst.com/investing/2026/09/22/former-spacex-engineer-we-all-rolled-our-eyes-when-elon-musk-proposed-catching-a-rocket-with-chopsticks/",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-us/news/other/animation-of-spacex-chopsticks-to-catch-starships-super-heavy-booster/vi-AA2dvklJ?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://www.notebookcheck.net/SpaceX-brings-Starship-back-to-launch-site-for-the-first-time-three-months-after-launch.1424321.0.html",
+    "Research: Đang đọc nguồn: https://ua.news/en/technologies/spacex-sprobuie-vpiimati-starship-i-super-heavy-the-verge",
+    "Research: tìm được 48 kết quả, giữ 6 nguồn, loại 42 nguồn (lỗi tải/trích xuất: 17, quá ngắn (<300 ký tự): 1, ngoài giới hạn số nguồn: 13, bị chặn: 3, URL bị chặn/không hợp lệ: 4, trùng nguồn: 4)",
+    "Research: Đã thu thập 6 nguồn; đang tạo Research Brief…",
+    "Research: Facts: giữ 10, loại 0, rút gọn 7 trên 10 fact Gemini trả về.",
+    "Research: Hoàn tất",
+    "Kịch bản: Bắt đầu",
+    "Kịch bản: Director đang tạo kịch bản và Edit Plan…",
+    "Kịch bản: Lượt 1/3: chọn góc kể, dàn ý và open loop…"
+  ],
+  "auto_category": {
+    "config": {
+      "category": "công nghệ",
+      "region": "both",
+      "time_window_days": 3,
+      "duration": 60.0,
+      "format": "tiktok",
+      "creative_license": "strict",
+      "style": "news",
+      "review": false,
+      "use_youtube": false,
+      "ai_clips": 1,
+      "ai_model": "veo-3.1",
+      "ai_seconds": 4,
+      "render_mode": "final"
+    },
+    "topics": [
+      {
+        "cluster_id": "f60a1d2f5db6573c",
+        "topic": "SpaceX sẽ thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+        "why_now": "Được VnExpress đưa tin ngày 21/10/2026 dựa trên 1 nguồn tin.",
+        "angle": "Cần research chi tiết về công nghệ cánh tay cơ khí 'đũa gắp' và kế hoạch thu hồi tên lửa Starship của SpaceX.",
+        "suggested_type": "news",
+        "search_queries": {
+          "vi": [
+            "SpaceX thu hồi Starship",
+            "đũa gắp tên lửa Starship",
+            "SpaceX 2026"
+          ],
+          "en": [
+            "SpaceX Starship catch",
+            "Starship chopsticks mechanism",
+            "SpaceX rocket catch"
+          ]
+        },
+        "score": 9,
+        "score_reason": "Công nghệ hàng không vũ trụ mang tính bước ngoặt và thu hút lượng lớn sự quan tâm từ cộng đồng, với 1 nguồn tin chính thống.",
+        "source_urls": [
+          "https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html"
+        ]
+      },
+      {
+        "cluster_id": "e6f980f7d9df7092",
+        "topic": "The best gifts for nine-year-olds, picked by nine-year-olds and parents",
+        "why_now": "Tin đăng 2026-10-21T09:00:02+00:00; 1 nguồn độc lập đề cập.",
+        "angle": "Đọc nguồn và kiểm chứng sự kiện cụ thể trước khi viết kịch bản.",
+        "suggested_type": "news",
+        "search_queries": {
+          "vi": [
+            "The best gifts for nine-year-olds, picked by nine-year-olds and parents"
+          ],
+          "en": [
+            "artificial intelligence The best gifts for nine-year-olds, picked by nine-year-olds and parents"
+          ]
+        },
+        "score": 5,
+        "score_reason": "Điểm sơ bộ theo độ mới và số nguồn, chưa có phân tích Gemini.",
+        "source_urls": [
+          "https://www.theguardian.com/thefilter/2026/oct/21/best-gifts-toys-nine-year-olds"
+        ]
+      },
+      {
+        "cluster_id": "fc91c12db885f54a",
+        "topic": "JBL ra Live Beam 4 cạnh tranh với AirPods 5",
+        "why_now": "Tin đăng 2026-10-21T08:00:00+00:00; 1 nguồn độc lập đề cập.",
+        "angle": "Đọc nguồn và kiểm chứng sự kiện cụ thể trước khi viết kịch bản.",
+        "suggested_type": "news",
+        "search_queries": {
+          "vi": [
+            "JBL ra Live Beam 4 cạnh tranh với AirPods 5"
+          ],
+          "en": [
+            "artificial intelligence JBL ra Live Beam 4 cạnh tranh với AirPods 5"
+          ]
+        },
+        "score": 5,
+        "score_reason": "Điểm sơ bộ theo độ mới và số nguồn, chưa có phân tích Gemini.",
+        "source_urls": [
+          "https://vnexpress.net/jbl-ra-live-beam-4-canh-tranh-voi-airpods-5-5134810.html"
+        ]
+      }
+    ],
+    "selected_topic": "SpaceX sẽ thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+    "selection_reason": "Công nghệ hàng không vũ trụ mang tính bước ngoặt và thu hút lượng lớn sự quan tâm từ cộng đồng, với 1 nguồn tin chính thống. Được VnExpress đưa tin ngày 21/10/2026 dựa trên 1 nguồn tin.",
+    "active_index": 0,
+    "skipped": [],
+    "warnings": [
+      "RSS VnExpress (https://vnexpress.net/rss/khoa-hoc-cong-nghe.rss): tìm 60, giữ 39, loại 21 (ngoài khoảng ngày/thiếu ngày/URL lỗi).",
+      "RSS The Guardian (https://www.theguardian.com/technology/rss): tìm 35, giữ 19, loại 16 (ngoài khoảng ngày/thiếu ngày/URL lỗi).",
+      "Chủ đề thêm loại sự kiện không có trong nhóm tin.",
+      "Tên riêng ngoài nhóm tin: Elon",
+      "Tên riêng ngoài nhóm tin: Trung",
+      "Gemini trả URL không thuộc nhóm nguồn đã cung cấp."
+    ],
+    "ai_confirmed": true
+  },
+  "updated_at": "2026-10-21T10:04:20.230833+00:00",
+  "current_step": "director",
+  "step_progress": 0.0,
+  "summary": {
+    "facts": 10,
+    "facts_used": 0,
+    "sources_used": 0,
+    "elapsed_sec": 127.12
+  }
+}

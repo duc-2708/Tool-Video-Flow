@@ -1,0 +1,296 @@
+{
+  "version": 1,
+  "config": {
+    "discovery": {
+      "category": "công nghệ",
+      "suggestion": {
+        "cluster_id": "f60a1d2f5db6573c",
+        "topic": "SpaceX dự định thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+        "why_now": "Thông tin đăng tải trên VnExpress vào ngày 21/10/2026 từ 1 nguồn tin.",
+        "angle": "Tìm hiểu cơ chế kỹ thuật và tính khả thi của phương pháp thu hồi tên lửa độc đáo này.",
+        "suggested_type": "news",
+        "search_queries": {
+          "vi": [
+            "SpaceX thu hồi tên lửa Starship",
+            "đũa gắp tên lửa Starship"
+          ],
+          "en": [
+            "SpaceX Starship catch arms",
+            "Starship chopsticks recovery"
+          ]
+        },
+        "score": 9,
+        "score_reason": "Đề cập đến công nghệ hàng không vũ trụ tiên tiến và táo bạo của SpaceX, thu hút sự quan tâm lớn.",
+        "source_urls": [
+          "https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html"
+        ]
+      }
+    },
+    "topic": "SpaceX dự định thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+    "video_type": "news",
+    "video_format": "tiktok",
+    "duration_sec": 60.0,
+    "voice": "vi-VN-HoaiMyNeural",
+    "source_languages": [
+      "vi",
+      "en"
+    ],
+    "output_language": "vi",
+    "mode": "auto",
+    "youtube_trends": false,
+    "youtube_days": 14,
+    "web_limit": 6,
+    "script_style": "news",
+    "ai_clips": 1,
+    "ai_model": "veo-3.1",
+    "ai_seconds": 4,
+    "render_mode": "final",
+    "ai_failure_action": "skip"
+  },
+  "created_at": "2026-10-21T09:38:44.566921+00:00",
+  "status": "failed",
+  "error": "Bước Kịch bản lỗi: Director chưa đạt; bản nháp: C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\output\\auto-cong-nghe-ace8ccb3\\edit_plan.draft.json. 19 validation errors for EditPlan\nscenes.0.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.1.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.1.shots.1.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.1.shots.2.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.1.shots.3.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.2.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.2.shots.1.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.2.shots.2.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.2.shots.3.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.3.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.3.shots.1.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.3.shots.2.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.3.shots.3.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.4.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.4.shots.1.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.4.shots.2.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.4.shots.3.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.5.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.5.shots.1.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error · Project: C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\output\\auto-cong-nghe-ace8ccb3",
+  "review_approved": false,
+  "ai_approval": {
+    "count": 1,
+    "model": "veo-3.1",
+    "seconds": 4
+  },
+  "steps": {
+    "research": {
+      "status": "done",
+      "started_at": "2026-10-21T09:38:44.592360+00:00",
+      "finished_at": "2026-10-21T09:40:26.821547+00:00",
+      "elapsed_sec": 102.22918509998999,
+      "attempts": 1,
+      "warnings": [
+        "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+        "Bỏ URL không phải bài viết cụ thể hoặc là trang chuyên mục/trang chủ.",
+        "Đã tắt YouTube trends trong lượt nghiên cứu này.",
+        "fact #1: quote dài 33 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+        "fact #2: quote dài 36 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+        "Đã loại fact #5: quote dài 26 từ; quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+        "Đã loại fact #6: quote dài 32 từ; quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+        "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+        "dữ liệu mỏng, kịch bản sẽ ít chi tiết"
+      ],
+      "artifacts": {
+        "brief.json": "db6517556edc973b389c08c786fc953e9183889ee85a46c88c1ff1e8839835ad",
+        "sources.json": "cb4e44431bdf54ea339ff005d7260e90f6f6db31c8870c20993ee89a177e26e3"
+      },
+      "error": null
+    },
+    "director": {
+      "status": "failed",
+      "started_at": "2026-10-21T09:40:26.845228+00:00",
+      "finished_at": "2026-10-21T09:40:34.004642+00:00",
+      "elapsed_sec": 7.159379399992758,
+      "attempts": 1,
+      "warnings": [],
+      "artifacts": {},
+      "error": "Bước Kịch bản lỗi: Director chưa đạt; bản nháp: C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\output\\auto-cong-nghe-ace8ccb3\\edit_plan.draft.json. 19 validation errors for EditPlan\nscenes.0.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.1.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.1.shots.1.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.1.shots.2.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.1.shots.3.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.2.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.2.shots.1.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.2.shots.2.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.2.shots.3.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.3.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.3.shots.1.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.3.shots.2.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.3.shots.3.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.4.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.4.shots.1.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.4.shots.2.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.4.shots.3.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.5.shots.0.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nscenes.5.shots.1.query\n  Value error, query phải gồm 2–4 từ khóa tiếng Anh (ký tự Latin). [type=value_error, input_value='SpaceX Starship launch r...technology system catch', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error"
+    },
+    "assets": {
+      "status": "pending",
+      "started_at": null,
+      "finished_at": null,
+      "elapsed_sec": 0.0,
+      "attempts": 0,
+      "warnings": [],
+      "artifacts": {},
+      "error": null
+    },
+    "ai_video": {
+      "status": "pending",
+      "started_at": null,
+      "finished_at": null,
+      "elapsed_sec": 0.0,
+      "attempts": 0,
+      "warnings": [],
+      "artifacts": {},
+      "error": null
+    },
+    "render": {
+      "status": "pending",
+      "started_at": null,
+      "finished_at": null,
+      "elapsed_sec": 0.0,
+      "attempts": 0,
+      "warnings": [],
+      "artifacts": {},
+      "error": null
+    },
+    "discovery": {
+      "status": "done",
+      "elapsed_sec": 19.753670799997053,
+      "started_at": "2026-10-21T09:38:24.719651+00:00",
+      "finished_at": "2026-10-21T09:38:44.482236+00:00",
+      "attempts": 1,
+      "warnings": [],
+      "artifacts": {},
+      "error": null
+    }
+  },
+  "log": [
+    "Research: Bắt đầu",
+    "Research: Gemini đang sinh truy vấn tự nhiên cho từng ngôn ngữ nguồn…",
+    "Research: Tìm nguồn vi: SpaceX thu hồi tên lửa Starship",
+    "Research: Đang đọc nguồn: https://www.msn.com/vi-vn/news/other/spacex-sẽ-thu-hồi-toàn-bộ-tên-lửa-starship-bằng-đũa-gắp/ar-AA2fHZ49",
+    "Research: Đang đọc nguồn: https://soha.vn/trung-quoc-sap-duoi-kip-ky-tich-cong-nghe-cua-elon-musk-tai-hien-dua-gap-ten-lua-tai-su-dung-20-lan-cho-25-tan-hang-hoa-len-khong-trung-198261016121009922.htm",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-tang-tren-cua-ten-lua-starship-bang-dua-gap-5111820.html",
+    "Research: Tìm nguồn en: SpaceX Starship catch arms",
+    "Research: Đang đọc nguồn: https://www.barrons.com/livecoverage/spacex-earnings-stock-price/card/musk-shares-details-of-planned-starship-test-15-dxFnQ3CLrfQ4oNHsXHiR",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-us/technology/space-exploration/spacex-plans-first-starship-upper-stage-catch-for-august-pending-approval/ar-AA29wy4R?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-in/news/other/spacex-s-starship-reaches-orbit-on-its-14th-flight-after-engine-scare-company-says-the-team-has-made-the-call-not-to/ar-AA2d8Xqg?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://gtwebs.com/space/mechazilla-spacex-booster-catch-chopstick-arms/",
+    "Research: Đang đọc nguồn: https://roboticsreports.com/spacexs-robotic-arms-engineering-marvels-behind-rocket-catches-2/",
+    "Research: Tìm nguồn vi: đũa gắp tên lửa Starship",
+    "Research: Đang đọc nguồn: https://vietnamnet.vn/sieu-ten-lua-starship-v3-bat-ngo-bi-hoan-phong-o-giay-cuoi-2518155.html",
+    "Research: Đang đọc nguồn: https://baomoi.com/spacex-lan-dau-dua-sieu-ten-lua-starship-vao-quy-dao-trai-dat-c56153124.epi",
+    "Research: Đang đọc nguồn: https://www.msn.com/vi-vn/news/other/hành-trình-10-năm-của-starship-và-giấc-mơ-chinh-phục-sao-hỏa/ar-AA2ejexh?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-tang-tren-cua-ten-lua-starship-bang-dua-gap-5111820.html",
+    "Research: Đang đọc nguồn: https://tapchihangkhong.vn/spacex-su-dung-thanh-cong-dua-gap-ten-lua-lan-thu-hai-3622.html",
+    "Research: Tìm nguồn en: Starship chopsticks recovery",
+    "Research: Đang đọc nguồn: https://tech.yahoo.com/science/articles/spacex-attempt-1st-ever-double-222946161.html",
+    "Research: Đang đọc nguồn: https://www.yahoo.com/news/spacex-executes-chopsticks-booster-catch-014857840.html",
+    "Research: Đang đọc nguồn: https://www.yahoo.com/news/spacex-catches-super-heavy-booster-231702540.html",
+    "Research: Tìm nguồn vi: SpaceX kế hoạch thu hồi tên lửa Starship bằng tháp phóng đũa gắp",
+    "Research: Đang đọc nguồn: https://kenh14.vn/the-sun-canh-ten-lua-spacex-cua-elon-musk-no-tung-giua-dai-duong-215260524113401255.chn",
+    "Research: Đang đọc nguồn: https://kenh14.vn/ten-lua-khong-lo-cua-ty-phu-elon-musk-lam-nen-dieu-ngoan-muc-voi-so-13-may-man-215260725114205597.chn",
+    "Research: Đang đọc nguồn: https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html",
+    "Research: Tìm nguồn en: SpaceX catch Starship booster with Mechazilla chopstick arms updates",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-us/technology/space-exploration/animation-of-spacex-chopsticks-to-catch-starship-s-super-heavy-booster/vi-AA2duxCf?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-us/video/news/spacex-built-a-145-meter-robot-to-catch-the-world’s-most-powerful-rocket-out-of-thin-air/vi-AA2dpwNd?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://mynews13.com/fl/orlando/space/2026/05/21/spacex-starship-12-test",
+    "Research: Đang đọc nguồn: https://gtwebs.com/space/mechazilla-spacex-booster-catch-chopstick-arms/",
+    "Research: Đang đọc nguồn: https://www.foxweather.com/earth-space/spacex-catches-starship-booster-mechazilla-arms",
+    "Research: Tìm nguồn vi: chi tiết công nghệ bắt tên lửa Starship của SpaceX trên báo chí",
+    "Research: Đang đọc nguồn: https://vietnamnet.vn/trung-quoc-dat-dot-pha-trong-nganh-vu-tru-voi-cong-nghe-thu-hoi-ten-lua-2534750.html",
+    "Research: Đang đọc nguồn: https://kenh14.vn/lan-dau-tien-trong-lich-su-trung-quoc-thu-hoi-thanh-cong-ten-lua-tai-su-dung-pha-the-doc-quyen-cua-spacex-215260711122223385.chn",
+    "Research: Đang đọc nguồn: https://www.msn.com/vi-vn/news/other/trung-quốc-phát-triển-tên-lửa-tái-sử-dụng-thu-hồi-bằng-đũa-gắp/ar-AA2eh7BP?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://vnexpress.net/nhung-cai-tien-vuot-troi-cua-sieu-ten-lua-starship-v3-5075318.html",
+    "Research: Đang đọc nguồn: https://vietnamnet.vn/sieu-ten-lua-starship-v3-cua-spacex-se-lam-dieu-chua-tung-co-trong-lich-su-2516454.html",
+    "Research: Đang đọc nguồn: https://vtcnews.vn/cong-nghe-23-5-ten-lua-manh-nhat-the-gioi-phong-thu-thanh-cong-ar1019574.html",
+    "Research: Tìm nguồn en: latest news on SpaceX catching Starship rocket with launch tower",
+    "Research: Đang đọc nguồn: https://www.yahoo.com/news/science/articles/spacex-try-1st-starship-tower-203000063.html",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-au/news/other/spacex-s-first-starship-to-survive-reaching-space-has-just-returned-to-its-launch-site/ar-AA2eoUTN?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://www.msn.com/en-us/news/other/the-most-powerful-rocket-ever-built-is-on-the-verge-of-its-biggest-and-riskiest-test-yet/ar-AA2d3dFG?ocid=BingNewsVerp",
+    "Research: Đang đọc nguồn: https://www.basenor.com/blogs/news/starship-tower-catch-is-next-5-details-that-matter",
+    "Research: Đang đọc nguồn: https://www.newsnow.com/us/Science/Space+Exploration/Starship",
+    "Research: tìm được 48 kết quả, giữ 6 nguồn, loại 42 nguồn (lỗi tải/trích xuất: 13, trang chuyên mục/trang chủ: 2, ngoài giới hạn số nguồn: 20, bị chặn: 1, URL bị chặn/không hợp lệ: 2, trùng nguồn: 4)",
+    "Research: Đã thu thập 6 nguồn; đang tạo Research Brief…",
+    "Research: dữ liệu mỏng, kịch bản sẽ ít chi tiết",
+    "Research: Facts: giữ 4, loại 2, rút gọn 2 trên 6 fact Gemini trả về.",
+    "Research: Hoàn tất",
+    "Kịch bản: Bắt đầu",
+    "Kịch bản: dữ liệu mỏng: thời lượng yêu cầu 60s, kế hoạch rút còn 52s.",
+    "Kịch bản: Director đang tạo kịch bản và Edit Plan…",
+    "Kịch bản: dữ liệu mỏng, nên tăng số nguồn hoặc giảm thời lượng; đề xuất 52 giây.",
+    "Kịch bản: Lượt 1/3: chọn góc kể, dàn ý và open loop…",
+    "Kịch bản: Lượt 2/3: viết lời đọc theo dàn ý đã kiểm tra…"
+  ],
+  "auto_category": {
+    "config": {
+      "category": "công nghệ",
+      "region": "both",
+      "time_window_days": 3,
+      "duration": 60.0,
+      "format": "tiktok",
+      "creative_license": "strict",
+      "style": "news",
+      "review": false,
+      "use_youtube": false,
+      "ai_clips": 1,
+      "ai_model": "veo-3.1",
+      "ai_seconds": 4,
+      "render_mode": "final"
+    },
+    "topics": [
+      {
+        "cluster_id": "f60a1d2f5db6573c",
+        "topic": "SpaceX dự định thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+        "why_now": "Thông tin đăng tải trên VnExpress vào ngày 21/10/2026 từ 1 nguồn tin.",
+        "angle": "Tìm hiểu cơ chế kỹ thuật và tính khả thi của phương pháp thu hồi tên lửa độc đáo này.",
+        "suggested_type": "news",
+        "search_queries": {
+          "vi": [
+            "SpaceX thu hồi tên lửa Starship",
+            "đũa gắp tên lửa Starship"
+          ],
+          "en": [
+            "SpaceX Starship catch arms",
+            "Starship chopsticks recovery"
+          ]
+        },
+        "score": 9,
+        "score_reason": "Đề cập đến công nghệ hàng không vũ trụ tiên tiến và táo bạo của SpaceX, thu hút sự quan tâm lớn.",
+        "source_urls": [
+          "https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html"
+        ]
+      },
+      {
+        "cluster_id": "e6f980f7d9df7092",
+        "topic": "The best gifts for nine-year-olds, picked by nine-year-olds and parents",
+        "why_now": "Tin đăng 2026-10-21T09:00:02+00:00; 1 nguồn độc lập đề cập.",
+        "angle": "Đọc nguồn và kiểm chứng sự kiện cụ thể trước khi viết kịch bản.",
+        "suggested_type": "news",
+        "search_queries": {
+          "vi": [
+            "The best gifts for nine-year-olds, picked by nine-year-olds and parents"
+          ],
+          "en": [
+            "artificial intelligence The best gifts for nine-year-olds, picked by nine-year-olds and parents"
+          ]
+        },
+        "score": 5,
+        "score_reason": "Điểm sơ bộ theo độ mới và số nguồn, chưa có phân tích Gemini.",
+        "source_urls": [
+          "https://www.theguardian.com/thefilter/2026/oct/21/best-gifts-toys-nine-year-olds"
+        ]
+      },
+      {
+        "cluster_id": "fc91c12db885f54a",
+        "topic": "JBL ra Live Beam 4 cạnh tranh với AirPods 5",
+        "why_now": "Tin đăng 2026-10-21T08:00:00+00:00; 1 nguồn độc lập đề cập.",
+        "angle": "Đọc nguồn và kiểm chứng sự kiện cụ thể trước khi viết kịch bản.",
+        "suggested_type": "news",
+        "search_queries": {
+          "vi": [
+            "JBL ra Live Beam 4 cạnh tranh với AirPods 5"
+          ],
+          "en": [
+            "artificial intelligence JBL ra Live Beam 4 cạnh tranh với AirPods 5"
+          ]
+        },
+        "score": 5,
+        "score_reason": "Điểm sơ bộ theo độ mới và số nguồn, chưa có phân tích Gemini.",
+        "source_urls": [
+          "https://vnexpress.net/jbl-ra-live-beam-4-canh-tranh-voi-airpods-5-5134810.html"
+        ]
+      }
+    ],
+    "selected_topic": "SpaceX dự định thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+    "selection_reason": "Đề cập đến công nghệ hàng không vũ trụ tiên tiến và táo bạo của SpaceX, thu hút sự quan tâm lớn. Thông tin đăng tải trên VnExpress vào ngày 21/10/2026 từ 1 nguồn tin.",
+    "active_index": 0,
+    "skipped": [],
+    "warnings": [
+      "RSS VnExpress (https://vnexpress.net/rss/khoa-hoc-cong-nghe.rss): tìm 60, giữ 39, loại 21 (ngoài khoảng ngày/thiếu ngày/URL lỗi).",
+      "RSS The Guardian (https://www.theguardian.com/technology/rss): tìm 35, giữ 19, loại 16 (ngoài khoảng ngày/thiếu ngày/URL lỗi).",
+      "Chủ đề thêm loại sự kiện không có trong nhóm tin.",
+      "Tên riêng ngoài nhóm tin: Elon",
+      "Tên riêng ngoài nhóm tin: Trung"
+    ],
+    "ai_confirmed": true
+  },
+  "updated_at": "2026-10-21T09:40:34.306786+00:00",
+  "current_step": "director",
+  "step_progress": 0.0,
+  "summary": {
+    "facts": 4,
+    "facts_used": 0,
+    "sources_used": 0,
+    "elapsed_sec": 129.14
+  }
+}

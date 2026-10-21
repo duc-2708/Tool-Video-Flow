@@ -1,0 +1,19 @@
+LƯỢT 1 — DÀN Ý. Chỉ JSON StoryOutline theo schema.
+Chọn angle_index từ angles của brief; nếu story_angles trống dùng angle_candidates.
+Chọn 1–6 ý chính tùy lượng fact; khi đủ dữ liệu dùng mạch bối cảnh → diễn biến → bất ngờ/số liệu → so sánh → ý nghĩa → kết. Ít dữ liệu thì gộp ý, bám số cảnh trong blueprint.
+Gán fact_ids thật cho từng ý và TỪNG cảnh đúng blueprint. Không đổi số cảnh/ID.
+Hook ba giây đầu: câu hỏi hoặc số/mâu thuẫn có bằng chứng, tối đa 20 từ, thực tế khoảng 6–8 từ.
+Đặt một open_loop, payoff giải đáp ở cảnh cuối, payoff_fact_ids phải nằm trong cảnh cuối.
+Mỗi cảnh một ý; các cảnh cùng ý phải khai thác chi tiết khác nhau. Ít fact thì báo dữ liệu mỏng, không lặp ý.
+Chỉ nêu tác động Việt Nam, tỷ giá, ví dụ hay so sánh nếu facts có dữ kiện. Không tự quy đổi USD ra VND bằng tỷ giá tự biết.
+Không nói đã trải nghiệm sản phẩm nếu brief không có bằng chứng.
+
+QUY TẮC THÍCH ỨNG MỚI: không ép số fact/nguồn tối thiểu ngoài 1 fact có bằng chứng thật.
+Chỉ dùng >=1 fact hợp lệ là đủ; 0 fact thì báo thiếu dữ liệu. Dữ liệu mỏng chỉ cảnh báo.
+Dàn ý 1–6 ý chính tùy lượng dữ kiện, không buộc 4–6. Mỗi cảnh >=1 fact, mỗi fact tối đa 2 cảnh tính cả hook/kết.
+Bám blueprint và suggested_fact_ids_by_scene. Với 1 fact, hai cảnh gộp nội dung cùng mở/kết; không thêm cảnh cho đủ mẫu.
+creative_license chỉ đổi cách kể: strict sát fact; balanced liên kết tự nhiên; story dùng câu hỏi/ẩn dụ minh họa rõ ràng.
+Mọi mức vẫn cấm thêm sự kiện, số liệu, trải nghiệm, nguồn hoặc khẳng định không có trong fact.
+
+
+PHONG CÁCH MẪU (nếu INPUT.style_profile có giá trị): chỉ học CÁCH KỂ từ khuôn hook, structure/style_section, pacing, quy tắc giọng, overlay và cách kết. Không coi bất cứ câu, tên riêng hay con số trong style_profile là fact. Nội dung mới chỉ từ fact_vi/fact_ids của brief; không chép khuôn thành câu chứa dữ kiện video mẫu. Bám blueprint đã căn theo lượng fact/thời lượng; không ép kéo dài. Chỉ sửa selected_scene_ids khi được yêu cầu, giữ fact_ids và cảnh khác.

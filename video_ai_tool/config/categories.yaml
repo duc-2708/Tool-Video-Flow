@@ -1,0 +1,263 @@
+# RSS metadata: https://vnexpress.net/rss ; https://www.theguardian.com/help/feeds
+{
+  "categories": [
+    {
+      "name": "tin tức",
+      "enabled": true,
+      "keywords_vi": [
+        "tin thời sự",
+        "thế giới"
+      ],
+      "keywords_en": [
+        "world news",
+        "breaking news"
+      ],
+      "suggested_type": "news",
+      "rss": [
+        {
+          "name": "VnExpress",
+          "url": "https://vnexpress.net/rss/thoi-su.rss",
+          "region": "vn",
+          "enabled": true
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/world/rss",
+          "region": "global",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "công nghệ",
+      "enabled": true,
+      "keywords_vi": [
+        "trí tuệ nhân tạo",
+        "sản phẩm công nghệ"
+      ],
+      "keywords_en": [
+        "artificial intelligence",
+        "technology launch"
+      ],
+      "suggested_type": "news",
+      "rss": [
+        {
+          "name": "VnExpress",
+          "url": "https://vnexpress.net/rss/khoa-hoc-cong-nghe.rss",
+          "region": "vn",
+          "enabled": true
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/technology/rss",
+          "region": "global",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "thời trang",
+      "enabled": true,
+      "keywords_vi": [
+        "thời trang",
+        "bộ sưu tập mới"
+      ],
+      "keywords_en": [
+        "fashion collection",
+        "fashion launch"
+      ],
+      "suggested_type": "story",
+      "rss": [
+        {
+          "name": "VnExpress",
+          "url": "https://vnexpress.net/rss/giai-tri.rss",
+          "region": "vn",
+          "enabled": true,
+          "include_keywords": [
+            "thời trang",
+            "bộ sưu tập",
+            "váy",
+            "người mẫu",
+            "fashion"
+          ]
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/fashion/rss",
+          "region": "global",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "giải trí",
+      "enabled": true,
+      "keywords_vi": [
+        "điện ảnh",
+        "âm nhạc"
+      ],
+      "keywords_en": [
+        "film premiere",
+        "music release"
+      ],
+      "suggested_type": "news",
+      "rss": [
+        {
+          "name": "VnExpress",
+          "url": "https://vnexpress.net/rss/giai-tri.rss",
+          "region": "vn",
+          "enabled": true
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/culture/rss",
+          "region": "global",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "kinh doanh",
+      "enabled": true,
+      "keywords_vi": [
+        "doanh nghiệp",
+        "kinh tế"
+      ],
+      "keywords_en": [
+        "business companies",
+        "economy"
+      ],
+      "suggested_type": "news",
+      "rss": [
+        {
+          "name": "VnExpress",
+          "url": "https://vnexpress.net/rss/kinh-doanh.rss",
+          "region": "vn",
+          "enabled": true
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/business/rss",
+          "region": "global",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "sức khỏe & đời sống",
+      "enabled": true,
+      "keywords_vi": [
+        "sức khỏe",
+        "đời sống"
+      ],
+      "keywords_en": [
+        "health study",
+        "lifestyle"
+      ],
+      "suggested_type": "story",
+      "rss": [
+        {
+          "name": "VnExpress",
+          "url": "https://vnexpress.net/rss/suc-khoe.rss",
+          "region": "vn",
+          "enabled": true
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/lifeandstyle/rss",
+          "region": "global",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "thể thao",
+      "enabled": true,
+      "keywords_vi": [
+        "bóng đá",
+        "thể thao"
+      ],
+      "keywords_en": [
+        "football match",
+        "sports results"
+      ],
+      "suggested_type": "news",
+      "rss": [
+        {
+          "name": "VnExpress",
+          "url": "https://vnexpress.net/rss/the-thao.rss",
+          "region": "vn",
+          "enabled": true
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/sport/rss",
+          "region": "global",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "du lịch",
+      "enabled": true,
+      "keywords_vi": [
+        "du lịch",
+        "điểm đến"
+      ],
+      "keywords_en": [
+        "travel destination",
+        "tourism"
+      ],
+      "suggested_type": "story",
+      "rss": [
+        {
+          "name": "VnExpress",
+          "url": "https://vnexpress.net/rss/du-lich.rss",
+          "region": "vn",
+          "enabled": true
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/travel/rss",
+          "region": "global",
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "name": "game",
+      "enabled": true,
+      "keywords_vi": [
+        "trò chơi",
+        "game mới"
+      ],
+      "keywords_en": [
+        "video game release",
+        "gaming"
+      ],
+      "suggested_type": "review",
+      "rss": [
+        {
+          "name": "VnExpress",
+          "url": "https://vnexpress.net/rss/khoa-hoc-cong-nghe.rss",
+          "region": "vn",
+          "enabled": true,
+          "include_keywords": [
+            "game",
+            "trò chơi",
+            "console",
+            "PlayStation",
+            "Nintendo",
+            "Xbox"
+          ]
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/games/rss",
+          "region": "global",
+          "enabled": true
+        }
+      ]
+    }
+  ]
+}

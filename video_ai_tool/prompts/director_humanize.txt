@@ -1,0 +1,21 @@
+LƯỢT 3 — NGƯỜI HÓA VÀ AUDIT BẢN CUỐI. Chỉ JSON HumanizedScript.
+Chỉ trả selected_scene_ids, giữ fact_ids và toàn bộ ý nghĩa có căn cứ. Không đổi số cảnh/shot, thời lượng, nguồn.
+Viết tự nhiên như kể cho bạn bè, câu ngắn xen câu dài, bạn/mình vừa phải. Câu hỏi tu từ có căn cứ.
+Các kiểu "Nhưng khoan đã", "Vấn đề là", "Thử tưởng tượng" mỗi kiểu tối đa hai lần/video.
+CẤM: "Chào mọi người", "Hôm nay chúng ta sẽ", "Trong thời đại ngày nay" ở hook.
+CẤM toàn video: "một số", "nhiều người", "ngày càng", "đóng vai trò quan trọng", "không thể phủ nhận", "trong bối cảnh", "có thể nói rằng".
+Hook ba giây ≤20 từ, nên 6–8 từ. Cảnh còn lại 2–4 câu, mỗi câu ≤28 từ, không mở hai cảnh liền cùng cấu trúc.
+Câu cuối cảnh dẫn sang ý tiếp theo. Kết giải đáp open_loop rồi đặt câu hỏi/nhận định; không tóm cả bài, không cảm ơn đã xem.
+Số và đơn vị viết dạng đọc tự nhiên; tránh ngoặc, viết tắt có cách đọc. Tổng speech_budget, không nhồi chữ vào hook.
+Overlay 2–5 từ/số, mỗi shot một overlay hoặc null, không lặp nguyên câu lời đọc. Broll_query/shot_queries tiếng Anh 2–4 từ mỗi query, stock trung tính, không hãng/sản phẩm/người thật; thay đổi hành động/bối cảnh giữa shot, không chép truy vấn tìm bài báo.
+Tự đối chiếu TỪNG khẳng định của bản cuối và overlay với đúng fact_vi trong scene.fact_ids của full_plan.
+Kiểm tra cả dàn ý: hook/câu hỏi không ngầm bịa, payoff trả lời đúng open_loop, không biến nguồn trích thành dữ kiện.
+Giữ "Theo <nguồn>" chính xác với nguồn đơn; không dùng cụm chưa xác minh/chưa kiểm chứng/cần xác minh.
+Không thêm tỷ giá, giá Việt Nam, tác động Việt Nam, trải nghiệm dùng hoặc so sánh ngoài facts.
+Chỉ audit/sửa các selected_scene_ids; cảnh khác chỉ để đọc mạch kể. Không đổi hoặc báo lỗi cảnh ngoài danh sách này.
+Tiêu đề đã được kiểm tra riêng ở cấp video, không đối chiếu title với fact_ids của từng cảnh, không đưa lỗi title vào issues.
+approved=true chỉ nếu các cảnh được yêu cầu đều có căn cứ và giữ mạch open_loop; issues=[] khi đạt.
+Nếu không có căn cứ, approved=false, issues chỉ rõ scene_id và reason; không che vấn đề bằng lời văn chung chung.
+
+
+PHONG CÁCH MẪU (nếu INPUT.style_profile có giá trị): chỉ học CÁCH KỂ từ khuôn hook, structure/style_section, pacing, quy tắc giọng, overlay và cách kết. Không coi bất cứ câu, tên riêng hay con số trong style_profile là fact. Nội dung mới chỉ từ fact_vi/fact_ids của brief; không chép khuôn thành câu chứa dữ kiện video mẫu. Bám blueprint đã căn theo lượng fact/thời lượng; không ép kéo dài. Chỉ sửa selected_scene_ids khi được yêu cầu, giữ fact_ids và cảnh khác.

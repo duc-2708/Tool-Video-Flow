@@ -1,0 +1,18 @@
+# file: .gitignore
+.venv/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pytest_tmp/
+.cache/
+logs/*
+!logs/.gitkeep
+output/*
+!output/.gitkeep
+*.tmp
+.coverage
+assets/reference_videos/*
+!assets/reference_videos/.gitkeep

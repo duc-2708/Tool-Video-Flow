@@ -1,0 +1,8 @@
+{
+  "plan": null,
+  "warnings": [
+    "Cảnh cuối phải dùng fact giải đáp open loop."
+  ],
+  "failed_scene_ids": [],
+  "status": "draft_requires_review"
+}

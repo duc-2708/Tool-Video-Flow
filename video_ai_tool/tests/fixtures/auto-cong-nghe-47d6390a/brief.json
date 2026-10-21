@@ -1,0 +1,331 @@
+{
+  "discovery_hint": {
+    "category": "công nghệ",
+    "suggestion": {
+      "cluster_id": "f60a1d2f5db6573c",
+      "topic": "SpaceX sẽ thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+      "why_now": "Được VnExpress đưa tin ngày 21/10/2026 dựa trên 1 nguồn tin.",
+      "angle": "Cần research chi tiết về công nghệ cánh tay cơ khí 'đũa gắp' và kế hoạch thu hồi tên lửa Starship của SpaceX.",
+      "suggested_type": "news",
+      "search_queries": {
+        "vi": [
+          "SpaceX thu hồi Starship",
+          "đũa gắp tên lửa Starship",
+          "SpaceX 2026"
+        ],
+        "en": [
+          "SpaceX Starship catch",
+          "Starship chopsticks mechanism",
+          "SpaceX rocket catch"
+        ]
+      },
+      "score": 9,
+      "score_reason": "Công nghệ hàng không vũ trụ mang tính bước ngoặt và thu hút lượng lớn sự quan tâm từ cộng đồng, với 1 nguồn tin chính thống.",
+      "source_urls": [
+        "https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html"
+      ]
+    }
+  },
+  "research_depth": "deep",
+  "story_angles": [
+    {
+      "angle": "Thành tựu và sự cố trong chuyến bay thử nghiệm Starship",
+      "why": "SpaceX đã tóm gọn thành công tầng đẩy Super Heavy bằng đũa gắp nhưng mất liên lạc với tàu Ship ở tầng trên sau 8,5 phút."
+    },
+    {
+      "angle": "Kế hoạch mở rộng thu hồi toàn bộ hệ thống tên lửa Starship",
+      "why": "SpaceX công bố kế hoạch thu hồi toàn bộ tên lửa Starship bằng đũa gắp trong chuyến bay thử nghiệm thứ 15 dự kiến vào tháng 11."
+    },
+    {
+      "angle": "Cải tiến kỹ thuật trên phiên bản tàu Ship nâng cấp",
+      "why": "Tàu Ship có thiết kế cánh nhỏ phía trước nhỏ hơn và dịch chuyển về phía mũi nhằm giảm nhiệt độ hồi quyển."
+    }
+  ],
+  "key_numbers": [
+    {
+      "text": "Phương tiện Starship cao 123 mét.",
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "text": "Tầng đẩy Super Heavy được tóm gọn khoảng 7 phút sau khi cất cánh.",
+      "fact_ids": [
+        2
+      ]
+    },
+    {
+      "text": "Mất liên lạc với tàu Ship khoảng 8,5 phút sau khi bay.",
+      "fact_ids": [
+        3
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "text": "Ngày 16/1: Chuyến bay thử nghiệm thứ 7 diễn ra, phóng Starship từ Nam Texas và tóm gọn tầng đẩy Super Heavy bằng đũa gắp sau 7 phút, nhưng mất liên lạc với tàu Ship sau 8,5 phút.",
+      "fact_ids": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "text": "Tháng 6/2026: SpaceX bắt đầu giao dịch trên sàn NASDAQ sau đợt IPO.",
+      "fact_ids": [
+        6
+      ]
+    },
+    {
+      "text": "Tháng 11: Dự kiến diễn ra chuyến bay thử nghiệm thứ 15 với kế hoạch thu hồi toàn bộ tên lửa Starship bằng đũa gắp.",
+      "fact_ids": [
+        7
+      ]
+    }
+  ],
+  "why_it_matters": [
+    {
+      "text": "Việc sử dụng đũa gắp để thu hồi tầng đẩy Super Heavy thành công đánh dấu bước tiến trong công nghệ tái sử dụng tên lửa của SpaceX.",
+      "fact_ids": [
+        2
+      ]
+    },
+    {
+      "text": "Các cải tiến trên tàu Ship phiên bản nâng cấp giúp giải quyết bài toán giảm nhiệt độ hồi quyển khi phi thuyền chịu điều kiện nhiệt độ cực cao.",
+      "fact_ids": [
+        4,
+        8
+      ]
+    }
+  ],
+  "counterpoints": [
+    {
+      "text": "Các kỹ sư từng tỏ ra hoài nghi và phản đối ý tưởng dùng đũa gắp tên lửa của Elon Musk khi ông mới đề xuất.",
+      "fact_ids": [
+        5
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "text": "Đũa gắp: Cặp thiết bị đặt trên tháp phóng được SpaceX sử dụng để tóm gọn tầng đẩy Super Heavy.",
+      "fact_ids": [
+        2
+      ]
+    },
+    {
+      "text": "Super Heavy: Tầng đẩy của phương tiện Starship.",
+      "fact_ids": [
+        1,
+        2
+      ]
+    },
+    {
+      "text": "Hồi quyển: Giai đoạn tàu Ship phải chịu điều kiện nhiệt độ cực cao và chuyển sang hạ cánh phương ngang.",
+      "fact_ids": [
+        4,
+        8
+      ]
+    }
+  ],
+  "topic": "SpaceX sẽ thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+  "language": "vi",
+  "source_languages": [
+    "vi",
+    "en"
+  ],
+  "output_language": "vi",
+  "search_queries": [
+    {
+      "source_lang": "vi",
+      "query": "SpaceX thu hồi Starship",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "SpaceX Starship catch",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "đũa gắp tên lửa Starship",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "Starship chopsticks mechanism",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "SpaceX 2026",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "SpaceX rocket catch",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "SpaceX thu hồi tên lửa Starship bằng đũa gắp cơ khí",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "SpaceX catch Starship booster with mechanical arms news",
+      "region": "us-en"
+    }
+  ],
+  "angle_candidates": [
+    {
+      "angle": "Sự liều lĩnh và tầm nhìn của Elon Musk",
+      "why": "Phân tích cách các kỹ sư từng phản đối ý tưởng đũa gắp nhưng nó đã trở thành hiện thực."
+    },
+    {
+      "angle": "Thách thức kỹ thuật khi thu hồi toàn bộ Starship",
+      "why": "Làm rõ lý do việc tóm tàu Ship khó khăn hơn nhiều so với tầng đẩy Super Heavy."
+    },
+    {
+      "angle": "Cuộc đua tên lửa tái sử dụng toàn cầu",
+      "why": "Đặt thành tựu của SpaceX bên cạnh bước tiến mới của Trung Quốc với công nghệ lưới bắt trên biển."
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Trong chuyến bay thử nghiệm thứ 7 diễn ra vào ngày 16/1, SpaceX đã phóng phương tiện Starship cao 123 mét từ cơ sở Starbase ở Nam Texas.",
+      "source_name": "Yahoo News",
+      "source_url": "https://www.yahoo.com/news/spacex-catches-super-heavy-booster-231702540.html",
+      "confidence": "medium",
+      "evidence_quote": "The company launched its Starship megarocket for the seventh time ever today (Jan. 16), sending the 403.5-foot-tall (123 meters) reusable vehicle aloft from its Starbase",
+      "source_lang": "en",
+      "fact_vi": "Trong chuyến bay thử nghiệm thứ 7 diễn ra vào ngày 16/1, SpaceX đã phóng phương tiện Starship cao 123 mét từ cơ sở Starbase ở Nam Texas.",
+      "published_at": "2025-01-16"
+    },
+    {
+      "claim": "SpaceX đã sử dụng thành công cặp đũa gắp trên tháp phóng để tóm gọn tầng đẩy Super Heavy khoảng 7 phút sau khi cất cánh.",
+      "source_name": "Yahoo News",
+      "source_url": "https://www.yahoo.com/news/spacex-catches-super-heavy-booster-231702540.html",
+      "confidence": "medium",
+      "evidence_quote": "The 33-engine booster nestled softly into the tower's arms about seven minutes after liftoff today, showcasing the time-saving recovery strategy",
+      "source_lang": "en",
+      "fact_vi": "SpaceX đã sử dụng thành công cặp đũa gắp trên tháp phóng để tóm gọn tầng đẩy Super Heavy khoảng 7 phút sau khi cất cánh.",
+      "published_at": "2025-01-16"
+    },
+    {
+      "claim": "SpaceX đã mất liên lạc với tàu Ship ở tầng trên khoảng 8,5 phút sau khi bay do gặp trục trặc.",
+      "source_name": "Yahoo News",
+      "source_url": "https://www.yahoo.com/news/spacex-catches-super-heavy-booster-231702540.html",
+      "confidence": "medium",
+      "evidence_quote": "But not everything went to plan today. SpaceX lost contact with Ship around 8.5 minutes into flight, apparently after the vehicle suffered some kind of",
+      "source_lang": "en",
+      "fact_vi": "SpaceX đã mất liên lạc với tàu Ship ở tầng trên khoảng 8,5 phút sau khi bay do gặp trục trặc.",
+      "published_at": "2025-01-16"
+    },
+    {
+      "claim": "Tàu Ship ở phiên bản nâng cấp có thiết kế cánh nhỏ phía trước nhỏ hơn và dịch chuyển về phía mũi để giảm nhiệt độ hồi quyển.",
+      "source_name": "Yahoo News",
+      "source_url": "https://www.yahoo.com/news/spacex-catches-super-heavy-booster-231702540.html",
+      "confidence": "medium",
+      "evidence_quote": "The vehicle's forward flaps have been reduced in size and shifted towards the vehicle tip and away from the heat shield, significantly reducing their exposure",
+      "source_lang": "en",
+      "fact_vi": "Tàu Ship ở phiên bản nâng cấp có thiết kế cánh nhỏ phía trước nhỏ hơn và dịch chuyển về phía mũi để giảm nhiệt độ hồi quyển.",
+      "published_at": "2025-01-16"
+    },
+    {
+      "claim": "Các kỹ sư từng tỏ ra hoài nghi và phản đối ý tưởng dùng đũa gắp tên lửa của Elon Musk khi ông mới đề xuất.",
+      "source_name": "24/7 Wall Street",
+      "source_url": "https://247wallst.com/investing/2026/09/22/former-spacex-engineer-we-all-rolled-our-eyes-when-elon-musk-proposed-catching-a-rocket-with-chopsticks/",
+      "confidence": "medium",
+      "evidence_quote": "We all just rolled our eyes like, this is crazy. There’s just no way",
+      "source_lang": "en",
+      "fact_vi": "Các kỹ sư từng tỏ ra hoài nghi và phản đối ý tưởng dùng đũa gắp tên lửa của Elon Musk khi ông mới đề xuất.",
+      "published_at": "2026-09-22"
+    },
+    {
+      "claim": "SpaceX chỉ bắt đầu giao dịch trên sàn NASDAQ từ tháng 6/2026 sau đợt IPO.",
+      "source_name": "24/7 Wall Street",
+      "source_url": "https://247wallst.com/investing/2026/09/22/former-spacex-engineer-we-all-rolled-our-eyes-when-elon-musk-proposed-catching-a-rocket-with-chopsticks/",
+      "confidence": "medium",
+      "evidence_quote": "SpaceX (NASDAQ:SPCX | SPCX Price Prediction) only began trading on NASDAQ following its June 2026 IPO.",
+      "source_lang": "en",
+      "fact_vi": "SpaceX chỉ bắt đầu giao dịch trên sàn NASDAQ từ tháng 6/2026 sau đợt IPO.",
+      "published_at": "2026-09-22"
+    },
+    {
+      "claim": "SpaceX công bố kế hoạch thu hồi toàn bộ tên lửa Starship bằng đũa gắp trong chuyến bay thử nghiệm thứ 15 dự kiến diễn ra vào tháng 11.",
+      "source_name": "vnexpress.net",
+      "source_url": "https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html",
+      "confidence": "medium",
+      "evidence_quote": "SpaceX sẽ sử dụng cánh tay cơ khí của tháp phóng bắt giữ toàn bộ tên lửa Starship trong chuyến bay thử 15, dự kiến",
+      "source_lang": "vi",
+      "fact_vi": "SpaceX công bố kế hoạch thu hồi toàn bộ tên lửa Starship bằng đũa gắp trong chuyến bay thử nghiệm thứ 15 dự kiến diễn ra vào tháng 11.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Tàu Ship phải chịu điều kiện nhiệt độ cực cao khi hồi quyển và chuyển sang giai đoạn hạ cánh phương ngang trước khi đáp xuống.",
+      "source_name": "vnexpress.net",
+      "source_url": "https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html",
+      "confidence": "medium",
+      "evidence_quote": "sau khi hoàn thành nhiệm vụ, tàu Ship phải vượt qua quá trình hồi quyển, trong đó ma sát với không khí tạo ra nhiệt",
+      "source_lang": "vi",
+      "fact_vi": "Tàu Ship phải chịu điều kiện nhiệt độ cực cao khi hồi quyển và chuyển sang giai đoạn hạ cánh phương ngang trước khi đáp xuống.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Trung Quốc lần đầu tiên thu hồi thành công tên lửa tái sử dụng Long March 10B bằng một hệ thống lưới đặt trên tàu biển ngoài khơi.",
+      "source_name": "https://kenh14.vn",
+      "source_url": "https://kenh14.vn/lan-dau-tien-trong-lich-su-trung-quoc-thu-hoi-thanh-cong-ten-lua-tai-su-dung-pha-the-doc-quyen-cua-spacex-215260711122223385.chn",
+      "confidence": "medium",
+      "evidence_quote": "đây là lần đầu tiên Trung Quốc thu hồi thành công tên lửa trong một vụ phóng quỹ đạo thực tế, đồng thời là lần",
+      "source_lang": "vi",
+      "fact_vi": "Trung Quốc lần đầu tiên thu hồi thành công tên lửa tái sử dụng Long March 10B bằng một hệ thống lưới đặt trên tàu biển ngoài khơi.",
+      "published_at": "2026-07-11"
+    },
+    {
+      "claim": "Trong khi SpaceX hạ cánh tên lửa trên bệ phóng cố định bằng chân đỡ, Trung Quốc chọn phương án thu hồi bằng lưới căng trên tàu biển.",
+      "source_name": "https://kenh14.vn",
+      "source_url": "https://kenh14.vn/lan-dau-tien-trong-lich-su-trung-quoc-thu-hoi-thanh-cong-ten-lua-tai-su-dung-pha-the-doc-quyen-cua-spacex-215260711122223385.chn",
+      "confidence": "medium",
+      "evidence_quote": "Falcon 9 hạ cánh trên bệ phóng cố định trên đất liền hoặc sà lan tự hành, rocket đáp xuống bằng chân đỡ. Long March",
+      "source_lang": "vi",
+      "fact_vi": "Trong khi SpaceX hạ cánh tên lửa trên bệ phóng cố định bằng chân đỡ, Trung Quốc chọn phương án thu hồi bằng lưới căng trên tàu biển.",
+      "published_at": "2026-07-11"
+    }
+  ],
+  "trends": [],
+  "hooks": [
+    "Bạn có biết các kỹ sư hàng đầu từng phản đối ra mặt khi nghe Elon Musk đề xuất dùng đũa gắp tên lửa?",
+    "Thu hồi tầng đẩy chỉ là khởi đầu, thử thách lớn nhất của SpaceX là tóm gọn cả con tàu Starship từ không gian.",
+    "Khi SpaceX đang hướng tới việc thu hồi toàn bộ hệ thống tên lửa, Trung Quốc đã tạo ra một bước ngoặt hoàn toàn khác."
+  ],
+  "audience_questions": [
+    "Vì sao việc thu hồi tàu Ship ở tầng trên lại khó hơn tầng đẩy Super Heavy?",
+    "Công nghệ đũa gắp của SpaceX hoạt động như thế nào?",
+    "Liệu Trung Quốc với phương án lưới bắt trên biển có phá vỡ thế độc quyền của SpaceX?"
+  ],
+  "keywords": [
+    "Starship",
+    "SpaceX",
+    "đũa gắp tên lửa",
+    "Super Heavy",
+    "Elon Musk",
+    "tên lửa tái sử dụng"
+  ],
+  "risks": [
+    "Nguồn tin bao gồm dữ liệu từ nhiều mốc thời gian khác nhau (2025 và 2026), cần kiểm tra kỹ mốc sự kiện để tránh nhầm lẫn.",
+    "Một số thông tin chi tiết về kế hoạch chuyến bay thử 15 là dự phóng từ phát biểu của CEO.",
+    "fact #1: quote dài 33 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #3: quote dài 26 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #4: quote dài 28 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #7: quote dài 29 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #8: quote dài 35 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #9: quote dài 42 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #10: quote dài 46 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+    "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+    "Bỏ bài quá ngắn: 243 ký tự, yêu cầu ít nhất 300 ký tự.",
+    "Bỏ URL không phải bài viết cụ thể hoặc là trang chuyên mục/trang chủ.",
+    "Đã tắt YouTube trends trong lượt nghiên cứu này."
+  ]
+}

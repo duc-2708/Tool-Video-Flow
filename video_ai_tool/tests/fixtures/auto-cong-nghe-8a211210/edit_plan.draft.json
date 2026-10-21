@@ -1,0 +1,436 @@
+{
+  "plan": {
+    "adaptive": true,
+    "requested_duration_sec": 60.0,
+    "script_style": "storytelling",
+    "story_outline": {
+      "angle_index": 1,
+      "hook": "Trẻ chín tuổi thích thử thách gì nhất?",
+      "open_loop": "Món quà nào thực sự khiến trẻ chín tuổi thích thú và đạt thành tựu?",
+      "payoff": "Thiết bị Peekimo có nút tắt âm thanh ở đáy giúp tránh phát tiếng ồn vào giờ đi ngủ.",
+      "payoff_fact_ids": [
+        9
+      ],
+      "main_points": [
+        {
+          "id": 1,
+          "idea": "Giai đoạn phát triển và nhu cầu thử thách của trẻ chín tuổi",
+          "fact_ids": [
+            1
+          ]
+        },
+        {
+          "id": 2,
+          "idea": "Trò chơi và sở thích tương tác xã hội",
+          "fact_ids": [
+            2,
+            3
+          ]
+        },
+        {
+          "id": 3,
+          "idea": "Đồ dùng học tập và thiết bị giải trí công nghệ",
+          "fact_ids": [
+            4,
+            5
+          ]
+        },
+        {
+          "id": 4,
+          "idea": "Đồ chơi lắp ráp thử thách",
+          "fact_ids": [
+            6,
+            7
+          ]
+        },
+        {
+          "id": 5,
+          "idea": "Sách truyện và thiết bị tương tác gia đình",
+          "fact_ids": [
+            8,
+            9,
+            10
+          ]
+        }
+      ],
+      "scenes": [
+        {
+          "scene_id": 1,
+          "point_id": 1,
+          "fact_ids": [
+            1
+          ],
+          "purpose": "Mở đầu video với hook về trẻ chín tuổi"
+        },
+        {
+          "scene_id": 2,
+          "point_id": 2,
+          "fact_ids": [
+            2
+          ],
+          "purpose": "Giới thiệu trò chơi Mexican Train dominoes"
+        },
+        {
+          "scene_id": 3,
+          "point_id": 2,
+          "fact_ids": [
+            3
+          ],
+          "purpose": "Nhận định của chuyên gia Laura Moore-Williams về trò chơi ngang hàng"
+        },
+        {
+          "scene_id": 4,
+          "point_id": 3,
+          "fact_ids": [
+            4
+          ],
+          "purpose": "Giới thiệu bút chì màu Staedtler 24 Norix"
+        },
+        {
+          "scene_id": 5,
+          "point_id": 3,
+          "fact_ids": [
+            5
+          ],
+          "purpose": "Thông tin về máy nghe nhạc Mighty 3"
+        },
+        {
+          "scene_id": 6,
+          "point_id": 4,
+          "fact_ids": [
+            6
+          ],
+          "purpose": "Giới thiệu bộ đồ chơi Lego Fortnite Battle Bus"
+        },
+        {
+          "scene_id": 7,
+          "point_id": 4,
+          "fact_ids": [
+            7
+          ],
+          "purpose": "Giới thiệu bộ Lego Ferris wheel"
+        },
+        {
+          "scene_id": 8,
+          "point_id": 5,
+          "fact_ids": [
+            8,
+            10
+          ],
+          "purpose": "Giới thiệu sách Donut Squad và Beyblade Drop Attack"
+        },
+        {
+          "scene_id": 9,
+          "point_id": 5,
+          "fact_ids": [
+            9
+          ],
+          "purpose": "Giải đáp open loop với thiết bị Peekimo"
+        }
+      ]
+    },
+    "title": "Món quà nào thực sự khiến trẻ chín tuổi thích thú?",
+    "format": "tiktok",
+    "voice": "vi-VN-HoaiMyNeural",
+    "music": {
+      "mood": "calm",
+      "volume": 0.08
+    },
+    "scenes": [
+      {
+        "id": 1,
+        "role": "hook",
+        "narration": "Trẻ chín tuổi thích thử thách gì?",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "nine year old child",
+            "duration_sec": 3.0,
+            "effect": "pan_left",
+            "text_overlay": "Trẻ chín tuổi"
+          }
+        ],
+        "transition_out": "cut",
+        "sfx": "none",
+        "fact_ids": [
+          1
+        ],
+        "pattern_interrupt": false
+      },
+      {
+        "id": 2,
+        "role": "body",
+        "narration": "Theo The Guardian, trẻ chín tuổi đang ở giai đoạn chuyển tiếp. Các em thích thú với các thử thách mới.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "kids playing games",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "kids playing games",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "kids playing games",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "cut",
+        "sfx": "none",
+        "fact_ids": [
+          2
+        ],
+        "pattern_interrupt": false
+      },
+      {
+        "id": 3,
+        "role": "body",
+        "narration": "Trò chơi Mexican Train dominoes được yêu thích nhờ nhịp độ nhanh. Trò chơi này rất dễ học và có chiến thuật.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "domino game kids",
+            "duration_sec": 2.5142857142857142,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "domino game kids",
+            "duration_sec": 2.5142857142857142,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "domino game kids",
+            "duration_sec": 2.5142857142857142,
+            "effect": "zoom_in",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "zoom",
+        "sfx": "none",
+        "fact_ids": [
+          3
+        ],
+        "pattern_interrupt": true
+      },
+      {
+        "id": 4,
+        "role": "body",
+        "narration": "Chuyên gia Laura Moore-Williams nhận định trò chơi ngang hàng rất có giá trị. Trẻ sẽ có cảm giác thuộc về nhóm.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "children playing together",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "children playing together",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "children playing together",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "cut",
+        "sfx": "none",
+        "fact_ids": [
+          4
+        ],
+        "pattern_interrupt": false
+      },
+      {
+        "id": 5,
+        "role": "body",
+        "narration": "Bút chì màu Staedtler Norix có bề mặt chống trượt. Sản phẩm làm từ gỗ tái chế từ rừng đạt chuẩn PEFC.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "colored pencils drawing",
+            "duration_sec": 2.5142857142857142,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "colored pencils drawing",
+            "duration_sec": 2.5142857142857142,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "colored pencils drawing",
+            "duration_sec": 2.5142857142857142,
+            "effect": "zoom_in",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "zoom",
+        "sfx": "none",
+        "fact_ids": [
+          5
+        ],
+        "pattern_interrupt": true
+      },
+      {
+        "id": 6,
+        "role": "body",
+        "narration": "Máy nghe nhạc Mighty ba cho phép tải nhạc Spotify độc lập. Tuy nhiên tính năng này sẽ dừng từ tháng tư năm hai nghìn không trăm hai mươi bảy.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "kids small music player",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "kids small music player",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "kids small music player",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "cut",
+        "sfx": "none",
+        "fact_ids": [
+          6
+        ],
+        "pattern_interrupt": false
+      },
+      {
+        "id": 7,
+        "role": "body",
+        "narration": "Bộ Lego Fortnite Battle Bus có chín nhân vật nhỏ. Đây là thử thách thú vị dù dành cho trẻ trên mười tuổi.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "lego building toys",
+            "duration_sec": 2.5142857142857142,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "lego building toys",
+            "duration_sec": 2.5142857142857142,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "lego building toys",
+            "duration_sec": 2.5142857142857142,
+            "effect": "zoom_in",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "zoom",
+        "sfx": "none",
+        "fact_ids": [
+          7
+        ],
+        "pattern_interrupt": true
+      },
+      {
+        "id": 8,
+        "role": "body",
+        "narration": "Bộ Lego Ferris wheel mang lại giá trị cao. Người chơi có thể tháo rời và lắp ráp theo ba hướng dẫn hội chợ.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "lego ferris wheel",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "lego ferris wheel",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "lego ferris wheel",
+            "duration_sec": 2.5142857142857142,
+            "effect": "pan_left",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "cut",
+        "sfx": "none",
+        "fact_ids": [
+          8,
+          10
+        ],
+        "pattern_interrupt": false
+      },
+      {
+        "id": 9,
+        "role": "cta",
+        "narration": "Thiết bị Peekimo có nút nguồn ở đáy pod. Bạn có thể tắt bớt âm thanh để tránh phát tiếng vào giờ đi ngủ.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "interactive toy pod",
+            "duration_sec": 2.1,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "interactive toy pod",
+            "duration_sec": 2.1,
+            "effect": "zoom_in",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "zoom",
+        "sfx": "none",
+        "fact_ids": [
+          9
+        ],
+        "pattern_interrupt": true
+      }
+    ],
+    "video_type": "news",
+    "target_duration_sec": 60.0,
+    "brief_hash": "897c962d8e632804d635ebcbf326f81c4bb32c1e0843fc02f468f0e7fc640831"
+  },
+  "warnings": [
+    "Cảnh 2: số overlay khác số shot."
+  ],
+  "failed_scene_ids": [],
+  "status": "draft_requires_review"
+}

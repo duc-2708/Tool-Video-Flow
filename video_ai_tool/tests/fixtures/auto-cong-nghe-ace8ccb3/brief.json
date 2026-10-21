@@ -1,0 +1,215 @@
+{
+  "discovery_hint": {
+    "category": "công nghệ",
+    "suggestion": {
+      "cluster_id": "f60a1d2f5db6573c",
+      "topic": "SpaceX dự định thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+      "why_now": "Thông tin đăng tải trên VnExpress vào ngày 21/10/2026 từ 1 nguồn tin.",
+      "angle": "Tìm hiểu cơ chế kỹ thuật và tính khả thi của phương pháp thu hồi tên lửa độc đáo này.",
+      "suggested_type": "news",
+      "search_queries": {
+        "vi": [
+          "SpaceX thu hồi tên lửa Starship",
+          "đũa gắp tên lửa Starship"
+        ],
+        "en": [
+          "SpaceX Starship catch arms",
+          "Starship chopsticks recovery"
+        ]
+      },
+      "score": 9,
+      "score_reason": "Đề cập đến công nghệ hàng không vũ trụ tiên tiến và táo bạo của SpaceX, thu hút sự quan tâm lớn.",
+      "source_urls": [
+        "https://vnexpress.net/spacex-se-thu-hoi-toan-bo-ten-lua-starship-bang-dua-gap-5135035.html"
+      ]
+    }
+  },
+  "research_depth": "deep",
+  "story_angles": [
+    {
+      "angle": "Thành công thu hồi tầng đẩy Starship bằng tháp phóng",
+      "why": "SpaceX đã thực hiện thành công việc thu hồi tầng đẩy Super Heavy bằng hệ thống tay đũa gắp trong các chuyến thử nghiệm vào tháng 10 năm 2024 và tháng 1 năm 2025."
+    },
+    {
+      "angle": "Công nghệ bắt giữ tên lửa giữa không trung Mechazilla",
+      "why": "Hệ thống tay đũa gắp Mechazilla được thiết kế đặc biệt để giữ tầng đẩy tại các điểm cứng gần cánh lưới ngay khi bay lơ lửng trở lại bệ phóng."
+    },
+    {
+      "angle": "Cơ chế kỹ thuật hãm phách và hấp thụ năng lượng động học",
+      "why": "Tầng đẩy sử dụng động cơ Raptor để lật ngược và đốt động cơ hãm phách trước khi cánh tay đũa gắp dùng hệ thống thủy lực để đóng lại và hấp thụ năng lượng."
+    }
+  ],
+  "key_numbers": [
+    {
+      "text": "Tầng đẩy tên lửa Super Heavy cao 71 mét",
+      "fact_ids": [
+        2
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "text": "Ngày 13 tháng 10 năm 2024: Lần đầu tiên trong lịch sử hàng không vũ trụ bắt giữ thành công tầng đẩy Super Heavy bằng các cánh tay cơ khí trên tháp phóng.",
+      "fact_ids": [
+        2
+      ]
+    },
+    {
+      "text": "Ngày 16 tháng 1 năm 2025: Trong chuyến thử nghiệm thứ bảy, SpaceX phóng tên lửa Starship từ miền nam Texas và tiếp tục thu hồi tầng đẩy Super Heavy bằng tay đũa gắp.",
+      "fact_ids": [
+        1
+      ]
+    }
+  ],
+  "why_it_matters": [
+    {
+      "text": "Đánh dấu cột mốc lịch sử hàng không vũ trụ khi bắt giữ thành công tầng đẩy tên lửa giữa không trung bằng cánh tay cơ khí trên tháp phóng.",
+      "fact_ids": [
+        2
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "text": "Mechazilla: Biệt danh của hệ thống tay đũa gắp được thiết kế để giữ tầng đẩy Super Heavy tại các điểm cứng gần cánh lưới.",
+      "fact_ids": [
+        3
+      ]
+    },
+    {
+      "text": "Động cơ Raptor: Loại động cơ được tầng đẩy Super Heavy sử dụng để thực hiện thao tác lật ngược và đốt hãm phách.",
+      "fact_ids": [
+        4
+      ]
+    }
+  ],
+  "topic": "SpaceX dự định thu hồi toàn bộ tên lửa Starship bằng đũa gắp",
+  "language": "vi",
+  "source_languages": [
+    "vi",
+    "en"
+  ],
+  "output_language": "vi",
+  "search_queries": [
+    {
+      "source_lang": "vi",
+      "query": "SpaceX thu hồi tên lửa Starship",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "SpaceX Starship catch arms",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "đũa gắp tên lửa Starship",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "Starship chopsticks recovery",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "SpaceX kế hoạch thu hồi tên lửa Starship bằng tháp phóng đũa gắp",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "SpaceX catch Starship booster with Mechazilla chopstick arms updates",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "chi tiết công nghệ bắt tên lửa Starship của SpaceX trên báo chí",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "latest news on SpaceX catching Starship rocket with launch tower",
+      "region": "us-en"
+    }
+  ],
+  "angle_candidates": [
+    {
+      "angle": "Công nghệ đũa gắp Mechazilla và bước nhảy vọt trong lịch sử hàng không vũ trụ",
+      "why": "Giúp người xem hiểu rõ cách thức hoạt động chưa từng có của cánh tay robot khổng lồ bắt tên lửa giữa không trung."
+    },
+    {
+      "angle": "Bài toán tái sử dụng tên lửa và chiến lược tối ưu hóa chi phí của SpaceX",
+      "why": "Phân tích lý do SpaceX loại bỏ chân hạ cánh truyền thống để chuyển trọng lượng sang tháp phóng nhằm tăng tải trọng và giảm chi phí."
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Trong chuyến thử nghiệm thứ bảy diễn ra vào ngày 16 tháng 1 năm 2025, SpaceX đã phóng tên lửa Starship từ cơ sở Starbase ở miền nam Texas và thành công thu hồi tầng đẩy Super Heavy bằng hệ thống tay đũa gắp của tháp phóng.",
+      "source_name": "Yahoo News",
+      "source_url": "https://www.yahoo.com/news/spacex-catches-super-heavy-booster-231702540.html",
+      "confidence": "medium",
+      "evidence_quote": "The company launched its Starship megarocket for the seventh time ever today (Jan. 16), sending the 403.5-foot-tall (123 meters) reusable vehicle aloft from its Starbase",
+      "source_lang": "en",
+      "fact_vi": "Trong chuyến thử nghiệm thứ bảy diễn ra vào ngày 16 tháng 1 năm 2025, SpaceX đã phóng tên lửa Starship từ cơ sở Starbase ở miền nam Texas và thành công thu hồi tầng đẩy Super Heavy bằng hệ thống tay đũa gắp của tháp phóng.",
+      "published_at": "2025-01-16"
+    },
+    {
+      "claim": "Vào ngày 13 tháng 10 năm 2024, SpaceX đã lần đầu tiên trong lịch sử hàng không vũ trụ bắt giữ thành công một tầng đẩy tên lửa Super Heavy cao 71 mét giữa không trung bằng các cánh tay cơ khí trên tháp phóng.",
+      "source_name": "GTWebs",
+      "source_url": "https://gtwebs.com/space/mechazilla-spacex-booster-catch-chopstick-arms/",
+      "confidence": "medium",
+      "evidence_quote": "On October 13, 2024, SpaceX did something that had never been done in the history of spaceflight: it caught a 71-meter rocket booster mid-air using",
+      "source_lang": "en",
+      "fact_vi": "Vào ngày 13 tháng 10 năm 2024, SpaceX đã lần đầu tiên trong lịch sử hàng không vũ trụ bắt giữ thành công một tầng đẩy tên lửa Super Heavy cao 71 mét giữa không trung bằng các cánh tay cơ khí trên tháp phóng.",
+      "published_at": "2026-06-15"
+    },
+    {
+      "claim": "Hệ thống tay đũa gắp có biệt danh là Mechazilla được thiết kế để giữ tầng đẩy Super Heavy tại các điểm cứng gần cánh lưới ngay sau khi nó bay lơ lửng trở lại bệ phóng.",
+      "source_name": "GTWebs",
+      "source_url": "https://gtwebs.com/space/mechazilla-spacex-booster-catch-chopstick-arms/",
+      "confidence": "medium",
+      "evidence_quote": "The catch arms, informally called ‘chopsticks,’ are designed to grab the returning Super Heavy booster within seconds of it hovering back to the pad",
+      "source_lang": "en",
+      "fact_vi": "Hệ thống tay đũa gắp có biệt danh là Mechazilla được thiết kế để giữ tầng đẩy Super Heavy tại các điểm cứng gần cánh lưới ngay sau khi nó bay lơ lửng trở lại bệ phóng.",
+      "published_at": "2026-06-15"
+    },
+    {
+      "claim": "Tầng đẩy Super Heavy sử dụng các động cơ Raptor thực hiện thao tác lật ngược và đốt động cơ để hãm phách, trước khi hai cánh tay đũa gắp đóng lại hấp thụ năng lượng động học bằng hệ thống thủy lực.",
+      "source_name": "GTWebs",
+      "source_url": "https://gtwebs.com/space/mechazilla-spacex-booster-catch-chopstick-arms/",
+      "confidence": "medium",
+      "evidence_quote": "Hydraulic systems built into the arm mechanism absorb the kinetic energy of the grab. The booster is then lowered directly onto the launch mount below.",
+      "source_lang": "en",
+      "fact_vi": "Tầng đẩy Super Heavy sử dụng các động cơ Raptor thực hiện thao tác lật ngược và đốt động cơ để hãm phách, trước khi hai cánh tay đũa gắp đóng lại hấp thụ năng lượng động học bằng hệ thống thủy lực.",
+      "published_at": "2026-06-15"
+    }
+  ],
+  "trends": [],
+  "hooks": [
+    "Bạn có tin nổi một quả tên lửa cao bằng tòa nhà chọc trời lại có thể được bắt gọn giữa không trung bằng một đôi 'đũa gắp' khổng lồ?",
+    "Biến viễn tưởng thành hiện thực, SpaceX đã làm được điều chưa từng có trong lịch sử ngành vũ trụ."
+  ],
+  "audience_questions": [
+    "Hệ thống đũa gắp Mechazilla hoạt động như thế nào để bắt tên lửa nặng hàng trăm tấn?",
+    "Tại sao SpaceX không dùng chân hạ cánh truyền thống mà lại chọn tháp phóng để đỡ tên lửa?"
+  ],
+  "keywords": [
+    "SpaceX",
+    "Starship",
+    "Super Heavy",
+    "Mechazilla",
+    "đũa gắp tên lửa",
+    "tái sử dụng tên lửa"
+  ],
+  "risks": [
+    "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+    "Bỏ URL không phải bài viết cụ thể hoặc là trang chuyên mục/trang chủ.",
+    "Đã tắt YouTube trends trong lượt nghiên cứu này.",
+    "fact #1: quote dài 33 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #2: quote dài 36 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "Đã loại fact #5: quote dài 26 từ; quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+    "Đã loại fact #6: quote dài 32 từ; quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+    "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+    "dữ liệu mỏng, kịch bản sẽ ít chi tiết"
+  ]
+}

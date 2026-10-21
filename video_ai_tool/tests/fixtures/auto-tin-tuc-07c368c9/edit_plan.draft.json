@@ -1,0 +1,394 @@
+{
+  "plan": {
+    "adaptive": true,
+    "requested_duration_sec": 60.0,
+    "script_style": "explain",
+    "story_outline": {
+      "angle_index": 1,
+      "hook": "Bất ngờ phát hiện khẩu súng thần công dài gần 3m ở thành Điện Hải?",
+      "open_loop": "Khẩu súng thần công mới được tìm thấy ẩn chứa bí mật gì về lịch sử triều Nguyễn?",
+      "payoff": "Theo Bảo tàng Đà Nẵng, hiện vật này có thể thuộc hệ thống vũ khí triều Nguyễn dùng để phòng thủ.",
+      "payoff_fact_ids": [
+        2
+      ],
+      "main_points": [
+        {
+          "id": 1,
+          "idea": "Phát hiện khẩu súng thần công tại thành Điện Hải",
+          "fact_ids": [
+            1
+          ]
+        },
+        {
+          "id": 2,
+          "idea": "Nhận định ban đầu về nguồn gốc từ triều Nguyễn",
+          "fact_ids": [
+            2
+          ]
+        },
+        {
+          "id": 3,
+          "idea": "Số lượng hiện vật đang được bảo tàng lưu giữ",
+          "fact_ids": [
+            3
+          ]
+        },
+        {
+          "id": 4,
+          "idea": "Tầm quan trọng lịch sử của di tích thành Điện Hải",
+          "fact_ids": [
+            4
+          ]
+        },
+        {
+          "id": 5,
+          "idea": "Bối cảnh phát hiện khi đang thi công tu bổ",
+          "fact_ids": [
+            5
+          ]
+        },
+        {
+          "id": 6,
+          "idea": "Chỉ đạo trực tiếp tại hiện trường của lãnh đạo",
+          "fact_ids": [
+            6
+          ]
+        }
+      ],
+      "scenes": [
+        {
+          "scene_id": 1,
+          "point_id": 1,
+          "fact_ids": [
+            1
+          ],
+          "purpose": "Hook thu hút người xem với sự kiện phát hiện súng thần công."
+        },
+        {
+          "scene_id": 2,
+          "point_id": 1,
+          "fact_ids": [
+            1
+          ],
+          "purpose": "Cung cấp chi tiết về kích thước và vị trí tìm thấy khẩu súng."
+        },
+        {
+          "scene_id": 3,
+          "point_id": 2,
+          "fact_ids": [
+            2
+          ],
+          "purpose": "Đưa ra nhận định ban đầu của chuyên gia về nguồn gốc."
+        },
+        {
+          "scene_id": 4,
+          "point_id": 3,
+          "fact_ids": [
+            3
+          ],
+          "purpose": "Thông tin về số lượng súng thần công đang được lưu giữ."
+        },
+        {
+          "scene_id": 5,
+          "point_id": 4,
+          "fact_ids": [
+            4
+          ],
+          "purpose": "Nhắc đến giá trị lịch sử của di tích quốc gia đặc biệt."
+        },
+        {
+          "scene_id": 6,
+          "point_id": 5,
+          "fact_ids": [
+            5
+          ],
+          "purpose": "Giải thích tình huống phát hiện hiện vật khi đào đất tu bổ."
+        },
+        {
+          "scene_id": 7,
+          "point_id": 6,
+          "fact_ids": [
+            6
+          ],
+          "purpose": "Ghi nhận chỉ đạo bảo quản và trưng bày hiện vật."
+        },
+        {
+          "scene_id": 8,
+          "point_id": 2,
+          "fact_ids": [
+            2
+          ],
+          "purpose": "Kết luận và trả lời câu hỏi mở của video."
+        }
+      ]
+    },
+    "title": "Phat hien sung than cong tai thanh Dien Hai",
+    "format": "tiktok",
+    "voice": "vi-VN-HoaiMyNeural",
+    "music": {
+      "mood": "calm",
+      "volume": 0.08
+    },
+    "scenes": [
+      {
+        "id": 1,
+        "role": "hook",
+        "narration": "Phat hien sung than cong o thanh Dien Hai.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "ancient cannon discovery",
+            "duration_sec": 3.0,
+            "effect": "pan_left",
+            "text_overlay": "Sung than cong"
+          }
+        ],
+        "transition_out": "cut",
+        "sfx": "none",
+        "fact_ids": [
+          1
+        ],
+        "pattern_interrupt": false
+      },
+      {
+        "id": 2,
+        "role": "body",
+        "narration": "Theo Báo điện tử Thể thao và Văn hóa, khẩu súng bằng gang dài hai phẩy chín lăm mét được tìm thấy ở độ sâu một phẩy năm mét.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "digging historical artifact",
+            "duration_sec": 2.933333333333333,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "digging historical artifact",
+            "duration_sec": 2.933333333333333,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "digging historical artifact",
+            "duration_sec": 2.9333333333333327,
+            "effect": "pan_left",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "cut",
+        "sfx": "none",
+        "fact_ids": [
+          1
+        ],
+        "pattern_interrupt": false
+      },
+      {
+        "id": 3,
+        "role": "body",
+        "narration": "Theo Báo điện tử Thể thao và Văn hóa, chuyên gia nhận định đây có thể là vũ khí triều Nguyễn phòng thủ.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "historical old cannon",
+            "duration_sec": 2.933333333333333,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "historical old cannon",
+            "duration_sec": 2.933333333333333,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "historical old cannon",
+            "duration_sec": 2.9333333333333327,
+            "effect": "zoom_in",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "zoom",
+        "sfx": "none",
+        "fact_ids": [
+          2
+        ],
+        "pattern_interrupt": true
+      },
+      {
+        "id": 4,
+        "role": "body",
+        "narration": "Theo Báo điện tử Thể thao và Văn hóa, bảo tàng đang lưu giữ mười bốn khẩu súng.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "museum weapons display",
+            "duration_sec": 2.933333333333333,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "museum weapons display",
+            "duration_sec": 2.933333333333333,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "museum weapons display",
+            "duration_sec": 2.9333333333333327,
+            "effect": "pan_left",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "cut",
+        "sfx": "none",
+        "fact_ids": [
+          3
+        ],
+        "pattern_interrupt": false
+      },
+      {
+        "id": 5,
+        "role": "body",
+        "narration": "Theo Báo điện tử Thể thao và Văn hóa, di tích gắn liền giai đoạn chống liên quân Pháp Tây Ban Nha.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "historic citadel vietnam",
+            "duration_sec": 2.933333333333333,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "historic citadel vietnam",
+            "duration_sec": 2.933333333333333,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "historic citadel vietnam",
+            "duration_sec": 2.9333333333333327,
+            "effect": "zoom_in",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "zoom",
+        "sfx": "none",
+        "fact_ids": [
+          4
+        ],
+        "pattern_interrupt": true
+      },
+      {
+        "id": 6,
+        "role": "body",
+        "narration": "Theo Tuoi tre news, công nhân phát hiện hiện vật khi đào đất làm móng cột điện.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "construction workers digging",
+            "duration_sec": 2.933333333333333,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "construction workers digging",
+            "duration_sec": 2.933333333333333,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "construction workers digging",
+            "duration_sec": 2.9333333333333327,
+            "effect": "pan_left",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "cut",
+        "sfx": "none",
+        "fact_ids": [
+          5
+        ],
+        "pattern_interrupt": false
+      },
+      {
+        "id": 7,
+        "role": "body",
+        "narration": "Theo Báo điện tử Thể thao và Văn hóa, lãnh đạo đã kiểm tra và đề nghị bảo quản trưng bày.",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "leaders inspecting site",
+            "duration_sec": 2.933333333333333,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "leaders inspecting site",
+            "duration_sec": 2.933333333333333,
+            "effect": "zoom_in",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "leaders inspecting site",
+            "duration_sec": 2.9333333333333327,
+            "effect": "zoom_in",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "zoom",
+        "sfx": "none",
+        "fact_ids": [
+          6
+        ],
+        "pattern_interrupt": true
+      },
+      {
+        "id": 8,
+        "role": "cta",
+        "narration": "Ban muon tim hieu buoc nao tiep theo?",
+        "shots": [
+          {
+            "type": "stock_video",
+            "query": "historic museum exhibit",
+            "duration_sec": 2.1,
+            "effect": "pan_left",
+            "text_overlay": null
+          },
+          {
+            "type": "stock_video",
+            "query": "historic museum exhibit",
+            "duration_sec": 2.1,
+            "effect": "pan_left",
+            "text_overlay": null
+          }
+        ],
+        "transition_out": "cut",
+        "sfx": "none",
+        "fact_ids": [
+          2
+        ],
+        "pattern_interrupt": false
+      }
+    ],
+    "video_type": "story",
+    "target_duration_sec": 60.0,
+    "brief_hash": "4cb86418f9b9ce20e1731f02210eb862b343523104e152164a0f43df24cfb6e2"
+  },
+  "warnings": [
+    "Cảnh 2: số overlay khác số shot."
+  ],
+  "failed_scene_ids": [],
+  "status": "draft_requires_review"
+}

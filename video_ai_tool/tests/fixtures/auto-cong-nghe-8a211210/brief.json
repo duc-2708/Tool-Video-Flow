@@ -1,0 +1,292 @@
+{
+  "discovery_hint": {
+    "category": "công nghệ",
+    "suggestion": {
+      "cluster_id": "e6f980f7d9df7092",
+      "topic": "The best gifts for nine-year-olds, picked by nine-year-olds and parents",
+      "why_now": "Tin đăng 2026-10-21T09:00:02+00:00; 1 nguồn độc lập đề cập.",
+      "angle": "Đọc nguồn và kiểm chứng sự kiện cụ thể trước khi viết kịch bản.",
+      "suggested_type": "news",
+      "search_queries": {
+        "vi": [
+          "The best gifts for nine-year-olds, picked by nine-year-olds and parents"
+        ],
+        "en": [
+          "artificial intelligence The best gifts for nine-year-olds, picked by nine-year-olds and parents"
+        ]
+      },
+      "score": 5,
+      "score_reason": "Điểm sơ bộ theo độ mới và số nguồn, chưa có phân tích Gemini.",
+      "source_urls": [
+        "https://www.theguardian.com/thefilter/2026/oct/21/best-gifts-toys-nine-year-olds"
+      ]
+    }
+  },
+  "research_depth": "deep",
+  "story_angles": [
+    {
+      "angle": "Quà tặng dựa trên sở thích và đánh giá thực tế của trẻ chín tuổi và phụ huynh",
+      "why": "Bài viết tập trung vào các món quà phù hợp với giai đoạn phát triển chuyển tiếp của trẻ chín tuổi, kết hợp ý kiến từ trẻ em và chuyên gia như Laura Moore-Williams."
+    },
+    {
+      "angle": "Xu hướng đồ chơi thử thách và trò chơi tương tác xã hội cho lứa tuổi chuyển tiếp",
+      "why": "Phản ánh nhu cầu về thử thách khó hơn, trò chơi chiến thuật và trò chơi ngang hàng giúp trẻ tăng tính tự lập và cảm giác thuộc về nhóm."
+    }
+  ],
+  "key_numbers": [
+    {
+      "text": "Trẻ ở độ tuổi chín tuổi đang trong giai đoạn chuyển tiếp thú vị.",
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "text": "Máy nghe nhạc Mighty 3 sẽ ngừng hỗ trợ Spotify từ tháng 4 năm 2027.",
+      "fact_ids": [
+        5
+      ]
+    },
+    {
+      "text": "Bộ đồ chơi Lego Fortnite Battle Bus bao gồm chín nhân vật nhỏ.",
+      "fact_ids": [
+        6
+      ]
+    },
+    {
+      "text": "Bộ Lego Ferris wheel thuộc series 3-in-1 Creator có thể lắp ráp lại theo ba hướng dẫn khác nhau.",
+      "fact_ids": [
+        7
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "text": "Tháng 4 năm 2027: Thời điểm máy nghe nhạc Mighty 3 ngừng hỗ trợ Spotify.",
+      "fact_ids": [
+        5
+      ]
+    }
+  ],
+  "why_it_matters": [
+    {
+      "text": "Trò chơi ngang hàng có giá trị cao giúp trẻ chín tuổi có cảm giác thuộc về nhóm và đạt được thành tựu.",
+      "fact_ids": [
+        3
+      ]
+    },
+    {
+      "text": "Các món quà thử thách như bộ thủ công khó hay trò chơi phức tạp phù hợp với sự tò mò và tính tự lập ngày càng tăng của trẻ.",
+      "fact_ids": [
+        1
+      ]
+    }
+  ],
+  "counterpoints": [
+    {
+      "text": "Bộ đồ chơi Lego Fortnite Battle Bus có độ tuổi khuyến nghị là trên 10 tuổi nhưng vẫn là thử thách thú vị cho trẻ chín tuổi.",
+      "fact_ids": [
+        6
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "text": "Laura Moore-Williams là chuyên gia tư vấn mầm non đưa ra nhận định về giá trị của trò chơi ngang hàng đối với trẻ.",
+      "fact_ids": [
+        3
+      ]
+    }
+  ],
+  "topic": "The best gifts for nine-year-olds, picked by nine-year-olds and parents",
+  "language": "vi",
+  "source_languages": [
+    "vi",
+    "en"
+  ],
+  "output_language": "vi",
+  "search_queries": [
+    {
+      "source_lang": "vi",
+      "query": "The best gifts for nine-year-olds, picked by nine-year-olds and parents",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "artificial intelligence The best gifts for nine-year-olds, picked by nine-year-olds and parents",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "quà tặng tốt nhất cho trẻ 9 tuổi theo đánh giá phụ huynh",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "best gifts for nine year olds picked by kids",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "món quà mà trẻ 9 tuổi yêu thích nhất năm nay",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "top toys and presents recommended by parents of nine year olds",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "khảo sát quà sinh nhật cho trẻ 9 tuổi từ báo chí uy tín",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "expert tested gift guide for nine year old children news",
+      "region": "us-en"
+    }
+  ],
+  "angle_candidates": [
+    {
+      "angle": "Gợi ý quà tặng chuẩn xác cho trẻ 9 tuổi theo đánh giá thực tế từ chuyên gia và phụ huynh",
+      "why": "Giúp người xem tiết kiệm thời gian chọn quà cho lứa tuổi tween khó chiều."
+    },
+    {
+      "angle": "Top món đồ chơi phát triển kỹ năng và tư duy phù hợp nhất cho trẻ lớp 3-4",
+      "why": "Đáp ứng tâm lý mong muốn con vừa học vừa chơi của các bậc phụ huynh."
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Trẻ chín tuổi đang ở giai đoạn chuyển tiếp thú vị giữa sự tò mò và tính tự lập ngày càng tăng, thích các thử thách như bộ thủ công khó hơn hoặc trò chơi phức tạp.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/thefilter/2026/oct/21/best-gifts-toys-nine-year-olds",
+      "confidence": "medium",
+      "evidence_quote": "The start of the tween years, nine years old, is a sweet spot between curiosity and growing independence, making it a fun, though sometimes tricky,",
+      "source_lang": "en",
+      "fact_vi": "Trẻ chín tuổi đang ở giai đoạn chuyển tiếp thú vị giữa sự tò mò và tính tự lập ngày càng tăng, thích các thử thách như bộ thủ công khó hơn hoặc trò chơi phức tạp.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Trò chơi Mexican Train dominoes được một thử nghiệm viên chín tuổi yêu thích vì nhịp độ nhanh, dễ học và có yếu tố chiến thuật.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/thefilter/2026/oct/21/best-gifts-toys-nine-year-olds",
+      "confidence": "medium",
+      "evidence_quote": "I want a game called Mexican Train dominoes. I played it with my older cousins on holiday, and it was fun",
+      "source_lang": "en",
+      "fact_vi": "Trò chơi Mexican Train dominoes được một thử nghiệm viên chín tuổi yêu thích vì nhịp độ nhanh, dễ học và có yếu tố chiến thuật.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Chuyên gia tư vấn mầm non Laura Moore-Williams nhận định trò chơi ngang hàng rất có giá trị đối với trẻ chín tuổi để tạo cảm giác thuộc về nhóm và đạt thành tựu.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/thefilter/2026/oct/21/best-gifts-toys-nine-year-olds",
+      "confidence": "medium",
+      "evidence_quote": "Peer-based play is really valuable for nine-year-olds",
+      "source_lang": "en",
+      "fact_vi": "Chuyên gia tư vấn mầm non Laura Moore-Williams nhận định trò chơi ngang hàng rất có giá trị đối với trẻ chín tuổi để tạo cảm giác thuộc về nhóm và đạt thành tựu.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Bút chì màu Staedtler 24 Norix có bề mặt chống trượt, dễ cầm trong thời gian dài và được làm từ gỗ tái chế từ rừng chứng nhận PEFC.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/thefilter/2026/oct/21/best-gifts-toys-nine-year-olds",
+      "confidence": "medium",
+      "evidence_quote": "The non-slip surface is comfortable to hold for extended periods; there’s a great range of colours; and they’re made from a durable wood-based composite containing",
+      "source_lang": "en",
+      "fact_vi": "Bút chì màu Staedtler 24 Norix có bề mặt chống trượt, dễ cầm trong thời gian dài và được làm từ gỗ tái chế từ rừng chứng nhận PEFC.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Máy nghe nhạc Mighty 3 cho phép trẻ tải danh sách phát nhạc từ Spotify để nghe độc lập, nhưng sẽ ngừng hỗ trợ Spotify từ tháng 4 năm 2027.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/thefilter/2026/oct/21/best-gifts-toys-nine-year-olds",
+      "confidence": "medium",
+      "evidence_quote": "It is worth noting that Mighty will stop supporting Spotify from April 2027 and only be compatible with Amazon Music.",
+      "source_lang": "en",
+      "fact_vi": "Máy nghe nhạc Mighty 3 cho phép trẻ tải danh sách phát nhạc từ Spotify để nghe độc lập, nhưng sẽ ngừng hỗ trợ Spotify từ tháng 4 năm 2027.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Bộ đồ chơi Lego Fortnite Battle Bus bao gồm chín nhân vật nhỏ và là thử thách thú vị cho trẻ chín tuổi dù độ tuổi khuyến nghị là trên 10 tuổi.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/thefilter/2026/oct/21/best-gifts-toys-nine-year-olds",
+      "confidence": "medium",
+      "evidence_quote": "The recommended age is 10+, but my nine-year-old relished the challenge. You end up with a toy (there are a generous nine minifigures in the",
+      "source_lang": "en",
+      "fact_vi": "Bộ đồ chơi Lego Fortnite Battle Bus bao gồm chín nhân vật nhỏ và là thử thách thú vị cho trẻ chín tuổi dù độ tuổi khuyến nghị là trên 10 tuổi.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Bộ Lego Ferris wheel thuộc series 3-in-1 Creator mang lại giá trị cao nhờ khả năng tháo rời và lắp ráp lại theo ba hướng dẫn hội chợ khác nhau.",
+      "source_name": "The Independent",
+      "source_url": "https://www.independent.co.uk/extras/indybest/kids/gifts/best-gifts-for-9-year-olds-b2739631.html",
+      "confidence": "medium",
+      "evidence_quote": "It’s part of the 3-in-1 creator series, giving you the option to pick one of three fairground-inspired builds. The best bit? Once you’ve built and",
+      "source_lang": "en",
+      "fact_vi": "Bộ Lego Ferris wheel thuộc series 3-in-1 Creator mang lại giá trị cao nhờ khả năng tháo rời và lắp ráp lại theo ba hướng dẫn hội chợ khác nhau.",
+      "published_at": "2026-10-02"
+    },
+    {
+      "claim": "Sách Donut Squad xoay quanh nhóm bánh donut chiến đấu với robot độc ác, giúp trẻ đọc say mê nhờ các truyện tranh ngắn hài hước.",
+      "source_name": "The Independent",
+      "source_url": "https://www.independent.co.uk/extras/indybest/kids/gifts/best-gifts-for-9-year-olds-b2739631.html",
+      "confidence": "medium",
+      "evidence_quote": "The story follows the squad as evil robots try to wipe donuts off the face of the earth, and it’s split into short comic strips",
+      "source_lang": "en",
+      "fact_vi": "Sách Donut Squad xoay quanh nhóm bánh donut chiến đấu với robot độc ác, giúp trẻ đọc say mê nhờ các truyện tranh ngắn hài hước.",
+      "published_at": "2026-10-02"
+    },
+    {
+      "claim": "Thiết bị tương tác Peekimo có nút nguồn ở đáy pod giúp tắt bớt âm thanh khi cần thiết, tránh việc phát ra tiếng liên tục vào giờ đi ngủ.",
+      "source_name": "The Independent",
+      "source_url": "https://www.independent.co.uk/extras/indybest/kids/gifts/best-gifts-for-9-year-olds-b2739631.html",
+      "confidence": "medium",
+      "evidence_quote": "I love that it has an off button at the base of the pod; as cute as it is, you don’t want Peekimo going off",
+      "source_lang": "en",
+      "fact_vi": "Thiết bị tương tác Peekimo có nút nguồn ở đáy pod giúp tắt bớt âm thanh khi cần thiết, tránh việc phát ra tiếng liên tục vào giờ đi ngủ.",
+      "published_at": "2026-10-02"
+    },
+    {
+      "claim": "Bộ đồ chơi Beyblade Drop Attack Battle Set bao gồm hai con quay nặng và sân vận động nhựa để trẻ thi đấu đối kháng.",
+      "source_name": "The Independent",
+      "source_url": "https://www.independent.co.uk/extras/indybest/kids/gifts/best-gifts-for-9-year-olds-b2739631.html",
+      "confidence": "medium",
+      "evidence_quote": "Included are two spinning tops and two ripcord launchers, as well as the plastic battleground, and it’s as simple as pulling the plastic ripcord launcher",
+      "source_lang": "en",
+      "fact_vi": "Bộ đồ chơi Beyblade Drop Attack Battle Set bao gồm hai con quay nặng và sân vận động nhựa để trẻ thi đấu đối kháng.",
+      "published_at": "2026-10-02"
+    }
+  ],
+  "trends": [],
+  "hooks": [
+    "Bạn có đau đầu khi phải chọn quà sinh nhật hay quà Giáng sinh cho trẻ 9 tuổi?",
+    "Lứa tuổi tween từ 9 tuổi thích gì nhất? Hãy nghe chính những đứa trẻ bật mí."
+  ],
+  "audience_questions": [
+    "Trẻ 9 tuổi thích nhận những món quà gì vào dịp lễ?",
+    "Làm sao để chọn đồ chơi vừa giúp con phát triển kỹ năng vừa khiến con thích thú?"
+  ],
+  "keywords": [
+    "quà tặng trẻ 9 tuổi",
+    "đồ chơi cho trẻ tween",
+    "Lego Fortnite",
+    "đồ chơi giáo dục STEM"
+  ],
+  "risks": [
+    "Một số sản phẩm hoặc dịch vụ nhắc đến trong bài viết có thể thay đổi hoặc ngừng hỗ trợ theo thời gian (ví dụ: Mighty ngừng hỗ trợ Spotify vào năm 2027).",
+    "Dữ liệu được tổng hợp từ các bài viết đánh giá nước ngoài, cần cân nhắc tính sẵn có của sản phẩm tại thị trường Việt Nam.",
+    "fact #1: quote dài 29 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #4: quote dài 31 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "Đã loại fact #5: quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+    "fact #7: quote dài 35 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #8: quote dài 41 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #9: quote dài 36 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #10: quote dài 29 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #11: quote dài 32 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+    "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+    "Tìm web/news không khả dụng; đã dùng các nguồn còn lại.",
+    "Đã tắt YouTube trends trong lượt nghiên cứu này."
+  ]
+}

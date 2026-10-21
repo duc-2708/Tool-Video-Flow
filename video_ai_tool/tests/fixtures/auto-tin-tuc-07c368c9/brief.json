@@ -1,0 +1,250 @@
+{
+  "discovery_hint": {
+    "category": "tin tức",
+    "suggestion": {
+      "cluster_id": "8c225f628e688e4d",
+      "topic": "Phát hiện súng thần công dài gần 3 m tại thành Điện Hải",
+      "why_now": "Sự kiện khảo cổ mới được VnExpress đưa tin vào ngày 21-10-2026 dựa trên 1 nguồn tin.",
+      "angle": "Cần research thêm về lịch sử, niên đại và giá trị của khẩu súng thần công phát hiện ở thành Điện Hải.",
+      "suggested_type": "story",
+      "search_queries": {
+        "vi": [
+          "súng thần công thành Điện Hải",
+          "phát hiện súng thần công dài 3m"
+        ],
+        "en": [
+          "dien hai citadel cannon discovery",
+          "ancient cannon found da nang"
+        ]
+      },
+      "score": 7,
+      "score_reason": "Tin tức văn hóa lịch sử độc đáo từ nguồn VnExpress ngày 21-10-2026.",
+      "source_urls": [
+        "https://vnexpress.net/phat-hien-sung-than-cong-dai-gan-3-m-tai-thanh-dien-hai-5135084.html"
+      ]
+    }
+  },
+  "research_depth": "deep",
+  "story_angles": [
+    {
+      "angle": "Phát hiện súng thần công mới tại thành Điện Hải",
+      "why": "Khẩu súng bằng gang dài 2,95 m được phát hiện ở độ sâu khoảng 1,5 mét tại khu vực phía đông bắc cổng thành Điện Hải vào sáng 21/10."
+    },
+    {
+      "angle": "Nhận định về nguồn gốc hiện vật",
+      "why": "Giám đốc Bảo tàng Đà Nẵng Huỳnh Đình Quốc Thiện nhận định ban đầu khẩu súng có thể thuộc hệ thống vũ khí triều Nguyễn dùng để phòng thủ Đà Nẵng."
+    },
+    {
+      "angle": "Công tác bảo tồn và chỉ đạo tại hiện trường",
+      "why": "Bí thư Thành ủy Đà Nẵng Lê Ngọc Quang đã trực tiếp đến hiện trường kiểm tra và đề nghị bảo quản, nghiên cứu hiện vật để trưng bày."
+    }
+  ],
+  "key_numbers": [
+    {
+      "text": "Khẩu súng thần công bằng gang dài 2,95 m được phát hiện ở độ sâu khoảng 1,5 mét.",
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "text": "Bảo tàng Đà Nẵng hiện đang lưu giữ 14 khẩu súng thần công gồm 13 khẩu bằng gang sắt và 1 khẩu bằng đồng.",
+      "fact_ids": [
+        3
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "text": "Sáng 21/10, công nhân phát hiện khẩu súng trong lúc đang đào đất để dịch chuyển móng cột điện thuộc dự án tu bổ thành.",
+      "fact_ids": [
+        1,
+        5
+      ]
+    },
+    {
+      "text": "Thành Điện Hải là di tích quốc gia đặc biệt gắn liền với cuộc chiến chống liên quân Pháp Tây Ban Nha giai đoạn 1858-1860.",
+      "fact_ids": [
+        4
+      ]
+    }
+  ],
+  "why_it_matters": [
+    {
+      "text": "Việc phát hiện thêm súng thần công bổ sung vào số lượng hiện vật tại Bảo tàng Đà Nẵng, nơi đang lưu giữ 14 khẩu súng.",
+      "fact_ids": [
+        1,
+        3
+      ]
+    },
+    {
+      "text": "Hiện vật mới phát hiện giúp làm rõ thêm hệ thống vũ khí triều Nguyễn dùng để phòng thủ Đà Nẵng tại di tích quốc gia đặc biệt thành Điện Hải.",
+      "fact_ids": [
+        1,
+        2,
+        4
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "text": "Thành Điện Hải: Di tích quốc gia đặc biệt gắn liền với cuộc chiến chống liên quân Pháp Tây Ban Nha giai đoạn 1858-1860.",
+      "fact_ids": [
+        4
+      ]
+    }
+  ],
+  "topic": "Phát hiện súng thần công dài gần 3 m tại thành Điện Hải",
+  "language": "vi",
+  "source_languages": [
+    "vi",
+    "en"
+  ],
+  "output_language": "vi",
+  "search_queries": [
+    {
+      "source_lang": "vi",
+      "query": "súng thần công thành Điện Hải",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "dien hai citadel cannon discovery",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "phát hiện súng thần công dài 3m",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "ancient cannon found da nang",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "phát hiện súng thần công gần 3m tại thành Điện Hải báo Tuổi Trẻ",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "ancient cannon nearly 3 meters long found at Dien Hai citadel Vietnam news",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "thông tin khai quật súng thần công dài 3 mét ở thành Điện Hải nguồn chính thống",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "historic cannon discovery Dien Hai citadel Danang official report",
+      "region": "us-en"
+    }
+  ],
+  "angle_candidates": [
+    {
+      "angle": "Khám phá khảo cổ học bất ngờ tại thành Điện Hải",
+      "why": "Tập trung vào sự kiện phát hiện khẩu súng thần công dài gần 3m trong lúc dời cột điện, thu hút người xem yêu thích lịch sử và khám phá."
+    },
+    {
+      "angle": "Giá trị lịch sử của hệ thống phòng thủ triều Nguyễn",
+      "why": "Nhấn mạnh vai trò của thành Điện Hải trong cuộc kháng chiến chống liên quân Pháp - Tây Ban Nha qua các hiện vật súng thần công."
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Khẩu súng thần công bằng gang dài 2,95 m được phát hiện ở độ sâu khoảng 1,5 mét tại khu vực phía đông bắc cổng thành Điện Hải vào sáng 21/10.",
+      "source_name": "Báo điện tử Thể thao & Văn hóa",
+      "source_url": "https://thethaovanhoa.vn/phat-hien-sung-than-cong-tai-thanh-dien-hai-20261021145452195.htm",
+      "confidence": "medium",
+      "evidence_quote": "Sáng 21/10, trong quá trình chỉnh trang khuôn viên Di tích quốc gia đặc biệt Thành Điện Hải, thành phố Đà Nẵng, đơn vị thi",
+      "source_lang": "vi",
+      "fact_vi": "Khẩu súng thần công bằng gang dài 2,95 m được phát hiện ở độ sâu khoảng 1,5 mét tại khu vực phía đông bắc cổng thành Điện Hải vào sáng 21/10.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Giám đốc Bảo tàng Đà Nẵng Huỳnh Đình Quốc Thiện nhận định ban đầu khẩu súng có thể thuộc hệ thống vũ khí triều Nguyễn dùng để phòng thủ Đà Nẵng.",
+      "source_name": "Báo điện tử Thể thao & Văn hóa",
+      "source_url": "https://thethaovanhoa.vn/phat-hien-sung-than-cong-tai-thanh-dien-hai-20261021145452195.htm",
+      "confidence": "medium",
+      "evidence_quote": "Giám đốc Bảo tàng Đà Nẵng Huỳnh Đình Quốc Thiện cho biết, bước đầu nhận định khẩu súng có thể thuộc hệ thống vũ khí",
+      "source_lang": "vi",
+      "fact_vi": "Giám đốc Bảo tàng Đà Nẵng Huỳnh Đình Quốc Thiện nhận định ban đầu khẩu súng có thể thuộc hệ thống vũ khí triều Nguyễn dùng để phòng thủ Đà Nẵng.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Bảo tàng Đà Nẵng hiện đang lưu giữ 14 khẩu súng thần công gồm 13 khẩu bằng gang sắt và 1 khẩu bằng đồng.",
+      "source_name": "Báo điện tử Thể thao & Văn hóa",
+      "source_url": "https://thethaovanhoa.vn/phat-hien-sung-than-cong-tai-thanh-dien-hai-20261021145452195.htm",
+      "confidence": "medium",
+      "evidence_quote": "Bảo tàng Đà Nẵng hiện lưu giữ 14 khẩu súng thần công, gồm 13 khẩu bằng gang - sắt được phát hiện tại khu vực",
+      "source_lang": "vi",
+      "fact_vi": "Bảo tàng Đà Nẵng hiện đang lưu giữ 14 khẩu súng thần công gồm 13 khẩu bằng gang sắt và 1 khẩu bằng đồng.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Thành Điện Hải là di tích quốc gia đặc biệt gắn liền với cuộc chiến chống liên quân Pháp Tây Ban Nha giai đoạn 1858-1860.",
+      "source_name": "Báo điện tử Thể thao & Văn hóa",
+      "source_url": "https://thethaovanhoa.vn/phat-hien-sung-than-cong-tai-thanh-dien-hai-20261021145452195.htm",
+      "confidence": "medium",
+      "evidence_quote": "Thành Điện Hải hiện là Di tích quốc gia đặc biệt gắn với cuộc chiến đấu của quân và dân Đà Nẵng chống liên quân",
+      "source_lang": "vi",
+      "fact_vi": "Thành Điện Hải là di tích quốc gia đặc biệt gắn liền với cuộc chiến chống liên quân Pháp Tây Ban Nha giai đoạn 1858-1860.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Công nhân phát hiện khẩu súng trong lúc đang đào đất để dịch chuyển móng cột điện thuộc dự án tu bổ thành.",
+      "source_name": "Tuoi tre news",
+      "source_url": "https://news.tuoitre.vn/168-year-old-cannon-unearthed-during-restoration-of-historic-citadel-in-vietnams-da-nang-103261021133007308.htm",
+      "confidence": "medium",
+      "evidence_quote": "Workers came across the weapon while digging to relocate the foundation of an electricity pole as part of an ongoing project to restore and renovate",
+      "source_lang": "vi",
+      "fact_vi": "Công nhân phát hiện khẩu súng trong lúc đang đào đất để dịch chuyển móng cột điện thuộc dự án tu bổ thành.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Bí thư Thành ủy Đà Nẵng Lê Ngọc Quang đã trực tiếp đến hiện trường kiểm tra và đề nghị bảo quản, nghiên cứu hiện vật để trưng bày.",
+      "source_name": "Báo điện tử Thể thao & Văn hóa",
+      "source_url": "https://thethaovanhoa.vn/phat-hien-sung-than-cong-tai-thanh-dien-hai-20261021145452195.htm",
+      "confidence": "medium",
+      "evidence_quote": "Có mặt tại hiện trường, Bí thư Thành ủy Đà Nẵng Lê Ngọc Quang đánh giá hiện vật có giá trị lịch sử lớn; đề",
+      "source_lang": "vi",
+      "fact_vi": "Bí thư Thành ủy Đà Nẵng Lê Ngọc Quang đã trực tiếp đến hiện trường kiểm tra và đề nghị bảo quản, nghiên cứu hiện vật để trưng bày.",
+      "published_at": "2026-10-21"
+    }
+  ],
+  "trends": [],
+  "hooks": [
+    "Khẩu súng thần công dài gần 3 mét vừa được phát hiện ẩn sâu dưới lòng đất thành Điện Hải tại Đà Nẵng.",
+    "Điều gì nằm ẩn dưới móng cột điện tại di tích quốc gia đặc biệt thành Điện Hải suốt gần hai thế kỷ?"
+  ],
+  "audience_questions": [
+    "Khẩu súng thần công mới phát hiện có niên đại từ khi nào?",
+    "Thành Điện Hải đã đóng vai trò gì trong cuộc chiến chống Pháp - Tây Ban Nha?"
+  ],
+  "keywords": [
+    "súng thần công",
+    "thành Điện Hải",
+    "Đà Nẵng",
+    "triều Nguyễn",
+    "khảo cổ học"
+  ],
+  "risks": [
+    "Nhiều nguồn web tổng hợp không liên quan về chủ đề bãi biển hoặc pháo hoa đã bị loại bỏ.",
+    "Cần đối chiếu thêm các tài liệu chính thức để xác định chính xác niên đại tuyệt đối của khẩu súng.",
+    "fact #1: quote dài 41 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #2: quote dài 42 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #3: quote dài 53 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #4: quote dài 35 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #5: quote dài 28 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #6: quote dài 48 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+    "dữ liệu mỏng, kịch bản sẽ ít chi tiết",
+    "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+    "Tìm web/news không khả dụng; đã dùng các nguồn còn lại.",
+    "Bỏ bài quá ngắn: 95 ký tự, yêu cầu ít nhất 300 ký tự.",
+    "Bỏ bài quá ngắn: 67 ký tự, yêu cầu ít nhất 300 ký tự.",
+    "Đã tắt YouTube trends trong lượt nghiên cứu này."
+  ]
+}

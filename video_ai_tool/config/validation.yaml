@@ -1,0 +1,101 @@
+# 1 = chặn/retry riêng cảnh; 2 = tự sửa code; 3 = chỉ cảnh báo.
+rules:
+  originality:
+    group: 1
+    description: Không sao chép lời đọc video mẫu
+  schema_basic:
+    group: 1
+    description: JSON/schema cơ bản không sửa được
+  fact_ids:
+    group: 1
+    description: ID fact hợp lệ; cảnh nội dung có căn cứ
+  grounding_numbers:
+    group: 1
+    description: Số liệu trong lời đọc/overlay có trong brief hoặc giả định rõ
+  grounding_names_quotes:
+    group: 1
+    description: Tên riêng/trích dẫn có căn cứ
+  grounding_claims:
+    group: 1
+    description: Khẳng định/nhân quả được audit đối chiếu fact
+  forbidden_editorial:
+    group: 1
+    description: Cụm kiểm chứng bị cấm còn sót sau xóa
+  shot_structure:
+    group: 2
+    description: Chuẩn hóa mảng/shot/role/schema trình bày
+  outline_structure:
+    group: 2
+    description: Đồng bộ dàn ý/blueprint
+  broll_query:
+    group: 2
+    description: Query stock hợp lệ và khác nhau
+  ai_prompt:
+    group: 2
+    description: Chuẩn hóa prompt AI trước khi cho gọi gateway
+  title:
+    group: 2
+    description: Tiêu đề cấp video hợp lệ
+  duration:
+    group: 2
+    description: Căn tổng thời lượng bằng code
+  format:
+    group: 2
+    description: Đồng bộ format
+  brief_binding:
+    group: 2
+    description: Cập nhật metadata brief và kiểm tra lại
+  attribution:
+    group: 2
+    description: Định dạng nguồn Theo ...
+  fact_reuse:
+    group: 2
+    description: Giảm lặp ID, ưu tiên fact tương đương
+  open_loop:
+    group: 2
+    description: Gán fact payoff liên quan hoặc bỏ câu hỏi
+  hook_length:
+    group: 3
+    description: Độ dài hook
+  hook_strength:
+    group: 3
+    description: Hook hấp dẫn/cách mở
+  cliches:
+    group: 3
+    description: Cụm sáo rỗng
+  sentence_length:
+    group: 3
+    description: Câu dài/cấu trúc câu
+  transitions:
+    group: 3
+    description: Chuyển ý/mở cảnh bị lặp
+  repeated_ideas:
+    group: 3
+    description: Lặp lời/ý
+  pattern_interrupt:
+    group: 3
+    description: Thiếu pattern interrupt
+  ending_style:
+    group: 3
+    description: Kết video đúng kiểu
+  word_budget:
+    group: 3
+    description: Lượng từ lệch quá khoảng ±20%
+  tts_format:
+    group: 3
+    description: Cách đọc số/đơn vị/viết tắt
+  overlay_style:
+    group: 3
+    description: Độ dài/ý nghĩa overlay
+  examples:
+    group: 3
+    description: Thiếu ví dụ/số liệu cụ thể
+  open_loop_clarity:
+    group: 3
+    description: Câu hỏi mở không rõ
+  scene_target:
+    group: 3
+    description: Số cảnh dưới mục tiêu
+  audit_clarity:
+    group: 3
+    description: Audit không giải thích kết luận

@@ -1,0 +1,13 @@
+LƯỢT 2 — VIẾT LỜI ĐỌC. Chỉ JSON WrittenScript, đúng các scene_id từ outline.
+Giữ nguyên ý và fact_ids của dàn ý; không đề xuất fact mới. Narration tiếng Việt tự viết.
+Theo giọng style. Cả video 2.4–2.8 từ/giây, phân bổ theo blueprint (tính cả Theo nguồn).
+Hook 6–8 từ và không quá 20 từ; body 2–4 câu/cảnh, mỗi câu ≤28 từ, câu cuối dẫn tự nhiên sang cảnh sau.
+Mỗi cảnh một ý chính → chi tiết từ fact → ý nghĩa hoặc câu hỏi dẫn. Open loop phải được giải đáp trong kết.
+Viết số/đơn vị dạng đọc: ba mươi phần trăm, một triệu token. Viết tắt có cách đọc; không ngoặc.
+Broll_query 2–4 từ tiếng Anh, mô tả stock trung tính, không tên hãng/sản phẩm/người thật hoặc chuỗi truy vấn tìm bài báo.
+Có thể trả shot_queries theo từng shot để thay đổi hành động/bối cảnh trong cùng cảnh; không dùng lại một chuỗi chủ đề dài cho tất cả shot.
+Overlays theo đúng số shot, mỗi overlay 2–5 từ/số có ý nghĩa hoặc null.
+Không lặp nguyên câu lời đọc lên overlay. Không kéo dài bằng lặp ý; dữ kiện không đủ thì đề nghị rút thời lượng.
+
+
+PHONG CÁCH MẪU (nếu INPUT.style_profile có giá trị): chỉ học CÁCH KỂ từ khuôn hook, structure/style_section, pacing, quy tắc giọng, overlay và cách kết. Không coi bất cứ câu, tên riêng hay con số trong style_profile là fact. Nội dung mới chỉ từ fact_vi/fact_ids của brief; không chép khuôn thành câu chứa dữ kiện video mẫu. Bám blueprint đã căn theo lượng fact/thời lượng; không ép kéo dài. Chỉ sửa selected_scene_ids khi được yêu cầu, giữ fact_ids và cảnh khác.
