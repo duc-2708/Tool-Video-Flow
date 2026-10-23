@@ -1,6 +1,6 @@
 """Typed discovery metadata; these fields are never facts."""
 from typing import Literal
-from pydantic import Field, HttpUrl
+from pydantic import Field, HttpUrl, field_validator
 from schemas.base import StrictModel, NonEmptyText
 
 class FeedSpec(StrictModel):
@@ -11,12 +11,25 @@ class FeedSpec(StrictModel):
     include_keywords: list[str] = Field(default_factory=list)
 
 class Category(StrictModel):
+    id: str | None = Field(default=None, exclude_if=lambda v:v is None)
     name: NonEmptyText
     enabled: bool = True
     keywords_vi: list[NonEmptyText] = Field(min_length=1,max_length=10)
     keywords_en: list[NonEmptyText] = Field(min_length=1,max_length=10)
     rss: list[FeedSpec]
     suggested_type: Literal["news","review","story"] = "news"
+
+    @field_validator("id")
+    @classmethod
+    def safe_id(cls, value):
+        if value is not None and (not value.strip() or value in {"_default", "_unsorted", "analysis"} or any(c in value for c in ("/", "\\", ":", ".."))):
+            raise ValueError("ID danh mục không được là đường dẫn hoặc tên thư mục dành riêng.")
+        return value
+
+    @property
+    def category_id(self):
+        from utils.text import slugify
+        return self.id or slugify(self.name)
 
 class CategoryFile(StrictModel):
     categories: list[Category] = Field(min_length=1,max_length=50)

@@ -45,7 +45,7 @@ class YouTubeSource:
                 except (ValueError, KeyError, TypeError):
                     raise QuotaExceeded("File quota local không hợp lệ; không gọi YouTube để tránh vượt quota.") from None
             if search and (self.searches_this_run >= self.settings.youtube_max_searches_per_run
-                           or state["search_calls"] >= 100):
+                           or state["search_calls"] >= getattr(self,"daily_search_limit",100)):
                 raise QuotaExceeded("Đã đạt giới hạn số lần search YouTube local.")
             if state["estimated_units"] + cost > self.settings.youtube_daily_quota:
                 raise QuotaExceeded(f"Vượt YOUTUBE_DAILY_QUOTA={self.settings.youtube_daily_quota}: đã dùng {state['estimated_units']}, cần thêm {cost} đơn vị.")

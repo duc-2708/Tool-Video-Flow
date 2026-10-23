@@ -1,5 +1,20 @@
 # 1 = chặn/retry riêng cảnh; 2 = tự sửa code; 3 = chỉ cảnh báo.
 rules:
+  sentence_background_names:
+    group: 3
+    description: Tên riêng trong câu explain/opinion/cta chỉ cảnh báo kiểm tra ví dụ nền
+  visual_structure:
+    group: 2
+    description: Giữ nhãn đồ họa theo đúng thứ tự cụm từ trong lời đọc
+  visual_background:
+    group: 3
+    description: Ví dụ nền đồ họa chỉ cảnh báo kiểm tra lại
+  sentence_grounding:
+    group: 1
+    description: Câu event có fact; nhãn explain không được dùng để lách dữ kiện cụ thể
+  visual_grounding:
+    group: 1
+    description: Số liệu, tên, ngày và URL trong mẫu đồ họa phải có trong fact của brief
   originality:
     group: 1
     description: Không sao chép lời đọc video mẫu

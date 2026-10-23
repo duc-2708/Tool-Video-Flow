@@ -37,6 +37,9 @@ def normalize_plan_structure(plan, *, reference=None, diagnostics=None, query_pr
         query=next((q for token,q in [("video","video editing"),("công nghệ","technology detail"),("máy","technology detail"),
             ("du lịch","travel landscape"),("sức khỏe","healthy lifestyle"),("thể thao","sports training")] if token in narrative),"news detail")
         shots=scene.get("shots")
+        if isinstance(shots,list):
+            shots=[s.model_dump(mode="json") if isinstance(s,BaseModel) else s for s in shots]
+            scene["shots"]=shots
         if full and not shots:
             durations=source.get("shot_durations_sec") or [s.get("duration_sec",3.) for s in (source.get("shots") or [])]
             if not durations:
@@ -93,7 +96,7 @@ def normalize_plan_structure(plan, *, reference=None, diagnostics=None, query_pr
                         shot[field]=default;warn(f"shot {i+1}: dùng {field}={default} hợp lệ")
                 try: seconds=float(shot.get("duration_sec",3))
                 except (ValueError,TypeError): seconds=3.
-                seconds=min(4.,max(1.5,seconds)) if math.isfinite(seconds) else 3.
+                seconds=min(600. if shot.get("planning_duration") else 4.,max(1/30 if shot.get("planning_duration") else 1.5,seconds)) if math.isfinite(seconds) else 3.
                 if seconds!=shot.get("duration_sec"):
                     shot["duration_sec"]=seconds;warn(f"shot {i+1}: duration_sec={seconds:g} hợp lệ")
             if scene.get("sfx") not in {"none","whoosh","pop"}:
@@ -118,6 +121,11 @@ def normalize_plan_structure(plan, *, reference=None, diagnostics=None, query_pr
         raw_queries=[s.get("query","") for s in shots] if full else scene.get("shot_queries") or [scene.get("broll_query","")]*n
         clean_queries=[]
         for i,old in enumerate(raw_queries):
+            if full and shots[i].get("semantic_query"):
+                from agents.explainer_visuals import semantic_query
+                clean=semantic_query(old,narrative)
+                shots[i]["query"]=clean;clean_queries.append(clean);used.add(clean)
+                continue
             # Group 2 policy: validation repairs never spend another Gemini call.
             clean=sanitize_broll_query(old,narrative,diagnostics=diagnostics)
             if unique_queries: clean=unique_query(clean,narrative,used)

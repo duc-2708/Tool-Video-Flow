@@ -5,7 +5,7 @@ from schemas.research_brief import ResearchBrief
 from pathlib import Path
 from datetime import datetime,timezone
 import streamlit as st
-from app.style_controls import select_style
+from app.style_controls import select_style,select_category
 from pipeline.run_all import RunConfig,saved_config,LABELS,STEPS
 from pipeline.run_all_jobs import PipelineJobs
 from pipeline.projects import read_json
@@ -41,21 +41,27 @@ def read_ui_state(project, snapshot=None):
 def render(settings,project,topic,debug,diagnostics):
     prefill=st.session_state.pop("discovery_prefill",None)
     if prefill:
+        st.session_state.pop("create_style_preset_context",None)
         st.session_state["create_topic"]=prefill["topic"]
         suggestion=prefill.get("suggestion")
         st.session_state["create_discovery"]={"category":prefill["category"],"suggestion":suggestion} if suggestion else None
         if suggestion: st.session_state["create_type"]=suggestion["suggested_type"]
+        if prefill.get("category"):
+            from config.categories import resolve_category
+            st.session_state["create_category"]=resolve_category(settings,prefill["category"]).category_id
     st.title("Tạo video")
     st.caption("Research → Kịch bản → Assets → Clip AI tùy chọn → Render. Mỗi lượt mới có project riêng; có thể tiếp tục lượt đang dở.")
     manager = pipeline_jobs()
     active = manager.active()
+    category = select_category(settings,key="create_category")
     entered_topic = st.text_input("Chủ đề",value=topic or "",max_chars=500,key="create_topic")
     left,right = st.columns(2)
     video_type = left.selectbox("Loại video",["news","review","story"],key="create_type")
     video_format = right.selectbox("Khổ video",["tiktok","youtube"],format_func=lambda value:"TikTok · 9:16" if value == "tiktok" else "YouTube · 16:9",key="create_format")
     preset = left.selectbox("Mốc thời lượng",["Tùy chỉnh",*DURATIONS],key="create_duration_preset")
-    style_preset = select_style(settings,key="create_style_preset")
+    style_preset = select_style(settings,key="create_style_preset",category=category,video_type=video_type,current=prefill.get("style_preset") if prefill else None)
     script_style = right.selectbox("Phong cách",list(STYLES),format_func=STYLES.get,key="create_script_style")
+    explainer_v2=st.checkbox("Explainer v2: giảng giải chuyên sâu",value=False,key="create_explainer_v2")
     duration = left.number_input("Độ dài mong muốn (giây)",min_value=6.,max_value=600.,value=45.,step=1.,key="create_duration")
     duration = float(preset) if preset != "Tùy chỉnh" else duration
     if project is not None and (project/"brief.json").exists():
@@ -94,9 +100,9 @@ def render(settings,project,topic,debug,diagnostics):
                  settings.gemini_model.strip() and (not ai_enabled or (confirmed and settings.gateway_api_key.get_secret_value().strip())))
     if st.button("Tạo video",type="primary",width="stretch",disabled=bool(active) or not ready):
         try:
-            config = RunConfig(topic=entered_topic,video_type=video_type,video_format=video_format,duration_sec=float(duration),voice=voice,
+            config = RunConfig(topic=entered_topic,category=category,video_type=video_type,video_format=video_format,duration_sec=float(duration),voice=voice,
                 mode=mode,youtube_trends=youtube,youtube_days=int(days),web_limit=int(web_limit),ai_clips=int(ai_count),
-                source_languages=source_languages,output_language=output_language,script_style=script_style,style_preset=style_preset,discovery=st.session_state.get("create_discovery"),
+                source_languages=source_languages,output_language=output_language,script_style=script_style,style_preset=style_preset,discovery=st.session_state.get("create_discovery"),content_mode="explainer_v2" if explainer_v2 else "event_only",
                 ai_model=ai_model,ai_seconds=ai_seconds,ai_confirmed=confirmed,render_mode=render_mode,ai_failure_action="stop" if stop_on_ai_error else "skip")
             key = manager.submit(config,settings)
             st.session_state["pipeline_worker"] = key

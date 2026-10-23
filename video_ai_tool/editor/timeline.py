@@ -32,6 +32,7 @@ class TimelineScene:
     duration: float
     audio: Path
     shots: list[TimelineShot]
+    audio_silent: bool = False
 
 
 @dataclass
@@ -81,11 +82,11 @@ def build_timeline(plan_path: Path) -> Timeline:
                 if candidates:
                     path = confined(project/"clips",candidates[0].name)
             fallback = path is None or not path.is_file() or (asset and asset.media_type == "color") or (path and "_fallback_" in path.name)
-            if fallback:
+            if fallback and not (shot.visual and shot.visual.template!="stock"):
                 warnings.append(f"Cảnh {scene.id}, shot {index}: dùng nền màu và chữ.")
             length = duration-local if index == len(scene.shots) else duration*shot.duration_sec/scene.duration_sec
             shots.append(TimelineShot(scene.id,index,clock+local,length,shot,path,bool(fallback)))
             local += length
-        scenes.append(TimelineScene(scene,clock,duration,audio,shots))
+        scenes.append(TimelineScene(scene,clock,duration,audio,shots,bool(record and record.audio_silent)))
         clock += duration
     return Timeline(plan,project,scenes,clock,warnings)

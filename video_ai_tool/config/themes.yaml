@@ -1,0 +1,27 @@
+# Local images are optional, relative to assets/backgrounds/. No network URLs.
+default: studio
+themes:
+  studio:
+    background: gradient
+    top: '#101F32'
+    bottom: '#263E55'
+    card: '#172D43'
+    foreground: '#F8F7F2'
+    muted: '#ADC1CD'
+    accent: '#FFCE52'
+    secondary: '#61D7C3'
+    radius: 28
+    shadow: 0.35
+    image: ''
+  paper:
+    background: paper
+    top: '#EDE9DF'
+    bottom: '#D8D2C6'
+    card: '#F7F4EB'
+    foreground: '#192937'
+    muted: '#516374'
+    accent: '#AE431E'
+    secondary: '#246D66'
+    radius: 24
+    shadow: 0.18
+    image: ''

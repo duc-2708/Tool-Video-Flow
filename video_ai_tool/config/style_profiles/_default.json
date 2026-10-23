@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "name": "Phong cách mặc định chung",
+  "slug": "@default",
+  "reference_hashes": [],
+  "reference_files": [],
+  "reference_texts": [],
+  "hook_templates": [
+    "Điều gì khiến {topic} đáng chú ý?"
+  ],
+  "hook_techniques": [
+    "Câu hỏi có căn cứ"
+  ],
+  "structure": [
+    {
+      "name": "hook",
+      "fraction": 0.1
+    },
+    {
+      "name": "bối cảnh",
+      "fraction": 0.2
+    },
+    {
+      "name": "giải thích",
+      "fraction": 0.5
+    },
+    {
+      "name": "kết",
+      "fraction": 0.2
+    }
+  ],
+  "shot_seconds": {
+    "mean": 3.0,
+    "minimum": 1.5,
+    "maximum": 4.0
+  },
+  "speech_words_per_sec": {
+    "mean": 2.6,
+    "minimum": 2.4,
+    "maximum": 2.8
+  },
+  "narration_rules": [
+    "Viết tự nhiên, mỗi cảnh một ý, chỉ dựa trên fact."
+  ],
+  "broll_patterns": [
+    "stock b-roll"
+  ],
+  "visual_effects": [
+    "zoom_in",
+    "pan_left"
+  ],
+  "transitions": [
+    "cut",
+    "fade"
+  ],
+  "captions": {
+    "enabled": true,
+    "mode": "phrase",
+    "font_description": "Chữ đậm dễ đọc",
+    "font_scale": 0.064,
+    "color": "#FFFFFF",
+    "highlight_color": "#FFD741",
+    "stroke_color": "#000000",
+    "stroke_width_ratio": 0.006,
+    "position": "lower",
+    "emphasis": "Tô màu từ đang đọc",
+    "shadow": "Không rõ"
+  },
+  "audio": {
+    "mood": "calm",
+    "music_volume": 0.08,
+    "sfx_types": [],
+    "sfx_per_10_sec": 0.0,
+    "sfx_positions": [],
+    "ducking": true,
+    "details": "Không đủ dữ liệu"
+  },
+  "ending_techniques": [
+    "Câu hỏi hoặc nhận định có căn cứ"
+  ],
+  "reusable_rules": [
+    "Chỉ dùng fact trong brief.",
+    "Không lặp ý để kéo dài."
+  ],
+  "rule_frequencies": [],
+  "category_id": null,
+  "video_type": null,
+  "video_count": 0,
+  "confidence_label": "mặc định",
+  "source_signature": "",
+  "locked_fields": [],
+  "scene_pacing": [
+    {
+      "duration_sec": 30.0,
+      "scene_count": 5,
+      "min_scene_count": 5,
+      "max_scene_count": 5,
+      "avg_scene_sec": 6.0,
+      "min_scene_sec": 4.178571428571429,
+      "max_scene_sec": 6.857142857142857,
+      "durations_sec": [
+        4.178571428571429,
+        6.857142857142857,
+        6.857142857142857,
+        6.857142857142857,
+        5.25
+      ]
+    },
+    {
+      "duration_sec": 60.0,
+      "scene_count": 10,
+      "min_scene_count": 10,
+      "max_scene_count": 10,
+      "avg_scene_sec": 6.0,
+      "min_scene_sec": 4.178571428571429,
+      "max_scene_sec": 6.857142857142857,
+      "durations_sec": [
+        4.178571428571429,
+        4.178571428571429,
+        6.857142857142857,
+        6.857142857142857,
+        6.857142857142857,
+        6.857142857142857,
+        6.857142857142857,
+        6.857142857142857,
+        5.25,
+        5.25
+      ]
+    },
+    {
+      "duration_sec": 90.0,
+      "scene_count": 14,
+      "min_scene_count": 14,
+      "max_scene_count": 14,
+      "avg_scene_sec": 6.428571428571429,
+      "min_scene_sec": 4.399159663865547,
+      "max_scene_sec": 7.298319327731092,
+      "durations_sec": [
+        4.399159663865547,
+        4.399159663865547,
+        4.399159663865547,
+        7.298319327731092,
+        7.298319327731092,
+        7.298319327731092,
+        7.298319327731092,
+        7.298319327731092,
+        7.298319327731092,
+        7.298319327731092,
+        7.298319327731092,
+        7.298319327731092,
+        5.5588235294117645,
+        5.558823529411768
+      ]
+    },
+    {
+      "duration_sec": 120.0,
+      "scene_count": 18,
+      "min_scene_count": 18,
+      "max_scene_count": 18,
+      "avg_scene_sec": 6.666666666666667,
+      "min_scene_sec": 4.579470198675496,
+      "max_scene_sec": 7.658940397350993,
+      "durations_sec": [
+        4.579470198675496,
+        4.579470198675496,
+        4.579470198675496,
+        4.579470198675496,
+        7.658940397350993,
+        7.658940397350993,
+        7.658940397350993,
+        7.658940397350993,
+        7.658940397350993,
+        7.658940397350993,
+        7.658940397350993,
+        7.658940397350993,
+        7.658940397350993,
+        7.658940397350993,
+        7.658940397350993,
+        5.811258278145695,
+        5.811258278145695,
+        5.811258278145701
+      ]
+    },
+    {
+      "duration_sec": 180.0,
+      "scene_count": 24,
+      "min_scene_count": 24,
+      "max_scene_count": 24,
+      "avg_scene_sec": 7.5,
+      "min_scene_sec": 5.0467980295566495,
+      "max_scene_sec": 8.593596059113299,
+      "durations_sec": [
+        5.0467980295566495,
+        5.0467980295566495,
+        5.0467980295566495,
+        5.0467980295566495,
+        5.0467980295566495,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        8.593596059113299,
+        6.46551724137931,
+        6.46551724137931,
+        6.46551724137931,
+        6.465517241379331
+      ]
+    }
+  ],
+  "narrative_flows": [
+    "hook → bối cảnh → giải thích → ý nghĩa → kết"
+  ],
+  "connective_phrases": [
+    "Nhưng điều đáng nói về {topic} là..."
+  ],
+  "connective_frequencies": [],
+  "scene_patterns": [],
+  "shots_per_10_sec": 3.3333333333333335,
+  "warnings": []
+}

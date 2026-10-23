@@ -95,7 +95,8 @@ def prepare_ai_bundle(project,config,settings,progress,check_cancel,diagnostics)
     ai_slots = {(item["scene_id"],item["shot_id"]):item for item in used}
     lines = ["CREDITS — tài nguyên trong bản dựng có clip AI",""]
     for scene in manifest.scenes:
-        lines.append(f"Cảnh {scene.scene_id}: giọng đọc Microsoft Edge TTS ({original.voice}).")
+        lines.append(f"Cảnh {scene.scene_id}: audio có đoạn im lặng do TTS lỗi; dùng caption." if scene.audio_silent else
+            f"Cảnh {scene.scene_id}: giọng đọc Microsoft Edge TTS ({scene.audio_voice or original.voice}).")
         for shot in scene.shots:
             label = f"Cảnh {scene.scene_id} / shot {shot.shot_id}"
             ai = ai_slots.get((scene.scene_id,shot.shot_id))

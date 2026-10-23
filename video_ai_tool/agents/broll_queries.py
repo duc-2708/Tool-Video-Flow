@@ -27,6 +27,19 @@ POOLS={
     "technology":["technology abstract","data center","engineers laboratory","electronic circuit board","computer processor closeup","factory machinery","robotic arm assembly","server equipment interior"],
     "general":["city skyline","news studio","office team meeting","people walking street","industrial factory","globe network","urban traffic aerial","research laboratory"]}
 VOCAB.update(word for pool in POOLS.values() for query in pool for word in query.split())
+TRANSLATE.update({"trung tam du lieu":"data center","nang luong":"energy power","kho han":"drought water",
+    "tri tue nhan tao":"computing technology","may hoc":"machine learning","the thao":"sports training",
+    "thoi trang":"fashion clothing","kinh doanh":"business finance","tro choi":"gaming controller",
+    "han han":"drought water","nuoc":"water","dien":"electric power","moi truong":"environment",
+    "khi hau":"climate","phat thai":"carbon emissions","nha kinh":"greenhouse emissions",
+    "gia dien":"electricity power","hoa don":"energy bill","dong song":"river water",
+    "san xuat chip":"semiconductor manufacturing","chip":"semiconductor chip","may tinh":"computer",
+    "ky thuat vien":"technician","dan cu":"community","tai nguyen":"natural resources",
+    "dong vat":"wildlife animals","cau di bo":"pedestrian bridge","am nhac":"music concert",
+    "dien thoai gap":"smartphone folding","pin":"battery","dau tu":"business investment"})
+VOCAB.update("drought electricity bill river carbon emissions greenhouse natural resources investment pedestrian folding animals".split())
+VOCAB.update("aerial wide closeup interior exterior panoramic detail documentary night daylight sunset sunrise view daytime morning evening".split())
+VOCAB.update("machine learning".split())
 
 def category(context):
     text=latin(context)
@@ -56,24 +69,24 @@ def sanitize_broll_query(query, scene_context="", *, provider=None, diagnostics=
         try: cleaned=keywords(BrollQueryResponse.model_validate_json(provider.generate_json(prompt,BrollQueryResponse)).query)
         except Exception as error:
             if diagnostics: diagnostics.record_exception(error,"Sửa riêng b-roll query một lần; dùng stock query dự phòng")
-    return cleaned if 2<=len(cleaned.split())<=4 else POOLS[category(scene_context)][0]
+    if 2<=len(cleaned.split())<=4: return cleaned
+    contextual=keywords(scene_context)
+    return contextual if 2<=len(contextual.split())<=4 else POOLS[category(scene_context)][0]
 
 def unique_query(query,scene_context,used):
     if query not in used: return query
-    for candidate in POOLS[category(scene_context)]:
-        if candidate not in used: return candidate
-    # Bounded English shot descriptors, not random IDs or copies of the topic.
-    views=("aerial","wide","closeup","interior","exterior","panoramic")
-    settings=("night","daylight","sunset","sunrise","studio","workshop","factory","landscape")
-    bases=list(dict.fromkeys([" ".join(q.split()[:2]) for q in POOLS[category(scene_context)]]+ ["city skyline","data center","factory machinery"]))
+    # Keep the scene's subject; vary framing rather than rotate unrelated media.
+    views=("aerial","wide","closeup","interior","exterior","panoramic","detail","documentary")
+    settings=("night","daylight","sunset","sunrise","view","daytime","morning","evening")
+    VOCAB.update((*views,*settings))
+    bases=list(dict.fromkeys([" ".join(query.split()[:2])," ".join(keywords(scene_context).split()[:2])]))
     for base in bases:
+        if len(base.split())<2: continue
+        for view in views:
+            candidate=f"{base} {view}"
+            if candidate not in used: return candidate
         for view in views:
             for setting in settings:
                 candidate=f"{base} {view} {setting}"
                 if candidate not in used: return candidate
-    # Even very long plans can draw distinct pairs from the safe stock vocabulary.
-    for first in sorted(VOCAB-BRANDS):
-        for second in sorted(VOCAB-BRANDS):
-            candidate=f"{first} {second}"
-            if first!=second and candidate not in used: return candidate
     return query

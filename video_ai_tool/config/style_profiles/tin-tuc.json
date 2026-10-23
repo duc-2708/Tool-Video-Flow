@@ -1,0 +1,688 @@
+{
+  "version": 1,
+  "name": "tin tức",
+  "slug": "@category:tin-tuc",
+  "reference_hashes": [
+    "9e5386b8a856833a7c9e6133d6c0660a558409ceacbefce20bdbf7d21d4bceb0",
+    "83773ca48f0a0c32961e916ccdbbdb0f8d008a36cf12a867ed97ff7f4305ec81"
+  ],
+  "reference_files": [
+    "tin-tuc/tin_tuc_2.mp4",
+    "tin-tuc/tin_tuc_4.mp4"
+  ],
+  "reference_texts": [
+    "Giới thiệu 17 chuyện nhanh trong 3 phút.",
+    "Tin thế giới: sắc lệnh của Trump, tàu dầu Iran cháy, mầm non trộn sơn, giẫm đạp ở Ấn Độ.",
+    "Tin Việt Nam: đồng hồ điện nước, quy định mua bán vàng, hộ kinh doanh, dịch bệnh, metro, giao thông, giáo dục.",
+    "Thể thao & Giải trí: Messi, Barca, Liverpool, BIGBANG, phòng vé phim.",
+    "Giới thiệu Gemini 4 Argon và Blender.",
+    "Tạo mô hình 3D từ file CAD.",
+    "Viết engine 3D từ con số 0.",
+    "Tạo thành phố 3D và game đua xe từ ảnh.",
+    "Giới thiệu hôm nay có 17 chuyện đáng biết, kể nhanh trong 3 phút.",
+    "Ông Trump ký sắc lệnh mới với Nga, nghị sĩ hai đảng chỉ trích vô trách nhiệm.",
+    "Tàu chở dầu Iran trúng thủy lôi bốc cháy ở Hormuz.",
+    "Trường mầm non Trung Quốc trộn sơn vào đồ ăn khiến trẻ nhiễm độc chì.",
+    "Giẫm đạp ở lễ hội Durga Puja tại Ấn Độ làm ít nhất 19 người chết.",
+    "Chủ tịch nước phát biểu về sai sót đồng hồ điện nước, yêu cầu bồi thường.",
+    "Quy định mới về thanh toán mua bán vàng và đề xuất thuế hộ kinh doanh.",
+    "Đề xuất hộ kinh doanh doanh thu đến 10 tỷ được chọn nộp thuế theo doanh thu.",
+    "TP.HCM ghi nhận thêm ca mắc mô cẩu ở trường học.",
+    "Metro Bến Thành - Suối Tiên gián đoạn do sự cố trạm điện.",
+    "6 phụ nữ chụp ảnh giữa đèo Hải Vân bị phạt tiền.",
+    "Bộ GD&ĐT sắp xếp lại các trường cao đẳng, trung cấp và đại học trực thuộc.",
+    "Kết quả các trận bóng đá quốc tế: Messi, Barca, Liverpool.",
+    "Giới thiệu mô hình Gemini 4 Argon và tốc độ thử nghiệm Blender cực nhanh.",
+    "Ví dụ tạo mô hình 3D từ file CAD gốc bằng AI.",
+    "Thử thách viết engine 3D từ số 0 không dùng thư viện.",
+    "Tạo thành phố 3D và biến ảnh thành game đua xe."
+  ],
+  "hook_templates": [
+    "Hôm nay có {topic} chuyện đáng biết, mình kể nhanh trong {number} phút nhé.",
+    "{topic} vừa ra mắt mô hình mới. Chưa đầy {number} tiếng sau, nó đã bắt đầu ..."
+  ],
+  "hook_techniques": [
+    "Con số bất ngờ"
+  ],
+  "structure": [
+    {
+      "name": "Mở đầu",
+      "fraction": 0.015503875968992248
+    },
+    {
+      "name": "Tin thế giới",
+      "fraction": 0.16279069767441862
+    },
+    {
+      "name": "Tin trong nước",
+      "fraction": 0.43023255813953487
+    },
+    {
+      "name": "Thể thao & Giải trí",
+      "fraction": 0.29844961240310075
+    },
+    {
+      "name": "Kết thúc",
+      "fraction": 0.09302325581395349
+    }
+  ],
+  "shot_seconds": {
+    "mean": 7.035,
+    "minimum": 2.15,
+    "maximum": 11.92
+  },
+  "speech_words_per_sec": {
+    "mean": 3.55,
+    "minimum": 3.2,
+    "maximum": 3.9
+  },
+  "narration_rules": [
+    "Câu hỏi tu từ: Không rõ",
+    "Mức hài hước: Không rõ",
+    "Cảm xúc giọng: Hào hứng, nhanh nhảu",
+    "Cảm xúc giọng: Nhanh nhẹn, rành mạch",
+    "Mức thân mật: Thân mật, nhanh gọn",
+    "Mức thân mật: Thân thiện, nhanh gọn",
+    "Xưng hô: mình",
+    "Xưng hô: nó/có người",
+    "Câu dài trung bình khoảng {number} từ; xen câu ngắn và dài theo ý."
+  ],
+  "broll_patterns": [
+    "B-roll phong cảnh",
+    "b-roll thật",
+    "chữ nổi bật",
+    "gameplay",
+    "giao diện phần mềm",
+    "hình minh họa"
+  ],
+  "visual_effects": [
+    "pan",
+    "zoom",
+    "Zoom nhẹ"
+  ],
+  "transitions": [
+    "cut nhanh",
+    "Cắt cảnh trực tiếp"
+  ],
+  "captions": {
+    "analysis_warnings": [],
+    "enabled": true,
+    "mode": "phrase",
+    "font_description": "Chữ không chân đậm, dễ đọc trên nền tối",
+    "font_scale": 0.064,
+    "color": "#FFFFFF",
+    "highlight_color": "#FFD741",
+    "stroke_color": "#000000",
+    "color_note": "",
+    "stroke_width_ratio": 0.006,
+    "position": "lower",
+    "emphasis": "Tô màu vàng từ đang đọc",
+    "shadow": "Có bóng đen"
+  },
+  "audio": {
+    "analysis_warnings": [],
+    "mood": "Hào hứng, công nghệ",
+    "music_volume": 0.15000000000000002,
+    "sfx_types": [
+      "Tiếng chuyển cảnh",
+      "whoosh"
+    ],
+    "sfx_per_10_sec": 0.75,
+    "sfx_positions": [
+      0.0,
+      4.0,
+      46.0
+    ],
+    "ducking": true,
+    "details": "Nhạc nền hiện đại kết hợp giọng đọc nhanh gọn"
+  },
+  "ending_techniques": [
+    "Không rõ",
+    "Tóm lược nhẹ nhàng và chào tạm biệt"
+  ],
+  "reusable_rules": [
+    "Chia nhỏ nội dung thành các mục rõ ràng",
+    "Dùng số lượng tin tức lớn ở đầu để tạo tò mò",
+    "Dùng tiêu đề lớn trực quan để làm rõ chủ đề",
+    "Dùng từ ngữ gần gũi trong cách xưng hô",
+    "Giới hạn thời lượng mỗi tin ngắn gọn",
+    "Giữ nhịp đọc nhanh, dứt khoát cho video tổng hợp tin",
+    "Giữ thời lượng mỗi shot dưới {number} giây để duy trì sự chú ý",
+    "Giữ tỷ lệ khung hình dọc {number} tối ưu cho nền tảng",
+    "Kết hợp giao diện thực tế và thành phẩm để tăng độ uy tín",
+    "Kết hợp âm nhạc có tiết tấu để giữ chân người xem",
+    "Luôn đưa thông tin cập nhật nóng hổi ở {number} giây đầu",
+    "Sử dụng chữ nổi bật theo từng từ để tăng chú ý",
+    "Sử dụng màu sắc tương phản cao cho phụ đề",
+    "Sử dụng ví dụ từ dễ đến khó để minh chứng năng lực",
+    "Tránh lan man, đi thẳng vào các trường hợp ấn tượng nhất",
+    "Đồng bộ hóa hiệu ứng âm thanh với chuyển cảnh"
+  ],
+  "rule_frequencies": [
+    {
+      "rule": "Chia nhỏ nội dung thành các mục rõ ràng",
+      "video_count": 1
+    },
+    {
+      "rule": "Dùng số lượng tin tức lớn ở đầu để tạo tò mò",
+      "video_count": 1
+    },
+    {
+      "rule": "Dùng tiêu đề lớn trực quan để làm rõ chủ đề",
+      "video_count": 1
+    },
+    {
+      "rule": "Dùng từ ngữ gần gũi trong cách xưng hô",
+      "video_count": 1
+    },
+    {
+      "rule": "Giới hạn thời lượng mỗi tin ngắn gọn",
+      "video_count": 1
+    },
+    {
+      "rule": "Giữ nhịp đọc nhanh, dứt khoát cho video tổng hợp tin",
+      "video_count": 1
+    },
+    {
+      "rule": "Giữ thời lượng mỗi shot dưới {number} giây để duy trì sự chú ý",
+      "video_count": 1
+    },
+    {
+      "rule": "Giữ tỷ lệ khung hình dọc {number} tối ưu cho nền tảng",
+      "video_count": 1
+    },
+    {
+      "rule": "Kết hợp giao diện thực tế và thành phẩm để tăng độ uy tín",
+      "video_count": 1
+    },
+    {
+      "rule": "Kết hợp âm nhạc có tiết tấu để giữ chân người xem",
+      "video_count": 1
+    },
+    {
+      "rule": "Luôn đưa thông tin cập nhật nóng hổi ở {number} giây đầu",
+      "video_count": 1
+    },
+    {
+      "rule": "Sử dụng chữ nổi bật theo từng từ để tăng chú ý",
+      "video_count": 1
+    },
+    {
+      "rule": "Sử dụng màu sắc tương phản cao cho phụ đề",
+      "video_count": 1
+    },
+    {
+      "rule": "Sử dụng ví dụ từ dễ đến khó để minh chứng năng lực",
+      "video_count": 1
+    },
+    {
+      "rule": "Tránh lan man, đi thẳng vào các trường hợp ấn tượng nhất",
+      "video_count": 1
+    },
+    {
+      "rule": "Đồng bộ hóa hiệu ứng âm thanh với chuyển cảnh",
+      "video_count": 1
+    }
+  ],
+  "category_id": "tin-tuc",
+  "video_type": null,
+  "video_count": 2,
+  "confidence_label": "đang tích lũy",
+  "source_signature": "181551b48e7844e1769023997c84c37ca9e971487507034b6d8c7fc32b85d0f8",
+  "locked_fields": [],
+  "scene_pacing": [
+    {
+      "duration_sec": 30.0,
+      "scene_count": 3,
+      "min_scene_count": 2,
+      "max_scene_count": 4,
+      "avg_scene_sec": 10.0,
+      "min_scene_sec": 5.934782608695652,
+      "max_scene_sec": 12.586956521739133,
+      "durations_sec": [
+        5.934782608695652,
+        11.478260869565217,
+        12.586956521739133
+      ]
+    },
+    {
+      "duration_sec": 60.0,
+      "scene_count": 6,
+      "min_scene_count": 4,
+      "max_scene_count": 8,
+      "avg_scene_sec": 10.0,
+      "min_scene_sec": 3.693548387096774,
+      "max_scene_sec": 28.919354838709676,
+      "durations_sec": [
+        3.693548387096774,
+        6.983870967741935,
+        6.435483870967742,
+        28.919354838709676,
+        6.983870967741935,
+        6.983870967741936
+      ]
+    },
+    {
+      "duration_sec": 90.0,
+      "scene_count": 9,
+      "min_scene_count": 7,
+      "max_scene_count": 11,
+      "avg_scene_sec": 10.0,
+      "min_scene_sec": 5.017241379310345,
+      "max_scene_sec": 12.931034482758621,
+      "durations_sec": [
+        5.017241379310345,
+        10.293103448275861,
+        10.293103448275861,
+        9.413793103448276,
+        12.931034482758621,
+        11.172413793103448,
+        10.293103448275861,
+        10.293103448275861,
+        10.293103448275872
+      ]
+    },
+    {
+      "duration_sec": 120.0,
+      "scene_count": 12,
+      "min_scene_count": 9,
+      "max_scene_count": 15,
+      "avg_scene_sec": 10.0,
+      "min_scene_sec": 4.098726114649681,
+      "max_scene_sec": 33.98407643312102,
+      "durations_sec": [
+        4.098726114649681,
+        7.996815286624204,
+        7.996815286624204,
+        9.945859872611464,
+        7.3471337579617835,
+        9.945859872611464,
+        33.98407643312102,
+        8.646496815286625,
+        7.996815286624204,
+        6.047770700636943,
+        7.996815286624204,
+        7.996815286624198
+      ]
+    },
+    {
+      "duration_sec": 180.0,
+      "scene_count": 18,
+      "min_scene_count": 13,
+      "max_scene_count": 23,
+      "avg_scene_sec": 10.0,
+      "min_scene_sec": 4.198412698412698,
+      "max_scene_sec": 35.23015873015873,
+      "durations_sec": [
+        4.198412698412698,
+        4.198412698412698,
+        8.246031746031747,
+        8.246031746031747,
+        8.246031746031747,
+        10.269841269841269,
+        7.571428571428571,
+        10.269841269841269,
+        10.269841269841269,
+        35.23015873015873,
+        8.920634920634921,
+        8.920634920634921,
+        8.246031746031747,
+        6.222222222222222,
+        8.246031746031747,
+        8.246031746031747,
+        8.246031746031747,
+        16.206349206349216
+      ]
+    }
+  ],
+  "narrative_flows": [
+    "Video dẫn dắt người xem qua hàng loạt bản tin ngắn về thế giới, trong nước, thể thao và giải trí với nhịp độ nhanh và dồn dập.",
+    "Video mở đầu bằng thông tin sốc về tốc độ thử nghiệm công nghệ mới, sau đó đưa ra các minh chứng cụ thể từ dễ đến phức tạp về khả năng của AI, và khép lại bằng ứng dụng thực tế ấn tượng."
+  ],
+  "connective_phrases": [
+    "Chuyển qua tin {topic}:",
+    "Chuyển sang chuyện {topic}:",
+    "Chuyển sang thể thao {topic}:",
+    "Chuyển sang tin:",
+    "Chuyển sang {topic}:",
+    "Chuyện {topic} đầu tiên:",
+    "Chuyện đầu tiên:",
+    "Chưa đầy {number} ngày sau",
+    "Chưa đầy {time} sau, {topic} đã bắt đầu ...",
+    "Câu chuyện cuối cùng:",
+    "Có lập trình viên còn tiến xa hơn, bắt nó {topic}.",
+    "Có người còn tiến xa hơn"
+  ],
+  "connective_frequencies": [
+    {
+      "rule": "Chuyển qua tin {topic}:",
+      "video_count": 1
+    },
+    {
+      "rule": "Chuyển sang chuyện {topic}:",
+      "video_count": 1
+    },
+    {
+      "rule": "Chuyển sang thể thao {topic}:",
+      "video_count": 1
+    },
+    {
+      "rule": "Chuyển sang tin:",
+      "video_count": 1
+    },
+    {
+      "rule": "Chuyển sang {topic}:",
+      "video_count": 1
+    },
+    {
+      "rule": "Chuyện {topic} đầu tiên:",
+      "video_count": 1
+    },
+    {
+      "rule": "Chuyện đầu tiên:",
+      "video_count": 1
+    },
+    {
+      "rule": "Chưa đầy {number} ngày sau",
+      "video_count": 1
+    },
+    {
+      "rule": "Chưa đầy {time} sau, {topic} đã bắt đầu ...",
+      "video_count": 1
+    },
+    {
+      "rule": "Câu chuyện cuối cùng:",
+      "video_count": 1
+    },
+    {
+      "rule": "Có lập trình viên còn tiến xa hơn, bắt nó {topic}.",
+      "video_count": 1
+    },
+    {
+      "rule": "Có người còn tiến xa hơn",
+      "video_count": 1
+    }
+  ],
+  "scene_patterns": [
+    {
+      "purpose": "hook",
+      "fraction": 0.022371364653243846,
+      "shot_count": 2.5,
+      "average_shot_sec": 2.625,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật",
+        "chữ lớn"
+      ],
+      "effects": [
+        "Zoom"
+      ],
+      "overlay_styles": [
+        "lower: Tô màu từng từ",
+        "top: Không rõ"
+      ],
+      "sfx": [
+        "hiệu ứng chuyển cảnh",
+        "Nhạc nền điện tử nhẹ"
+      ],
+      "transition": "cut",
+      "connective_template": "Chuyện {topic} đầu tiên:"
+    },
+    {
+      "purpose": "tin thế giới",
+      "fraction": 0.05592841163310962,
+      "shot_count": 2.5,
+      "average_shot_sec": 5.625,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật",
+        "chữ lớn"
+      ],
+      "effects": [
+        "zoom"
+      ],
+      "overlay_styles": [
+        "center: Highlight từ khóa",
+        "top: Không rõ"
+      ],
+      "sfx": [
+        "hiệu ứng chuyển cảnh"
+      ],
+      "transition": "cut",
+      "connective_template": "Chuyển sang chuyện {topic}:"
+    },
+    {
+      "purpose": "tin thế giới",
+      "fraction": 0.05592841163310962,
+      "shot_count": 2.5,
+      "average_shot_sec": 5.625,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật",
+        "chữ lớn"
+      ],
+      "effects": [
+        "zoom"
+      ],
+      "overlay_styles": [
+        "center: Highlight số lượng",
+        "top: Không rõ"
+      ],
+      "sfx": [
+        "hiệu ứng chuyển cảnh"
+      ],
+      "transition": "cut",
+      "connective_template": "Chưa đầy {time} sau, {topic} đã bắt đầu ..."
+    },
+    {
+      "purpose": "tin thế giới",
+      "fraction": 0.07270693512304251,
+      "shot_count": 2.0,
+      "average_shot_sec": 7.835,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật"
+      ],
+      "effects": [
+        "pan"
+      ],
+      "overlay_styles": [
+        "center: Highlight số lượng trẻ"
+      ],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": "Có lập trình viên còn tiến xa hơn, bắt nó {topic}."
+    },
+    {
+      "purpose": "tin thế giới",
+      "fraction": 0.050335570469798654,
+      "shot_count": 2.0,
+      "average_shot_sec": 5.835,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật"
+      ],
+      "effects": [
+        "pan"
+      ],
+      "overlay_styles": [
+        "center: Highlight số thương vong"
+      ],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": "Chuyển qua tin {topic}:"
+    },
+    {
+      "purpose": "tin việt nam",
+      "fraction": 0.07270693512304251,
+      "shot_count": 2.0,
+      "average_shot_sec": 7.835,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật"
+      ],
+      "effects": [
+        "pan"
+      ],
+      "overlay_styles": [
+        "center: Highlight"
+      ],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": "Có lập trình viên còn tiến xa hơn, bắt nó {topic}."
+    },
+    {
+      "purpose": "tin việt nam",
+      "fraction": 0.2796420581655481,
+      "shot_count": 3.0,
+      "average_shot_sec": 13.75,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật",
+        "giao diện code"
+      ],
+      "effects": [
+        "zoom"
+      ],
+      "overlay_styles": [
+        "center: Highlight"
+      ],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": "Rồi có người bảo nó tạo một {topic}."
+    },
+    {
+      "purpose": "tin việt nam",
+      "fraction": 0.06152125279642058,
+      "shot_count": 2.5,
+      "average_shot_sec": 6.75,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật",
+        "giao diện code"
+      ],
+      "effects": [
+        "zoom"
+      ],
+      "overlay_styles": [
+        "center: Highlight"
+      ],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": "Rồi có người bảo nó tạo một {topic}."
+    },
+    {
+      "purpose": "tin việt nam",
+      "fraction": 0.05592841163310962,
+      "shot_count": 2.5,
+      "average_shot_sec": 6.25,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật",
+        "giao diện code"
+      ],
+      "effects": [
+        "zoom"
+      ],
+      "overlay_styles": [
+        "center: Highlight"
+      ],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": "Rồi có người bảo nó tạo một {topic}."
+    },
+    {
+      "purpose": "tin việt nam",
+      "fraction": 0.03914988814317673,
+      "shot_count": 2.5,
+      "average_shot_sec": 4.75,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật",
+        "giao diện code"
+      ],
+      "effects": [
+        "zoom"
+      ],
+      "overlay_styles": [
+        "center: Highlight"
+      ],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": "Chuyển sang {topic}:"
+    },
+    {
+      "purpose": "tin việt nam",
+      "fraction": 0.05592841163310962,
+      "shot_count": 2.5,
+      "average_shot_sec": 6.25,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật",
+        "giao diện code"
+      ],
+      "effects": [
+        "zoom"
+      ],
+      "overlay_styles": [
+        "center: Highlight"
+      ],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": "Rồi có người bảo nó tạo một {topic}."
+    },
+    {
+      "purpose": "tin việt nam",
+      "fraction": 0.05592841163310962,
+      "shot_count": 2.5,
+      "average_shot_sec": 6.075,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật",
+        "gameplay"
+      ],
+      "effects": [
+        "zoom"
+      ],
+      "overlay_styles": [
+        "center: Highlight"
+      ],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": "Chuyển sang thể thao {topic}:"
+    },
+    {
+      "purpose": "tin thể thao",
+      "fraction": 0.12192393736017902,
+      "shot_count": 3.5,
+      "average_shot_sec": 8.91,
+      "visual_types": [
+        "B-roll",
+        "b-roll thật",
+        "gameplay"
+      ],
+      "effects": [
+        "zoom"
+      ],
+      "overlay_styles": [
+        "center: Highlight"
+      ],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": ""
+    }
+  ],
+  "shots_per_10_sec": 2.820845014583864,
+  "warnings": [
+    "Dùng bản thô của lần gọi trước; ghi chú/model/cấu hình mới chưa được gửi Gemini. Muốn áp dụng mới, chọn Học lại có xác nhận.",
+    "Đã parse lại bản thô tại máy, không gọi Gemini.",
+    "scenes[13]: loại mốc bắt đầu 204 ngoài phạm vi/không hợp lệ.",
+    "scenes[14]: loại mốc bắt đầu 234 ngoài phạm vi/không hợp lệ.",
+    "scenes[12]: cắt end_sec 204s → 178.8s theo phạm vi video.",
+    "transcript_outline[4]: loại mốc bắt đầu 234 ngoài phạm vi/không hợp lệ.",
+    "transcript_outline[3]: cắt end_sec 234s → 178.8s theo phạm vi video.",
+    "scene_count=15 được đồng bộ về 13 cảnh có trong dữ liệu.",
+    "avg_scene_sec được tính lại từ start_sec/end_sec của các cảnh.",
+    "tin-tuc/tin_tuc_3.mp4: chưa có phân tích còn hiệu lực (FileNotFoundError)."
+  ]
+}

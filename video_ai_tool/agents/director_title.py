@@ -44,6 +44,12 @@ def ensure_title(plan,brief,*,provider=None,diagnostics=None,now=None):
                 f"tập số hợp lệ={sorted(result['allowed'])}; thứ tự hợp lệ={sorted(result['ordinal_counts'])}; "
                 f"số mục thực tế={result['item_count']}; tháng hiện tại={result['month']}; sai={sorted(result['invalid'])}")
         return result
+    from agents.content_plan import vietnamese_title
+    if not vietnamese_title(plan.title):
+        original=plan.title
+        plan.title=brief.topic if vietnamese_title(brief.topic) else "Thông tin về "+brief.topic
+        message="Tiêu đề không phải tiếng Việt; đã dùng chủ đề tiếng Việt, không đổi các cảnh."
+        if message not in plan.review_notes: plan.review_notes.append(message)
     result=check()
     if not result["invalid"]: return plan
     original=plan.title

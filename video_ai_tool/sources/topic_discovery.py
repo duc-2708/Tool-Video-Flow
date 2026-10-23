@@ -11,7 +11,7 @@ import time
 import requests
 import feedparser
 from ddgs import DDGS
-from config.categories import load_categories
+from config.categories import categories_for
 from pipeline.topics_history import similarity,already_made,history_rows,normalized
 from schemas.topic_discovery import TopicBatch,TopicSuggestion
 from utils.cache import JsonCache,cache_key
@@ -183,8 +183,8 @@ def discover_topics(category,settings,*,region="both",time_window_days=3,count=5
                     now=None,feed_loader=None,searcher=None,provider=None,categories=None,progress_cb=None):
     if region not in {"vn","global","both"} or time_window_days not in {1,3,7} or not 1<=count<=20:
         raise ValueError("Khám phá cần region vn/global/both, days 1/3/7, count 1–20.")
-    config=categories or load_categories()
-    selected=next((c for c in config.categories if c.name.casefold()==category.casefold() and c.enabled),None)
+    config=categories or categories_for(settings)
+    selected=next((c for c in config.categories if category.casefold() in {c.name.casefold(),c.category_id.casefold()} and c.enabled),None)
     if selected is None: raise ValueError("Danh mục không tồn tại hoặc đã tắt.")
     now=now or datetime.now(timezone.utc)
     diagnostics=Diagnostics(settings.logs_dir,filename="topic_discovery_errors.log")

@@ -37,7 +37,16 @@ def speak_number(value):
 
 ACRONYMS = {"API":"ây pi ai", "AI":"ây ai", "GPU":"gi pi diu", "CPU":"xi pi diu", "USD":"đô la Mỹ", "VND":"đồng", "LLM":"eo eo em", "TTS":"ti ti ét", "FPS":"ép pi ét", "SSD":"ét ét đi"}
 
-def tts_text(text):
+def tts_text(text,*,protected_names=()):
+    saved={}
+    for index,name in enumerate(sorted(set(protected_names),key=len,reverse=True)):
+        if not name: continue
+        token="PROTECTEDNAME"+chr(65+index//26)+chr(65+index%26)
+        saved[token]=name
+        text=re.sub(re.escape(name),lambda m:token,text,flags=re.I)
+    # Calendar separators must never be read as decimal punctuation.
+    text=re.sub(r"(?<!\d)(?:(\d{1,2})[./-])?(\d{1,2})[./-](\d{4})(?!\d)",
+        lambda m:(read_integer(m[1])+" tháng " if m[1] else "tháng ")+read_integer(m[2])+" năm "+read_integer(m[3]),text)
     text = re.sub(r"(\d+(?:[.,]\d+)*)\s*([KMB])\b",lambda m:m[1]+" "+{"K":"nghìn","M":"triệu","B":"tỷ"}[m[2]],text)
     units = {"kg":"ki lô gam","km":"ki lô mét","GB":"ghi ga bai","MB":"mê ga bai","ms":"mi li giây","s":"giây"}
     text = re.sub(r"(\d+(?:[.,]\d+)*)\s*(kg|km|GB|MB|ms|s)\b",lambda m:m[1]+" "+units[m[2]],text)
@@ -46,16 +55,23 @@ def tts_text(text):
     text = re.sub(r"\d+(?:[.,]\d+)*",lambda m:speak_number(m[0]),text)
     for word, pronunciation in ACRONYMS.items():
         text = re.sub(r"\b"+word+r"\b",pronunciation,text)
+    for token,name in saved.items(): text=text.replace(token,name)
     return " ".join(text.replace("(",", ").replace(")",", ").split())
 
 
 def spoken_to_digits(text):
+    # 'năm' is a calendar linker before a year, not the digit five in the month.
+    text=re.sub(r"\bnăm(?=\s+(?:(?:hai|một)\s+(?:nghìn|ngàn)|\d{4}\b))","CALENDARYEAR",text,flags=re.I)
+    months={read_integer(i):str(i) for i in range(1,13)}
+    text=re.sub(r"\btháng\s+("+"|".join(re.escape(k) for k in sorted(months,key=len,reverse=True))+r")(?!\w)",lambda m:"tháng "+months[m[1].casefold()],text,flags=re.I)
+    # Recover legacy TTS joining a spoken digit to the original 24h suffix.
+    text=re.sub(r"\b("+"|".join(DIGITS+["mốt","tư","lăm"])+r")(h|gb|kg|km)(?!\w)",r"\1 \2",text)
     tokens = r"(?:không|một|mốt|hai|ba|bốn|tư|năm|lăm|sáu|bảy|tám|chín|mười|mươi|trăm|nghìn|ngàn|triệu|tỷ|lẻ|linh)"
     digit_words = r"(?:"+"|".join([*DIGITS,"mốt","tư","lăm"])+r")"
-    pattern = r"(?<!\w)(?:"+tokens+r"(?:\s+"+tokens+r")+|"+digit_words+r"(?=\s+phẩy))(?:\s+phẩy(?:\s+"+digit_words+r")+(?:\s+(?:nghìn|ngàn|triệu|tỷ))?)?(?!\w)"
+    pattern = r"(?<!\w)(?:"+tokens+r"(?:\s+"+tokens+r")+|mười|"+digit_words+r"(?=\s+phẩy))(?:\s+phẩy(?:\s+"+digit_words+r")+(?:\s+(?:nghìn|ngàn|triệu|tỷ))?)?(?!\w)"
     def convert(match):
         from decimal import Decimal
-        whole, *decimal = match[0].split(" phẩy ")
+        whole, *decimal = match[0].casefold().split(" phẩy ")
         total = group = 0
         current=None
         values = {word:i for i,word in enumerate(DIGITS)}
@@ -75,4 +91,4 @@ def spoken_to_digits(text):
             value = Decimal(str(total+group+(current or 0))+"."+"".join(str(values[w]) for w in fraction))*factor
             return format(value.normalize(),"f")
         return str(total+group+(current or 0))
-    return re.sub(pattern,convert,text,flags=re.I)
+    return re.sub(pattern,convert,text,flags=re.I).replace("CALENDARYEAR","năm")

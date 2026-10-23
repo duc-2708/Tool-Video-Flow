@@ -220,7 +220,8 @@ class WebSearch:
         def decide(url,kept,reason,final_url=None):
             record["decisions"].append({"url":url,"kept":kept,"reason":reason,"final_url":final_url})
             self.diagnostics.record(f"URL {url}: {'giữ' if kept else 'loại'} — {reason}")
-        for row in sorted(rows,key=lambda item:not bool(item.get("date"))):
+        from agents.explainer_research import live_blog
+        for row in sorted(rows,key=lambda item:(live_blog(item.get("href") or item.get("url") or "",item.get("title", "")),not bool(item.get("date")))):
             url = str(row.get("href") or row.get("url") or "")
             if url in seen or not article_url(url):
                 decide(url,False,"trùng nguồn" if url in seen else "trang chuyên mục/trang chủ" if allowed_web_url(url) else "URL bị chặn/không hợp lệ")

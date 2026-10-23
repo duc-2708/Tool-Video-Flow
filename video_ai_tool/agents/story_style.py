@@ -3,7 +3,6 @@ import math
 import re
 from collections import Counter
 from config.storytelling import DURATIONS
-from agents.vietnamese_tts import tts_text
 
 CLICHES = ("một số", "nhiều người", "ngày càng", "đóng vai trò quan trọng", "không thể phủ nhận", "trong bối cảnh", "có thể nói rằng")
 HOOK_BANNED = ("chào mọi người", "hôm nay chúng ta sẽ", "trong thời đại ngày nay")
@@ -20,6 +19,9 @@ def data_advice(brief, duration):
 
 
 def story_blueprint(duration, fact_count, profile=None):
+    if profile is not None and profile.scene_pacing:
+        from pipeline.category_style import profile_blueprint
+        return profile_blueprint(duration,fact_count,profile)
     from agents.adaptive import content_count
     # With one fact, merge opening/closing roles into two content-bearing scenes.
     total=2 if fact_count==1 or duration<7.5 else content_count(duration,fact_count)+2
@@ -78,8 +80,11 @@ def style_issues(plan):
         sentences = [s for s in re.split(r"(?<=[.!?])\s+",text) if s.strip()]
         if i>0 and not 2<=len(sentences)<=4: timing_issue(scene,"Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.")
         if any(len(sentence.split())>28 for sentence in sentences): add(scene,"Câu quá 28 từ; tách tại ranh giới ý.")
-        if re.search(r"[()\d%$]|\b(?:API|GPU|CPU|USD|VND|AI|LLM|TTS|FPS|SSD)\b",text): add(scene,"Viết số, đơn vị và viết tắt ở dạng đọc được; tránh ngoặc.")
-        for phrase in CONNECTORS:
+        if re.search(r"[()]",text): add(scene,"Tránh ngoặc trong lời đọc; bước Assets sẽ chuyển số/đơn vị sang dạng TTS.")
+        extra=tuple(p.split("{topic}")[0].strip(" .,:!?…").casefold() for p in plan.style_profile.connective_phrases) if plan.style_profile else ()
+        for phrase in dict.fromkeys((*CONNECTORS,*extra)):
+            if not phrase or len(phrase.split())<2:
+                continue
             connectors[phrase] += lower.count(phrase)
             if connectors[phrase]>2: add(scene,"Lạm dụng chuyển ý: "+phrase)
         # Ignore compulsory attribution when comparing openings.

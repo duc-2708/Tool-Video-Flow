@@ -18,6 +18,7 @@ from pipeline.projects import create_project,read_json
 from pipeline.run_all_ai import prepare_ai_bundle,copy_artifact
 from providers.video_gateway import VideoRequest,require_allowed_model
 from schemas.edit_plan import EditPlan
+from schemas.assets import AssetsManifest
 from schemas.research_brief import ResearchBrief
 from schemas.topic_discovery import DiscoveryHint
 from utils.cache import write_json
@@ -34,6 +35,8 @@ LABELS = {"discovery":"Khám phá chủ đề","research":"Research","director":
 
 
 class RunConfig(BaseModel):
+    content_mode: Literal["event_only","explainer_v2"] = Field(default="event_only",exclude_if=lambda v:v=="event_only")
+    category: str | None = Field(default=None,exclude_if=lambda v:v is None)
     model_config = ConfigDict(extra="forbid")
     project_dir: Path | None = Field(default=None,exclude=True)
     creative_license: Literal["strict","balanced","story"] = Field(default="strict",exclude_if=lambda v:v=="strict")
@@ -108,8 +111,12 @@ def fingerprints(project,paths):
 
 def asset_files(project,plan_path):
     original,resolved,manifest = load_assets(plan_path)
-    if manifest.status != "complete" or any(scene.audio_error or not scene.audio_path for scene in manifest.scenes):
-        raise ValueError("Assets chưa hoàn tất audio. Chạy lại/tiếp tục bước Assets; không Render bằng manifest partial.")
+    broken=[scene.scene_id for scene in manifest.scenes if not scene.audio_path or scene.audio_error and not scene.audio_silent]
+    if broken:
+        ids=", ".join(map(str,broken))
+        raise ValueError(f"TTS lỗi ở cảnh {ids}; chưa có audio/im lặng hợp lệ. Chạy lại riêng audio cảnh đó trên trang Assets hoặc dùng --scene ID.")
+    if manifest.status!="complete":
+        raise ValueError("Assets chưa hoàn tất; chạy lại Assets trước khi Render.")
     if {scene.scene_id for scene in manifest.scenes} != {scene.id for scene in resolved.scenes}:
         raise ValueError("Assets thiếu cảnh so với kế hoạch.")
     files = [plan_path,plan_path.parent/"edit_plan.resolved.json",plan_path.parent/"assets.json",plan_path.parent/"credits.txt"]
@@ -138,11 +145,24 @@ def report(project,state,diagnostics):
         f"Thời gian xử lý: {state['summary']['elapsed_sec']:.2f} giây.","","## Các bước"]
     lines.extend(f"- {LABELS[name]}: {item['status']} · {item['elapsed_sec']:.2f}s" for name,item in state["steps"].items())
     lines.extend(["","## Nguồn fact đã dùng",*(f"- {url}" for url in sorted(source_urls))])
+    if plan:
+        actual=state.get("render_result",{}).get("duration_sec",plan.duration_sec)
+        wanted=state["config"]["duration_sec"]
+        lines.extend(["","## Thời lượng",f"Yêu cầu {wanted:g}s; kế hoạch {plan.duration_sec:.1f}s; thực tế {actual:.1f}s."])
+        if actual<wanted*.8: lines.append("Dữ liệu mỏng: tăng số nguồn hoặc chọn chủ đề khác; không kéo dài bằng lặp ý.")
+        if plan.content_mode=="explainer_v2":
+            lines.extend(["","## Explainer v2","Câu event đối chiếu brief; explain/opinion là diễn giải nền có độ mềm, không phải dữ kiện đã xác minh."])
+            for scene in plan.scenes:
+                lines.append(f"- Cảnh {scene.id} ({scene.information_kind}): {scene.new_information}")
+            if plan.script_critic: lines.append("Critic trước sửa: "+plan.script_critic.model_dump_json())
     if brief:
         lines.extend(["","## Nguồn đối chiếu trong brief",*(f"- {str(fact.source_url)}" for fact in brief.facts)])
         if brief.trend_signals:
             lines.extend(["","## Tín hiệu YouTube (không phải nguồn fact)",*(f"- {signal.title}: {signal.url}" for signal in brief.trend_signals)])
     warnings = list(dict.fromkeys(warning for item in state["steps"].values() for warning in item["warnings"]))
+    if (project/"assets.json").is_file():
+        current_assets=AssetsManifest.model_validate(read_json(project/"assets.json"))
+        warnings=list(dict.fromkeys(warnings+[w for scene in current_assets.scenes for w in scene.audio_warnings]))
     lines.extend(["","## Cảnh báo",*(f"- {warning}" for warning in warnings)])
     if plan and plan.style_profile:
         lines.extend(["", "## Phong cách mẫu",plan.style_profile.name+"; chỉ học cách kể/nhịp, không sử dụng hình hay âm thanh video mẫu."])
@@ -308,7 +328,7 @@ def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event
                     if step == "research":
                         run_research(config.topic,settings,web_limit=config.web_limit,use_youtube=config.youtube_trends,
                             youtube_days=config.youtube_days,output_dir=project,progress=lambda message:emit(step,message),
-                            source_languages=config.source_languages,output_language=config.output_language,discovery_hint=config.discovery)
+                            source_languages=config.source_languages,output_language=config.output_language,discovery_hint=config.discovery,content_mode=config.content_mode)
                         brief = ResearchBrief.model_validate(read_json(project/"brief.json"))
                         source_data = read_json(project/"sources.json")
                         if not brief.facts:
@@ -317,11 +337,11 @@ def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event
                     elif step == "director":
                         run_director(project/"brief.json",settings,video_type=config.video_type,video_format=config.video_format,
                             duration_sec=config.duration_sec,progress=lambda message:emit(step,message),
-                            source_languages=config.source_languages,output_language=config.output_language,ai_clip_limit=config.ai_clips,script_style=config.script_style,creative_license=config.creative_license,style_preset=config.style_preset)
+                            source_languages=config.source_languages,output_language=config.output_language,ai_clip_limit=config.ai_clips,script_style=config.script_style,creative_license=config.creative_license,style_preset=config.style_preset,category=config.category or (config.discovery.category if config.discovery else None),content_mode=config.content_mode)
                         plan = EditPlan.model_validate(read_json(project/"edit_plan.json"))
                         validate_plan(plan,ResearchBrief.model_validate(read_json(project/"brief.json")),
                             DirectorRequest(video_type=config.video_type,video_format=config.video_format,duration_sec=config.duration_sec))
-                        state["effective_duration_sec"]=plan.target_duration_sec or plan.duration_sec
+                        state["effective_duration_sec"]=plan.duration_sec
                         if state["effective_duration_sec"]<config.duration_sec:
                             warnings.append(f"Thời lượng yêu cầu {config.duration_sec:g}s, kế hoạch {state['effective_duration_sec']:g}s vì dữ liệu mỏng.")
                         if plan.voice != config.voice:
@@ -401,11 +421,13 @@ def main():
     configure_console()
     parser = argparse.ArgumentParser(description="Research → Director → Assets → AI tùy chọn → Render; checkpoint/resume.")
     parser.add_argument("--topic")
+    parser.add_argument("--explainer-v2",action="store_true")
     parser.add_argument("--source-languages",nargs="+",choices=["vi","en","zh","ko","ja"])
     parser.add_argument("--output-language",choices=["vi"])
     parser.add_argument("--type",choices=["news","review","story"],dest="video_type")
     parser.add_argument("--format",choices=["tiktok","youtube"],dest="video_format")
     parser.add_argument("--style-preset")
+    parser.add_argument("--category")
     parser.add_argument("--style",dest="script_style",choices=["storytelling","news","explain","review"])
     parser.add_argument("--duration",type=float,dest="duration_sec")
     parser.add_argument("--voice",choices=["vi-VN-HoaiMyNeural","vi-VN-NamMinhNeural"])
@@ -430,12 +452,13 @@ def main():
     try:
         settings = get_settings()
         values = saved_config(args.resume).model_dump() if args.resume else {"voice":settings.default_voice,"ai_model":settings.gateway_video_model,"ai_seconds":settings.ai_clip_seconds}
-        for key in ("style_preset","script_style","topic","video_type","video_format","duration_sec","voice","youtube_days","web_limit","ai_clips","ai_model","ai_seconds","render_mode","source_languages","output_language"):
+        for key in ("category","style_preset","script_style","topic","video_type","video_format","duration_sec","voice","youtube_days","web_limit","ai_clips","ai_model","ai_seconds","render_mode","source_languages","output_language"):
             value = getattr(args,key)
             if value is not None:
                 values[key] = value
         if args.review:
             values["mode"] = "review"
+        if args.explainer_v2: values["content_mode"]="explainer_v2"
         if args.youtube_trends:
             values["youtube_trends"] = True
         if args.ai_on_error:

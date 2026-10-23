@@ -11,9 +11,9 @@ from utils.console import configure_console
 from utils.diagnostics import Diagnostics
 
 
-def topic_config(suggestion,category,*,topic=None,review=True):
+def topic_config(suggestion,category,*,topic=None,review=True,style_preset=None):
     suggestion=TopicSuggestion.model_validate(suggestion)
-    return RunConfig(topic=topic or suggestion.topic,video_type=suggestion.suggested_type,mode="review" if review else "auto",
+    return RunConfig(topic=topic or suggestion.topic,category=category,style_preset=style_preset,video_type=suggestion.suggested_type,mode="review" if review else "auto",
         discovery=DiscoveryHint(category=category,suggestion=suggestion),ai_clips=0)
 
 

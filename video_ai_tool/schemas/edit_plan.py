@@ -8,6 +8,8 @@ from schemas.base import NonEmptyText, StrictModel
 from schemas.story import StoryOutline
 from schemas.validation import ValidationEvent
 from schemas.style import StyleProfile, StyleRenderDefaults
+from schemas.visual import Visual
+from schemas.explainer import ScriptSentence,ContentMode,InfoKind,ExplainerOutline,ScriptCritic
 
 
 class Music(StrictModel):
@@ -16,19 +18,31 @@ class Music(StrictModel):
 
 
 class Shot(StrictModel):
+    semantic_query: bool = Field(default=False,exclude_if=lambda v:not v)
+    visual: Visual | None = Field(default=None,exclude_if=lambda v:v is None)
+    planning_duration: bool = Field(default=False,exclude_if=lambda v:not v)
     type: Literal["stock_video", "stock_image", "ai_image", "ai_video", "text_card"] = Field(validation_alias=AliasChoices("type","source"))
     ai_prompt: str | None = Field(default=None,exclude_if=lambda value:value is None)
     query: NonEmptyText
-    duration_sec: float = Field(ge=SHOT_MIN_SECONDS, le=SHOT_MAX_SECONDS)
+    duration_sec: float = Field(ge=1/30, le=600)
     effect: Literal["none", "zoom_in", "zoom_out", "pan_left", "pan_right"]
     # on_screen_text is accepted on input; renderers keep the established name.
     text_overlay: NonEmptyText | None = Field(validation_alias=AliasChoices("text_overlay", "on_screen_text"))
 
     @field_validator("query",mode="before")
     @classmethod
-    def validate_query(cls, value: str) -> str:
+    def validate_query(cls, value: str,info) -> str:
+        if info.data.get("semantic_query"):
+            from agents.explainer_visuals import semantic_query
+            return semantic_query(value)
         from agents.broll_queries import sanitize_broll_query
         return sanitize_broll_query(value)
+
+    @model_validator(mode="after")
+    def stock_duration(self):
+        if not self.planning_duration and not SHOT_MIN_SECONDS<=self.duration_sec<=SHOT_MAX_SECONDS:
+            raise ValueError("Shot audio-resolved phải nằm trong 1.5–4 giây.")
+        return self
 
 
 class ReviewSource(StrictModel):
@@ -54,6 +68,9 @@ class ReviewNotes(StrictModel):
 
 
 class Scene(StrictModel):
+    sentences: list[ScriptSentence] = Field(default_factory=list,exclude_if=lambda v:not v)
+    information_kind: InfoKind | None = Field(default=None,exclude_if=lambda v:v is None)
+    new_information: str = Field(default="",exclude_if=lambda v:not v)
     @model_validator(mode="before")
     @classmethod
     def normalize_structure(cls,value):
@@ -64,6 +81,7 @@ class Scene(StrictModel):
 
     id: int = Field(ge=1)
     role: Literal["hook", "body", "transition", "cta"]
+    style_purpose: str | None = Field(default=None,exclude_if=lambda v:v is None)
     narration: NonEmptyText
     pronunciation_hint: str | None = Field(default=None, exclude_if=lambda value:value is None)
     shots: Annotated[list[Shot], Field(min_length=1)]
@@ -80,6 +98,11 @@ class Scene(StrictModel):
 
 
 class EditPlan(StrictModel):
+    content_mode: ContentMode = Field(default="event_only",exclude_if=lambda v:v=="event_only")
+    explainer_outline: ExplainerOutline | None = Field(default=None,exclude_if=lambda v:v is None)
+    script_critic: ScriptCritic | None = Field(default=None,exclude_if=lambda v:v is None)
+    content_timed: bool = Field(default=False,exclude_if=lambda v:not v)
+    ai_clip_limit: int = Field(default=0,ge=0,exclude_if=lambda v:not v)
     style_preset: str | None = Field(default=None, exclude_if=lambda v: v is None)
     style_profile: StyleProfile | None = Field(default=None, exclude_if=lambda v: v is None)
     render_style: StyleRenderDefaults | None = Field(default=None, exclude_if=lambda v: v is None)
@@ -112,7 +135,7 @@ class EditPlan(StrictModel):
             repaired.append("Đã đánh lại ID cảnh trùng, giữ nội dung/fact.")
         if self.scenes[0].role != "hook":
             self.scenes[0].role="hook";repaired.append("Đã đặt vai trò cảnh đầu là hook.")
-        if self.scenes[0].duration_sec > 3:
+        if self.scenes[0].duration_sec > 3 and not self.content_timed:
             source=self.scenes[0].shots[0]
             self.scenes[0].shots=[source.model_copy(update={"duration_sec":3.})]
             repaired.append("Đã căn shot hook về 3 giây; không cắt lời đọc, audio thật sẽ được căn ở Assets.")

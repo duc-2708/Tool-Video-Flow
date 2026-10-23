@@ -1,0 +1,237 @@
+{
+  "discovery_hint": {
+    "category": "công nghệ",
+    "suggestion": {
+      "cluster_id": "4775035771722880",
+      "topic": "AI firms say UK has a year to head off datacentre protests before construction is threatened",
+      "why_now": "Tin đăng 2026-10-22T05:00:08+00:00; 1 nguồn độc lập đề cập.",
+      "angle": "Đọc nguồn và kiểm chứng sự kiện cụ thể trước khi viết kịch bản.",
+      "suggested_type": "news",
+      "search_queries": {
+        "vi": [
+          "AI firms say UK has a year to head off datacentre protests before construction is threatened"
+        ],
+        "en": [
+          "artificial intelligence AI firms say UK has a year to head off datacentre protests before construction is threatened"
+        ]
+      },
+      "score": 5,
+      "score_reason": "Điểm sơ bộ theo độ mới và số nguồn, chưa có phân tích Gemini.",
+      "source_urls": [
+        "https://www.theguardian.com/uk-news/2026/oct/22/ai-firms-say-uk-has-a-year-to-head-off-datacentre-protests-before-construction-is-threatened"
+      ]
+    }
+  },
+  "research_depth": "deep",
+  "story_angles": [
+    {
+      "angle": "Nguy cơ biểu tình trung tâm dữ liệu tại Anh",
+      "why": "Các công ty AI cảnh báo Anh có một năm để ngăn chặn phản đối từ cộng đồng trước khi xây dựng bị đe dọa."
+    },
+    {
+      "angle": "Đề xuất hiệp ước lợi ích cộng đồng từ nhóm SAIL",
+      "why": "Nhóm đặc nhiệm bao gồm Nvidia, Microsoft và Cisco kêu gọi chính phủ tạo hiệp ước để hội đồng địa phương giữ lại nhiều doanh thu thuế hơn."
+    },
+    {
+      "angle": "Sự phản đối từ các tổ chức và cộng đồng địa phương",
+      "why": "PauseAI UK nêu quan điểm người dân không thấy đáng khi nhận tiền từ công ty lớn, và tại Scotland đã có 15 chiến dịch phản đối dự án trung tâm dữ liệu quy mô lớn."
+    }
+  ],
+  "key_numbers": [
+    {
+      "text": "Khoảng 12 tháng là thời gian Anh Quốc có để ngăn chặn sự phản đối từ cộng đồng đối với các trung tâm dữ liệu.",
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "text": "Microsoft đã cam kết đầu tư 30 tỷ USD (tương đương 22 tỷ bảng Anh) vào cơ sở hạ tầng trí tuệ nhân tạo tại Vương quốc Anh.",
+      "fact_ids": [
+        4
+      ]
+    },
+    {
+      "text": "Có 15 chiến dịch cộng đồng hoạt động tích cực tại Scotland để phản đối các dự án phát triển trung tâm dữ liệu quy mô lớn.",
+      "fact_ids": [
+        6
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "text": "Các công ty trí tuệ nhân tạo đưa ra cảnh báo Anh Quốc có khoảng 12 tháng để ngăn chặn sự phản đối đối với các trung tâm dữ liệu.",
+      "fact_ids": [
+        1
+      ]
+    }
+  ],
+  "why_it_matters": [
+    {
+      "text": "Các mùa hè khô hạn liên tiếp và hóa đơn năng lượng tăng cao đang làm gia tăng sự giám sát của công chúng đối với các trung tâm dữ liệu.",
+      "fact_ids": [
+        2
+      ]
+    },
+    {
+      "text": "Việc không ngăn chặn kịp thời có thể dẫn đến các cuộc biểu tình giống như ở Mỹ và đe dọa quá trình xây dựng.",
+      "fact_ids": [
+        1
+      ]
+    }
+  ],
+  "counterpoints": [
+    {
+      "text": "Tổ chức PauseAI UK cho biết người dân sẽ cảm thấy không đáng khi nhận tiền từ các công ty công nghệ lớn có lợi ích không chung với họ.",
+      "fact_ids": [
+        5
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "text": "Nhóm đặc nhiệm SAIL bao gồm các công ty Nvidia, Microsoft và Cisco.",
+      "fact_ids": [
+        2
+      ]
+    }
+  ],
+  "topic": "AI firms say UK has a year to head off datacentre protests before construction is threatened",
+  "language": "vi",
+  "source_languages": [
+    "vi",
+    "en"
+  ],
+  "output_language": "vi",
+  "search_queries": [
+    {
+      "source_lang": "vi",
+      "query": "AI firms say UK has a year to head off datacentre protests before construction is threatened",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "artificial intelligence AI firms say UK has a year to head off datacentre protests before construction is threatened",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "Cty AI Anh canh bao bieu tinh trung tam du lieu 2024",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "UK datacentre protests AI firms warning 2024",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "Thoi han tranh bieu tinh trung tam du lieu tai Anh quoc",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "Datacentre construction threat UK protests news",
+      "region": "us-en"
+    }
+  ],
+  "angle_candidates": [
+    {
+      "angle": "Khủng hoảng hạ tầng AI tại Anh",
+      "why": "Phản ánh trực tiếp cảnh báo từ các hãng công nghệ lớn về làn sóng phản đối trung tâm dữ liệu."
+    },
+    {
+      "angle": "Bài toán năng lượng và môi trường",
+      "why": "Làm rõ nguyên nhân sâu xa dẫn đến sự bất bình của người dân địa phương đối với nhà kho máy tính AI."
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Các công ty trí tuệ nhân tạo cảnh báo Anh Quốc có khoảng 12 tháng để ngăn chặn sự phản đối từ cộng đồng đối với các trung tâm dữ liệu nhằm tránh các cuộc biểu tình giống như ở Mỹ.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/uk-news/2026/oct/22/ai-firms-say-uk-has-a-year-to-head-off-datacentre-protests-before-construction-is-threatened",
+      "confidence": "medium",
+      "evidence_quote": "AI companies have told ministers they have 12 months to head off public opposition to datacentres in the UK or risk US-style protests that could",
+      "source_lang": "en",
+      "fact_vi": "Các công ty trí tuệ nhân tạo cảnh báo Anh Quốc có khoảng 12 tháng để ngăn chặn sự phản đối từ cộng đồng đối với các trung tâm dữ liệu nhằm tránh các cuộc biểu tình giống như ở Mỹ.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Nhóm đặc nhiệm SAIL bao gồm Nvidia, Microsoft và Cisco đã đệ trình lên chính phủ Lao động Anh về việc các mùa hè khô hạn liên tiếp và hóa đơn năng lượng tăng cao đang làm gia tăng sự giám sát của công chúng.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/uk-news/2026/oct/22/ai-firms-say-uk-has-a-year-to-head-off-datacentre-protests-before-construction-is-threatened",
+      "confidence": "medium",
+      "evidence_quote": "Successive dry summers and rising energy bills are increasing public scrutiny of plans for the huge computer warehouses that are used to train and run",
+      "source_lang": "en",
+      "fact_vi": "Nhóm đặc nhiệm SAIL bao gồm Nvidia, Microsoft và Cisco đã đệ trình lên chính phủ Lao động Anh về việc các mùa hè khô hạn liên tiếp và hóa đơn năng lượng tăng cao đang làm gia tăng sự giám sát của công chúng.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Nhóm công nghệ kêu gọi chính phủ tạo ra một hiệp ước giúp cộng đồng hưởng lợi từ việc lưu trữ trung tâm dữ liệu, bao gồm việc cho phép các hội đồng địa phương giữ lại nhiều doanh thu thuế hơn.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/uk-news/2026/oct/22/ai-firms-say-uk-has-a-year-to-head-off-datacentre-protests-before-construction-is-threatened",
+      "confidence": "medium",
+      "evidence_quote": "they are calling on ministers to create a “compact” that would show how communities can benefit from hosting datacentres, including allowing councils that host them",
+      "source_lang": "en",
+      "fact_vi": "Nhóm công nghệ kêu gọi chính phủ tạo ra một hiệp ước giúp cộng đồng hưởng lợi từ việc lưu trữ trung tâm dữ liệu, bao gồm việc cho phép các hội đồng địa phương giữ lại nhiều doanh thu thuế hơn.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Microsoft đã cam kết đầu tư 30 tỷ USD (tương đương 22 tỷ bảng Anh) vào cơ sở hạ tầng trí tuệ nhân tạo tại Vương quốc Anh.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/uk-news/2026/oct/22/ai-firms-say-uk-has-a-year-to-head-off-datacentre-protests-before-construction-is-threatened",
+      "confidence": "medium",
+      "evidence_quote": "Microsoft has promised to invest $30bn (£22bn) in UK AI infrastructure.",
+      "source_lang": "en",
+      "fact_vi": "Microsoft đã cam kết đầu tư 30 tỷ USD (tương đương 22 tỷ bảng Anh) vào cơ sở hạ tầng trí tuệ nhân tạo tại Vương quốc Anh.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Tổ chức PauseAI UK cho biết người dân sẽ cảm thấy không đáng khi nhận tiền từ các công ty công nghệ lớn có lợi ích không chung với họ.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/uk-news/2026/oct/22/ai-firms-say-uk-has-a-year-to-head-off-datacentre-protests-before-construction-is-threatened",
+      "confidence": "medium",
+      "evidence_quote": "People are going to feel it is undignified to be bought off by huge tech companies who do not share their interests.",
+      "source_lang": "en",
+      "fact_vi": "Tổ chức PauseAI UK cho biết người dân sẽ cảm thấy không đáng khi nhận tiền từ các công ty công nghệ lớn có lợi ích không chung với họ.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Tại Scotland, đã có 15 chiến dịch cộng đồng hoạt động tích cực để phản đối các dự án phát triển trung tâm dữ liệu quy mô lớn gây tổn hại môi trường.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/uk-news/2026/oct/22/ai-firms-say-uk-has-a-year-to-head-off-datacentre-protests-before-construction-is-threatened",
+      "confidence": "medium",
+      "evidence_quote": "In Scotland, we have 15 community campaigns already working incredibly hard opposing these environmentally destructive developments locally, and a growing national campaign",
+      "source_lang": "en",
+      "fact_vi": "Tại Scotland, đã có 15 chiến dịch cộng đồng hoạt động tích cực để phản đối các dự án phát triển trung tâm dữ liệu quy mô lớn gây tổn hại môi trường.",
+      "published_at": "2026-10-22"
+    }
+  ],
+  "trends": [],
+  "hooks": [
+    "Liệu Anh Quốc có đang đứng trước nguy cơ đình trệ các trung tâm dữ liệu AI chỉ trong vòng 12 tháng tới?",
+    "Khi các hãng công nghệ lớn như Nvidia hay Microsoft lo ngại làn sóng biểu tình giống tại Mỹ lan sang châu Âu."
+  ],
+  "audience_questions": [
+    "Vì sao người dân Anh lại phản đối việc xây dựng các trung tâm dữ liệu?",
+    "Chính phủ Anh sẽ giải quyết bài toán năng lượng và cộng đồng như thế nào?"
+  ],
+  "keywords": [
+    "datacentre",
+    "AI firms",
+    "UK protests",
+    "Nvidia",
+    "Microsoft",
+    "SAIL taskforce"
+  ],
+  "risks": [
+    "Bỏ bài quá ngắn: 13 ký tự, yêu cầu ít nhất 300 ký tự.",
+    "Tìm web/news không khả dụng; đã dùng các nguồn còn lại.",
+    "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+    "Đã tắt YouTube trends trong lượt nghiên cứu này.",
+    "fact #1: quote dài 28 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #2: quote dài 46 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #3: quote dài 30 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+    "dữ liệu mỏng, kịch bản sẽ ít chi tiết"
+  ]
+}

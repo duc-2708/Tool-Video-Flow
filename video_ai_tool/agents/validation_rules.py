@@ -94,7 +94,8 @@ def fact_ids(ctx):
     for scene in ctx.obj.scenes:
         invalid=[i for i in scene.fact_ids if type(i) is not int or not 1<=i<=len(ctx.brief.facts)]
         if invalid: issues.append(Finding(sid(scene),f"fact_id không tồn tại: {invalid}."))
-        if not scene.fact_ids and (ctx.phase=="outline" or scene.role!="cta"):
+        from agents.explainer_guard import is_v2
+        if not scene.fact_ids and not is_v2(ctx.obj) and (ctx.phase=="outline" or scene.role!="cta"):
             issues.append(Finding(sid(scene),"Cảnh nội dung có 0 fact tham chiếu."))
     return issues
 
@@ -102,13 +103,16 @@ def unsupported_numbers(ctx):
     if not ctx.plan: return []
     from agents.director_numbers import normalized_numbers
     from utils.source_credits import publisher_name
+    from agents.director_sources import canonical_sources,number_names
     allowed=normalized_numbers(" ".join(fact_text(f) for f in ctx.brief.facts),ignore_current_year=False)
     issues=[]
     for scene in ctx.plan.scenes:
-        content=scene.narration+" "+" ".join(s.text_overlay or "" for s in scene.shots)
-        for fact in ctx.brief.facts:
-            for name in (fact.source_name,publisher_name(fact.source_url)):
-                if name: content=re.sub(r"\bTheo\s+"+re.escape(name)+r"(?=[,\s])[,\s]*","",content,flags=re.I)
+        from agents.explainer_guard import is_v2,event_text
+        from agents.visual_policy import content_type
+        content=canonical_sources(event_text(scene) if is_v2(ctx.plan) else scene.narration,ctx.brief)+". "+". ".join(s.text_overlay or "" for s in scene.shots if not is_v2(ctx.plan) or content_type(scene,s)=="event")
+        for name in number_names(ctx.brief):
+            content=re.sub(r"\bTheo\s+"+re.escape(name)+r"(?=[,\s])[,\s]*","",content,flags=re.I)
+            content=re.sub(r"(?<!\w)"+re.escape(name)+r"(?!\w)"," ",content,flags=re.I)
         # Hypothetical exemption is per sentence, explicitly spoken to viewers.
         parts=re.split(r"(?<=[!?;])\s+|(?<=[.])\s+(?=[A-ZÀ-Ỹ])",content)
         asserted=" ".join(p for p in parts if not re.match(r"\s*(?:giả sử|giả định|ví dụ minh họa)\b",p,re.I))
@@ -119,28 +123,24 @@ def unsupported_numbers(ctx):
     return issues
 
 ORDINARY=set("Bạn Mình Theo Nhưng Đầu Sau Riêng Còn Ở Chỗ Điểm Với Đến Nhìn Mạch Chọn Người Các Công Thành Một Hai Không Tại Số Nội Năm Hãy Đây Đó Vì Vậy Khi Nếu Cách Phần Dựng Trong Cắt Ghép Video Chào Có Thử Vấn Từ Trước Giả Ví Kết Bước Giữ Sắp Tốc Tư Làm Kiểm Bắt Cảnh Nguồn Nhịp Bản Thông Việc Về Dữ Nó Điều So Cuối Ta Chúng Xem Như Thế Trên Và Để TTS".split())
-def proper_names(text):
-    tokens=list(re.finditer(r"[^\W\d_]+(?:[-'][^\W\d_]+)*",text,re.UNICODE))
-    index=0
-    while index<len(tokens):
-        token=tokens[index]
-        if not token[0][0].isupper(): index+=1;continue
-        last=index
-        while last+1<len(tokens) and tokens[last+1][0][0].isupper() and text[tokens[last].end():tokens[last+1].start()].isspace(): last+=1
-        yield re.search(re.escape(text[token.start():tokens[last].end()]),text)
-        index=last+1
+from agents.proper_names import proper_names
 
 def names_quotes(ctx):
     if not ctx.plan: return []
     from utils.source_credits import publisher_name
-    base=" ".join(fact_text(f)+" "+f.claim+" "+(f.evidence_quote or "")+" "+f.source_name+" "+publisher_name(f.source_url) for f in ctx.brief.facts)
+    from agents.director_sources import allowed_sources,source_key,canonical_sources
+    source_names={source_key(n) for n in allowed_sources(ctx.brief)}
+    base=ctx.brief.topic+" "+" ".join(fact_text(f)+" "+f.claim+" "+(f.evidence_quote or "")+" "+f.source_name+" "+publisher_name(f.source_url) for f in ctx.brief.facts)
     allowed=textkey(base);issues=[]
     for scene in ctx.plan.scenes:
-        text=scene.narration+" "+" ".join(s.text_overlay or "" for s in scene.shots)
-        for part in re.split(r"(?<=[.!?])\s+",text):
+        from agents.explainer_guard import is_v2,event_text
+        from agents.visual_policy import content_type
+        fields=[s.text for s in scene.sentences if s.type=="event"] if is_v2(ctx.plan) else [scene.narration]
+        fields.extend(s.text_overlay for s in scene.shots if s.text_overlay and (not is_v2(ctx.plan) or content_type(scene,s)=="event"))
+        for part in (part for value in fields for part in re.split(r"(?<=[.!?])\s+",canonical_sources(value,ctx.brief))):
             for cited in re.findall(r"\bTheo\s+([^,]+),",part):
-                source_key=lambda text:textkey(text).replace(" va "," ")
-                if source_key(cited) not in source_key(base): issues.append(Finding(scene.id,f"Nguồn trích dẫn không có trong brief: {cited}."))
+                if source_key(cited) not in source_names and any(source_key(name) not in source_names for name in re.split(r"\s+và\s+",cited,flags=re.I)):
+                    issues.append(Finding(scene.id,f"Nguồn trích dẫn không có trong brief: {cited}."))
             part=re.sub(r"^(?:Theo [^,]+,\s*)+","",part)
             if re.match(r"\s*(?:giả sử|giả định|ví dụ minh họa)\b",part,re.I): continue
             for quote in re.findall(r'[“"]([^”"]{3,200})[”"]',part):
@@ -150,7 +150,6 @@ def names_quotes(ctx):
                 if name=="Mỹ" and "đô la Mỹ" in part and re.search(r"\$|USD|đô la",base,re.I): continue
                 words=name.split()
                 if all(w in ORDINARY for w in words): continue
-                if len(words)==1 and match.start()==0 and not re.search(r"[A-Z].*[A-Z]|[a-z][A-Z]",name): continue
                 if textkey(name) not in allowed and not all(w in ORDINARY or textkey(w) in allowed.split() for w in words):
                     issues.append(Finding(scene.id,f"Tên riêng không có trong brief: {name}."))
     return issues
@@ -162,12 +161,18 @@ def forbidden(ctx):
         if re.search(FORBIDDEN,s.narration+" "+" ".join(x.text_overlay or "" for x in s.shots),re.I)]
 def clean_forbidden(ctx):
     for s in ctx.plan.scenes:
+        if s.sentences:
+            from agents.explainer_guard import sync_narration
+            for sentence in s.sentences: sentence.text=re.sub(FORBIDDEN,"",sentence.text,flags=re.I).strip(" ,:;-") or "Thông tin từ nguồn."
+            sync_narration(ctx.plan)
         s.narration=re.sub(r"Theo\s+thông\s+tin\s+sơ\s+bộ\s+(?:"+FORBIDDEN+r")","",s.narration,flags=re.I)
         s.narration=re.sub(FORBIDDEN,"",s.narration,flags=re.I).strip(" ,:;-") or (fact_text(ctx.brief.facts[s.fact_ids[0]-1]) if s.fact_ids and 1<=s.fact_ids[0]<=len(ctx.brief.facts) else "Thông tin từ nguồn.")
         for shot in s.shots:
             if shot.text_overlay: shot.text_overlay=re.sub(FORBIDDEN,"",shot.text_overlay,flags=re.I).strip(" ,:;-") or None
 
 def open_loop(ctx):
+    from agents.explainer_guard import is_v2
+    if is_v2(ctx.obj): return []  # Semantic payoff is checked by Explainer's LoopReview.
     outline=ctx.outline
     if not outline or not outline.open_loop: return []
     last=ctx.obj.scenes[-1]
@@ -199,6 +204,8 @@ def fix_open_loop(ctx):
     return "Không có fact liên quan thật; đã bỏ open loop và câu hỏi khỏi hook, thay bằng fact có nguồn."
 
 def repeated(ctx):
+    from agents.explainer_guard import is_v2
+    if is_v2(ctx.obj): return []
     uses=Counter(i for s in ctx.obj.scenes for i in set(s.fact_ids))
     return [Finding(sid(s),f"Fact #{i} dùng {uses[i]} lần, mục tiêu tối đa 2.") for s in ctx.obj.scenes for i in set(s.fact_ids) if uses[i]>2]
 def fix_repeated(ctx):
@@ -242,10 +249,19 @@ def fix_repeated(ctx):
 
 def duration(ctx):
     if not ctx.plan or not ctx.request: return []
+    from agents.explainer_guard import is_v2
+    if is_v2(ctx.plan): return []
+    if ctx.plan.content_timed:
+        from agents.content_plan import scene_seconds
+        return [Finding(s.id,"Timing cần đồng bộ với số từ lời đọc.") for s in ctx.plan.scenes if abs(s.duration_sec-scene_seconds(s))>.01 or len(s.shots)>4]
     target=ctx.plan.target_duration_sec if ctx.plan.adaptive and ctx.plan.target_duration_sec else ctx.request.duration_sec
     if abs(ctx.plan.duration_sec-target)>target*.1: return [Finding(None,f"Tổng thời lượng {ctx.plan.duration_sec:g}s lệch yêu cầu {target:g}s.")]
     return []
 def fix_duration(ctx):
+    if ctx.plan.content_timed:
+        from agents.content_plan import fit_content_timing
+        fit_content_timing(ctx.plan)
+        return "Đã căn thời lượng theo số từ / 2.6 + 0.8 giây, tối thiểu 2.5 giây; tối đa 4 shot/cảnh."
     target=ctx.plan.target_duration_sec if ctx.plan.adaptive and ctx.plan.target_duration_sec else ctx.request.duration_sec
     plan=ctx.plan
     if target<1.5*len(plan.scenes):
@@ -277,21 +293,27 @@ def rebind(ctx):
 
 def attribution(ctx):
     if not ctx.plan: return []
+    from agents.explainer_guard import is_v2
+    if is_v2(ctx.plan): return []  # Source cards carry provenance, no per-beat spoken prefix.
     from agents.director import review_notes_for,has_attribution
+    from agents.visual_planner import covered_sources
+    covered=covered_sources(ctx.plan)
     result=[]
     for scene in ctx.plan.scenes:
         if any(not 1<=i<=len(ctx.brief.facts) for i in scene.fact_ids): continue
         notes=review_notes_for(scene.fact_ids,ctx.brief)
-        required={f.sources[0].name for f in notes.facts if f.source_count==1}
+        required={f.sources[0].name for f in notes.facts if f.source_count==1}-covered
         if any(not has_attribution(scene.narration,name) for name in required): result.append(Finding(scene.id,"Thiếu nhãn Theo <nguồn> cho fact nguồn đơn."))
         if notes.facts and not required and any(has_attribution(scene.narration,s.name) for f in notes.facts for s in f.sources): result.append(Finding(scene.id,"Fact có nhiều nguồn; đồng bộ nhãn nêu nguồn."))
     return result
 def fix_attribution(ctx):
     from agents.director import review_notes_for,has_attribution
+    from agents.visual_planner import covered_sources
+    covered=covered_sources(ctx.plan)
     for scene in ctx.plan.scenes:
         if any(not 1<=i<=len(ctx.brief.facts) for i in scene.fact_ids): continue
         notes=review_notes_for(scene.fact_ids,ctx.brief)
-        required=list(dict.fromkeys(f.sources[0].name for f in notes.facts if f.source_count==1))
+        required=list(dict.fromkeys(f.sources[0].name for f in notes.facts if f.source_count==1 and f.sources[0].name not in covered))
         if required:
             for name in required:
                 if not has_attribution(scene.narration,name): scene.narration=f"Theo {name}, "+scene.narration
@@ -309,6 +331,9 @@ def style_matching(*patterns):
     return check
 def thin_scenes(ctx):
     if not ctx.plan or not ctx.request: return []
+    from agents.explainer_guard import is_v2
+    if is_v2(ctx.plan):
+        return [Finding(None,"Explainer dưới 5 beat; dữ liệu mỏng, không ép thêm cảnh rỗng.")] if ctx.request.duration_sec>=45 and len(ctx.plan.scenes)<5 else []
     target=2 if len(ctx.brief.facts)==1 else min(len(ctx.brief.facts)+2,max(4,round(ctx.request.duration_sec/8)))
     return [Finding(None,f"Số cảnh {len(ctx.plan.scenes)} dưới mục tiêu {target}; không thêm cảnh rỗng.")] if len(ctx.plan.scenes)<target else []
 def unclear_loop(ctx):
@@ -362,6 +387,8 @@ def title(ctx):
     from agents.director_title import title_numbers
     result=title_numbers(ctx.plan,ctx.brief)
     if ctx.diagnostics: ctx.diagnostics.record(f"đối tượng=tiêu đề: số={sorted(result['actual'])}; tập số hợp lệ={sorted(result['allowed'])}; sai={sorted(result['invalid'])}")
+    from agents.content_plan import vietnamese_title
+    if not vietnamese_title(ctx.plan.title): return [Finding(None,"Tiêu đề cần viết bằng tiếng Việt.")]
     return [Finding(None,"Tiêu đề có số ngoài tập được phép.")] if result["invalid"] else []
 def fix_title(ctx):
     from agents.director_title import ensure_title
@@ -386,8 +413,69 @@ def fix_ai_prompt(ctx):
                 except ValueError: shot.ai_prompt=fallback_prompt(scene.narration)
     return "Đã dùng prompt AI dự phòng an toàn, chưa gửi job trả phí."
 
+def visual_grounding(ctx):
+    if not ctx.plan: return []
+    from agents.visual_planner import visual_issues
+    return [Finding(scene,message) for scene,message in visual_issues(ctx.plan,ctx.brief)]
+
+
+def visual_background(ctx):
+    if not ctx.plan: return []
+    from agents.visual_policy import background_warnings
+    return [Finding(scene,message) for scene,message in background_warnings(ctx.plan,ctx.brief)]
+
+
+def visual_structure(ctx):
+    if not ctx.plan: return []
+    from agents.visual_policy import repair_label_order
+    return [Finding(scene,message) for scene,message in repair_label_order(ctx.plan.model_copy(deep=True))]
+
+
+def fix_visual_structure(ctx):
+    from agents.visual_policy import repair_label_order
+    changes=repair_label_order(ctx.plan)
+    return "; ".join(message for _,message in changes)
+
+
+def explainer_sentences(ctx):
+    if not ctx.plan: return []
+    from agents.explainer_guard import sentence_issues
+    return [Finding(scene,message) for scene,message in sentence_issues(ctx.plan,ctx.brief)]
+
+
+def fix_explainer_names(ctx):
+    from agents.explainer_guard import repair_event_names
+    repaired=repair_event_names(ctx.plan,ctx.brief)
+    if repaired:
+        # Keep automatically generated graphics in sync with the repaired sentence.
+        for scene in ctx.plan.scenes:
+            for shot in scene.shots:
+                visual=shot.visual
+                if not visual or not visual.auto_generated or not visual.sentence_index: continue
+                if visual.sentence_index>len(scene.sentences): continue
+                sentence=scene.sentences[visual.sentence_index-1]
+                if sentence.type!="event": continue
+                from schemas.visual import VisualData
+                from agents.visual_planner import excerpt
+                visual.template="text_focus"
+                visual.data=VisualData(text=excerpt(sentence.text,18),fact_ids=sentence.fact_ids[:])
+                shot.text_overlay=None
+    return "; ".join(f"Cảnh {sid}: {message}" for sid,message in repaired)
+
+
+def explainer_background_names(ctx):
+    if not ctx.plan: return []
+    from agents.explainer_guard import sentence_background_warnings
+    return [Finding(scene,message) for scene,message in sentence_background_warnings(ctx.plan,ctx.brief)]
+
+
 # Single source of rule IDs, default groups, checks and local repair functions.
 RULES=(
+    Rule("sentence_grounding",1,"Nhãn câu khớp lời đọc; event có fact, nền không giả làm sự kiện",explainer_sentences,fix_explainer_names),
+    Rule("sentence_background_names",3,"Tên riêng trong ví dụ nền chỉ cảnh báo",explainer_background_names),
+    Rule("visual_structure",2,"Giữ nhãn đồ họa đúng thứ tự lời đọc",visual_structure,fix_visual_structure),
+    Rule("visual_grounding",1,"Số liệu, tên, ngày, URL trong đồ họa có căn cứ brief",visual_grounding),
+    Rule("visual_background",3,"Ví dụ nền trong đồ họa cần kiểm tra, không chặn",visual_background),
     Rule("schema_basic",1,"JSON/schema cơ bản không sửa được",structure_notes),
     Rule("outline_structure",2,"Đồng bộ dàn ý/blueprint",outline_shape,fix_outline_shape),
     Rule("open_loop",2,"Gán fact payoff liên quan hoặc bỏ câu hỏi",open_loop,fix_open_loop),
@@ -425,7 +513,7 @@ RULES=(
 
 def run_rules(obj,brief,request=None,*,phase="plan",blueprint=None,diagnostics=None,config_path=None,check_style=True,audit_issues=None,allow_merge=True):
     ctx=Context(obj,brief,request,blueprint,phase,diagnostics,audit_issues or [],check_style)
-    ctx.allow_merge=allow_merge
+    ctx.allow_merge=allow_merge and not getattr(obj,"content_timed",False)
     policy=groups(config_path);hard=[]
     # Metadata must remain valid even when a fact rule is configured as warning.
     for rule in RULES:
@@ -434,15 +522,23 @@ def run_rules(obj,brief,request=None,*,phase="plan",blueprint=None,diagnostics=N
         if findings and rule.repair:
             result=rule.repair(ctx)
             remaining=rule.check(ctx)
-            for item in findings: emit(ctx,rule,policy[rule.id],Finding(item.scene_id,result or "Đã tự sửa bằng code."),"fixed")
+            if rule.id!="sentence_grounding" or result:
+                for item in findings: emit(ctx,rule,policy[rule.id],Finding(item.scene_id,result or "Đã tự sửa bằng code."),"fixed")
             findings=remaining
         for item in findings:
             event=emit(ctx,rule,policy[rule.id],item,"error" if policy[rule.id]==1 else "warning")
             if policy[rule.id]==1: hard.append(event)
     if ctx.plan:
         from agents.director import review_notes_for
+        # Drafts/checkpoints retain old diagnostics. Resolved false positives
+        # must not remain visible as active group-1 errors after revalidation.
+        unresolved={f.scene_id for f in explainer_sentences(ctx)}
+        obj.validation_events=[e for e in obj.validation_events if not
+            (e.rule_id=="sentence_grounding" and e.action=="error" and e.scene_id not in unresolved)]
         for scene in obj.scenes:
             previous=list(scene.review_notes.warnings) if scene.review_notes else []
+            if scene.id not in unresolved:
+                previous=[w for w in previous if not w.startswith("[sentence_grounding, nhóm 1, error]")]
             scene.review_notes=review_notes_for(scene.fact_ids,brief)
             scene.review_notes.warnings=list(dict.fromkeys(previous+scene.review_notes.warnings))
             for message in list(scene.review_notes.warnings if scene.review_notes else []):

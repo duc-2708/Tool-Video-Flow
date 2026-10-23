@@ -295,7 +295,7 @@ def test_partial_assets_stop_before_render(stages,monkeypatch):
         write_json(path,data)
         return path
     monkeypatch.setattr(module,"run_assets",partial)
-    with pytest.raises(PipelineError,match="Assets chưa hoàn tất audio"):
+    with pytest.raises(PipelineError,match="Assets chưa hoàn tất"):
         run_all(RunConfig(topic="Partial"),settings=settings)
     assert "render" not in calls
 

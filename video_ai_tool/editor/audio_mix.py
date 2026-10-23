@@ -39,6 +39,8 @@ def build_audio(timeline,assets_dir,resources):
         narration[start:start+length] += samples[:length]
     mix = narration.copy()
     music_files = local_media(Path(assets_dir)/"music",{".mp3",".wav",".m4a",".ogg"})
+    mood=timeline.plan.music.mood if hasattr(timeline.plan.music,"mood") else ""
+    music_files.sort(key=lambda p: (not bool(mood and mood.casefold() in p.stem.casefold()),p.name))
     music = music_files[0] if music_files and timeline.plan.music.volume > 0 else None
     if music:
         samples = read(music)
@@ -56,14 +58,24 @@ def build_audio(timeline,assets_dir,resources):
                 duck = np.ones_like(duck)
             fade = np.minimum(1.,np.minimum(np.arange(len(mix))/(rate*.7),(len(mix)-1-np.arange(len(mix)))/(rate*.8)))
             mix += music_track*duck[:,None]*fade[:,None]*timeline.plan.music.volume
+    sfx_files=local_media(Path(assets_dir)/"sfx",{".mp3",".wav",".ogg"})
+    events=[]
     for scene in timeline.scenes:
-        if scene.spec.sfx == "none":
-            continue
-        files = [p for p in local_media(Path(assets_dir)/"sfx",{".mp3",".wav",".ogg"}) if p.stem == scene.spec.sfx]
+        if scene.spec.sfx != "none": events.append((scene.start,scene.spec.sfx))
+        for shot in getattr(scene,"shots",[]):
+            visual=getattr(shot.spec,"visual",None)
+            style=getattr(timeline.plan,"render_style",None)
+            if style and not style.visual_templates: continue
+            if not visual or visual.template=="stock": continue
+            from editor.templates.core import element_times
+            kind="whoosh" if visual.template=="source_card" else "pop"
+            events.extend((shot.start+t,kind) for t in element_times(visual.template,visual.data.model_dump(mode="json"),shot.duration))
+    for time,kind in sorted(set(events)):
+        files = [p for p in sfx_files if p.stem == kind]
         if files:
             samples = read(files[0])
             samples *= .18/max(1e-6,float(np.max(np.abs(samples))))
-            offset = round(scene.start*rate)
+            offset = round(time*rate)
             length = min(len(samples),len(mix)-offset)
             mix[offset:offset+length] += samples[:length]
     ramp = np.minimum(1.,np.minimum(np.arange(len(mix))/(rate*.025),(len(mix)-1-np.arange(len(mix)))/(rate*.08)))

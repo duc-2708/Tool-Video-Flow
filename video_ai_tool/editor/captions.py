@@ -62,18 +62,24 @@ def word_timings(text,duration,timing_path=None):
 
 class Captions:
     def __init__(self,timeline,size,font_path):
+        self.timeline=timeline
         from schemas.style import CaptionStyle
         render_style = getattr(timeline.plan, "render_style", None)
         self.style = render_style.captions if render_style else CaptionStyle()
         self.size = size
         self.font = ImageFont.truetype(str(font_path),round(size[0]*self.style.font_scale))
         self.entries,self.cache = [],{}
-        if not self.style.enabled:
+        if not self.style.enabled and not any(getattr(scene,"audio_silent",False) for scene in timeline.scenes):
             return
         for scene in timeline.scenes:
+            if not self.style.enabled and not getattr(scene,"audio_silent",False): continue
             timing = scene.audio.with_suffix(".words.json")
             timing = timing if timing.resolve().is_relative_to(scene.audio.parent.resolve()) else None
-            words = word_timings(scene.spec.narration,scene.duration,timing)
+            text=scene.spec.narration
+            if getattr(scene,"audio_silent",False):
+                timing=None
+                if not any(c.isalnum() for c in text): text="Không có nội dung lời đọc."
+            words = word_timings(text,scene.duration,timing)
             count = 1 if self.style.mode == "word" else 3
             if self.style.mode == "sentence":
                 groups, current = [], []
@@ -96,13 +102,16 @@ class Captions:
         entry = next((e for e in self.entries if e[0] <= time < e[1]),None)
         if entry is None:
             return None
-        key = entry[2:]
+        scene=next((s for s in self.timeline.scenes if s.start<=time<s.start+s.duration),None)
+        visual=next((getattr(s.spec,"visual",None) for s in getattr(scene,"shots",[]) if s.start<=time<s.start+s.duration),None) if scene else None
+        key = entry[2:]+(bool(visual and visual.template!="stock"),)
         if key in self.cache:
             return self.cache[key]
         width,height = self.size
         font = self.font
         lines = wrap_lines(" ".join(entry[2]),font,width*.76)
-        while len(lines)*font.size*1.35 > height*.24 and font.size > 12:
+        band=.12 if visual and visual.template!="stock" else .24
+        while len(lines)*font.size*1.35 > height*band and font.size > 12:
             font = ImageFont.truetype(font.path,font.size-1)
             lines = wrap_lines(" ".join(entry[2]),font,width*.76)
         step = round(font.size*1.35)
@@ -113,12 +122,20 @@ class Captions:
             top = (height-len(lines)*step)/2
         elif self.style.position == "top":
             top = height*.12
+        if visual and visual.template!="stock":
+            # Templates reserve y=.20-.63; TikTok lower exclusion starts at .82.
+            top=max(height*.68,min(height*.82-len(lines)*step,height*.74))
         consumed = 0
         for index,line in enumerate(lines):
             x = (width-font.getlength(line))/2
             for word in line.split():
-                color = self.style.highlight_color if consumed == entry[3] else self.style.color
-                draw.text((x,top+index*step),word,font=font,fill=color,stroke_width=max(2,round(width*self.style.stroke_width_ratio)),stroke_fill=self.style.stroke_color,anchor="lt")
+                color = (self.style.highlight_color or "#FFD741") if consumed == entry[3] else (self.style.color or "#FFFFFF")
+                if self.style.appearance=="pill" and consumed==entry[3]:
+                    padding=max(3,round(width*.009))
+                    draw.rounded_rectangle((x-padding,top+index*step-padding,x+font.getlength(word)+padding,top+index*step+font.size+padding),radius=padding*2,fill=self.style.highlight_color or "#FFD741")
+                    color="#142230"
+                stroke=0 if self.style.appearance=="pill" and consumed==entry[3] else max(2,round(width*self.style.stroke_width_ratio))
+                draw.text((x,top+index*step),word,font=font,fill=color,stroke_width=stroke,stroke_fill=self.style.stroke_color or "#000000",anchor="lt")
                 x += font.getlength(word+" ")
                 consumed += 1
         # Bound memory independently of video length.

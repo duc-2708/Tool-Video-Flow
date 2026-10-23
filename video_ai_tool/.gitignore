@@ -16,3 +16,6 @@ output/*
 .coverage
 assets/reference_videos/*
 !assets/reference_videos/.gitkeep
+data/*.db
+data/*.db-wal
+data/*.db-shm

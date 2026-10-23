@@ -2,7 +2,7 @@
 from pathlib import Path
 import streamlit as st
 from app.style_controls import select_style
-from config.categories import load_categories
+from config.categories import categories_for
 from config.storytelling import DURATIONS,STYLES
 from pipeline.auto_category_jobs import AutoCategoryJobs
 from pipeline.projects import read_json
@@ -17,7 +17,7 @@ def auto_jobs(): return AutoCategoryJobs()
 def render(settings,project,topic,debug,diagnostics):
     st.title("Tạo video theo danh mục")
     st.caption("Khám phá chủ đề → Tìm thông tin → Kịch bản → Asset → Render. Ít dữ liệu sẽ tự rút thời lượng; không thêm sự kiện để kéo dài.")
-    try: categories=[c.name for c in load_categories().categories if c.enabled]
+    try: categories=[c.name for c in categories_for(settings).categories if c.enabled]
     except Exception as error: st.error(diagnostics.redact(str(error)));return
     if not categories: st.warning("Bật ít nhất một danh mục trong config/categories.yaml.");return
     manager=auto_jobs();active=manager.active()
@@ -27,8 +27,9 @@ def render(settings,project,topic,debug,diagnostics):
     days=right.selectbox("Khoảng ngày",[1,3,7],index=1,key="auto_days")
     duration=left.selectbox("Thời lượng mong muốn (giây)",DURATIONS,index=1,key="auto_duration")
     format_name=right.selectbox("Tỉ lệ",["tiktok","youtube"],format_func=lambda v:"TikTok · 9:16" if v=="tiktok" else "YouTube · 16:9",key="auto_format")
-    style_preset=select_style(settings,key="auto_style_preset")
+    style_preset=select_style(settings,key="auto_style_preset",category=category)
     style=left.selectbox("Phong cách",list(STYLES),format_func=STYLES.get,key="auto_style")
+    explainer_v2=st.checkbox("Explainer v2: giảng giải chuyên sâu",value=False,key="auto_explainer_v2")
     creative=right.selectbox("Mức sáng tạo",["strict","balanced","story"],key="auto_creative")
     st.caption("Mức sáng tạo chỉ đổi cách kể; số liệu, sự kiện và khẳng định luôn phải có fact làm căn cứ.")
     mode=st.radio("Chế độ chạy",["Tự động hoàn toàn","Dừng để duyệt kịch bản"],key="auto_mode")
@@ -41,7 +42,7 @@ def render(settings,project,topic,debug,diagnostics):
         st.info(f"Sẽ tạo tối đa {count} clip, model {settings.gateway_video_model}, {settings.ai_clip_seconds}s/clip. Tham khảo {quote.estimated_cost_vnd*count:,} VNĐ; generation_failed có thể phát sinh một job thử lại/clip.")
         confirmed=st.checkbox("Tôi xác nhận chi phí trước khi bắt đầu",key=f"auto_ai_confirm_{count}_{settings.gateway_video_model}_{settings.ai_clip_seconds}_{st.session_state.get('auto_ai_nonce',0)}")
     params=dict(category=category,region=region,time_window_days=days,duration=duration,format=format_name,creative_license=creative,
-        style=style,style_preset=style_preset,review=mode!="Tự động hoàn toàn",use_youtube=youtube,ai_clips=int(count),ai_confirmed=confirmed)
+        style=style,style_preset=style_preset,review=mode!="Tự động hoàn toàn",use_youtube=youtube,ai_clips=int(count),ai_confirmed=confirmed,content_mode="explainer_v2" if explainer_v2 else "event_only")
     ready=bool(settings.gemini_api_key.get_secret_value().strip() and settings.gemini_model.strip() and
         (not ai or confirmed and settings.gateway_api_key.get_secret_value().strip()))
     if st.button("Tạo video",type="primary",width="stretch",disabled=bool(active) or not ready,key="auto_start"):

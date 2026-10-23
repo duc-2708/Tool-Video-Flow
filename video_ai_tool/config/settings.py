@@ -21,11 +21,26 @@ class Settings(BaseModel):
     gemini_api_key: SecretStr = SecretStr("")
     gemini_model: str = ""
     gemini_director_model: str = ""
+    gemini_fallback_model: str = ""
+    gemini_timeout_sec: float = Field(default=120,gt=0,le=600)
     gemini_style_model: str = ""
     style_max_videos_per_run: int = Field(default=5, ge=1, le=20)
     style_max_file_mb: int = Field(default=200, ge=1, le=2000)
     style_max_duration_sec: float = Field(default=600, ge=1, le=3600)
     style_timeout_sec: float = Field(default=180, ge=10, le=300)
+    style_max_output_tokens: int = Field(default=8192,ge=1024,le=65536)
+    style_media_resolution: Literal["low","medium","none"] = "low"
+    style_use_response_schema: bool = True
+    style_schema_mode: Literal["flat","essential"] = "flat"
+    style_compact_output: bool = False
+    style_max_video_sec: float = Field(default=180,gt=0,le=600)
+    style_video_fps: float = Field(default=.5, gt=0, le=1)
+    style_tpm_limit: int = Field(default=250000, ge=1000)
+    style_rpm_limit: int = Field(default=2, ge=1, le=1000)
+    style_request_interval_sec: float = Field(default=5, ge=0, le=300)
+    scan_max_video_sec: float = Field(default=180, ge=1, le=3600)
+    scan_max_age_days: int = Field(default=180, ge=1, le=3650)
+    scan_max_new_videos: int = Field(default=5, ge=1, le=20)
     gateway_api_key: SecretStr = SecretStr("")
     gateway_base_url: str = "https://api.buihuuthang.com/v1"
     gateway_video_model: str = "veo-3.1"
@@ -36,6 +51,7 @@ class Settings(BaseModel):
     pexels_api_key: SecretStr = SecretStr("")
     pixabay_api_key: SecretStr = SecretStr("")
     default_voice: Literal["vi-VN-HoaiMyNeural", "vi-VN-NamMinhNeural"] = "vi-VN-HoaiMyNeural"
+    default_voice_fallback: Literal["vi-VN-HoaiMyNeural", "vi-VN-NamMinhNeural"] = "vi-VN-NamMinhNeural"
     request_timeout_sec: float = Field(default=30, gt=0, le=300)
     retry_attempts: int = Field(default=3, ge=1, le=8)
     cache_ttl_sec: int = Field(default=86400, ge=1)

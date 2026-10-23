@@ -23,10 +23,12 @@ from app.views.create_video import render as render_create_video
 from app.views.discover import render as render_discover
 from app.views.auto_category import render as render_auto_category
 from app.views.style_samples import render as render_style_samples
+from app.views.templates import render as render_templates
 
 NEW_PROJECT = "__new_project__"
 # Thêm trang mới tại đây; mỗi render có cùng signature với trang Research.
 PAGES = {"Tạo video theo danh mục":render_auto_category,"Khám phá chủ đề":render_discover, "Tạo video": render_create_video, "Research": render_research, "Edit Plan": render_edit_plan, "Assets": render_assets, "AI Video": render_ai_video, "Render": render_video, "Phong cách mẫu":render_style_samples}
+PAGES["Xem trước mẫu"]=render_templates
 
 
 def new_project() -> None:

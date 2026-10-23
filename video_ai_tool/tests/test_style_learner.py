@@ -23,6 +23,12 @@ from utils.cache import JsonCache
 
 def observed():
     return StyleAnalysis(duration_sec=30,
+        category_guess={"category_id":"cong-nghe","confidence":.85,"reason":"Ví dụ phân tích mock"},suggested_type="news",
+        narrative_flow="hook → giải thích → kết",connective_phrases=["Nhưng điều đáng nói về {topic} là..."],scene_count=3,avg_scene_sec=10,
+        scenes=[{"start_sec":start,"end_sec":end,"purpose":purpose,"narration_summary":"Tóm tắt một ý quan sát được trong video mẫu.","word_count":round((end-start)*2.6),"words_per_sec":2.6,
+            "shot_count":max(1,round((end-start)/3)),"average_shot_sec":(end-start)/max(1,round((end-start)/3)),"visual_types":["stock b-roll"],"camera_effects":["zoom_in"],"overlays":[],"sfx":[],"music":"nhẹ",
+            "transition_to_next":{"type":"fade","connective_template":"Nhưng điều đáng nói về {topic} là..." if purpose!="kết" else ""}}
+            for start,end,purpose in [(0,3,"hook"),(3,27,"giải thích"),(27,30,"kết")]],
         transcript_outline=[{"start_sec": 0, "end_sec": 30, "summary": "Một vật thể chuyển động chậm giữa khu rừng yên tĩnh khi ánh nắng bắt đầu lên."}],
         hook={"technique": "Câu hỏi", "template": "Điều gì khiến {topic} khác biệt?", "word_count": 7},
         structure=[{"name": name, "duration_sec": seconds, "purpose": "Gợi tò mò" if name=="hook" else "Triển khai rồi kết", "transition": "cut"}
@@ -64,9 +70,12 @@ def style_settings(tmp_path,monkeypatch):
 def test_analysis_schema_valid_and_invalid():
     assert StyleAnalysis.model_validate_json(observed().model_dump_json()).duration_sec==30
     bad=observed().model_dump();bad["transcript_outline"][0]["end_sec"]=80
-    with pytest.raises(ValidationError,match="vượt thời lượng"): StyleAnalysis.model_validate(bad)
+    recovered=StyleAnalysis.model_validate(bad)
+    assert recovered.normalization_notes and all(p.end_sec<=recovered.duration_sec+1 for p in recovered.transcript_outline)
     bad=observed().model_dump();bad["captions"]["color"]="not a color"
-    with pytest.raises(ValidationError): StyleAnalysis.model_validate(bad)
+    recovered=StyleAnalysis.model_validate(bad)
+    assert recovered.captions.color is None and recovered.analysis_warnings
+    assert "not a color" in recovered.captions.color_note
 
 
 def test_hash_cache_avoids_second_upload_and_invalidates_notes(style_settings):
@@ -80,10 +89,12 @@ def test_hash_cache_avoids_second_upload_and_invalidates_notes(style_settings):
     assert AnalysisRecord.model_validate_json(saved.read_text(encoding="utf-8")).file_hash
     (saved.parent.parent/"a.txt").write_text("Ghi chú mới",encoding="utf-8")
     analyze_one(style_settings,"a.mp4",provider=provider)
-    assert provider.analyze.call_count==2
+    assert provider.analyze.call_count==1
+    analyze_one(style_settings,"a.mp4",provider=provider,force=True)
+    assert provider.analyze.call_count==1  # Existing raw is immutable, including relearn.
     (saved.parent.parent/"a.mp4").write_bytes(b"changed video")
     analyze_one(style_settings,"a.mp4",provider=provider)
-    assert provider.analyze.call_count==3
+    assert provider.analyze.call_count==2
 
 
 def test_rename_uses_same_hash_cache(style_settings):
@@ -107,7 +118,7 @@ def test_one_file_failure_does_not_break_batch_and_redacts_key(style_settings):
 def test_estimate_no_api_and_max_batch(style_settings,monkeypatch):
     provider=Mock();monkeypatch.setattr("pipeline.style_learner.VideoStyleProvider",provider)
     estimate=estimate_batch(style_settings,["a.mp4"])
-    assert estimate["estimated_input_tokens"]>12000 and estimate["total_duration_sec"]==30
+    assert 0<estimate["estimated_input_tokens"]<12000 and estimate["total_duration_sec"]==30
     provider.assert_not_called()
     with pytest.raises(ValueError,match="Tối đa"):
         estimate_batch(style_settings,[f"{i}.mp4" for i in range(6)])
@@ -137,9 +148,9 @@ def test_uploaded_file_deleted_on_success_and_generation_error(style_settings,mo
     monkeypatch.setattr("pipeline.style_learner.GeminiProvider",lambda settings:llm)
     provider=VideoStyleProvider(style_settings)
     if failed:
-        with pytest.raises(RuntimeError): provider.analyze(Path("a.mp4"),"prompt",lambda message:None)
+        with pytest.raises(RuntimeError): provider.analyze(style_settings.root_dir/"assets/reference_videos/a.mp4","prompt",lambda message:None)
     else:
-        assert provider.analyze(Path("a.mp4"),"prompt",lambda message:None).duration_sec==30
+        assert provider.analyze(style_settings.root_dir/"assets/reference_videos/a.mp4","prompt",lambda message:None).duration_sec==30
     llm.client.files.delete.assert_called_once_with(name="files/mock")
     provider.close();llm.close.assert_called_once()
 

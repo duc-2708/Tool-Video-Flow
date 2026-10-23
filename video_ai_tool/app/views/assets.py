@@ -4,7 +4,7 @@ from pathlib import Path
 import streamlit as st
 from app.ui_errors import error_details
 from config.settings import Settings
-from pipeline.assets import load_assets, refresh_shot, run_assets, safe_asset_path
+from pipeline.assets import load_assets, refresh_shot, refresh_audio,run_assets, safe_asset_path
 from pipeline.stock_assets import allowed_media_url
 from utils.diagnostics import Diagnostics
 
@@ -61,7 +61,7 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
         report(error, project, diagnostics)
         show_error(project, debug)
         return
-    completed = sum(scene.audio_path is not None for scene in manifest.scenes)
+    completed = sum(scene.audio_path is not None and not scene.audio_silent for scene in manifest.scenes)
     fallbacks = sum(shot.fallback for scene in manifest.scenes for shot in scene.shots)
     columns = st.columns(3)
     columns[0].metric("Audio đã tạo", f"{completed}/{len(manifest.scenes)} cảnh")
@@ -71,8 +71,11 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
         st.warning("Một số cảnh chưa có audio. Nhấn Tạo Assets để thử lại; các audio/cache đã thành công được tái sử dụng.")
     for warning in manifest.warnings:
         st.warning(diagnostics.redact(warning))
+    for scene in manifest.scenes:
+        if scene.audio_silent:
+            st.error(f"cảnh {scene.scene_id} không có giọng đọc (toàn bộ hoặc một phần). Video dùng im lặng và caption; hãy chạy lại riêng audio nếu muốn có lời đọc.")
     st.dataframe([{"Cảnh": scene.scene_id, "Audio (giây)": scene.audio_duration_sec,
-                   "Trạng thái giọng": "Đã có" if scene.audio_path else "Cần thử lại",
+                   "Trạng thái giọng": "IM LẶNG — cần thử lại" if scene.audio_silent else "Đã có" if scene.audio_path else "TTS lỗi — cần thử lại",
                    "Số shot": len(scene.shots), "Fallback": sum(shot.fallback for shot in scene.shots)}
                   for scene in manifest.scenes], hide_index=True)
     selected = st.selectbox("Cảnh để nghe và xem b-roll", [scene.scene_id for scene in manifest.scenes],
@@ -81,6 +84,16 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
     scene_plan = next(scene for scene in resolved.scenes if scene.id == selected)
     st.subheader(f"Cảnh {selected} · {scene_plan.role}")
     st.write(diagnostics.redact(scene_plan.narration))
+    if st.button(f"Chạy lại riêng audio cảnh {selected}",key=f"audio_retry_{project.name}_{selected}"):
+        st.session_state.pop("assets_error",None)
+        try:
+            with st.spinner(f"Đang tạo lại riêng giọng cảnh {selected}; tái sử dụng b-roll và audio các cảnh khác…"):
+                refresh_audio(plan_path,settings,selected)
+            st.session_state["assets_notice"]={"project":project.name,"message":f"Đã xử lý lại audio cảnh {selected}; xem cảnh báo giọng bên dưới."}
+            st.rerun()
+        except Exception as error:
+            report(error,project,diagnostics)
+            st.rerun()
     if scene_assets.audio_path:
         try:
             audio = safe_asset_path(project, scene_assets.audio_path)
