@@ -1,0 +1,17 @@
+{
+  "text_hash": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+  "audio_silent": true,
+  "audio_error": "Văn bản không có nội dung đọc.",
+  "voice_used": null,
+  "warnings": [
+    "cảnh 2 không có giọng đọc: văn bản rỗng/chỉ có dấu câu sau khi làm sạch; dùng im lặng và caption."
+  ],
+  "chunks": [
+    {
+      "index": 1,
+      "silent": true,
+      "voice": null,
+      "error": "Văn bản không có nội dung đọc."
+    }
+  ]
+}

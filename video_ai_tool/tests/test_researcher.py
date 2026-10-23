@@ -122,7 +122,7 @@ def test_pipeline_writes_artifacts_without_real_api(source: SourceDocument, sett
     monkeypatch.setattr(module, "generate_queries", fake_queries)
     llm = FakeLLM([json.dumps(response_data(source))])
     llm.close = Mock()
-    monkeypatch.setattr(module, "GeminiProvider", lambda s: llm)
+    monkeypatch.setattr(module, "provider_for_step", lambda *args,**kwargs: llm)
     path = run_research("Dựng video", settings, use_youtube=False, progress=lambda message: None)
     assert path.exists() and (path.parent / "sources.json").exists()
     assert ResearchBrief.model_validate_json(path.read_text(encoding="utf-8")).facts
@@ -249,7 +249,7 @@ def test_run_writes_fact_statistics_and_warnings(source, settings, monkeypatch):
     data["facts"].append(fact_for(source, "Một đoạn không tồn tại trong nguồn này."))
     llm = FakeLLM([json.dumps(data)])
     llm.close = Mock()
-    monkeypatch.setattr(module, "GeminiProvider", lambda s: llm)
+    monkeypatch.setattr(module, "provider_for_step", lambda *args,**kwargs: llm)
     path = run_research("Dựng video", settings, use_youtube=False, progress=lambda message: None)
     source_data = json.loads((path.parent/"sources.json").read_text(encoding="utf-8"))
     assert source_data["grounding"]["kept"] == 3 and source_data["grounding"]["discarded"] == 1

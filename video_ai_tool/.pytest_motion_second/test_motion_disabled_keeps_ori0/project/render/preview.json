@@ -1,0 +1,16 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion_second\\test_motion_disabled_keeps_ori0\\project\\render\\dung-video_tiktok_preview.mp4",
+  "filename": "dung-video_tiktok_preview.mp4",
+  "mode": "preview",
+  "duration_sec": 3.2413333333333334,
+  "width": 540,
+  "height": 960,
+  "fps": 15,
+  "size_bytes": 275422,
+  "render_seconds": 2.69,
+  "warnings": [
+    "Cảnh 1, shot 1: dùng nền màu và chữ.",
+    "Cảnh 8, shot 1: dùng nền màu và chữ."
+  ],
+  "caption_timing": "Word sidecar nếu hợp lệ; còn lại ước lượng theo số ký tự"
+}

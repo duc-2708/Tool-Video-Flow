@@ -278,6 +278,12 @@ def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event
             from pipeline.topics_history import record_topic
             record_topic(settings.output_dir,config.topic,config.discovery.category,project,
                 original_topic=config.discovery.suggestion.topic,source_urls=[str(u) for u in config.discovery.suggestion.source_urls])
+            try:
+                from db.repository import Repository
+                Repository.for_settings(settings).mark_topic_used(config.topic,config.discovery.category,project)
+            except Exception as error:
+                diagnostics.record_exception(error,"Không cập nhật được used_topics; lịch sử JSON vẫn còn")
+                state.setdefault("log",[]).append("Cảnh báo: chưa cập nhật used_topics SQLite; giữ topics_history.json.")
         report(project,state,diagnostics)
         save()
         if progress_cb:

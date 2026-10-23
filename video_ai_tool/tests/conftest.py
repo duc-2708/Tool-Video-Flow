@@ -7,7 +7,7 @@ import pytest
 from dotenv.main import DotEnv
 import config.settings as configuration
 
-PREFIXES = ("GEMINI_", "YOUTUBE_", "PEXELS_", "PIXABAY_", "GATEWAY_", "STYLE_")
+PREFIXES = ("GEMINI_", "OPENAI_", "LLM_", "YOUTUBE_", "PEXELS_", "PIXABAY_", "GATEWAY_", "STYLE_")
 CONFIG_NAMES = {name.upper() for name in configuration.Settings.model_fields if name != "root_dir"}
 CONFIG_NAMES.update({"FFMPEG_BINARY", "FFPLAY_BINARY", "IMAGEIO_FFMPEG_EXE",
     "GOOGLE_API_KEY", "GOOGLE_GENAI_USE_VERTEXAI", "GOOGLE_APPLICATION_CREDENTIALS",

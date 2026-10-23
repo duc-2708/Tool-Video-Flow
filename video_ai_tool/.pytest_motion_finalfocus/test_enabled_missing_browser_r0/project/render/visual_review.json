@@ -1,0 +1,7 @@
+{
+  "shots": [],
+  "warnings": [
+    "Cảnh 8, shot 1: dùng nền màu và chữ.",
+    "Cảnh 1: Motion không sẵn sàng; dùng đồ họa Pillow hiện có. Kiểm tra Playwright/Chromium và logs/render_errors.log."
+  ]
+}

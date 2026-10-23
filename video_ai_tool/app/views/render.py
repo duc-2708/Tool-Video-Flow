@@ -30,6 +30,8 @@ def show_result(result,project,diagnostics):
 def render(settings,project,topic,debug,diagnostics):
     st.header("Render")
     st.caption("Dựng video từ Assets đã chuẩn bị. Mọi kết quả nằm trong render/; các đầu vào được giữ nguyên.")
+    if settings.motion_enabled:
+        st.info(f"Motion graphics bật · {settings.motion_fps} fps · scale {settings.motion_scale:g}. Thiếu Playwright/Chromium sẽ dùng đồ họa Pillow. Tiến độ chụp cảnh kèm thời gian còn lại ước tính.")
     if project is None:
         st.info("Chọn một project đã tạo Assets.")
         return

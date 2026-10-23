@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "timing_source": "estimated_characters",
+  "duration_sec": 2.2,
+  "words": [
+    {
+      "text": "Fixture",
+      "start": 0.0,
+      "end": 2.2
+    }
+  ]
+}

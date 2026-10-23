@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Literal
 
 from dotenv import dotenv_values
-from pydantic import BaseModel, ConfigDict, Field, SecretStr, ValidationError, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, SecretStr, ValidationError, field_validator, model_validator
 
 from config.video_models import VIDEO_MODELS
 
@@ -18,6 +18,26 @@ class Settings(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     root_dir: Path = ROOT_DIR
+    motion_enabled: bool = False
+    motion_fps: int = Field(default=30,ge=1,le=60)
+    motion_scale: float = Field(default=1.,ge=.25,le=1.)
+    @field_validator("motion_enabled","motion_fps","motion_scale",mode="before")
+    @classmethod
+    def optional_motion_defaults(cls,value,info):
+        if value is None or isinstance(value,str) and not value.strip():
+            return {"motion_enabled":False,"motion_fps":30,"motion_scale":1.}[info.field_name]
+        return value
+    openai_api_key: SecretStr = SecretStr("")
+    openai_model: str = ""
+    openai_director_model: str = ""
+    openai_timeout_sec: float = Field(default=120,gt=0,le=600)
+    openai_rpm_limit: int = Field(default=20,ge=1,le=1000)
+    openai_max_retries: int = Field(default=3,ge=0,le=8)
+    llm_provider_researcher: str = "gemini"
+    llm_provider_director: str = "gemini"
+    llm_provider_trend: str = "gemini"
+    llm_fallback_provider: str = ""
+    _llm_configuration_warnings: tuple[str,...] = PrivateAttr(default=())
     gemini_api_key: SecretStr = SecretStr("")
     gemini_model: str = ""
     gemini_director_model: str = ""
@@ -48,6 +68,7 @@ class Settings(BaseModel):
     ai_clip_seconds: int = Field(default=4, ge=1, le=30)
     ai_clip_max_per_run: int = Field(default=3, ge=0, le=20)
     youtube_api_key: SecretStr = SecretStr("")
+    scrapecreators_api_key: SecretStr = SecretStr("")
     pexels_api_key: SecretStr = SecretStr("")
     pixabay_api_key: SecretStr = SecretStr("")
     default_voice: Literal["vi-VN-HoaiMyNeural", "vi-VN-NamMinhNeural"] = "vi-VN-HoaiMyNeural"
@@ -58,6 +79,39 @@ class Settings(BaseModel):
     youtube_daily_quota: int = Field(default=10000, ge=1, le=10000)
     youtube_max_searches_per_run: int = Field(default=2, ge=0, le=10)
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
+
+    @model_validator(mode="wrap")
+    @classmethod
+    def optional_llm_configuration(cls, data, handler):
+        """Blank/new invalid options cannot prevent unrelated local pages loading."""
+        if not isinstance(data,dict): return handler(data)
+        data=dict(data);warnings=[]
+        for name,default in (("openai_timeout_sec",120),("openai_rpm_limit",20),("openai_max_retries",3)):
+            value=data.get(name)
+            if value is None or isinstance(value,str) and not value.strip():
+                data[name]=default;continue
+            try:
+                number=float(value)
+                maximum=600 if name=="openai_timeout_sec" else 1000 if name=="openai_rpm_limit" else 8
+                minimum=0 if name in {"openai_max_retries","openai_timeout_sec"} else 1
+                if isinstance(value,bool) or not minimum<=number<=maximum or name=="openai_timeout_sec" and number==0 or name!="openai_timeout_sec" and not number.is_integer(): raise ValueError
+                data[name]=number if name=="openai_timeout_sec" else int(number)
+            except (TypeError,ValueError,OverflowError):
+                data[name]=default;warnings.append(f"{name.upper()} không hợp lệ; dùng mặc định {default}.")
+        for name in ("llm_provider_researcher","llm_provider_director","llm_provider_trend","llm_fallback_provider"):
+            value=str(data.get(name) or "").strip().lower()
+            if not value and name!="llm_fallback_provider": value="gemini"
+            if value not in {"gemini","openai",""}:
+                warnings.append(f"{name.upper()} chỉ chấp nhận gemini/openai; lựa chọn này đã tắt.")
+            data[name]=value
+        for name in ("openai_model","openai_director_model"): data[name]=str(data.get(name) or "").strip()
+        if data.get("openai_api_key") is None: data["openai_api_key"]=""
+        result=handler(data)
+        result._llm_configuration_warnings=tuple(warnings)
+        return result
+
+    @property
+    def llm_configuration_warnings(self): return list(self._llm_configuration_warnings)
 
     @field_validator("gateway_allowed_models", mode="before")
     @classmethod

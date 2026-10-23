@@ -1,0 +1,29 @@
+CREDITS — video_ai_tool
+Chỉ liệt kê tài nguyên đang được dùng trong assets.json.
+
+Cảnh 1: audio có đoạn im lặng do TTS lỗi; caption theo kịch bản, không phải giọng đọc.
+Cảnh 1 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 2: audio có đoạn im lặng do TTS lỗi; caption theo kịch bản, không phải giọng đọc.
+Cảnh 2 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 2 / shot 2: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 3: audio có đoạn im lặng do TTS lỗi; caption theo kịch bản, không phải giọng đọc.
+Cảnh 3 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 3 / shot 2: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 4: audio có đoạn im lặng do TTS lỗi; caption theo kịch bản, không phải giọng đọc.
+Cảnh 4 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 4 / shot 2: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 5: audio có đoạn im lặng do TTS lỗi; caption theo kịch bản, không phải giọng đọc.
+Cảnh 5 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 5 / shot 2: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 6: audio có đoạn im lặng do TTS lỗi; caption theo kịch bản, không phải giọng đọc.
+Cảnh 6 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 6 / shot 2: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 7: audio có đoạn im lặng do TTS lỗi; caption theo kịch bản, không phải giọng đọc.
+Cảnh 7 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 7 / shot 2: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 8: audio có đoạn im lặng do TTS lỗi; caption theo kịch bản, không phải giọng đọc.
+Cảnh 8 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 8 / shot 2: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+
+License Pixabay: https://pixabay.com/service/license-summary/
+License Pexels: https://www.pexels.com/license/

@@ -69,8 +69,8 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
                         report_error(error,diagnostics,project)
                         st.error(diagnostics.redact(str(error)))
     kinds, formats = ["news", "review", "story"], ["tiktok", "youtube"]
-    model_ready = bool(settings.gemini_api_key.get_secret_value().strip() and
-                       (settings.gemini_director_model.strip() or settings.gemini_model.strip()))
+    from providers.llm.router import route_ready
+    model_ready = route_ready(settings,"director")
     with st.form(f"director_generate_{scope}"):
         video_type = st.selectbox("Loại video", kinds, index=kinds.index(existing.video_type) if existing and existing.video_type in kinds else 1)
         video_format = st.selectbox("Khổ video", formats, index=formats.index(existing.format) if existing else 0,

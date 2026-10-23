@@ -14,24 +14,7 @@ from utils.diagnostics import Diagnostics
 from providers.research_payload import ResearchFactsResponse,compact_facts_json
 from providers.style_schema import response_schema
 from providers.gemini_resilience import transient_gemini,error_code,compact_prompt
-
-
-class GeminiRequestError(ProviderError):
-    def __init__(self,code,message):
-        super().__init__(message)
-        self.code = code
-
-
-class GeminiOutputError(ProviderError):
-    """Phân biệt output rỗng/cắt token với API hoặc lỗi parse JSON."""
-    def __init__(self, message: str, *, retryable: bool,finish_reason: str | None = None) -> None:
-        super().__init__(message)
-        self.retryable = retryable
-        self.finish_reason=finish_reason
-
-
-class GeminiTransientError(GeminiRequestError):
-    """Retry budget exhausted; callers must checkpoint rather than retry blindly."""
+from providers.llm.base import GeminiRequestError, GeminiOutputError, GeminiTransientError, AuthError
 
 
 class GeminiProvider(LLMProvider):
@@ -117,7 +100,8 @@ class GeminiProvider(LLMProvider):
                     # là Schema kiểu OpenAPI, SDK đổi additionalProperties thành
                     # additional_properties không hợp lệ ở endpoint đang dùng.
                     response_json_schema=response_schema(schema),
-                    max_output_tokens=self.output_token_budget, temperature=0.2)
+                    max_output_tokens=self.output_token_budget, temperature=getattr(self,"temperature",0.2),
+                    system_instruction=getattr(self,"system_instruction",None))
             if media is not None:
                 options=getattr(self,"media_request_options",{})
                 if options:
@@ -162,7 +146,7 @@ class GeminiProvider(LLMProvider):
         except errors.APIError as error:
             self.diagnostics.record_exception(error, "Gemini generate_content: API error")
             if error.code in {401, 403}:
-                raise ProviderError("Gemini từ chối xác thực/quyền truy cập. Kiểm tra key và model trong .env.") from None
+                raise AuthError("Gemini từ chối xác thực/quyền truy cập. Kiểm tra GEMINI_API_KEY và model trong .env.",code=error.code) from None
             if error.code == 429:
                 raise ProviderError("Gemini hết quota hoặc bị giới hạn tốc độ. Thử lại sau.") from None
             if error.code == 400:

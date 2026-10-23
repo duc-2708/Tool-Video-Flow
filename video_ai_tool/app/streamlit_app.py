@@ -9,6 +9,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import streamlit as st
+from pydantic import ValidationError
+from providers.llm.router import model_for, route_ready
 from config.settings import get_settings
 from pipeline.projects import list_projects
 from utils.diagnostics import Diagnostics
@@ -24,11 +26,13 @@ from app.views.discover import render as render_discover
 from app.views.auto_category import render as render_auto_category
 from app.views.style_samples import render as render_style_samples
 from app.views.templates import render as render_templates
+from app.views.trend_scout import render as render_trend_scout
 
 NEW_PROJECT = "__new_project__"
 # Thêm trang mới tại đây; mỗi render có cùng signature với trang Research.
 PAGES = {"Tạo video theo danh mục":render_auto_category,"Khám phá chủ đề":render_discover, "Tạo video": render_create_video, "Research": render_research, "Edit Plan": render_edit_plan, "Assets": render_assets, "AI Video": render_ai_video, "Render": render_video, "Phong cách mẫu":render_style_samples}
 PAGES["Xem trước mẫu"]=render_templates
+PAGES["Trend Scout"]=render_trend_scout
 
 
 def new_project() -> None:
@@ -47,7 +51,11 @@ def main() -> None:
         settings = get_settings()
         diagnostics = Diagnostics(settings.logs_dir, secrets=[
             getattr(settings, f"{provider}_api_key").get_secret_value()
-            for provider in ("gemini", "youtube", "pexels", "pixabay", "gateway")])
+            for provider in ("gemini", "youtube", "pexels", "pixabay", "gateway", "scrapecreators", "openai")])
+    except ValidationError as error:
+        names=sorted({str(item["loc"][0]).upper() for item in error.errors(include_input=False) if item["loc"]})
+        st.error("Không nạp được cấu hình. Biến cần kiểm tra: "+", ".join(names)+". Không hiển thị giá trị khóa.")
+        st.stop()
     except Exception:
         st.error("Không nạp được cấu hình. Hãy kiểm tra kiểu và khoảng giá trị theo .env.example bằng trình soạn thảo.")
         st.stop()
@@ -66,6 +74,10 @@ def main() -> None:
         st.stop()
     by_name = {project.name: project for project in projects}
     options = [NEW_PROJECT, *by_name]
+    inspiration=st.session_state.pop("pending_research_topic",None)
+    if inspiration:
+        st.session_state["project_choice"]=NEW_PROJECT
+        st.session_state["research_topic_new"]=inspiration
     pending = st.session_state.pop("pending_project", None)
     if pending in by_name:
         st.session_state["project_choice"] = pending
@@ -85,11 +97,17 @@ def main() -> None:
         debug = st.checkbox("Chế độ debug", value=False, key="ui_debug")
         st.divider()
         st.subheader("Trạng thái cấu hình")
-        for provider in ("gemini", "youtube", "pexels", "pixabay", "gateway"):
+        for provider in ("gemini", "youtube", "pexels", "pixabay", "gateway", "scrapecreators", "openai"):
             present = bool(getattr(settings, f"{provider}_api_key").get_secret_value().strip())
             st.text(f"{provider.upper()}_API_KEY: {'Đã có' if present else 'Chưa có'}")
         st.text("Model: " + diagnostics.redact(settings.gemini_model or "Chưa cấu hình"))
         st.text("Model Director: " + diagnostics.redact(settings.gemini_director_model.strip() or settings.gemini_model or "Chưa cấu hình"))
+        for step,label in (("researcher","Researcher"),("director","Director"),("trend","Trend")):
+            provider=getattr(settings,"llm_provider_"+step)
+            st.text(f"LLM {label}: "+diagnostics.redact(f"{provider} / {model_for(settings,provider,step) or 'Chưa có model'}"))
+            if not route_ready(settings,step): st.caption(f"{label}: chưa đủ cấu hình provider đã chọn.")
+        st.caption("Style Learner: chỉ Gemini, không chuyển sang OpenAI.")
+        for warning in settings.llm_configuration_warnings: st.warning(warning)
         st.caption("Trạng thái key chỉ cho biết đã nhập, chưa xác minh quyền sử dụng.")
         st.caption("Chỉ chạy local tại 127.0.0.1. Không có trình xem hoặc nhập API key trên UI.")
     notice = st.session_state.pop("research_notice", None)

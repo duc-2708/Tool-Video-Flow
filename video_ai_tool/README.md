@@ -1,6 +1,55 @@
 <!-- file: README.md -->
 # video_ai_tool
 
+## Motion graphics — giai đoạn 1 (tùy chọn)
+
+Renderer HTML local hỗ trợ `hook_card`, `steps_list`, `compare_bars`, nền tối và
+phụ đề cụm 2–4 từ. Không lấy hình/mascot từ video mẫu. Các mẫu khác vẫn dùng
+Pillow/MoviePy. Luật kiểm chứng và prompt nội dung Director giữ nguyên.
+
+Chạy từng lệnh trong thư mục `video_ai_tool`:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+```powershell
+.\.venv\Scripts\python.exe -m playwright install chromium
+```
+
+Chỉnh bằng editor trong `.env` (không chứa khóa trong ví dụ này):
+
+```dotenv
+MOTION_ENABLED=true
+MOTION_FPS=30
+MOTION_SCALE=0.5
+```
+
+`MOTION_ENABLED=false` mặc định giữ nguyên renderer cũ (preview 540×960/15fps).
+Khi bật, scale 0.5 = 540×960, scale 1.0 = 1080×1920 (YouTube xoay ngang),
+FPS do MOTION_FPS quyết định cho cả preview/final; chất lượng mã hóa vẫn theo mode.
+Thiếu Playwright/Chromium hoặc motion lỗi → cảnh đó dùng đồ họa Pillow và ghi cảnh báo.
+Không cần cài FFmpeg riêng. Khởi động lại Streamlit sau khi đổi cấu hình.
+
+```powershell
+.\.venv\Scripts\python.exe -m editor.render output/auto-cong-nghe-01bfaa5f/edit_plan.resolved.json --mode preview
+```
+
+Render qua UI vẫn chạy worker, hiển thị tiến độ từng cảnh/khung và ETA ước tính.
+Cache trong `output/<project>/render/motion_cache/`; đổi dữ liệu/timing/font/engine
+thì tự vô hiệu cache. Muốn render lại khi pipeline đã done, dùng trang Render;
+không sửa hash/status trong run_state để ép resume.
+
+Demo/benchmark 10s chỉ dùng media local, không gọi API, không sửa project gốc:
+
+```powershell
+.\.venv\Scripts\python.exe -m pipeline.motion_demo output/auto-cong-nghe-01bfaa5f/edit_plan.resolved.json --scene 1
+```
+
+MP4, ảnh và `benchmark.json` nằm trong `output/motion_demo/`. Audio cảnh gốc được
+cắt/pad im lặng tới 10s; đây là phép thử đồ họa, không phải kịch bản mới dài 10s.
+Chi tiết timing, beats, cache và giới hạn: [quy trình](../docs/PROCESS.md#71-motion-graphics-html--giai-đoạn-1).
+
 ## Chạy test độc lập với cấu hình máy
 
 ```powershell

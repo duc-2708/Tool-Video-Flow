@@ -1,0 +1,76 @@
+
+[2026-10-23T10:00:16.323425+00:00] TTS lỗi ở cảnh 1; đoạn=1; attempt=1/5; voice=vi-VN-HoaiMyNeural; text_length=8; cleaned_text='Xin chào'
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 94, in _chunk
+    worker.submit(asyncio.run,bounded()).result()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\concurrent\futures\_base.py", line 450, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\concurrent\futures\_base.py", line 395, in __get_result
+    raise self._exception
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\concurrent\futures\thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\concurrent\futures\thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 92, in bounded
+    await asyncio.wait_for(collect(),timeout=max(30,self.settings.request_timeout_sec*3))
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 86, in collect
+    async for event in request.stream():
+    ...<3 lines>...
+                "end":(event["offset"]+event["duration"])/10_000_000})
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_motion.py", line 86, in stream
+    if len(calls)<=2: raise TimeoutError("fixture timeout")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: fixture timeout
+
+
+[2026-10-23T10:00:16.362716+00:00] TTS lỗi ở cảnh 1; đoạn=1; attempt=2/5; voice=vi-VN-HoaiMyNeural; text_length=8; cleaned_text='Xin chào'
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 94, in _chunk
+    worker.submit(asyncio.run,bounded()).result()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\concurrent\futures\_base.py", line 450, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\concurrent\futures\_base.py", line 395, in __get_result
+    raise self._exception
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\concurrent\futures\thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\concurrent\futures\thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\asyncio\base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 92, in bounded
+    await asyncio.wait_for(collect(),timeout=max(30,self.settings.request_timeout_sec*3))
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\asyncio\tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 86, in collect
+    async for event in request.stream():
+    ...<3 lines>...
+                "end":(event["offset"]+event["duration"])/10_000_000})
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_motion.py", line 86, in stream
+    if len(calls)<=2: raise TimeoutError("fixture timeout")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: fixture timeout
+

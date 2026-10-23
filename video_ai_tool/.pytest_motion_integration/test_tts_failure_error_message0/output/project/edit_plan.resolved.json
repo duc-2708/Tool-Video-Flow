@@ -1,0 +1,258 @@
+{
+  "title": "Dựng video",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "calm",
+    "volume": 0.1
+  },
+  "scenes": [
+    {
+      "id": 1,
+      "role": "hook",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 2.2,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false
+    },
+    {
+      "id": 2,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 2.2,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 3,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 2.2,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 4,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 2.2,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 5,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 2.2,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 6,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 2.2,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 7,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 2.2,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 8,
+      "role": "cta",
+      "narration": "Bạn muốn tìm hiểu bước nào?",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 2.2,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn muốn tìm hiểu bước nào?"
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    }
+  ],
+  "video_type": null,
+  "target_duration_sec": null,
+  "brief_hash": null,
+  "source_plan_hash": "eb99c323a550a222a2d8929d47abb8888d2999f1b72aba2acb9258e287aa68b8",
+  "timing_basis": "audio",
+  "warnings": [
+    "Cảnh 2: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 3: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 4: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 5: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 6: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 7: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 8: số shot đổi từ 2 thành 1 theo audio thật."
+  ]
+}

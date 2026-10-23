@@ -1,0 +1,215 @@
+{
+  "source_plan_hash": "eb99c323a550a222a2d8929d47abb8888d2999f1b72aba2acb9258e287aa68b8",
+  "resolved_plan_hash": "c07e38ad5f1a4e65d4bb66fa9ee638a649b894504e9f955f51448ee4bf44a0b7",
+  "status": "complete",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "audio_path": "audio/scene_1.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_1_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "audio_path": "audio/scene_2.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_2_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "audio_path": "audio/scene_3.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_3_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "audio_path": "audio/scene_4.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_4_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 5,
+      "audio_path": "audio/scene_5.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_5_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 6,
+      "audio_path": "audio/scene_6.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_6_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 7,
+      "audio_path": "audio/scene_7.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_7_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "audio_path": "audio/scene_8.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_8_shot_1_fallback_0155de9979.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "Cảnh 3: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 4: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 5: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 6: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 7: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 8: số shot đổi từ 2 thành 1 theo audio thật."
+  ]
+}

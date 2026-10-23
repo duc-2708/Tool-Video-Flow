@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "timing_source": "estimated_characters",
+  "duration_sec": 2.2,
+  "words": [
+    {
+      "text": "Lời",
+      "start": 0.0,
+      "end": 0.55
+    },
+    {
+      "text": "đọc",
+      "start": 0.55,
+      "end": 1.1
+    },
+    {
+      "text": "hợp",
+      "start": 1.1,
+      "end": 1.6500000000000001
+    },
+    {
+      "text": "lệ.",
+      "start": 1.6500000000000001,
+      "end": 2.2
+    }
+  ]
+}

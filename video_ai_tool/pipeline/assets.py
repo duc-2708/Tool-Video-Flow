@@ -152,6 +152,11 @@ def scene_audio(scene,voice,path,settings,diagnostics,tts,protected_names):
                 old_duration=duration;duration=pad_audio_to(path,target,settings.request_timeout_sec)
                 meta["warnings"].append(f"Cảnh {scene.id}: thêm {duration-old_duration:.2f}s khoảng nghỉ để shot Explainer nằm trong 2.5–4s, giữ toàn bộ lời đọc.")
                 write_json_atomic(audio_metadata_path(path),meta)
+        from utils.word_timing import read_words,save_words,timing_source,align_words
+        timing=path.with_suffix(".words.json")
+        observed=read_words(timing);source=timing_source(timing)
+        _,method=align_words(scene.narration,duration,observed)
+        save_words(timing,scene.narration,duration,observed,source=source if source!="word_boundary" else method)
         return duration,meta
     except Exception as error:
         diagnostics.record_exception(error,f"TTS lỗi ở cảnh {scene.id}; voice={voice}; attempt=provider; text_length={len(clean)}; cleaned_text={clean[:200]!r}")
@@ -161,6 +166,8 @@ def scene_audio(scene,voice,path,settings,diagnostics,tts,protected_names):
             warning=f"cảnh {scene.id} không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh {scene.id} trong Assets."
             meta={"audio_silent":True,"audio_error":message,"voice_used":None,"warnings":[warning]}
             write_json_atomic(audio_metadata_path(path),meta)
+            from utils.word_timing import save_words
+            save_words(path.with_suffix(".words.json"),scene.narration,duration)
             return duration,meta
         except Exception as silence_error:
             diagnostics.record_exception(silence_error,f"Không tạo được im lặng dự phòng cảnh {scene.id}")

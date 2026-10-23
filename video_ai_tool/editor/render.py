@@ -54,8 +54,12 @@ class Frames:
         self.theme=theme or load_theme()
         self.cards=OrderedDict()
         self.failed_cards=set()
+        self.motion_paths={}
+        self.motion_readers=OrderedDict()
 
     def close(self):
+        for reader in self.motion_readers.values(): reader.close()
+        self.motion_readers.clear()
         for source in self.cache.values():
             if isinstance(source,VideoFileClip):
                 source.close()
@@ -63,6 +67,15 @@ class Frames:
         self.cards.clear()
 
     def frame(self,shot,t):
+        if shot.scene_id in self.motion_paths:
+            if shot.scene_id not in self.motion_readers:
+                if len(self.motion_readers)>=2:
+                    _,old=self.motion_readers.popitem(last=False);old.close()
+                self.motion_readers[shot.scene_id]=VideoFileClip(str(self.motion_paths[shot.scene_id]),audio=False)
+            self.motion_readers.move_to_end(shot.scene_id)
+            reader=self.motion_readers[shot.scene_id]
+            scene=next(s for s in self.timeline.scenes if s.spec.id==shot.scene_id)
+            return reader.get_frame(min(max(0,t-scene.start),max(0,reader.duration-1/reader.fps)))
         key = (shot.scene_id,shot.shot_id)
         text = shot.spec.text_overlay or next(s.spec.narration for s in self.timeline.scenes if s.spec.id == shot.scene_id)
         if key not in self.cache:
@@ -156,16 +169,45 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
         with file_lock(render_dir/"editor.lock"):
             portrait = timeline.plan.format == "tiktok"
             size = ((540,960) if portrait else (960,540)) if mode == "preview" else ((1080,1920) if portrait else (1920,1080))
+            if settings.motion_enabled:
+                full=(1080,1920) if portrait else (1920,1080)
+                size=tuple(max(2,round(n*settings.motion_scale/2)*2) for n in full)
             font = find_font(settings.root_dir)
             theme=load_theme(timeline.plan.render_style.theme,settings.root_dir)
             captions = Captions(timeline,size,font)
             frames = Frames(timeline,size,font,diagnostics,theme)
+            motion_results=[]
+            if settings.motion_enabled and timeline.plan.render_style.visual_templates:
+                from pipeline.render_motion import render_scene,SUPPORTED
+                candidates=[s for s in timeline.scenes if any(shot.spec.visual and shot.spec.visual.template in SUPPORTED for shot in s.shots)]
+                paths={}
+                for index,scene in enumerate(candidates):
+                    def static_frame(t,scene=scene):
+                        shot=next((s for s in scene.shots if scene.start+t<s.start+s.duration),scene.shots[-1])
+                        return captions.apply(frames.frame(shot,scene.start+t),scene.start+t)
+                    def motion_progress(value,message,index=index):
+                        notify(.05+.45*(index+value)/max(1,len(candidates)),message)
+                    caption_style=captions.style.model_copy(update={"enabled":True}) if scene.audio_silent else captions.style
+                    result=render_scene(scene,render_dir/"motion_cache",size=size,font=font,caption_style=caption_style,
+                        fps=settings.motion_fps,static_frame=static_frame,progress=motion_progress,diagnostics=diagnostics,
+                        extra_identity={"theme":theme,"scene":scene.spec.model_dump(mode="json")})
+                    if result:
+                        paths[scene.spec.id]=result["path"];motion_results.append(result)
+                    else:
+                        timeline.warnings.append(f"Cảnh {scene.spec.id}: Motion không sẵn sàng; dùng đồ họa Pillow hiện có. Kiểm tra Playwright/Chromium và logs/render_errors.log.")
+                frames.motion_paths=paths
             tracker=ProgressTracker(timeline,size,theme)
             notify(.05,"Đang chuẩn hóa giọng đọc và trộn nhạc")
             audio,music = build_audio(timeline,settings.root_dir/"assets",resources)
             resources.append(audio)
             fps=15 if mode=="preview" else 30
-            video = VideoClip(lambda t: tracker.apply(captions.apply(frames.at(t),t),t),duration=timeline.duration).with_audio(audio).with_fps(fps)
+            if settings.motion_enabled: fps=settings.motion_fps
+            def composite(t):
+                scene=next((s for s in timeline.scenes if t<s.start+s.duration),timeline.scenes[-1])
+                frame=frames.at(t)
+                if scene.spec.id not in frames.motion_paths: frame=captions.apply(frame,t)
+                return tracker.apply(frame,t)
+            video = VideoClip(composite,duration=timeline.duration).with_audio(audio).with_fps(fps)
             filename = f"{slugify(timeline.plan.title)}_{timeline.plan.format}_{mode}.mp4"
             destination = confined(render_dir,filename)
             temporary = confined(render_dir,f".{uuid.uuid4().hex}.mp4")
@@ -175,7 +217,7 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                     audio_bitrate="192k",preset="ultrafast" if mode == "preview" else "medium",
                     threads=min(8,os.cpu_count() or 2),temp_audiofile=str(temp_audio),
                     ffmpeg_params=["-crf","27" if mode == "preview" else "20","-movflags","+faststart"],
-                    pixel_format="yuv420p",logger=RenderProgress(notify))
+                    pixel_format="yuv420p",logger=RenderProgress((lambda value,message:notify(.5+.5*value,message)) if settings.motion_enabled else notify))
                 replace_file_retry(temporary, destination)
             finally:
                 discard_temp_file(temp_audio)
@@ -187,6 +229,8 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                 "width":size[0],"height":size[1],"fps":fps,"size_bytes":destination.stat().st_size,
                 "render_seconds":round(time.perf_counter()-started,3),"warnings":timeline.warnings,
                 "caption_timing":"Word sidecar nếu hợp lệ; còn lại ước lượng theo số ký tự"}
+            if settings.motion_enabled:
+                result.update(motion_enabled=True,motion_scenes=motion_results,motion_scale=settings.motion_scale)
             write_json(confined(render_dir,f"{mode}.json"),result)
             reviews=getattr(timeline,"visual_review",[])
             write_json(confined(render_dir,"visual_review.json"),{"shots":reviews,"warnings":timeline.warnings})

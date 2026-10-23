@@ -2,6 +2,7 @@
 import streamlit as st
 from agents.video_prompt_writer import generate_for_shot,fallback_prompt
 from pipeline.video_prompts import save_shot_prompt
+from providers.llm.router import route_ready
 
 
 def prompt_editor(settings,project,scene_id,shot_index,saved_prompt,topic,diagnostics,*,prefix):
@@ -12,7 +13,7 @@ def prompt_editor(settings,project,scene_id,shot_index,saved_prompt,topic,diagno
     draft = st.text_area(f"AI prompt · cảnh {scene_id} / shot {shot_index}",
         value=saved_prompt or fallback_prompt(topic),key=key,height=100)
     simpler = st.checkbox("Đơn giản hơn",key=key+"_simple")
-    ready = bool(settings.gemini_api_key.get_secret_value().strip() and (settings.gemini_director_model.strip() or settings.gemini_model.strip()))
+    ready = route_ready(settings,"director")
     if st.button("Viết lại prompt",key=key+"_rewrite",disabled=not ready):
         try:
             with st.spinner("Đang viết prompt ngắn; chưa tạo video…"):

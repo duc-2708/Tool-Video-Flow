@@ -1,0 +1,219 @@
+{
+  "title": "Dựng video",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "calm",
+    "volume": 0.1
+  },
+  "scenes": [
+    {
+      "id": 1,
+      "role": "hook",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "pattern_interrupt": false,
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "id": 2,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "pattern_interrupt": false,
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "id": 3,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "pattern_interrupt": true,
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "id": 4,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "pattern_interrupt": true,
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "id": 5,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "pattern_interrupt": true,
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "id": 6,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "pattern_interrupt": true,
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "id": 7,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "pattern_interrupt": true,
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "id": 8,
+      "role": "cta",
+      "narration": "Bạn muốn tìm hiểu bước nào?",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "pattern_interrupt": true,
+      "fact_ids": []
+    }
+  ],
+  "target_duration_sec": 60.0
+}

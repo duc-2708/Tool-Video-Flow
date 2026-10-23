@@ -11,6 +11,8 @@ from pipeline.run_all import RunConfig,run_all,saved_config,STEPS,RunCancelled,A
 from pipeline.topics_history import already_made,history_rows
 from schemas.topic_discovery import DiscoveryHint,TopicSuggestion
 from sources.topic_discovery import discover_topics
+from config.trends import load_trends
+from pipeline.trend_scout import scout
 from agents.researcher import NoResearchDataError
 from utils.atomic_io import write_json_atomic,write_text_atomic,cleanup_tmp_files
 from utils.file_lock import file_lock
@@ -123,7 +125,23 @@ def run_auto(category=None,region="both",time_window_days=3,duration=60,format="
                 emit("discovery","Đang khám phá chủ đề và kiểm tra lịch sử…")
                 import time
                 started=time.perf_counter()
-                result=discover_topics(cfg.category,settings,region=cfg.region,time_window_days=cfg.time_window_days,count=10,use_youtube=cfg.use_youtube,progress_cb=lambda message:emit("discovery",message))
+                trends_config=load_trends(settings)
+                if trends_config.enabled:
+                    try:
+                        result=scout(cfg.category,settings,config=trends_config,region=cfg.region,count=10,
+                            use_youtube=cfg.use_youtube,progress_cb=lambda message:emit("discovery",message))
+                    except Exception as error:
+                        diagnostics.record_exception(error,"Trend Scout lỗi; dùng khám phá RSS/news hiện có")
+                        result={"topics":[],"warnings":["Trend Scout lỗi: "+diagnostics.redact(str(error))]}
+                    meta["topic_provider"]="trend_scout"
+                    write_json_atomic(project/"trend_scout.json",result)
+                    if not result["topics"]:
+                        notices=result["warnings"]+["Trend Scout chưa có chủ đề mới; tiếp tục RSS/news hiện có."]
+                        result=discover_topics(cfg.category,settings,region=cfg.region,time_window_days=cfg.time_window_days,count=10,use_youtube=cfg.use_youtube,progress_cb=lambda message:emit("discovery",message))
+                        result["warnings"]=notices+result["warnings"]
+                        meta["topic_provider"]="rss_fallback"
+                else:
+                    result=discover_topics(cfg.category,settings,region=cfg.region,time_window_days=cfg.time_window_days,count=10,use_youtube=cfg.use_youtube,progress_cb=lambda message:emit("discovery",message))
                 meta["warnings"]=result["warnings"]
                 history=history_rows(settings.output_dir)
                 meta["topics"]=[t for t in result["topics"] if not already_made(t["topic"],history,source_urls=t["source_urls"])][:3]

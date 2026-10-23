@@ -1,0 +1,22 @@
+CREDITS — video_ai_tool
+Chỉ liệt kê tài nguyên đang được dùng trong assets.json.
+
+Cảnh 1: giọng đọc Microsoft Edge TTS, nội dung theo narration của project.
+Cảnh 1 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 2: giọng đọc Microsoft Edge TTS, nội dung theo narration của project.
+Cảnh 2 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 3: giọng đọc Microsoft Edge TTS, nội dung theo narration của project.
+Cảnh 3 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 4: giọng đọc Microsoft Edge TTS, nội dung theo narration của project.
+Cảnh 4 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 5: giọng đọc Microsoft Edge TTS, nội dung theo narration của project.
+Cảnh 5 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 6: giọng đọc Microsoft Edge TTS, nội dung theo narration của project.
+Cảnh 6 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 7: giọng đọc Microsoft Edge TTS, nội dung theo narration của project.
+Cảnh 7 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+Cảnh 8: giọng đọc Microsoft Edge TTS, nội dung theo narration của project.
+Cảnh 8 / shot 1: nền màu/chữ tạo bằng code, không dùng media bên ngoài.
+
+License Pixabay: https://pixabay.com/service/license-summary/
+License Pexels: https://www.pexels.com/license/

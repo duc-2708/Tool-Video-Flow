@@ -40,8 +40,19 @@ class Repository:
                     id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL DEFAULT 1,
                     provider TEXT NOT NULL, created_at TEXT NOT NULL);
                 CREATE INDEX IF NOT EXISTS learned_category ON learned_videos(user_id, category_id, status);
-                PRAGMA user_version=1;
+                CREATE TABLE IF NOT EXISTS trend_requests (
+                    id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL DEFAULT 1,
+                    provider TEXT NOT NULL, day TEXT NOT NULL, endpoint TEXT NOT NULL,
+                    credits_charged REAL, created_at TEXT NOT NULL);
+                CREATE INDEX IF NOT EXISTS trend_daily ON trend_requests(user_id,provider,day);
+                CREATE TABLE IF NOT EXISTS used_topics (
+                    id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL DEFAULT 1,
+                    topic TEXT NOT NULL, category_id TEXT NOT NULL,
+                    project TEXT NOT NULL, used_at TEXT NOT NULL,
+                    UNIQUE(user_id,project));
             """)
+            if db.execute("PRAGMA user_version").fetchone()[0] < 2:
+                db.execute("PRAGMA user_version=2")
 
     @classmethod
     def for_settings(cls, settings, user_id=1):
@@ -61,6 +72,50 @@ class Repository:
                 yield db
         finally:
             db.close()
+
+    def trend_usage(self, provider="scrapecreators", day=None):
+        day = day or datetime.now(timezone.utc).date().isoformat()
+        with self.connection() as db:
+            row = db.execute("""SELECT COUNT(*) requests, SUM(credits_charged) reported_credits,
+                COUNT(credits_charged) reported_calls FROM trend_requests
+                WHERE user_id=? AND provider=? AND day=?""", (self.user_id, provider, day)).fetchone()
+            return dict(row)
+
+    def reserve_trend_call(self, provider, limit, endpoint, day=None):
+        """Reserve before HTTP; ambiguous/failed calls count. Atomic across workers."""
+        day = day or datetime.now(timezone.utc).date().isoformat()
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("""SELECT COUNT(*),COALESCE(SUM(credits_charged),0)
+                FROM trend_requests WHERE user_id=? AND provider=? AND day=?""",
+                (self.user_id, provider, day)).fetchone()
+            if max(row[0], row[1]) >= limit:
+                return None
+            return db.execute("""INSERT INTO trend_requests(user_id,provider,day,endpoint,created_at)
+                VALUES(?,?,?,?,?)""", (self.user_id, provider, day, endpoint, utcnow())).lastrowid
+
+    def finish_trend_call(self, request_id, charged):
+        import math
+        if isinstance(charged, bool) or not isinstance(charged, (int, float)) or not math.isfinite(charged) or charged < 0:
+            return
+        with self.connection() as db:
+            db.execute("UPDATE trend_requests SET credits_charged=? WHERE id=? AND user_id=?",
+                       (charged, request_id, self.user_id))
+
+    def mark_topic_used(self, topic, category_id, project):
+        with self.connection() as db:
+            db.execute("""INSERT INTO used_topics(user_id,topic,category_id,project,used_at)
+                VALUES(?,?,?,?,?) ON CONFLICT(user_id,project) DO UPDATE SET
+                topic=excluded.topic,category_id=excluded.category_id""",
+                (self.user_id, topic, category_id, str(Path(project).resolve()), utcnow()))
+
+    def recent_topics(self, days=14, now=None):
+        from datetime import timedelta
+        now = now or datetime.now(timezone.utc)
+        with self.connection() as db:
+            return [dict(r) for r in db.execute("""SELECT topic,category_id,project,used_at AS date
+                FROM used_topics WHERE user_id=? AND used_at>=? AND used_at<=?""",
+                (self.user_id, (now-timedelta(days=days)).isoformat(), now.isoformat()))]
 
     def add_source(self, category_id, kind, value, label, source_url="", thumbnail_url=""):
         with self.connection() as db:

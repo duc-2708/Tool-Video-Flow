@@ -1,0 +1,207 @@
+{
+  "source_plan_hash": "fd022e1e62cff00a40dc88e68e02552fa06852f40beb55596a3af51de45bfbb0",
+  "resolved_plan_hash": "9072a9bb4ecebaa0eae34af7f1ebbce57b2a3d913144c612ae5d0c67d1493345",
+  "status": "complete",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "audio_path": "audio/scene_1.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_1_shot_1_fallback_5511882ecc.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "audio_path": "audio/scene_2.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": "TTS lỗi ở cảnh 2: NoAudioReceived: mock failure",
+      "audio_silent": true,
+      "audio_voice": null,
+      "audio_warnings": [
+        "cảnh 2 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 2 trong Assets."
+      ],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_2_shot_1_fallback_5511882ecc.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing wide",
+          "media_type": "color",
+          "path": "clips/scene_2_shot_2_fallback_5511882ecc.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "audio_path": "audio/scene_3.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing closeup",
+          "media_type": "color",
+          "path": "clips/scene_3_shot_1_fallback_5511882ecc.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "audio_path": "audio/scene_4.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing exterior",
+          "media_type": "color",
+          "path": "clips/scene_4_shot_1_fallback_5511882ecc.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 6,
+      "audio_path": "audio/scene_6.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing detail",
+          "media_type": "color",
+          "path": "clips/scene_6_shot_1_fallback_5511882ecc.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 7,
+      "audio_path": "audio/scene_7.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing aerial sunset",
+          "media_type": "color",
+          "path": "clips/scene_7_shot_1_fallback_5511882ecc.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "audio_path": "audio/scene_8.mp3",
+      "audio_duration_sec": 2.2,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing aerial view",
+          "media_type": "color",
+          "path": "clips/scene_8_shot_1_fallback_0155de9979.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "cảnh 2 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 2 trong Assets.",
+    "Cảnh 3: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 4: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 6: số shot đổi từ 4 thành 1 theo audio thật.",
+    "Cảnh 7: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Cảnh 8: số shot đổi từ 2 thành 1 theo audio thật.",
+    "Tổng thời lượng theo audio 19.20s khác yêu cầu 45.00s quá 10%; giữ nguyên timing audio, chưa tự đổi tốc độ giọng."
+  ]
+}

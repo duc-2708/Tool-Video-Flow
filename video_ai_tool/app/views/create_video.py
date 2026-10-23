@@ -96,8 +96,9 @@ def render(settings,project,topic,debug,diagnostics):
         confirmed = st.checkbox("Tôi xác nhận số clip, model, thời lượng và chi phí AI trước khi bắt đầu",key=f"create_ai_approval_{signature}_{nonce}")
         if not settings.gateway_api_key.get_secret_value().strip():
             st.warning("Thiếu GATEWAY_API_KEY. Điền trong cấu hình local hoặc tắt clip AI.")
-    ready = bool(source_languages and entered_topic.strip() and settings.gemini_api_key.get_secret_value().strip() and
-                 settings.gemini_model.strip() and (not ai_enabled or (confirmed and settings.gateway_api_key.get_secret_value().strip())))
+    from providers.llm.router import route_ready
+    ready = bool(source_languages and entered_topic.strip() and route_ready(settings,"researcher") and
+                 route_ready(settings,"director") and (not ai_enabled or (confirmed and settings.gateway_api_key.get_secret_value().strip())))
     if st.button("Tạo video",type="primary",width="stretch",disabled=bool(active) or not ready):
         try:
             config = RunConfig(topic=entered_topic,category=category,video_type=video_type,video_format=video_format,duration_sec=float(duration),voice=voice,

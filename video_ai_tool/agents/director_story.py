@@ -97,8 +97,8 @@ def humanize(plan,brief,provider,settings,diagnostics,*,scene_ids=None,style=Non
         except RuleViolation as error:
             last=error
         except Exception as error:
-            from providers.llm_gemini import GeminiTransientError
-            if isinstance(error,GeminiTransientError): raise
+            from providers.llm.base import TransientError
+            if isinstance(error,TransientError): raise
             diagnostics.record_exception(error,"Người hóa/API không phải lỗi luật nhóm 1; không retry văn phong")
             break
         diagnostics.record_exception(last,f"Người hóa lần {attempt+1}: chỉ retry nhóm 1")
@@ -254,6 +254,8 @@ def rewrite_script(brief_path,settings,*,style,scene_id=None):
             # Scene-only rewrite keeps every other scene byte-for-byte.
             if scene_id is None:
                 validate_plan(rewritten,brief,DirectorRequest(video_type=rewritten.video_type or "story",video_format=rewritten.format,duration_sec=rewritten.target_duration_sec or rewritten.duration_sec))
+            from providers.llm.router import add_provider_notes
+            add_provider_notes(rewritten,provider)
             write_json(brief_path.parent/"edit_plan.json",rewritten.model_dump(mode="json"))
             resolve_draft(brief_path.parent)
             return brief_path.parent/"edit_plan.json"

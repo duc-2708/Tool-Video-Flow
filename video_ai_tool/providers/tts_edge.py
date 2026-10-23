@@ -1,5 +1,7 @@
 """Bounded, chunk-cached Edge TTS with explicit, renderable silence fallback."""
 import math
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 import subprocess
 import threading
 import time
@@ -17,6 +19,7 @@ from utils.cache import cache_key
 from utils.diagnostics import Diagnostics
 from utils.file_lock import file_lock
 from utils.media import measured_audio_duration
+from utils.word_timing import read_words,save_words,timing_source
 
 _REQUESTS=threading.BoundedSemaphore(2)
 RETRY_DELAYS=(2,4,8,16)  # Initial call plus at most four retries, per chunk/voice.
@@ -74,10 +77,26 @@ class EdgeTTSProvider:
                 temporary=cached.with_name(uuid4().hex+".tmp.mp3")
                 try:
                     with _REQUESTS:
-                        edge_tts.Communicate(text,voice=voice,connect_timeout=int(self.settings.request_timeout_sec),
-                            receive_timeout=int(self.settings.request_timeout_sec)).save_sync(str(temporary))
+                        request=edge_tts.Communicate(text,voice=voice,boundary="WordBoundary",
+                            connect_timeout=int(self.settings.request_timeout_sec),receive_timeout=int(self.settings.request_timeout_sec))
+                        boundaries=[]
+                        if hasattr(request,"stream"):
+                            async def collect():
+                                with temporary.open("wb") as stream:
+                                    async for event in request.stream():
+                                        if event["type"]=="audio": stream.write(event["data"])
+                                        elif event["type"]=="WordBoundary":
+                                            boundaries.append({"text":event["text"],"start":event["offset"]/10_000_000,
+                                                "end":(event["offset"]+event["duration"])/10_000_000})
+                            async def bounded():
+                                await asyncio.wait_for(collect(),timeout=max(30,self.settings.request_timeout_sec*3))
+                            with ThreadPoolExecutor(max_workers=1) as worker:
+                                worker.submit(asyncio.run,bounded()).result()
+                        else:  # Compatible injected providers; old cache needs no new request.
+                            request.save_sync(str(temporary))
                     audio_duration(temporary)
                     replace_file_retry(temporary,cached)
+                    save_words(cached.with_suffix(".words.json"),text,audio_duration(cached),boundaries)
                     return cached,None
                 except Exception as error:
                     last=self.diagnostics.redact(f"{type(error).__name__}: {error}")[:1500]
@@ -112,7 +131,7 @@ class EdgeTTSProvider:
         clean=clean_tts_text(text)
         planned=max(1.5,float(duration_sec if duration_sec is not None else max(1.5,len(clean.split())/2.6)))
         destination.parent.mkdir(parents=True,exist_ok=True)
-        warnings=[];parts=[];error=None
+        warnings=[];parts=[];error=None;boundaries=[];cursor=0.;timing_sources=[]
         with file_lock(destination.with_suffix(".tts.lock"),timeout=1):
             if not has_speech(clean):
                 warnings.append(f"cảnh {scene_id} không có giọng đọc: văn bản rỗng/chỉ có dấu câu sau khi làm sạch; dùng im lặng và caption.")
@@ -147,6 +166,12 @@ class EdgeTTSProvider:
                             used=None
                             warnings.append(f"cảnh {scene_id} không có giọng đọc (đoạn {index}/{len(chunks)}): TTS lỗi; dùng im lặng và caption. Có thể chạy lại riêng audio cảnh {scene_id}.")
                         paths.append(path)
+                        length=audio_duration(path)
+                        from utils.word_timing import align_words
+                        words,_=align_words(chunk,length,read_words(path.with_suffix(".words.json")))
+                        timing_sources.append(timing_source(path.with_suffix(".words.json")))
+                        boundaries.extend(dict(w,start=w["start"]+cursor,end=w["end"]+cursor) for w in words)
+                        cursor+=length
                         parts.append({"index":index,"silent":silent,"voice":used,"error":last if silent else None})
                     self._join(paths,destination)
             metadata={"text_hash":cache_key(clean),"audio_silent":any(p["silent"] for p in parts),
@@ -154,4 +179,7 @@ class EdgeTTSProvider:
                 "warnings":warnings,"chunks":parts}
             # Only successful speech chunks enter cache. Silence is always retryable.
             write_json_atomic(audio_metadata_path(destination),metadata)
-            return audio_duration(destination)
+            duration=audio_duration(destination)
+            source=None if timing_sources and all(s=="word_boundary" for s in timing_sources) else "estimated_characters" if not timing_sources or all(s=="estimated_characters" for s in timing_sources) else "boundary_projected"
+            save_words(destination.with_suffix(".words.json"),clean,duration,boundaries,source=source)
+            return duration

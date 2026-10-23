@@ -1,0 +1,13 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion_finalfocus\\test_scene_cache_hit_skips_chr0\\cache\\629e91a76cafed13a84b340ed896d23370f779ae562f1dedb04a9849034e4ba6.mp4",
+  "cache_hit": false,
+  "scene_id": 1,
+  "width": 270,
+  "height": 480,
+  "fps": 10,
+  "duration_sec": 0.3,
+  "render_seconds": 1.608,
+  "size_bytes": 8908,
+  "sha256": "88f19054380773d3d0b731fbde9f81e6d7dfc058ace214be84ddbaf185499857",
+  "timing_source": "estimated_characters"
+}

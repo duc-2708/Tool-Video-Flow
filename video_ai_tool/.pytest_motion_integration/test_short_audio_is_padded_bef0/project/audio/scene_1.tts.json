@@ -1,0 +1,17 @@
+{
+  "text_hash": "378806e37a1d8a5a5156fd77b869a2fff75d22de166fd2eec9f30e1856d47cce",
+  "audio_silent": true,
+  "audio_error": "TypeError: 'async for' requires an object with __aiter__ method, got Mock",
+  "voice_used": null,
+  "warnings": [
+    "cảnh 1 không có giọng đọc (đoạn 1/1): TTS lỗi; dùng im lặng và caption. Có thể chạy lại riêng audio cảnh 1."
+  ],
+  "chunks": [
+    {
+      "index": 1,
+      "silent": true,
+      "voice": null,
+      "error": "TypeError: 'async for' requires an object with __aiter__ method, got Mock"
+    }
+  ]
+}

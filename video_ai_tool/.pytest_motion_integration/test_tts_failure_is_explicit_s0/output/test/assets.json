@@ -1,0 +1,331 @@
+{
+  "source_plan_hash": "eb99c323a550a222a2d8929d47abb8888d2999f1b72aba2acb9258e287aa68b8",
+  "resolved_plan_hash": "0f7aba24c82e5e4759b1b61a8207386634cd0e92d62344498ed1eaa823a4af15",
+  "status": "complete",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "audio_path": "audio/scene_1.mp3",
+      "audio_duration_sec": 3.0,
+      "audio_error": "TTS lỗi ở cảnh 1: TimeoutError: Fixture network timeout",
+      "audio_silent": true,
+      "audio_voice": null,
+      "audio_warnings": [
+        "cảnh 1 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 1 trong Assets."
+      ],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_1_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "audio_path": "audio/scene_2.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": "TTS lỗi ở cảnh 2: TimeoutError: Fixture network timeout",
+      "audio_silent": true,
+      "audio_voice": null,
+      "audio_warnings": [
+        "cảnh 2 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 2 trong Assets."
+      ],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_2_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_2_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "audio_path": "audio/scene_3.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": "TTS lỗi ở cảnh 3: TimeoutError: Fixture network timeout",
+      "audio_silent": true,
+      "audio_voice": null,
+      "audio_warnings": [
+        "cảnh 3 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 3 trong Assets."
+      ],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_3_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_3_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "audio_path": "audio/scene_4.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": "TTS lỗi ở cảnh 4: TimeoutError: Fixture network timeout",
+      "audio_silent": true,
+      "audio_voice": null,
+      "audio_warnings": [
+        "cảnh 4 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 4 trong Assets."
+      ],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_4_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_4_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 5,
+      "audio_path": "audio/scene_5.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": "TTS lỗi ở cảnh 5: TimeoutError: Fixture network timeout",
+      "audio_silent": true,
+      "audio_voice": null,
+      "audio_warnings": [
+        "cảnh 5 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 5 trong Assets."
+      ],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_5_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_5_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 6,
+      "audio_path": "audio/scene_6.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": "TTS lỗi ở cảnh 6: TimeoutError: Fixture network timeout",
+      "audio_silent": true,
+      "audio_voice": null,
+      "audio_warnings": [
+        "cảnh 6 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 6 trong Assets."
+      ],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_6_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_6_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 7,
+      "audio_path": "audio/scene_7.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": "TTS lỗi ở cảnh 7: TimeoutError: Fixture network timeout",
+      "audio_silent": true,
+      "audio_voice": null,
+      "audio_warnings": [
+        "cảnh 7 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 7 trong Assets."
+      ],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_7_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_7_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "audio_path": "audio/scene_8.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": "TTS lỗi ở cảnh 8: TimeoutError: Fixture network timeout",
+      "audio_silent": true,
+      "audio_voice": null,
+      "audio_warnings": [
+        "cảnh 8 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 8 trong Assets."
+      ],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_8_shot_1_fallback_0155de9979.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_8_shot_2_fallback_0155de9979.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "cảnh 1 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 1 trong Assets.",
+    "cảnh 2 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 2 trong Assets.",
+    "cảnh 3 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 3 trong Assets.",
+    "cảnh 4 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 4 trong Assets.",
+    "cảnh 5 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 5 trong Assets.",
+    "cảnh 6 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 6 trong Assets.",
+    "cảnh 7 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 7 trong Assets.",
+    "cảnh 8 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 8 trong Assets."
+  ]
+}

@@ -13,7 +13,8 @@ from pydantic import Field, ValidationError, model_validator
 from config.settings import Settings, get_settings
 from pipeline.projects import read_json
 from providers.llm_base import LLMProvider,ProviderError
-from providers.llm_gemini import GeminiOutputError, GeminiProvider
+from providers.llm.base import GeminiOutputError
+from providers.llm.router import provider_for_step, require_route, add_provider_notes
 from schemas.base import StrictModel
 from schemas.edit_plan import EditPlan, Scene, ReviewNotes, FactReview, ReviewSource
 from schemas.research_brief import ResearchBrief
@@ -466,9 +467,9 @@ def director_diagnostics(settings: Settings, debug: bool = False) -> Diagnostics
                        secrets=[settings.gemini_api_key.get_secret_value()])
 
 
-def director_provider(settings: Settings, diagnostics: Diagnostics) -> GeminiProvider:
+def director_provider(settings: Settings, diagnostics: Diagnostics) -> LLMProvider:
     # Chọn model riêng trong bộ cấu hình runtime, không thay đổi .env.
-    provider = GeminiProvider(settings.model_copy(update={"gemini_model": settings.require_director_model()}))
+    provider = provider_for_step(settings,"director",diagnostics=diagnostics)
     provider.diagnostics = diagnostics
     return provider
 
@@ -492,8 +493,7 @@ def run_director(brief_path: Path, settings: Settings, *, video_type: str = "rev
             if not effective: raise DirectorError("Brief không có fact hợp lệ; cần Research lại hoặc đổi chủ đề.")
             request=request.model_copy(update={"duration_sec":effective,"requested_duration_sec":float(duration_sec),"creative_license":creative_license})
             if effective<float(duration_sec): progress(f"dữ liệu mỏng: thời lượng yêu cầu {duration_sec:g}s, kế hoạch rút còn {effective:g}s.")
-        settings.require_key("gemini")
-        settings.require_director_model()
+        require_route(settings,"director")
         settings.ensure_directories()
         progress("Director đang tạo kịch bản và Edit Plan…")
         provider = director_provider(settings, diagnostics)
@@ -508,6 +508,7 @@ def run_director(brief_path: Path, settings: Settings, *, video_type: str = "rev
         validate_plan(plan,brief,request,diagnostics=diagnostics,allow_merge=False)
         fill_plan_prompts(plan,brief,provider,diagnostics,limit=ai_clip_limit)
         path = brief_path.parent / "edit_plan.json"
+        add_provider_notes(plan,provider)
         write_json(path, plan.model_dump(mode="json"))
         resolve_draft(brief_path.parent)
         progress(f"Thời lượng kế hoạch: {plan.duration_sec:.1f}s / yêu cầu {duration_sec:.1f}s.")
@@ -535,6 +536,7 @@ def save_edit_plan(brief_path: Path, plan_data: dict, settings: Settings) -> Pat
         provider = director_provider(settings, diagnostics)
         audit_plan(plan, brief, provider, settings, JsonCache(settings.cache_dir, settings.cache_ttl_sec), diagnostics)
         path = brief_path.parent / "edit_plan.json"
+        add_provider_notes(plan,provider)
         write_json(path, plan.model_dump(mode="json"))
         resolve_draft(brief_path.parent)
         return path

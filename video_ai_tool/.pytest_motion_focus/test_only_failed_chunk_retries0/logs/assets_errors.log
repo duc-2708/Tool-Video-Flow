@@ -1,0 +1,28 @@
+
+[2026-10-23T09:56:11.134186+00:00] TTS lỗi ở cảnh 2; đoạn=2; attempt=1/5; voice=vi-VN-HoaiMyNeural; text_length=174; cleaned_text='Phần đầu là một câu chuyện cụ thể. Phần cuối có ví dụ thực tế. Phần cuối có ví dụ thực tế. Phần cuối có ví dụ thực tế. Phần cuối có ví dụ thực tế. Phần cuối có ví dụ thực tế.'
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 89, in _chunk
+    request.save_sync(str(temporary))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 28, in save_sync
+    if behavior: behavior(text,voice,len(calls))
+                 ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 96, in behavior
+    failed+=1;raise NoAudioReceived("transient")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+edge_tts.exceptions.NoAudioReceived: transient
+
+
+[2026-10-23T09:56:11.189927+00:00] TTS lỗi ở cảnh 2; đoạn=2; attempt=2/5; voice=vi-VN-HoaiMyNeural; text_length=174; cleaned_text='Phần đầu là một câu chuyện cụ thể. Phần cuối có ví dụ thực tế. Phần cuối có ví dụ thực tế. Phần cuối có ví dụ thực tế. Phần cuối có ví dụ thực tế. Phần cuối có ví dụ thực tế.'
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 89, in _chunk
+    request.save_sync(str(temporary))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 28, in save_sync
+    if behavior: behavior(text,voice,len(calls))
+                 ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 96, in behavior
+    failed+=1;raise NoAudioReceived("transient")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+edge_tts.exceptions.NoAudioReceived: transient
+

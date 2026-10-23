@@ -87,6 +87,9 @@ def prepare_ai_bundle(project,config,settings,progress,check_cancel,diagnostics)
         if not scene.audio_path:
             raise ValueError(f"Thiếu audio cảnh {scene.scene_id}; chạy lại Assets.")
         copy_artifact(safe_asset_path(project,scene.audio_path),confined(bundle,scene.audio_path))
+        words=safe_asset_path(project,scene.audio_path).with_suffix(".words.json")
+        if words.is_file():
+            copy_artifact(words,confined(bundle,str(Path(scene.audio_path).with_suffix(".words.json"))))
         for shot in scene.shots:
             copy_artifact(safe_asset_path(project,shot.path),confined(bundle,shot.path))
     manifest.resolved_plan_hash = cache_key(resolved.model_dump(mode="json"))

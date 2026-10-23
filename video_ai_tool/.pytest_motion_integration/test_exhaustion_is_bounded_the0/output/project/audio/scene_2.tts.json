@@ -1,0 +1,15 @@
+{
+  "text_hash": "e2e06e00811d7c0f0f6bf9ec08f130edaf5331bb4882a4f56b898ed2ea20bb8f",
+  "audio_silent": false,
+  "audio_error": null,
+  "voice_used": "vi-VN-HoaiMyNeural",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "silent": false,
+      "voice": "vi-VN-HoaiMyNeural",
+      "error": null
+    }
+  ]
+}
