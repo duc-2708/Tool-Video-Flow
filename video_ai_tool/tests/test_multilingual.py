@@ -102,7 +102,8 @@ def test_multilingual_research_end_to_end_mocked(tmp_path,monkeypatch):
     assert brief.output_language == "vi" and brief.source_languages == ["en"]
     assert brief.search_queries[0].query == "video editing workflow for beginners"
     assert collect.call_args_list[0].args == ("video editing workflow for beginners",3,"en")
-    assert collect.call_count == 2 and len(brief.search_queries) == 2
+    assert collect.call_count == 4 and len(brief.search_queries) == 4
+    assert any("dữ liệu" in warning.lower() for warning in brief.risks)
     assert brief.facts[0].evidence_quote == "Editors can cut and join clips."
     assert "Có thể cắt" in brief.facts[0].fact_vi
     provider.close.assert_called_once()

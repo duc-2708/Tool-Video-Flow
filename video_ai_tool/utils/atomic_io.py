@@ -108,8 +108,11 @@ def _remember(path, data):
 
 
 def write_text_atomic(path, text):
+    write_bytes_atomic(path,text.encode("utf-8"))
+
+
+def write_bytes_atomic(path, encoded):
     path = Path(path)
-    encoded = text.encode("utf-8")
     with path_lock(path), _temporary(path) as (temporary, stream):
         stream.write(encoded)
         stream.flush()

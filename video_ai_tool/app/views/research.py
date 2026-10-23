@@ -34,6 +34,7 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
         entered_topic = st.text_input("Chủ đề", value=topic, max_chars=500, key=f"research_topic_{scope}",
                                      placeholder="Ví dụ: trong dựng video cho người mới")
         enable_youtube = st.checkbox("Bật YouTube trends", value=False)
+        explainer_v2=st.checkbox("Explainer v2: nghiên cứu theo câu hỏi và kiến thức nền",value=False)
         source_languages = st.multiselect("Ngôn ngữ nguồn",list(LABELS),default=["vi","en"],format_func=LABELS.get)
         output_language = st.selectbox("Ngôn ngữ kịch bản",["vi"],format_func=LABELS.get)
         web_limit = st.number_input("Số nguồn web tối đa", min_value=1, max_value=12, value=6, step=1)
@@ -56,7 +57,7 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
                 with st.spinner("Researcher đang xử lý…"):
                     result = run_research(entered_topic, settings, web_limit=int(web_limit),
                         use_youtube=enable_youtube, youtube_days=int(youtube_days), youtube_vietnamese=vietnamese, output_dir=destination,
-                        source_languages=source_languages,output_language=output_language,
+                        source_languages=source_languages,output_language=output_language,content_mode="explainer_v2" if explainer_v2 else "event_only",
                         progress=lambda message: progress.info(diagnostics.redact(message)), debug=False)
                 st.session_state["pending_project"] = result.parent.name
                 st.session_state["research_notice"] = "Researcher hoàn tất. Brief và nguồn đối chiếu đã được lưu."
@@ -101,11 +102,24 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
     overview, sources_tab, raw_tab = st.tabs(["Research Brief", "Nguồn đối chiếu", "JSON thô"])
     with overview:
         st.subheader(brief_data["topic"])
+        if brief.research_questions:
+            with st.expander("Các câu hỏi cần trả lời"):
+                st.dataframe([q.model_dump(mode="json") for q in brief.research_questions],hide_index=True)
+        if brief.knowledge_notes:
+            with st.expander("Kiến thức nền — không phải fact sự kiện"):
+                st.dataframe([n.model_dump(mode="json") for n in brief.knowledge_notes],hide_index=True)
         if len(brief.facts)<8:
             st.warning("dữ liệu mỏng, kịch bản sẽ ít chi tiết")
+        for warning in brief.risks:
+            if "vẫn mỏng" in warning or "tăng số nguồn hoặc chọn chủ đề khác" in warning:
+                st.warning(diagnostics.redact(warning))
         source_rows = []
         try:
-            source_rows = read_json(project/"sources.json").get("sources",[])
+            source_document=read_json(project/"sources.json")
+            source_rows = source_document.get("sources",[])
+            expanded=source_document.get("research_expansion",{})
+            if expanded.get("attempted"):
+                st.info(f"Research đã mở rộng 1 lần: thêm {expanded['added_sources']} nguồn; {expanded.get('facts_before',0)} → {expanded.get('facts_after',len(brief.facts))} fact hợp lệ.")
         except (OSError,ValueError):
             pass
         st.metric("Số nguồn bài viết",len(source_rows))

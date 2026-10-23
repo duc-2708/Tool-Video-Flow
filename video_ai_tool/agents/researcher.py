@@ -254,7 +254,8 @@ def run_research(topic: str, settings: Settings, *, web_limit: int = 6, youtube_
                  use_youtube: bool = True, use_transcripts: bool = False,
                  youtube_days: int = 14, youtube_vietnamese: bool = True,
                  output_dir: Path | None = None, progress: Callable[[str], None] = print,
-                 debug: bool = False, source_languages: list[str] | None = None, output_language: str = "vi",discovery_hint=None) -> Path:
+                 debug: bool = False, source_languages: list[str] | None = None, output_language: str = "vi",discovery_hint=None,content_mode="event_only") -> Path:
+    if content_mode not in {"event_only","explainer_v2"}: raise ValueError("Chế độ nội dung không hợp lệ.")
     language_options = LanguageOptions(source_languages=source_languages if source_languages is not None else ["vi","en"],output_language=output_language)
     topic = clean_text(topic)
     if not topic or len(topic) > 500:
@@ -268,11 +269,21 @@ def run_research(topic: str, settings: Settings, *, web_limit: int = 6, youtube_
         raise ValueError("Số nguồn web phải từ 1 đến 12.")
     progress("Gemini đang sinh truy vấn tự nhiên cho từng ngôn ngữ nguồn…")
     provider = GeminiProvider(settings)
+    if hasattr(provider,"progress"):
+        provider.progress=progress
     diagnostics = Diagnostics(settings.logs_dir, debug=debug)
     if isinstance(getattr(provider, "diagnostics", None), Diagnostics):
         provider.diagnostics.debug = debug
     try:
         queries = generate_queries(topic,language_options.source_languages,provider,settings,cache,diagnostics)
+        research_questions=[]
+        if content_mode=="explainer_v2":
+            from agents.explainer_research import question_queries
+            try:
+                research_questions,question_searches=question_queries(topic,language_options.source_languages,provider,diagnostics)
+                queries=question_searches+[q for q in queries if q.source_lang not in {"vi","en"}]
+            except Exception as error:
+                diagnostics.record_exception(error,"Câu hỏi Research v2 lỗi; dùng truy vấn đa ngôn ngữ hiện có")
         if discovery_hint is not None:
             from schemas.topic_discovery import DiscoveryHint
             from schemas.research_brief import SearchQuery
@@ -288,7 +299,7 @@ def run_research(topic: str, settings: Settings, *, web_limit: int = 6, youtube_
         # Interleave languages so a small global source limit does not always
         # fill up with Vietnamese results before an English query is searched.
         groups = [[q for q in queries if q.source_lang == lang] for lang in dict.fromkeys(language_options.source_languages)]
-        pending = [group[index] for index in range(4) for group in groups if len(group)>index]
+        pending = [group[index] for index in range(max((len(g) for g in groups),default=0)) for group in groups if len(group)>index]
         buckets = {lang:[] for lang in dict.fromkeys(language_options.source_languages)}
         used_queries = []
         for query in pending:
@@ -319,6 +330,9 @@ def run_research(topic: str, settings: Settings, *, web_limit: int = 6, youtube_
     # Prefer source diversity, then date and length; do not let one publisher
     # occupy every slot merely by returning many URLs in several queries.
     candidates = [source for bucket in buckets.values() for source in bucket]
+    if content_mode=="explainer_v2":
+        from agents.explainer_research import prioritize_sources
+        candidates,live_warnings=prioritize_sources(candidates);warnings.extend(live_warnings)
     candidates.sort(key=lambda source:(not bool(source.published_at),-len(source.text)))
     sources,domains = [],set()
     from urllib.parse import urlsplit
@@ -349,9 +363,48 @@ def run_research(topic: str, settings: Settings, *, web_limit: int = 6, youtube_
     destination = output_dir or settings.output_dir / (slugify(topic) + "-" + cache_key(topic)[:8])
     progress(f"Đã thu thập {len(sources)} nguồn; đang tạo Research Brief…")
     grounding_report = {}
+    expansion={"attempted":False,"added_sources":0}
     try:
-        brief = create_brief(topic, sources, provider, settings, cache, warnings, progress,
-                             diagnostics=diagnostics, grounding_report=grounding_report)
+        initial_error=None
+        try:
+            brief = create_brief(topic, sources, provider, settings, cache, warnings, progress,
+                                 diagnostics=diagnostics, grounding_report=grounding_report)
+        except NoResearchDataError as error:
+            brief=None;initial_error=error
+        from agents.research_expansion import thin_research,expand_sources_once,merge_grounded_briefs
+        if thin_research(brief):
+            before=len(brief.facts) if brief else 0
+            extra,extra_queries,extra_warnings=expand_sources_once(topic,sources,used_queries,collector,diagnostics,progress)
+            sources.extend(extra);used_queries.extend(extra_queries);warnings.extend(extra_warnings)
+            expansion={"attempted":True,"added_sources":len(extra),"facts_before":before}
+            if extra:
+                try:
+                    extra_report={}
+                    base_report=dict(grounding_report)
+                    expanded=create_brief(topic,sources,provider,settings,cache,warnings,progress,diagnostics=diagnostics,grounding_report=extra_report)
+                    brief=merge_grounded_briefs(brief,expanded)
+                    grounding_report.update(extra_report)
+                    grounding_report["kept"]=len(brief.facts)
+                    grounding_report["returned"]=max(len(brief.facts),base_report.get("returned",0)+extra_report.get("returned",0))
+                    grounding_report["discarded"]=grounding_report["returned"]-len(brief.facts)
+                    grounding_report["trimmed"]=min(len(brief.facts),base_report.get("trimmed",0)+extra_report.get("trimmed",0))
+                except Exception as error:
+                    diagnostics.record_exception(error,"Research mở rộng 1/1 thất bại; giữ fact gốc hợp lệ")
+                    if brief is None: raise
+                    warnings.append("Research mở rộng không bổ sung được fact; giữ các fact đã kiểm chứng.")
+            if brief is None: raise initial_error
+            expansion["facts_after"]=len(brief.facts)
+            notice=f"Đã mở rộng Research 1 lần: thêm {len(extra)} nguồn; {before} → {len(brief.facts)} fact hợp lệ."
+            warnings.append(notice);progress(notice)
+            search_report=collector.summarize([str(source.url) for source in sources])
+            if thin_research(brief):
+                warning="Dữ liệu vẫn mỏng sau khi mở rộng 1 lần (chỉ 1 nguồn độc lập hoặc dưới 6 fact); kịch bản sẽ ngắn. Hãy tăng số nguồn hoặc chọn chủ đề khác."
+                warnings.append(warning);progress(warning)
+        brief.risks=list(dict.fromkeys(brief.risks+warnings))
+        if content_mode=="explainer_v2":
+            from agents.explainer_research import knowledge_notes
+            brief.content_mode=content_mode;brief.research_questions=research_questions
+            knowledge_notes(brief,provider,diagnostics)
         brief.discovery_hint = discovery_hint
         brief.source_languages = list(dict.fromkeys(language_options.source_languages))
         brief.output_language = language_options.output_language
@@ -377,6 +430,7 @@ def run_research(topic: str, settings: Settings, *, web_limit: int = 6, youtube_
                                              "warnings": list(dict.fromkeys(warnings + grounding_report.get("warnings", []))),
                                              "grounding": grounding_report,
                                              "search_diagnostics":search_report,
+                                             "research_expansion":expansion,
                                              "search_queries": [query.model_dump(mode="json") for query in used_queries],
                                              "trend_signals": [signal.model_dump(mode="json") for signal in brief.trend_signals]})
     write_json(destination / "brief.json", brief.model_dump(mode="json"))
@@ -399,12 +453,13 @@ def main() -> int:
     parser.add_argument("--debug", action="store_true", help="In traceback đã che credentials; luôn ghi lỗi vào logs/")
     parser.add_argument("--source-languages",nargs="+",choices=["vi","en","zh","ko","ja"],default=["vi","en"])
     parser.add_argument("--output-language",choices=["vi"],default="vi")
+    parser.add_argument("--explainer-v2",action="store_true")
     args = parser.parse_args()
     diagnostics = Diagnostics(Path(__file__).resolve().parents[1] / "logs", debug=args.debug)
     try:
         path = run_research(args.topic, get_settings(), web_limit=args.web_limit, youtube_limit=args.youtube_limit,
                             use_youtube=not args.no_youtube, youtube_days=args.youtube_days, youtube_vietnamese=args.youtube_language == "vi",
-                            output_dir=args.output_dir, debug=args.debug,source_languages=args.source_languages,output_language=args.output_language)
+                            output_dir=args.output_dir, debug=args.debug,source_languages=args.source_languages,output_language=args.output_language,content_mode="explainer_v2" if args.explainer_v2 else "event_only")
     except (ResearchError, ProviderError) as error:
         diagnostics.record_exception(error, "Researcher failed")
         print(str(error))

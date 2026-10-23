@@ -94,3 +94,18 @@ Mọi mức vẫn cấm thêm sự kiện, số liệu, trải nghiệm, nguồn
 
 
 PHONG CÁCH MẪU (nếu INPUT.style_profile có giá trị): chỉ học CÁCH KỂ từ khuôn hook, structure/style_section, pacing, quy tắc giọng, overlay và cách kết. Không coi bất cứ câu, tên riêng hay con số trong style_profile là fact. Nội dung mới chỉ từ fact_vi/fact_ids của brief; không chép khuôn thành câu chứa dữ kiện video mẫu. Bám blueprint đã căn theo lượng fact/thời lượng; không ép kéo dài. Chỉ sửa selected_scene_ids khi được yêu cầu, giữ fact_ids và cảnh khác.
+
+HỒ SƠ DANH MỤC: nếu style_profile có scene_pacing/scene_patterns/narrative_flows/connective_phrases, dùng bảng phân cảnh và blueprint đã được code co giãn theo thời lượng và lượng fact. Mỗi style_section/connective_template/transition_hint là cách kể, không phải fact. Bám mạch kể theo thứ tự, biến tấu các khuôn câu nối {topic} theo nội dung đã có; mỗi cụm nối tối đa hai lần/video. Không đưa số cảnh, số shot, chỉ số nhịp trong metadata thành số liệu trong narration/overlay. Không đưa tóm tắt/nội dung video mẫu vào lời đọc.
+
+DANH SÁCH NGUỒN CHO PHÉP: INPUT.allowed_sources được lấy trực tiếp từ brief.
+Chỉ nêu tên báo/nguồn có trong danh sách này, chép chính xác tên kể cả tên có chữ số.
+Không dùng tên kênh/báo/thương hiệu/người/địa danh từ video mẫu. Tên sản phẩm/người chỉ từ fact_vi hoặc chủ đề.
+Các chỗ {topic}, {source}, {number} trong hồ sơ chỉ là ô trống; không điền dữ kiện ngoài brief.
+Khi sửa cảnh lỗi nguồn, chọn lại nguồn trong allowed_sources và giữ nguyên fact_ids, không sửa cảnh đã đạt.
+ĐẦU RA CHUẨN ĐỂ KIỂM TRA: giữ số liệu, phần trăm, số thập phân và ngày/tháng/năm ở dạng chữ số đúng fact.
+Không phiên âm tên nguồn/sản phẩm có chữ số. Code chỉ chuyển số sang cách đọc ở bước tạo audio SAU kiểm tra.
+
+MẪU ĐỒ HỌA: mỗi shot có thể chứa visual {template, data}. template: hook_card (mở đầu), stat_card (số quan trọng), steps_list (2–4 ý), compare_bars (2–4 giá trị cùng đơn vị và cùng cơ sở so sánh), source_card (nguồn), text_focus (kết luận), stock.
+data chỉ lấy từ fact_ids trong brief: text, highlight[], value, number_text, label, unit, source, source_url, date, title, items[], bars[{label,value,unit,fact_id}], fact_ids[]. Không thêm số, đơn vị, nguồn, ngày, phát biểu hoặc quan hệ so sánh ngoài fact.
+Chỉ dùng source_card một lần gần đầu và một lần cuối; không mở mọi cảnh bằng "Theo ..." khi thẻ nguồn đã ghi đúng nguồn. Code chọn mẫu khi thiếu visual. Không tạo dữ liệu mẫu minh họa như fact thật.
+Nhịp hình: đổi mẫu hoặc hiện phần tử mới mỗi 2.5–3.5 giây, không giữ khung tĩnh quá 4 giây. Stock là nền mờ/tối, chữ và đồ họa là nội dung chính.

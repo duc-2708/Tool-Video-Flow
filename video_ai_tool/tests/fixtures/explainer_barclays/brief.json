@@ -1,0 +1,307 @@
+{
+  "discovery_hint": {
+    "category": "công nghệ",
+    "suggestion": {
+      "cluster_id": "0d3f03b0fe2afc80",
+      "topic": "Barclays to cut 5,000 jobs as bank’s bosses hail AI productivity advances",
+      "why_now": "Tin đăng 2026-10-22T08:40:42+00:00; 1 nguồn độc lập đề cập.",
+      "angle": "Đọc nguồn và kiểm chứng sự kiện cụ thể trước khi viết kịch bản.",
+      "suggested_type": "news",
+      "search_queries": {
+        "vi": [
+          "Barclays to cut 5,000 jobs as bank’s bosses hail AI productivity advances"
+        ],
+        "en": [
+          "artificial intelligence Barclays to cut 5,000 jobs as bank’s bosses hail AI productivity advances"
+        ]
+      },
+      "score": 5,
+      "score_reason": "Điểm sơ bộ theo độ mới và số nguồn, chưa có phân tích Gemini.",
+      "source_urls": [
+        "https://www.theguardian.com/business/2026/oct/22/barclays-profits-up-as-uk-banks-brace-for-tax-increase-in-budget"
+      ]
+    }
+  },
+  "research_depth": "deep",
+  "story_angles": [
+    {
+      "angle": "Barclays cắt giảm 5.000 việc làm",
+      "why": "Ngân hàng Barclays thông báo kế hoạch cắt giảm 5.000 việc làm, với một phần đã thực hiện và phần còn lại diễn ra trước cuối năm."
+    },
+    {
+      "angle": "Tác động đến các vai trò hỗ trợ",
+      "why": "Đợt cắt giảm 5.000 nhân sự của Barclays phần lớn ảnh hưởng đến các vai trò hỗ trợ, chiếm khoảng 60% tổng số lượng."
+    }
+  ],
+  "key_numbers": [
+    {
+      "text": "Cắt giảm tổng cộng 5.000 việc làm, trong đó khoảng 1.000 việc làm đã được cắt giảm và 4.000 việc làm tiếp theo sẽ diễn ra trước cuối năm.",
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "text": "Khoảng 60% tổng số lượng việc làm bị cắt giảm ảnh hưởng đến các vai trò hỗ trợ.",
+      "fact_ids": [
+        2
+      ]
+    },
+    {
+      "text": "Khoảng 5.000 nhân sự trên toàn cầu, tương đương khoảng 5% tổng số nhân viên, bị cắt giảm",
+      "fact_ids": [
+        3
+      ]
+    },
+    {
+      "text": "Khoảng 1.000 vị trí việc làm đã được cắt giảm trong nửa đầu năm và 4.000 vị trí tiếp theo hoàn tất trước khi kết thúc năm",
+      "fact_ids": [
+        4
+      ]
+    },
+    {
+      "text": "Khoảng 60% số lượng công việc bị cắt giảm thuộc về các bộ phận hỗ trợ, bao gồm cả các nhà phát triển phần mềm",
+      "fact_ids": [
+        6
+      ]
+    },
+    {
+      "text": "Lợi nhuận trước thuế đạt 2,3 tỷ bảng Anh trong quý kết thúc vào tháng 9",
+      "fact_ids": [
+        7
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "text": "Khoảng 1.000 việc làm đã được cắt giảm trong tổng số 5.000 việc làm theo kế hoạch của Barclays.",
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "text": "4.000 việc làm tiếp theo sẽ diễn ra trước cuối năm.",
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "text": "Khoảng 1.000 vị trí việc làm đã được cắt giảm trong nửa đầu năm",
+      "fact_ids": [
+        4
+      ]
+    },
+    {
+      "text": "Quý kết thúc vào tháng 9 ghi nhận lợi nhuận trước thuế đạt 2,3 tỷ bảng Anh",
+      "fact_ids": [
+        7
+      ]
+    },
+    {
+      "text": "4.000 vị trí việc làm tiếp theo sẽ hoàn tất cắt giảm trước khi kết thúc năm",
+      "fact_ids": [
+        4
+      ]
+    }
+  ],
+  "why_it_matters": [
+    {
+      "text": "Đợt cắt giảm 5.000 nhân sự của Barclays phần lớn ảnh hưởng đến các vai trò hỗ trợ, chiếm khoảng 60% tổng số lượng.",
+      "fact_ids": [
+        1,
+        2
+      ]
+    },
+    {
+      "text": "Việc cắt giảm 5.000 nhân sự (tương đương 5% tổng số nhân viên) phản ánh quá trình hiện đại hóa công nghệ có sự ứng dụng trí tuệ nhân tạo của ngân hàng",
+      "fact_ids": [
+        3,
+        5
+      ]
+    },
+    {
+      "text": "Đợt cắt giảm tác động mạnh đến các bộ phận hỗ trợ khi chiếm khoảng 60% số lượng công việc bị cắt giảm",
+      "fact_ids": [
+        6
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "text": "CS Venkatakrishnan là Giám đốc điều hành Barclays",
+      "fact_ids": [
+        5
+      ]
+    }
+  ],
+  "topic": "Barclays to cut 5,000 jobs as bank’s bosses hail AI productivity advances",
+  "language": "vi",
+  "source_languages": [
+    "vi",
+    "en"
+  ],
+  "output_language": "vi",
+  "search_queries": [
+    {
+      "source_lang": "vi",
+      "query": "Barclays to cut 5,000 jobs as bank’s bosses hail AI productivity advances",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "artificial intelligence Barclays to cut 5,000 jobs as bank’s bosses hail AI productivity advances",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "Barclays cắt giảm 5000 việc làm AI",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "Barclays 5000 job cuts AI productivity",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "lãnh đạo Barclays ca ngợi năng suất AI",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "Barclays bosses AI productivity advances 5000 jobs",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "Barclays to cut 5,000 jobs as bank’s bosses hail AI productivity advances diễn biến nguyên nhân tác động",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "vi",
+      "query": "Barclays to cut 5,000 jobs as bank’s bosses hail AI productivity advances chi tiết số liệu cập nhật",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "artificial intelligence Barclays to cut 5,000 jobs as bank’s bosses hail AI productivity advances background details impact",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "en",
+      "query": "artificial intelligence Barclays to cut 5,000 jobs as bank’s bosses hail AI productivity advances latest developments evidence",
+      "region": "us-en"
+    }
+  ],
+  "angle_candidates": [
+    {
+      "angle": "Tác động của AI đối với nhân sự ngành ngân hàng",
+      "why": "Phản ánh làn sóng cắt giảm việc làm thực tế tại Barclays và các ngân hàng lớn do tiến bộ công nghệ."
+    },
+    {
+      "angle": "Bài toán tối ưu hóa chi phí và tái cấu trúc doanh nghiệp",
+      "why": "Phân tích cách các tập đoàn tài chính lớn sử dụng AI kết hợp chiến lược chuyển dịch vận hành để tăng trưởng lợi nhuận."
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Ngân hàng Barclays thông báo kế hoạch cắt giảm 5.000 việc làm, với khoảng 1.000 việc làm đã được cắt giảm và 4.000 việc làm tiếp theo sẽ diễn ra trước cuối năm.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/business/live/2026/oct/22/barclays-profits-jump-looming-bank-tax-french-bond-yields-hit-fresh-24-year-high-latest-live-updates",
+      "confidence": "medium",
+      "evidence_quote": "UK bank says 1,000 job cuts already done with a further 4,000 to go before year end",
+      "source_lang": "en",
+      "fact_vi": "Ngân hàng Barclays thông báo kế hoạch cắt giảm 5.000 việc làm, với khoảng 1.000 việc làm đã được cắt giảm và 4.000 việc làm tiếp theo sẽ diễn ra trước cuối năm.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Đợt cắt giảm 5.000 nhân sự của Barclays phần lớn ảnh hưởng đến các vai trò hỗ trợ, chiếm khoảng 60% tổng số lượng.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/business/live/2026/oct/22/barclays-profits-jump-looming-bank-tax-french-bond-yields-hit-fresh-24-year-high-latest-live-updates",
+      "confidence": "medium",
+      "evidence_quote": "The majority (60%) affect support roles.",
+      "source_lang": "en",
+      "fact_vi": "Đợt cắt giảm 5.000 nhân sự của Barclays phần lớn ảnh hưởng đến các vai trò hỗ trợ, chiếm khoảng 60% tổng số lượng.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Ngân hàng Barclays thông báo kế hoạch cắt giảm khoảng 5.000 nhân sự trên toàn cầu, tương đương khoảng 5% tổng số nhân viên của tập đoàn.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/business/live/2026/oct/22/barclays-profits-jump-looming-bank-tax-french-bond-yields-hit-fresh-24-year-high-latest-live-updates",
+      "confidence": "medium",
+      "evidence_quote": "These actions involve an expected reduction of circa 5000 full time employees, around 60% of the group actions relate to support functions",
+      "source_lang": "en",
+      "fact_vi": "Ngân hàng Barclays thông báo kế hoạch cắt giảm khoảng 5.000 nhân sự trên toàn cầu, tương đương khoảng 5% tổng số nhân viên của tập đoàn.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Khoảng 1.000 vị trí việc làm đã được cắt giảm trong nửa đầu năm và 4.000 vị trí tiếp theo sẽ hoàn tất trước khi kết thúc năm.",
+      "source_name": "The Guardian",
+      "source_url": "https://www.theguardian.com/business/live/2026/oct/22/barclays-profits-jump-looming-bank-tax-french-bond-yields-hit-fresh-24-year-high-latest-live-updates",
+      "confidence": "medium",
+      "evidence_quote": "UK bank says 1,000 job cuts already done with a further 4,000 to go before year end, driven by advances in AI",
+      "source_lang": "en",
+      "fact_vi": "Khoảng 1.000 vị trí việc làm đã được cắt giảm trong nửa đầu năm và 4.000 vị trí tiếp theo sẽ hoàn tất trước khi kết thúc năm.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Giám đốc điều hành Barclays CS Venkatakrishnan ví việc ứng dụng trí tuệ nhân tạo như lớp kem trên bánh trong quá trình hiện đại hóa công nghệ của ngân hàng.",
+      "source_name": "Evening Standard",
+      "source_url": "https://uat-web.standard.co.uk/news/uk/barclays-john-healey-budget-b1301869.html",
+      "confidence": "medium",
+      "evidence_quote": "I’ve often said that it is the icing on the cake – it’s not the cake – because you need to do the infrastructure build",
+      "source_lang": "en",
+      "fact_vi": "Giám đốc điều hành Barclays CS Venkatakrishnan ví việc ứng dụng trí tuệ nhân tạo như lớp kem trên bánh trong quá trình hiện đại hóa công nghệ của ngân hàng.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Khoảng 60% số lượng công việc bị cắt giảm thuộc về các bộ phận hỗ trợ, bao gồm cả các nhà phát triển phần mềm.",
+      "source_name": "BBC",
+      "source_url": "https://www.bbc.co.uk/news/articles/cm4g1p347qgxo?amp;at_campaign=rss",
+      "confidence": "medium",
+      "evidence_quote": "Barclays said around 60% of the job cuts will fall within its support functions, including among developers.",
+      "source_lang": "en",
+      "fact_vi": "Khoảng 60% số lượng công việc bị cắt giảm thuộc về các bộ phận hỗ trợ, bao gồm cả các nhà phát triển phần mềm.",
+      "published_at": "2026-10-22"
+    },
+    {
+      "claim": "Barclays báo cáo lợi nhuận trước thuế đạt 2,3 tỷ bảng Anh trong quý kết thúc vào tháng 9, cao hơn so với cùng kỳ năm ngoái.",
+      "source_name": "BBC",
+      "source_url": "https://www.bbc.co.uk/news/articles/cm4g1p347qgxo?amp;at_campaign=rss",
+      "confidence": "medium",
+      "evidence_quote": "Barclays also revealed it made £2.3bn profit in the three months to September, higher than the same period a year ago, but slightly less than",
+      "source_lang": "en",
+      "fact_vi": "Barclays báo cáo lợi nhuận trước thuế đạt 2,3 tỷ bảng Anh trong quý kết thúc vào tháng 9, cao hơn so với cùng kỳ năm ngoái.",
+      "published_at": "2026-10-22"
+    }
+  ],
+  "trends": [],
+  "hooks": [
+    "Barclays vừa sa thải 5.000 nhân sự và gọi AI là 'lớp kem phủ ngọt ngào' cho năng suất ngân hàng.",
+    "Khi trí tuệ nhân tạo làm thay việc hỗ trợ và tiếp thị, hàng nghìn nhân sự ngân hàng toàn cầu đang đi về đâu?"
+  ],
+  "audience_questions": [
+    "Liệu AI có thực sự thay thế hoàn toàn các công việc văn phòng trong ngành tài chính?",
+    "Người lao động cần trang bị kỹ năng gì để không bị tụt lại trong làn sóng tự động hóa?"
+  ],
+  "keywords": [
+    "Barclays",
+    "sa thải nhân sự",
+    "trí tuệ nhân tạo",
+    "tự động hóa ngân hàng",
+    "tái cấu trúc tài chính"
+  ],
+  "risks": [
+    "Tìm web/news không khả dụng; đã dùng các nguồn còn lại.",
+    "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+    "Đã tắt YouTube trends trong lượt nghiên cứu này.",
+    "Đã loại fact #3: quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+    "Đã loại fact #4: quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+    "Đã loại fact #5: quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+    "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+    "dữ liệu mỏng, kịch bản sẽ ít chi tiết",
+    "Bỏ URL không phải bài viết cụ thể hoặc là trang chuyên mục/trang chủ.",
+    "fact #3: quote dài 31 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #5: quote dài 26 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "Đã mở rộng Research 1 lần: thêm 2 nguồn; 2 → 7 fact hợp lệ."
+  ]
+}

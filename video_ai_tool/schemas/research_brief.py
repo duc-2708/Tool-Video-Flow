@@ -5,6 +5,7 @@ from typing import Annotated, Literal
 from pydantic import Field, HttpUrl
 from schemas.base import NonEmptyText, StrictModel
 from schemas.languages import SourceLanguage
+from schemas.explainer import KnowledgeNote,ResearchQuestion,ContentMode
 
 
 class AngleCandidate(StrictModel):
@@ -63,6 +64,9 @@ class TrendInsights(StrictModel):
 
 
 class ResearchBrief(StrictModel):
+    content_mode: ContentMode = Field(default="event_only",exclude_if=lambda v:v=="event_only")
+    research_questions: list[ResearchQuestion] = Field(default_factory=list,exclude_if=lambda v:not v)
+    knowledge_notes: list[KnowledgeNote] = Field(default_factory=list,max_length=8,exclude_if=lambda v:not v)
     discovery_hint: DiscoveryHint | None = Field(default=None,exclude_if=lambda v:v is None)
     research_depth: Literal["legacy","deep"] = Field(default="legacy",exclude_if=lambda value:value == "legacy")
     story_angles: list[AngleCandidate] = Field(default_factory=list,exclude_if=lambda value:not value)

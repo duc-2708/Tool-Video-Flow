@@ -164,6 +164,9 @@ def test_humanizer_cannot_approve_unsupported_claim(story_data):
     with pytest.raises(DirectorDraftError): create(story_data,provider)
     draft=json.loads((settings.output_dir/"edit_plan.draft.json").read_text(encoding="utf-8"))
     assert draft["failed_scene_ids"]==[2] and draft["plan"]["scenes"]
+    assert draft["plan"]["content_timed"]
+    for scene in draft["plan"]["scenes"]:
+        assert sum(s["duration_sec"] for s in scene["shots"])==pytest.approx(max(len(scene["narration"].split())/2.6+.8,2.5))
     assert len([s for s,_ in provider.calls if s is HumanizedScript])==3
 
 

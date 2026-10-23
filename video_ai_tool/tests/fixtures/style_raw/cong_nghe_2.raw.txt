@@ -1,0 +1,341 @@
+{
+  "category_guess": {
+    "category_id": "cong-nghe",
+    "confidence": 0.95,
+    "reason": "Video hướng dẫn tạo AI agent ứng dụng công nghệ phần mềm."
+  },
+  "suggested_type": "review",
+  "scenes": [
+    {
+      "start_sec": 0,
+      "end_sec": 5,
+      "purpose": "hook",
+      "narration_summary": "Giới thiệu cách tạo AI agent cực kỳ đơn giản với framework FAST.",
+      "word_count": 25,
+      "words_per_sec": 5.0,
+      "shot_count": 4,
+      "average_shot_sec": 1.25,
+      "visual_types": [
+        "animated graphics",
+        "avatar mascot"
+      ],
+      "camera_effects": [
+        "zoom"
+      ],
+      "overlays": [
+        {
+          "text": "TẠO AI AGENT",
+          "position": "lower",
+          "emphasis": "color highlight"
+        }
+      ],
+      "sfx": [
+        "pop"
+      ],
+      "music": "upbeat electronic",
+      "transition_to_next": {
+        "type": "fade",
+        "connective_template": "Chữ đầu tiên là {variable}"
+      }
+    },
+    {
+      "start_sec": 5,
+      "end_sec": 28,
+      "purpose": "step 1",
+      "narration_summary": "Giải thích chữ F trong FAST là cài đặt công cụ AI agent trên máy.",
+      "word_count": 70,
+      "words_per_sec": 3.0,
+      "shot_count": 6,
+      "average_shot_sec": 3.83,
+      "visual_types": [
+        "screen recording",
+        "app interface"
+      ],
+      "camera_effects": [
+        "pan"
+      ],
+      "overlays": [
+        {
+          "text": "F A S T",
+          "position": "top",
+          "emphasis": "glow"
+        }
+      ],
+      "sfx": [
+        "click"
+      ],
+      "music": "upbeat electronic",
+      "transition_to_next": {
+        "type": "fade",
+        "connective_template": "Tiếp theo là chữ {variable}"
+      }
+    },
+    {
+      "start_sec": 28,
+      "end_sec": 50,
+      "purpose": "step 2",
+      "narration_summary": "Giải thích chữ A là kết nối công cụ như Gmail cho agent.",
+      "word_count": 65,
+      "words_per_sec": 2.95,
+      "shot_count": 5,
+      "average_shot_sec": 4.4,
+      "visual_types": [
+        "screen recording",
+        "connectors interface"
+      ],
+      "camera_effects": [
+        "zoom in"
+      ],
+      "overlays": [
+        {
+          "text": "A",
+          "position": "top",
+          "emphasis": "circle"
+        }
+      ],
+      "sfx": [
+        "beep"
+      ],
+      "music": "upbeat electronic",
+      "transition_to_next": {
+        "type": "fade",
+        "connective_template": "Chữ tiếp theo là {variable}"
+      }
+    },
+    {
+      "start_sec": 50,
+      "end_sec": 121,
+      "purpose": "step 3 & 4",
+      "narration_summary": "Giải thích chữ S (giao nhiệm vụ) và chữ T (đóng gói thành skill tự chạy).",
+      "word_count": 180,
+      "words_per_sec": 2.53,
+      "shot_count": 10,
+      "average_shot_sec": 7.1,
+      "visual_types": [
+        "screen recording",
+        "prompt text"
+      ],
+      "camera_effects": [
+        "pan"
+      ],
+      "overlays": [
+        {
+          "text": "S",
+          "position": "top",
+          "emphasis": "highlight"
+        },
+        {
+          "text": "T",
+          "position": "top",
+          "emphasis": "highlight"
+        }
+      ],
+      "sfx": [
+        "whoosh"
+      ],
+      "music": "upbeat electronic",
+      "transition_to_next": {
+        "type": "fade",
+        "connective_template": "Nói ngắn gọn lại thì {summary}"
+      }
+    },
+    {
+      "start_sec": 121,
+      "end_sec": 116.71,
+      "purpose": "cta",
+      "narration_summary": "Tóm tắt lại các bước và kêu gọi comment để nhận tài liệu hướng dẫn.",
+      "word_count": 50,
+      "words_per_sec": 3.12,
+      "shot_count": 4,
+      "average_shot_sec": 1.4,
+      "visual_types": [
+        "animated graphics",
+        "avatar mascot"
+      ],
+      "camera_effects": [
+        "zoom out"
+      ],
+      "overlays": [
+        {
+          "text": "COMMENT AI AGENT",
+          "position": "lower",
+          "emphasis": "bold"
+        }
+      ],
+      "sfx": [
+        "success chime"
+      ],
+      "music": "upbeat electronic",
+      "transition_to_next": null
+    }
+  ],
+  "narrative_flow": "Video dẫn dắt người xem qua một framework 4 bước rõ ràng (F-A-S-T) để tự tạo AI agent, từ cài đặt, kết nối, giao nhiệm vụ đến đóng gói tự động hóa.",
+  "connective_phrases": [
+    "Chữ đầu tiên là",
+    "Tiếp theo là chữ",
+    "Chữ tiếp theo là",
+    "Và chữ cuối cùng là",
+    "Nói ngắn gọn lại thì"
+  ],
+  "scene_count": 5,
+  "avg_scene_sec": 23.34,
+  "duration_sec": 116.71,
+  "transcript_outline": [
+    {
+      "start_sec": 0,
+      "end_sec": 5,
+      "summary": "Giới thiệu framework FAST tạo AI agent"
+    },
+    {
+      "start_sec": 5,
+      "end_sec": 28,
+      "summary": "Bước F: Cài đặt công cụ AI agent"
+    },
+    {
+      "start_sec": 28,
+      "end_sec": 50,
+      "summary": "Bước A: Kết nối công cụ với agent"
+    },
+    {
+      "start_sec": 50,
+      "end_sec": 121,
+      "summary": "Bước S và T: Giao nhiệm vụ và đóng gói skill tự động"
+    },
+    {
+      "start_sec": 121,
+      "end_sec": 116.71,
+      "summary": "Tổng kết và kêu gọi hành động"
+    }
+  ],
+  "hook": {
+    "technique": "câu hỏi / tuyên bố giá trị",
+    "template": "Cách tạo {topic} cho bất kỳ công việc nào của bạn cực kỳ đơn giản",
+    "word_count": 18
+  },
+  "structure": [
+    {
+      "name": "Hook",
+      "duration_sec": 5,
+      "purpose": "Thu hút người xem bằng lời hứa tạo AI đơn giản",
+      "transition": "fade"
+    },
+    {
+      "name": "Body - Step F & A",
+      "duration_sec": 45,
+      "purpose": "Hướng dẫn cài đặt và kết nối công cụ",
+      "transition": "fade"
+    },
+    {
+      "name": "Body - Step S & T",
+      "duration_sec": 65,
+      "purpose": "Hướng dẫn giao nhiệm vụ và tự động hóa",
+      "transition": "fade"
+    },
+    {
+      "name": "CTA",
+      "duration_sec": 1.71,
+      "purpose": "Kêu gọi comment nhận tài liệu",
+      "transition": "none"
+    }
+  ],
+  "narration_style": {
+    "pronouns": [
+      "anh em",
+      "mình"
+    ],
+    "intimacy": "thân thiện, gần gũi",
+    "average_sentence_words": 12,
+    "rhetorical_questions": "không dùng",
+    "examples": "làm báo cáo email mỗi sáng",
+    "catchphrases": [
+      "F-A-S-T"
+    ],
+    "humor": "thấp",
+    "words_per_sec": 3.2,
+    "voice_gender_estimate": "nam",
+    "voice_age_estimate": "25-35",
+    "voice_emotion": "tự tin, chuyên nghiệp"
+  },
+  "pacing": {
+    "average_shot_sec": 3.5,
+    "cuts_per_10_sec": 3,
+    "pattern_interrupts": [
+      5,
+      28,
+      50,
+      121
+    ],
+    "rhythm": "đều đặn, rõ ràng theo từng bước"
+  },
+  "visual_style": {
+    "types": [
+      "screen recording",
+      "animated graphics",
+      "avatar mascot"
+    ],
+    "transitions": [
+      "fade",
+      "slide"
+    ],
+    "camera_effects": [
+      "zoom",
+      "pan"
+    ],
+    "aspect_ratio": "9:16",
+    "colors": [
+      "purple",
+      "white",
+      "grey"
+    ]
+  },
+  "captions": {
+    "enabled": true,
+    "mode": "phrase",
+    "font_description": "sans-serif bold",
+    "font_scale": 0.05,
+    "color": "white",
+    "highlight_color": "yellow",
+    "stroke_color": "black",
+    "stroke_width_ratio": 0.005,
+    "position": "lower",
+    "emphasis": "color highlight",
+    "shadow": "drop shadow"
+  },
+  "audio": {
+    "mood": "tech, upbeat",
+    "music_volume": 0.2,
+    "sfx_types": [
+      "pop",
+      "click",
+      "success chime"
+    ],
+    "sfx_per_10_sec": 2,
+    "sfx_positions": [
+      0,
+      5,
+      28,
+      50,
+      121
+    ],
+    "ducking": true,
+    "details": "Nhạc nền nhẹ nhàng kết hợp hiệu ứng âm thanh click thao tác rõ ràng."
+  },
+  "cta_ending": {
+    "technique": "yêu cầu bình luận để nhận tài liệu",
+    "has_cta": true
+  },
+  "strengths": [
+    "Framework F-A-S-T dễ nhớ và dễ áp dụng",
+    "Kết hợp hình ảnh quay màn hình thực tế trực quan",
+    "Nhịp điệu phân chia rõ ràng theo từng bước"
+  ],
+  "weaknesses": [
+    "Thời lượng hơi dài cho một video hướng dẫn nhanh"
+  ],
+  "reusable_rules": [
+    "Sử dụng từ viết tắt dễ nhớ làm khung sườn nội dung",
+    "Chia nhỏ hướng dẫn thành các bước trực quan trên màn hình",
+    "Kết hợp avatar hoạt hình hướng dẫn để tăng sinh động",
+    "Đặt câu hỏi kêu gọi hành động cụ thể ở cuối video"
+  ]
+}

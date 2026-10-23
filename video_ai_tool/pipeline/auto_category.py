@@ -20,6 +20,7 @@ from utils.console import configure_console
 class AutoCategoryError(RuntimeError): pass
 
 class AutoConfig(BaseModel):
+    content_mode: Literal["event_only","explainer_v2"] = Field(default="event_only",exclude_if=lambda v:v=="event_only")
     model_config=ConfigDict(extra="forbid")
     category: str=Field(min_length=1,max_length=120)
     region: Literal["vn","global","both"]="both"
@@ -73,7 +74,7 @@ def auto_report(project,state,diagnostics):
 
 def run_auto(category=None,region="both",time_window_days=3,duration=60,format="tiktok",creative_license="strict",style="storytelling",
              use_ai_clips=False,progress_cb=None,*,settings=None,resume=None,review=False,use_youtube=False,
-             ai_clips=0,ai_confirmed=False,cancel_event=None,render_mode="final",style_preset=None):
+             ai_clips=0,ai_confirmed=False,cancel_event=None,render_mode="final",style_preset=None,content_mode="event_only"):
     settings=settings or get_settings()
     if resume is not None:
         project=Path(resume).resolve()
@@ -85,7 +86,7 @@ def run_auto(category=None,region="both",time_window_days=3,duration=60,format="
     else:
         count=ai_clips or (1 if use_ai_clips else 0)
         cfg=AutoConfig(category=category,region=region,time_window_days=time_window_days,duration=duration,format=format,
-            creative_license=creative_license,style=style,style_preset=style_preset,review=review,use_youtube=use_youtube,ai_clips=count,
+            creative_license=creative_license,style=style,style_preset=style_preset,review=review,use_youtube=use_youtube,ai_clips=count,content_mode=content_mode,
             ai_model=settings.gateway_video_model,ai_seconds=settings.ai_clip_seconds,render_mode=render_mode)
         if count>settings.ai_clip_max_per_run: raise ValueError("Số clip vượt AI_CLIP_MAX_PER_RUN.")
         if count and not ai_confirmed:
@@ -142,8 +143,8 @@ def run_auto(category=None,region="both",time_window_days=3,duration=60,format="
                 if same:
                     run_cfg=saved_config(project,continue_after_review=state["status"]=="waiting_review")
                 else:
-                    run_cfg=RunConfig(topic=suggestion.topic,video_type=suggestion.suggested_type,video_format=cfg.format,duration_sec=cfg.duration,
-                        script_style=cfg.style,style_preset=cfg.style_preset,creative_license=cfg.creative_license,mode="review" if cfg.review else "auto",youtube_trends=cfg.use_youtube,
+                    run_cfg=RunConfig(topic=suggestion.topic,category=cfg.category,video_type=suggestion.suggested_type,video_format=cfg.format,duration_sec=cfg.duration,
+                        script_style=cfg.style,style_preset=cfg.style_preset,creative_license=cfg.creative_license,mode="review" if cfg.review else "auto",youtube_trends=cfg.use_youtube,content_mode=cfg.content_mode,
                         discovery=DiscoveryHint(category=cfg.category,suggestion=suggestion),project_dir=project,
                         ai_clips=cfg.ai_clips,ai_model=cfg.ai_model,ai_seconds=cfg.ai_seconds,ai_confirmed=meta["ai_confirmed"],ai_failure_action="skip",render_mode=cfg.render_mode)
                 try:
@@ -177,6 +178,7 @@ def main():
     configure_console()
     parser=argparse.ArgumentParser(description="Danh mục → video tự động; mặc định không dừng duyệt, AI clip tắt.")
     parser.add_argument("--category")
+    parser.add_argument("--explainer-v2",action="store_true")
     parser.add_argument("--region",choices=["vn","global","both"],default="both")
     parser.add_argument("--days",type=int,choices=[1,3,7],default=3)
     parser.add_argument("--duration",type=float,default=60)
@@ -199,7 +201,7 @@ def main():
         for index in range(args.count):
             project=run_auto(args.category,args.region,args.days,args.duration,args.format,args.creative_license,args.style,
                 settings=settings,resume=args.resume if index==0 else None,review=args.review,use_youtube=args.youtube_trends,
-                ai_clips=args.ai_clips,ai_confirmed=args.confirm_ai,style_preset=args.style_preset,progress_cb=lambda e:print(diagnostics.redact(e["message"]),flush=True))
+                ai_clips=args.ai_clips,ai_confirmed=args.confirm_ai,style_preset=args.style_preset,content_mode="explainer_v2" if args.explainer_v2 else "event_only",progress_cb=lambda e:print(diagnostics.redact(e["message"]),flush=True))
             state=read_json(project/"run_state.json")
             print(f"Project: {project} · {state['status']} · Báo cáo: {project/'report.md'}")
             if state["status"]!="done":

@@ -51,6 +51,9 @@ def profile_path(settings, name):
 
 
 def load_profile(settings, name):
+    if name.startswith("@"):
+        from pipeline.category_style import load_token
+        return load_token(settings,name)
     path = profile_path(settings, name)
     if not path.is_file():
         raise ValueError(f"Chưa có phong cách mẫu '{name}'. Phân tích video và lưu preset trước.")
@@ -110,8 +113,9 @@ def aggregate(records, name):
     if lengths:
         narration.append(f"Câu dài trung bình khoảng {mean(lengths):.0f} từ; xen câu ngắn và dài theo ý.")
     templates = common([[a.hook.template] if "{topic}" in a.hook.template else [] for a in analyses])
-    return StyleProfile(name=name.strip(), slug=slugify(name), reference_hashes=[r.file_hash for r in records],
-        reference_files=[r.filename for r in records],
+    result=StyleProfile(name=name.strip(), slug=slugify(name), reference_hashes=[r.file_hash for r in records],
+        video_count=len(records),confidence_label="ổn" if len(records)>=3 else "yếu" if len(records)==1 else "đang tích lũy",
+        reference_files=[r.filename for r in records],reference_entities=list(dict.fromkeys(e for a in analyses for e in a.entities_in_video)),
         reference_texts=[p.summary for a in analyses for p in a.transcript_outline],
         hook_templates=templates, hook_techniques=common([[a.hook.technique] for a in analyses]),
         structure=structure, shot_seconds=value_range([a.pacing.average_shot_sec for a in analyses], 3),
@@ -121,10 +125,18 @@ def aggregate(records, name):
         transitions=common([a.visual_style.transitions for a in analyses]), captions=captions, audio=audio,
         ending_techniques=common([[a.cta_ending.technique] for a in analyses]),
         reusable_rules=[r for r, _ in rule_counts], rule_frequencies=[RuleFrequency(rule=r, video_count=n) for r, n in rule_counts])
+    from pipeline.style_safety import sanitize_profile
+    return sanitize_profile(result)
 
 
 def save_profile(settings, profile):
-    profile = StyleProfile.model_validate(profile)
+    from pipeline.style_safety import sanitize_profile
+    profile = sanitize_profile(StyleProfile.model_validate(profile))
+    if profile.category_id or profile.slug=="@default":
+        from pipeline.category_style import profile_file
+        path=profile_file(settings,profile.category_id,profile.video_type)
+        write_json_atomic(path,profile.model_dump(mode="json"))
+        return path
     path = profile_path(settings, profile.name)
     write_json_atomic(path, profile.model_dump(mode="json"))
     write_json_atomic(settings.root_dir / "config/style_profile.json", profile.model_dump(mode="json"))
@@ -132,11 +144,12 @@ def save_profile(settings, profile):
 
 
 def build_profile(settings, name, videos):
-    from pipeline.style_learner import reference_path, storage, digest_file
+    from pipeline.style_learner import reference_path, digest_file
+    from pipeline.style_library import record_path
     records = []
     for video in dict.fromkeys(videos):
         path = reference_path(settings, video)
-        record = AnalysisRecord.model_validate_json((storage(settings) / f"{path.stem}.json").read_text(encoding="utf-8"))
+        record = AnalysisRecord.model_validate_json(record_path(settings,video).read_text(encoding="utf-8"))
         if record.file_hash != digest_file(path):
             raise ValueError(f"{path.name} đã thay đổi; phân tích lại trước khi tổng hợp.")
         from utils.cache import cache_key
@@ -152,7 +165,13 @@ def build_profile(settings, name, videos):
 def guidance(profile):
     if profile is None:
         return None
-    return profile.model_dump(mode="json", exclude={"reference_texts", "reference_files", "reference_hashes", "rule_frequencies"})
+    from pipeline.style_safety import sanitize_profile
+    data=sanitize_profile(profile).model_dump(mode="json", exclude={"name","slug","reference_texts","reference_entities", "reference_files", "reference_hashes", "rule_frequencies","source_signature","warnings","locked_fields"})
+    # Raw observations/repair diagnostics stay local, never become writing rules.
+    for section in ("captions","audio"):
+        data[section].pop("analysis_warnings",None)
+        data[section].pop("color_note",None)
+    return data
 
 
 def speech_budget(duration, profile=None):
@@ -192,7 +211,8 @@ def apply_defaults(plan, profile):
     from schemas.style import StyleRenderDefaults
     plan.style_preset = profile.slug
     plan.style_profile = profile.model_copy(deep=True)
-    plan.render_style = StyleRenderDefaults(captions=profile.captions.model_copy(deep=True), ducking=profile.audio.ducking)
+    plan.render_style = StyleRenderDefaults(captions=profile.captions.model_copy(deep=True), ducking=profile.audio.ducking,
+        theme=profile.visual_theme,visual_templates=profile.visual_templates,progress_tracker=profile.progress_tracker,progress_labels=profile.progress_labels)
     plan.music.mood = profile.audio.mood or "calm"
     plan.music.volume = profile.audio.music_volume
     allowed_fx = [v for v in profile.visual_effects if v in {"none", "zoom_in", "zoom_out", "pan_left", "pan_right"}] or ["none"]
@@ -202,11 +222,26 @@ def apply_defaults(plan, profile):
     interval = 10/profile.audio.sfx_per_10_sec if profile.audio.sfx_per_10_sec else float("inf")
     for index, scene in enumerate(plan.scenes):
         scene.transition_out = transitions[index % len(transitions)]
+        pattern=None
+        if profile.scene_patterns:
+            midpoint=(elapsed+scene.duration_sec/2)/plan.duration_sec
+            cumulative=0.
+            for candidate in profile.scene_patterns:
+                cumulative+=candidate.fraction
+                if midpoint<=cumulative+1e-8:
+                    pattern=candidate
+                    break
+            if pattern:
+                value=pattern.transition.casefold()
+                scene.transition_out=next((v for words,v in [(("fade","mờ"),"fade"),(("whip","whoosh"),"whip"),(("zoom",),"zoom")] if any(w in value for w in words)),"cut")
         scene.sfx = sfx[index % len(sfx)] if sfx and elapsed-last_sfx >= interval else "none"
         if scene.sfx != "none":
             last_sfx = elapsed
         for shot_index, shot in enumerate(scene.shots):
             shot.effect = allowed_fx[(index + shot_index) % len(allowed_fx)]
+            if pattern and pattern.effects:
+                value=pattern.effects[shot_index%len(pattern.effects)].casefold()
+                shot.effect=next((v for words,v in [(("pan_left","pan left","trái"),"pan_left"),(("pan_right","pan right","phải"),"pan_right"),(("zoom_out","zoom out","thu nhỏ"),"zoom_out"),(("zoom",),"zoom_in")] if any(w in value for w in words)),shot.effect)
         elapsed += scene.duration_sec
     return plan
 
@@ -214,12 +249,24 @@ def apply_defaults(plan, profile):
 def main():
     configure_console()
     parser = argparse.ArgumentParser(description="Tổng hợp phân tích video thành preset local")
-    parser.add_argument("--name", required=True)
-    parser.add_argument("--videos", nargs="+", required=True)
+    parser.add_argument("--name")
+    parser.add_argument("--videos", nargs="+")
+    parser.add_argument("--category")
+    parser.add_argument("--rebuild",action="store_true")
+    parser.add_argument("--type",choices=["news","review","story"])
     args = parser.parse_args()
     settings = None
     try:
         settings = get_settings()
+        if args.category:
+            from pipeline.category_style import rebuild_category,profile_file
+            profile=rebuild_category(settings,args.category,force=args.rebuild,video_type=args.type)
+            print(f"Đã tổng hợp {profile.video_count} video · {profile.confidence_label}: {profile_file(settings,args.category,args.type)}")
+            for warning in profile.warnings:
+                print("Cảnh báo: "+warning)
+            return 0
+        if not args.name or not args.videos:
+            parser.error("Cần --category --rebuild hoặc --name và --videos.")
         path = save_profile(settings, build_profile(settings, args.name, args.videos))
         print(f"Đã lưu preset: {path}")
         return 0

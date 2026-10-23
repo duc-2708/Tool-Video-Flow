@@ -19,11 +19,11 @@ def test_sdk_structured_output_timeout_and_close(tmp_path: Path, monkeypatch: py
     constructor = Mock(return_value=client)
     monkeypatch.setattr("providers.llm_gemini.genai.Client", constructor)
     settings = Settings(root_dir=tmp_path, gemini_api_key=SecretStr("fixture-only"), gemini_model="fixture-model",
-                        request_timeout_sec=12)
+                        request_timeout_sec=12,gemini_timeout_sec=14)
     provider = GeminiProvider(settings)
     assert provider.generate_json("fixture prompt", ResearchBrief) == "{}"
     options = constructor.call_args.kwargs["http_options"]
-    assert options.timeout == 12000 and options.retry_options.attempts == 1
+    assert options.timeout == 14000 and options.retry_options.attempts == 1
     config = client.models.generate_content.call_args.kwargs["config"]
     assert config.response_schema is None and config.response_mime_type == "application/json"
     assert config.response_json_schema == ResearchFactsResponse.model_json_schema()

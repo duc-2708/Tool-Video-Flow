@@ -1,4 +1,4 @@
-"""Budget, compact wire schema, original 400 and exactly one safe fallback."""
+"""Budget, compact wire schema and original HTTP 400 without retries."""
 import json
 from unittest.mock import Mock
 import pytest
@@ -50,35 +50,34 @@ def error400(message):
     return errors.ClientError(400,{"error":{"code":400,"status":"INVALID_ARGUMENT","message":message}})
 
 
-def test_400_original_message_redacted_in_log_ui_and_only_one_retry(tmp_path,monkeypatch):
+def test_400_original_message_redacted_in_log_ui_without_retry(tmp_path,monkeypatch):
     provider,client = provider_fixture(tmp_path,monkeypatch)
     message = 'Unknown name "additional_properties"; fixture-secret-marker '+"detail "*300
     client.models.generate_content.side_effect = error400(message)
     with pytest.raises(GeminiRequestError) as caught:
         provider.generate_json("test prompt",ResearchBrief)
-    assert client.models.generate_content.call_count == 2
+    assert client.models.generate_content.call_count == 1
     summary,_ = error_details(caught.value,provider.diagnostics)
     assert "INVALID_ARGUMENT" in summary and 'Unknown name "additional_properties"' in summary
     assert "fixture-secret-marker" not in summary and message.split("fixture-secret-marker")[1] in summary
     log = provider.diagnostics.path.read_text(encoding="utf-8")
     assert "INVALID_ARGUMENT" in log and "fixture-secret-marker" not in log
     config = client.models.generate_content.call_args.kwargs["config"]
-    assert config.response_json_schema is None and config.response_mime_type is None
-    assert config.max_output_tokens is None and config.temperature is None and config.thinking_config is None
+    assert config.response_json_schema and config.response_mime_type == "application/json"
+    assert config.thinking_config is None
 
 
-def test_one_reduced_attempt_can_succeed_and_reuses_compatible_mode(tmp_path,monkeypatch):
+def test_400_does_not_change_configuration_of_next_independent_request(tmp_path,monkeypatch):
     provider,client = provider_fixture(tmp_path,monkeypatch)
     response = Mock(text="{}",candidates=[])
-    client.models.generate_content.side_effect = [error400("Unsupported max_output_tokens"),response,response]
+    client.models.generate_content.side_effect = [error400("Unsupported max_output_tokens"),response]
     prompt = "Research instructions\nINPUT_DATA_JSON:\n"+json.dumps({"sources":[{"text":"paragraph "*8000} for _ in range(8)]})
-    assert provider.generate_json(prompt,ResearchBrief) == "{}"
-    sent = client.models.generate_content.call_args.kwargs["contents"]
-    payload = json.loads(sent.split("\nINPUT_DATA_JSON:\n")[1])
-    assert sum(len(row["text"]) for row in payload["sources"])<=12000
+    with pytest.raises(GeminiRequestError,match="Unsupported max_output_tokens"):
+        provider.generate_json(prompt,ResearchBrief)
+    assert client.models.generate_content.call_count == 1
     assert provider.generate_json("another task",ResearchBrief) == "{}"
-    assert client.models.generate_content.call_count == 3
-    assert client.models.generate_content.call_args.kwargs["config"].response_json_schema is None
+    assert client.models.generate_content.call_count == 2
+    assert client.models.generate_content.call_args.kwargs["config"].response_json_schema
 
 
 def test_researcher_always_caps_sources_before_call(tmp_path):

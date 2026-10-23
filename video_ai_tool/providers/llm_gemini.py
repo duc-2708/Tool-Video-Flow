@@ -3,15 +3,17 @@
 import httpx
 import json
 import math
+import random
+import time
 from google import genai
 from google.genai import errors, types
 from pydantic import BaseModel
-from tenacity import Retrying, retry_if_exception, stop_after_attempt, wait_exponential_jitter
 from config.settings import Settings
 from providers.llm_base import LLMProvider, ProviderError
 from utils.diagnostics import Diagnostics
-from providers.research_payload import ResearchFactsResponse,compact_facts_json,reduced_request_prompt
+from providers.research_payload import ResearchFactsResponse,compact_facts_json
 from providers.style_schema import response_schema
+from providers.gemini_resilience import transient_gemini,error_code,compact_prompt
 
 
 class GeminiRequestError(ProviderError):
@@ -22,24 +24,26 @@ class GeminiRequestError(ProviderError):
 
 class GeminiOutputError(ProviderError):
     """Phân biệt output rỗng/cắt token với API hoặc lỗi parse JSON."""
-    def __init__(self, message: str, *, retryable: bool) -> None:
+    def __init__(self, message: str, *, retryable: bool,finish_reason: str | None = None) -> None:
         super().__init__(message)
         self.retryable = retryable
+        self.finish_reason=finish_reason
 
 
-def transient_gemini(error: BaseException) -> bool:
-    return isinstance(error, (httpx.TimeoutException, httpx.NetworkError)) or (
-        isinstance(error, errors.APIError) and error.code in {408, 429, 500, 502, 503, 504})
+class GeminiTransientError(GeminiRequestError):
+    """Retry budget exhausted; callers must checkpoint rather than retry blindly."""
 
 
 class GeminiProvider(LLMProvider):
     def __init__(self, settings: Settings) -> None:
         self.diagnostics = Diagnostics(settings.logs_dir, secrets=[settings.gemini_api_key.get_secret_value()])
         self._model = settings.require_gemini_model()
-        self.attempts = settings.retry_attempts
+        self.attempts = 6  # Original request plus at most five retries.
+        self.fallback_model=settings.gemini_fallback_model.strip()
+        self.progress=lambda message:None
         self.output_token_budget = 8192
         self.client = genai.Client(api_key=settings.require_key("gemini"), http_options=types.HttpOptions(
-            timeout=int(settings.request_timeout_sec * 1000),
+            timeout=int(settings.gemini_timeout_sec * 1000),
             retry_options=types.HttpRetryOptions(attempts=1)))
 
     @property
@@ -49,65 +53,109 @@ class GeminiProvider(LLMProvider):
     def generate_json(self, prompt: str, schema: type[BaseModel]) -> str:
         from schemas.research_brief import ResearchBrief
         wire_schema = ResearchFactsResponse if schema is ResearchBrief else schema
-        fallback = getattr(self,"_plain_json_mode",False)
-        if fallback:
-            prompt = reduced_request_prompt(prompt,wire_schema)
-        while True:
-            try:
-                result = self._generate_json(prompt,wire_schema,minimal=fallback)
-                return compact_facts_json(result) if schema is ResearchBrief else result
-            except GeminiRequestError as error:
-                if error.code != 400 or fallback:
-                    raise
-                fallback = True
-                self._plain_json_mode = True
-                self.diagnostics.record("Gemini HTTP 400: thử đúng một lần với đầu vào/schema rút gọn; bỏ response_json_schema, response_mime_type, max_output_tokens, temperature. Lỗi gốc: "+str(error))
-                prompt = reduced_request_prompt(prompt,wire_schema)
+        result = self._generate_json(prompt,wire_schema)
+        return compact_facts_json(result) if schema is ResearchBrief else result
 
     def generate_media_json(self, prompt: str, media, schema: type[BaseModel]) -> str:
         """Reuse output/safety/timeout handling for a temporary Files API part."""
-        try:
-            return self._generate_json(prompt, schema, media=media)
-        except GeminiRequestError as error:
-            if error.code != 400:
-                raise
-            self.diagnostics.record("Style HTTP 400: thử một lần JSON không có response schema; giữ nguyên prompt phân tích.")
-            fallback = prompt + "\nChỉ trả JSON theo schema:\n" + json.dumps(schema.model_json_schema(), ensure_ascii=False)
-            return self._generate_json(fallback, schema, minimal=True, media=media)
+        return self._generate_json(prompt, schema, media=media)
+
+    def _send_with_retry(self,prompt,config,media):
+        model=self._model;deadline_failures=0;reduced=False;used_fallback=False
+        for index in range(self.attempts):
+            observer=getattr(self,"request_observer",None)
+            if observer is not None: observer()  # Rate/quota observers run before every paid attempt.
+            started=time.monotonic()
+            if media is not None:
+                wire=config.response_json_schema or config.response_schema
+                metadata=getattr(media,"video_metadata",None)
+                self.diagnostics.record("Gemini media request: "+json.dumps({
+                    "model":model,"max_output_tokens":config.max_output_tokens,"media_resolution":config.media_resolution,
+                    "response_mime_type":config.response_mime_type,"schema_chars":len(json.dumps(wire,ensure_ascii=False,default=str)) if wire else 0,
+                    "has_response_schema":config.response_schema is not None,"has_response_json_schema":config.response_json_schema is not None,
+                    "thinking_config":config.thinking_config.model_dump(mode="json") if config.thinking_config else None,
+                    "prompt_chars":len(prompt),"video_metadata":metadata.model_dump(mode="json",exclude_none=True) if metadata else None,
+                    "video":getattr(self,"video_request_context",{}),"attempt":index+1},ensure_ascii=False,default=str))
+            try:
+                response=self.client.models.generate_content(model=model,contents=[media,prompt] if media is not None else prompt,config=config)
+            except Exception as error:
+                code=error_code(error)
+                self.diagnostics.record_exception(error,f"Gemini attempt={index+1}, code={code}, model={model}, prompt_chars={len(prompt)}, estimated_input_tokens={math.ceil(len(prompt)/3)}, elapsed_sec={time.monotonic()-started:.3f}")
+                if media is not None and code==400:
+                    payload={"code":code,"status":getattr(error,"status",None),"message":getattr(error,"message",None),
+                        "details":getattr(error,"details",None),"original":str(error)}
+                    body=getattr(getattr(error,"response",None),"text",None)
+                    if isinstance(body,str): payload["response_body"]=body
+                    self.diagnostics.record("Gemini media 400 response (nguyên văn, đã che key): "+json.dumps(payload,ensure_ascii=False,default=str))
+                if not transient_gemini(error): raise
+                if index==self.attempts-1:
+                    raise GeminiTransientError(code,f"Gemini tạm thời không sẵn sàng ({code}) sau {self.attempts} lần gọi. Đã giữ tiến độ; chạy Tiếp tục để thử lại lượt đang dở. Chi tiết: {self.diagnostics.path}.") from error
+                if code in {504,"TIMEOUT"}:
+                    deadline_failures+=1
+                    if deadline_failures>=2 and not reduced:
+                        original=len(prompt);prompt=compact_prompt(prompt);reduced=True
+                        self.diagnostics.record(f"Gemini compact after {code}: prompt_chars={original} -> {len(prompt)}; giữ nguyên ID và fact đang tham chiếu.")
+                        self.progress("Gemini hết thời gian xử lý lặp lại; rút gọn hồ sơ phong cách và dữ liệu không dùng.")
+                    elif deadline_failures>=3 and reduced and self.fallback_model and self.fallback_model!=model and not used_fallback:
+                        model=self.fallback_model;used_fallback=True
+                        self.diagnostics.record(f"Gemini fallback: model={model}, prompt_chars={len(prompt)}")
+                        self.progress(f"Gemini vẫn quá tải; chuyển sang model dự phòng {model}.")
+                delay=3*2**index+random.uniform(0,1)
+                message=f"Gemini quá tải ({code}), thử lại lần {index+1}/5 sau {delay:.1f} giây"
+                self.diagnostics.record(message)
+                self.progress(message)
+                time.sleep(delay)
+                continue
+            self.diagnostics.record(f"Gemini attempt={index+1}, code=200, model={model}, prompt_chars={len(prompt)}, estimated_input_tokens={math.ceil(len(prompt)/3)}, elapsed_sec={time.monotonic()-started:.3f}")
+            return response
 
     def _generate_json(self, prompt: str, schema: type[BaseModel], *, minimal=False, media=None) -> str:
         try:
             self.diagnostics.record(f"Gemini request: model={self._model}, prompt_chars={len(prompt)}, estimated_input_tokens={math.ceil(len(prompt)/3)}, schema_chars={len(json.dumps(response_schema(schema)))}, mode={'plain_json_fallback' if minimal else 'structured_json'}, max_output_tokens={'model_default' if minimal else self.output_token_budget}, thinking_config=none")
-            for attempt in Retrying(retry=retry_if_exception(transient_gemini),
-                                    stop=stop_after_attempt(self.attempts),
-                                    before_sleep=lambda state: self.diagnostics.record_exception(
-                                        state.outcome.exception(), f"Gemini transient failure, attempt={state.attempt_number}"),
-                                    wait=wait_exponential_jitter(initial=1, max=30), reraise=True):
-                with attempt:
-                    response = self.client.models.generate_content(model=self._model, contents=[media, prompt] if media is not None else prompt,
-                        config=types.GenerateContentConfig() if minimal else types.GenerateContentConfig(response_mime_type="application/json",
-                            # JSON Schema phải đi qua response_json_schema; response_schema
-                            # là Schema kiểu OpenAPI, SDK đổi additionalProperties thành
-                            # additional_properties không hợp lệ ở endpoint đang dùng.
-                            response_json_schema=response_schema(schema),
-                            max_output_tokens=self.output_token_budget, temperature=0.2))
-                    candidates = response.candidates if isinstance(response.candidates, list) else []
-                    reasons = [str(getattr(candidate.finish_reason, "value", candidate.finish_reason)) for candidate in candidates]
-                    feedback = getattr(response, "prompt_feedback", None)
-                    block = getattr(feedback, "block_reason", None)
-                    block_reason = getattr(block, "value", block)
-                    if isinstance(block_reason, str) and block_reason not in {"", "BLOCK_REASON_UNSPECIFIED"}:
-                        raise GeminiOutputError(f"Gemini chặn prompt: {block_reason}.", retryable=False)
-                    if any(reason in {"SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII", "IMAGE_SAFETY"} for reason in reasons):
-                        raise GeminiOutputError(f"Gemini chặn output: {','.join(reasons)}.", retryable=False)
-                    if "MAX_TOKENS" in reasons:
-                        self.output_token_budget = min(self.output_token_budget * 2, 32768)
-                        raise GeminiOutputError("Gemini cắt output vì MAX_TOKENS; tăng ngân sách token cho lần thử kế tiếp.", retryable=True)
-                    text = response.text or ""
-                    if not text.strip():
-                        raise GeminiOutputError(f"Gemini trả output rỗng; finish_reason={','.join(reasons) or 'không có candidate'}.", retryable=True)
-                    self.diagnostics.record(f"Gemini response: finish_reason={','.join(reasons) or 'unknown'}, output_chars={len(text)}, max_output_tokens={self.output_token_budget}")
-                    return text
+            config=types.GenerateContentConfig() if minimal else types.GenerateContentConfig(response_mime_type="application/json",
+                    # JSON Schema phải đi qua response_json_schema; response_schema
+                    # là Schema kiểu OpenAPI, SDK đổi additionalProperties thành
+                    # additional_properties không hợp lệ ở endpoint đang dùng.
+                    response_json_schema=response_schema(schema),
+                    max_output_tokens=self.output_token_budget, temperature=0.2)
+            if media is not None:
+                options=getattr(self,"media_request_options",{})
+                if options:
+                    config.response_json_schema=options["wire_schema"] if options["use_schema"] else None
+                    config.response_schema=None
+                config.response_mime_type="application/json"
+                config.max_output_tokens=options.get("max_output_tokens",self.output_token_budget)
+                resolution=options.get("media_resolution",getattr(self,"media_resolution",None))
+                if resolution is not None:
+                    config.media_resolution=types.MediaResolution("MEDIA_RESOLUTION_"+resolution.upper())
+            response = self._send_with_retry(prompt,config,media)
+            candidates = response.candidates if isinstance(response.candidates, list) else []
+            reasons = [str(getattr(candidate.finish_reason, "value", candidate.finish_reason)) for candidate in candidates]
+            feedback = getattr(response, "prompt_feedback", None)
+            block = getattr(feedback, "block_reason", None)
+            block_reason = getattr(block, "value", block)
+            text = response.text or ""
+            response_observer=getattr(self,"response_observer",None)
+            if response_observer is not None:
+                blocked=(isinstance(block_reason,str) and block_reason not in {"","BLOCK_REASON_UNSPECIFIED"}) or any(reason in {"SAFETY","RECITATION","BLOCKLIST","PROHIBITED_CONTENT","SPII","IMAGE_SAFETY"} for reason in reasons)
+                try:
+                    response_observer(text,{"finish_reasons":reasons,"blocked":blocked,"truncated":"MAX_TOKENS" in reasons})
+                except Exception as error:
+                    raise GeminiOutputError("Không lưu được phản hồi thô; dừng để tránh mất kết quả đã tốn token.",retryable=False) from error
+            if isinstance(block_reason, str) and block_reason not in {"", "BLOCK_REASON_UNSPECIFIED"}:
+                raise GeminiOutputError(f"Gemini chặn prompt: {block_reason}.", retryable=False)
+            if any(reason in {"SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII", "IMAGE_SAFETY"} for reason in reasons):
+                raise GeminiOutputError(f"Gemini chặn output: {','.join(reasons)}.", retryable=False)
+            if "MAX_TOKENS" in reasons:
+                if media is None:
+                    self.output_token_budget = min(self.output_token_budget * 2, 32768)
+                raise GeminiOutputError("Gemini cắt output vì MAX_TOKENS.", retryable=True,finish_reason="MAX_TOKENS")
+            if not text.strip():
+                raise GeminiOutputError(f"Gemini trả output rỗng; finish_reason={','.join(reasons) or 'không có candidate'}.", retryable=True)
+            self.diagnostics.record(f"Gemini response: finish_reason={','.join(reasons) or 'unknown'}, output_chars={len(text)}, max_output_tokens={self.output_token_budget}")
+            return text
+        except GeminiTransientError:
+            raise
         except GeminiOutputError as error:
             self.diagnostics.record_exception(error, "Gemini output status")
             raise

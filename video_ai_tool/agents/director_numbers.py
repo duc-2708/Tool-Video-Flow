@@ -9,6 +9,12 @@ def normalized_numbers(text, *, ignore_current_year=True):
     # Lowercase m/mét in article lengths is not the uppercase financial suffix M.
     text=re.sub(r"(\d+(?:[.,]\d+)*)\s*m\b",r"\1 mét",text)
     text = spoken_to_digits(text.casefold()).replace("phần trăm","%")
+    # Explicit calendars are token boundaries; never concatenate month/year.
+    def calendar(match):
+        day,month,year=match.groups()
+        if not 1<=int(month)<=12 or day and not 1<=int(day)<=31: return match[0]
+        return " ".join(v for v in (day,month,year) if v)
+    text=re.sub(r"(?<!\d)(?:(\d{1,2})\s*[./-]\s*)?(\d{1,2})\s*[./-]\s*(\d{4})(?!\d)",calendar,text)
     text = re.sub(r"\b(?:cảnh|scene|bước|thứ|mục|phần|stt|số thứ tự)\s*#?\s*\d+\b","",text)
     text = re.sub(r"(?m)^\s*\d+[.)]\s+","",text)
     result = set()

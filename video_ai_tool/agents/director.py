@@ -83,6 +83,9 @@ from schemas.style import StyleProfile
 
 
 class DirectorRequest(StrictModel):
+    content_mode: Literal["event_only","explainer_v2"] = Field(default="event_only",exclude_if=lambda v:v=="event_only")
+    ai_clip_limit: int = Field(default=0,ge=0,exclude_if=lambda v:not v)
+    category: str | None = None
     style_preset: str | None = None
     style_profile: StyleProfile | None = Field(default=None, exclude=True)
     video_type: Literal["news", "review", "story"]
@@ -244,13 +247,29 @@ def timing_blueprint(target: float, fact_count=None) -> list[dict]:
 def validate_plan(plan: EditPlan, brief: ResearchBrief, request: DirectorRequest, *, check_style=True, check_title=True, diagnostics=None, validation_path=None, allow_merge=True) -> EditPlan:
     from agents.validation_rules import run_rules
     plan=normalize_plan_structure(plan,diagnostics=diagnostics)
-    return run_rules(plan,brief,request,diagnostics=diagnostics,config_path=validation_path,check_style=check_style,allow_merge=allow_merge)
+    from agents.director_sources import normalize_source_names
+    normalize_source_names(plan,brief,diagnostics)
+    result=run_rules(plan,brief,request,diagnostics=diagnostics,config_path=validation_path,check_style=check_style,allow_merge=allow_merge)
+    if result.content_timed:
+        from agents.content_plan import finalize_content_plan
+        finalize_content_plan(result,brief,ai_clip_limit=result.ai_clip_limit,diagnostics=diagnostics)
+        from agents.visual_planner import visual_issues
+        issues=visual_issues(result,brief)
+        if issues:
+            from agents.validation_rules import RuleViolation
+            from schemas.validation import ValidationEvent
+            raise RuleViolation([ValidationEvent(rule_id="visual_grounding",group=1,action="error",scene_id=s,message=m) for s,m in issues])
+    return result
 
 
 def validated_json(provider: LLMProvider, prompt: str, schema: type, attempts: int,
                    diagnostics: Diagnostics, *, reference=None):
     from agents.validation_rules import RuleViolation,schema_events
     last=None;candidate=None;repair_ids=set();base_prompt=prompt
+    try:
+        original_data=json.loads(base_prompt.split("\nINPUT_DATA_JSON:\n")[-1])
+        retry_context={k:original_data[k] for k in ("facts","allowed_sources") if k in original_data}
+    except (ValueError,TypeError): retry_context={}
     for attempt in range(1,attempts+1):
         try:
             raw=provider.generate_json(prompt,schema)
@@ -270,7 +289,7 @@ def validated_json(provider: LLMProvider, prompt: str, schema: type, attempts: i
             repair_ids=last.scene_ids
             if repair_ids and isinstance(candidate,dict):
                 prompt=("Sửa JSON/schema cơ bản cho RIÊNG các cảnh sau, giữ ID và các trường cấp video. Trả đúng schema đã cấp, scenes chỉ gồm cảnh được yêu cầu.\nINPUT_DATA_JSON:\n"+
-                    json.dumps({"selected_scene_ids":sorted(repair_ids),"scenes":[r for r in candidate.get("scenes",[]) if r.get("id",r.get("scene_id")) in repair_ids],"errors":str(last)},ensure_ascii=False))
+                    json.dumps({**retry_context,"selected_scene_ids":sorted(repair_ids),"scenes":[r for r in candidate.get("scenes",[]) if r.get("id",r.get("scene_id")) in repair_ids],"errors":str(last)},ensure_ascii=False))
             else: prompt=base_prompt+"\nSửa JSON/schema cơ bản; không markdown. "+str(last)
     if isinstance(last,RuleViolation):
         last.draft_plan=candidate
@@ -281,7 +300,11 @@ def validated_json(provider: LLMProvider, prompt: str, schema: type, attempts: i
 def audit_plan(plan: EditPlan, brief: ResearchBrief, provider: LLMProvider, settings: Settings,
                cache: JsonCache, diagnostics: Diagnostics) -> None:
     template = (settings.prompts_dir / "director_audit.txt").read_text(encoding="utf-8")
-    payload = {"facts": director_facts(brief),
+    if plan.content_mode=="explainer_v2":
+        template=("Explainer v2: chỉ audit câu type=event và visual.content_type=event theo fact_ids; explain/opinion là kiến thức nền mềm, không bắt có fact. "
+            "Không cho đổi nhãn để lách dữ kiện công ty, số/ngày/tên/phát ngôn cụ thể. Câu nền hợp lệ không phải lỗi thiếu fact.\n")+template
+    from agents.director_sources import allowed_sources
+    payload = {"allowed_sources":allowed_sources(brief),"facts": director_facts(brief),
                "plan": plan.model_dump(mode="json",exclude={"style_profile"})}
     inputs = {"data": payload, "model": provider.model_name, "prompt": cache_key(template)}
     cached = cache.get("director-audit-v2", inputs)
@@ -302,11 +325,22 @@ def audit_plan(plan: EditPlan, brief: ResearchBrief, provider: LLMProvider, sett
 def create_edit_plan(brief: ResearchBrief, request: DirectorRequest, provider: LLMProvider,
                      settings: Settings, cache: JsonCache, diagnostics: Diagnostics,
                      progress: Callable[[str], None] = print,*,draft_path: Path | None = None) -> EditPlan:
-    if request.style_preset and request.style_profile is None:
-        from pipeline.style_profile import load_profile
-        request=request.model_copy(update={"style_profile":load_profile(settings,request.style_preset)})
+    if hasattr(provider,"progress"):
+        provider.progress=progress
+    if request.style_profile is None:
+        from pipeline.category_style import choose_profile
+        profile,preset,notices=choose_profile(settings,request.category,request.style_preset,request.video_type)
+        request=request.model_copy(update={"style_profile":profile,"style_preset":preset})
+        for notice in notices:
+            progress(notice)
+    if request.style_profile is not None:
+        from pipeline.style_safety import sanitize_profile
+        request=request.model_copy(update={"style_profile":sanitize_profile(request.style_profile)})
     if not brief.facts:
         raise DirectorError("Brief chưa có fact để viết kịch bản. Bổ sung hoặc nghiên cứu lại nguồn; không dùng tín hiệu xã hội làm fact.")
+    if request.content_mode=="explainer_v2":
+        from agents.explainer_director import create_explainer_plan
+        return create_explainer_plan(brief,request,provider,settings,diagnostics,progress,draft_path=draft_path)
     if request.script_style is not None:
         if request.requested_duration_sec is None:
             from agents.adaptive import duration_for_brief
@@ -316,7 +350,8 @@ def create_edit_plan(brief: ResearchBrief, request: DirectorRequest, provider: L
     template = (settings.prompts_dir / f"director_{request.video_type}.txt").read_text(encoding="utf-8")
     common = (settings.prompts_dir / "director_common.txt").read_text(encoding="utf-8")
     from pipeline.style_profile import guidance,apply_defaults
-    data = {"style_profile":guidance(request.style_profile),"discovery_hint":brief.discovery_hint.model_dump(mode="json") if brief.discovery_hint else None,"request": request.model_dump(mode="json"), "voice": settings.default_voice,
+    from agents.director_sources import allowed_sources
+    data = {"allowed_sources":allowed_sources(brief),"style_profile":guidance(request.style_profile),"discovery_hint":brief.discovery_hint.model_dump(mode="json") if brief.discovery_hint else None,"request": request.model_dump(mode="json"), "voice": settings.default_voice,
             "speech_budget":speech_budget(request.duration_sec),"research_depth":brief.research_depth,
             "story_angles":[angle.model_dump(mode="json") for angle in brief.story_angles],
             "brief_details":{field:[row.model_dump(mode="json") for row in getattr(brief,field)] for field in ("key_numbers","timeline","why_it_matters","counterpoints","glossary")},
@@ -376,7 +411,7 @@ def create_edit_plan(brief: ResearchBrief, request: DirectorRequest, provider: L
             validate_plan(plan,brief,request,diagnostics=diagnostics)
             # Local post-audit merging only preserves checked statements and their facts.
             audit_template=(settings.prompts_dir/"director_audit.txt").read_text(encoding="utf-8")
-            audit_inputs={"data":{"facts":director_facts(brief),"plan":plan.model_dump(mode="json",exclude={"style_profile"})},"model":provider.model_name,"prompt":cache_key(audit_template)}
+            audit_inputs={"data":{"allowed_sources":allowed_sources(brief),"facts":director_facts(brief),"plan":plan.model_dump(mode="json",exclude={"style_profile"})},"model":provider.model_name,"prompt":cache_key(audit_template)}
             cache.set("director-audit-v2",audit_inputs,{"approved":True,"issues":[]})
             cache.set("director-plan-v2", inputs, plan.model_dump(mode="json"))
             return plan
@@ -413,13 +448,15 @@ def create_edit_plan(brief: ResearchBrief, request: DirectorRequest, provider: L
             diagnostics.record(f"Director lần {attempt}: cảnh lỗi={sorted(repair_ids)}, luật/giá trị={diagnostics.redact(feedback)}")
             prompt = (common+"\nRETRY: Chỉ sinh lại các cảnh lỗi dưới đây trong JSON {scenes:[...]}; giữ ID, số shot và thời lượng, không trả cảnh đã đạt. "
                 "Chỉ dùng các số trong allowed_numbers của từng cảnh; không có căn cứ thì bỏ khẳng định. Lỗi: "+diagnostics.redact(feedback)+
-                "\nINPUT_DATA_JSON:\n"+json.dumps({"facts":director_facts(brief),"failed_scenes":repair_data},ensure_ascii=False)) if candidate and repair_ids else common+"\n"+template+"\nINPUT_DATA_JSON:\n"+json.dumps(data,ensure_ascii=False)
+                "\nINPUT_DATA_JSON:\n"+json.dumps({"allowed_sources":allowed_sources(brief),"facts":director_facts(brief),"failed_scenes":repair_data},ensure_ascii=False)) if candidate and repair_ids else common+"\n"+template+"\nINPUT_DATA_JSON:\n"+json.dumps(data,ensure_ascii=False)
             progress(f"Cảnh lỗi {sorted(repair_ids)} chưa đạt kiểm tra; lần {attempt}/{attempts}.")
     draft_path = draft_path or settings.output_dir/"edit_plan.draft.json"
     warnings = [diagnostics.redact(str(last))] if last else ["Không nhận được kế hoạch hợp lệ."]
     warnings += [warning for scene in (candidate or {}).get("scenes",[]) for warning in (scene.get("review_notes") or {}).get("warnings",[])]
     if candidate:
         candidate.update(video_type=request.video_type,target_duration_sec=request.duration_sec,brief_hash=brief_hash(brief))
+        from agents.content_plan import draft_presentation
+        candidate=draft_presentation(candidate,brief,request,diagnostics)
     write_json(draft_path,json.loads(diagnostics.redact(json.dumps({"plan":candidate,"warnings":warnings,"failed_scene_ids":sorted(repair_ids),"validation_errors":[e.model_dump(mode="json") for e in getattr(last,"events",[])],"attempts":attempt,"status":"draft_requires_review"},ensure_ascii=False))))
     raise DirectorDraftError(f"Director chưa đạt sau {attempt} lần. Đã lưu bản nháp để sửa trong UI: {draft_path}") from last
 
@@ -440,16 +477,16 @@ def run_director(brief_path: Path, settings: Settings, *, video_type: str = "rev
                  video_format: str = "tiktok", duration_sec: float = 45.0,
                  progress: Callable[[str], None] = print, debug: bool = False,
                  source_languages: list[str] | None = None, output_language: str = "vi",ai_clip_limit: int = 0,
-                 script_style: str | None = "storytelling",creative_license: str = "strict",style_preset: str | None = None) -> Path:
+                 script_style: str | None = "storytelling",creative_license: str = "strict",style_preset: str | None = None,category: str | None = None,content_mode="event_only") -> Path:
     diagnostics = director_diagnostics(settings, debug)
     provider = None
     try:
         if not 0 <= ai_clip_limit <= settings.ai_clip_max_per_run:
             raise ValueError("Số clip AI vượt AI_CLIP_MAX_PER_RUN.")
         LanguageOptions(source_languages=source_languages if source_languages is not None else ["vi","en"],output_language=output_language)
-        request = DirectorRequest(video_type=video_type, video_format=video_format, duration_sec=float(duration_sec),output_language=output_language,script_style=script_style,creative_license=creative_license,style_preset=style_preset)
+        request = DirectorRequest(video_type=video_type, video_format=video_format, duration_sec=float(duration_sec),output_language=output_language,script_style=script_style,creative_license=creative_license,style_preset=style_preset,category=category,ai_clip_limit=ai_clip_limit,content_mode=content_mode)
         brief = ResearchBrief.model_validate(read_json(brief_path))
-        if script_style is not None:
+        if script_style is not None and content_mode!="explainer_v2":
             from agents.adaptive import duration_for_brief
             effective=duration_for_brief(brief,duration_sec)
             if not effective: raise DirectorError("Brief không có fact hợp lệ; cần Research lại hoặc đổi chủ đề.")
@@ -462,6 +499,13 @@ def run_director(brief_path: Path, settings: Settings, *, video_type: str = "rev
         provider = director_provider(settings, diagnostics)
         plan = create_edit_plan(brief, request, provider, settings,
                                 JsonCache(settings.cache_dir, settings.cache_ttl_sec), diagnostics, progress,draft_path=brief_path.parent/"edit_plan.draft.json")
+        from agents.content_plan import finalize_content_plan
+        plan.requested_duration_sec=float(duration_sec)
+        finalize_content_plan(plan,brief,ai_clip_limit=ai_clip_limit,diagnostics=diagnostics)
+        from agents.visual_planner import remove_repeated_attribution
+        if plan.content_mode!="explainer_v2": remove_repeated_attribution(plan,brief)
+        finalize_content_plan(plan,brief,ai_clip_limit=ai_clip_limit,diagnostics=diagnostics)
+        validate_plan(plan,brief,request,diagnostics=diagnostics,allow_merge=False)
         fill_plan_prompts(plan,brief,provider,diagnostics,limit=ai_clip_limit)
         path = brief_path.parent / "edit_plan.json"
         write_json(path, plan.model_dump(mode="json"))
@@ -483,7 +527,10 @@ def save_edit_plan(brief_path: Path, plan_data: dict, settings: Settings) -> Pat
     try:
         brief = ResearchBrief.model_validate(read_json(brief_path))
         plan = EditPlan.model_validate(normalize_plan_structure(plan_data,diagnostics=diagnostics))
-        request = DirectorRequest(video_type=plan.video_type or "story", video_format=plan.format, duration_sec=plan.target_duration_sec or plan.duration_sec)
+        request = DirectorRequest(video_type=plan.video_type or "story", video_format=plan.format, duration_sec=plan.requested_duration_sec or plan.target_duration_sec or max(6,plan.duration_sec))
+        if plan.content_timed:
+            from agents.content_plan import finalize_content_plan
+            finalize_content_plan(plan,brief,ai_clip_limit=plan.ai_clip_limit,diagnostics=diagnostics)
         validate_plan(plan, brief, request)
         provider = director_provider(settings, diagnostics)
         audit_plan(plan, brief, provider, settings, JsonCache(settings.cache_dir, settings.cache_ttl_sec), diagnostics)
@@ -505,6 +552,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Director → edit_plan.json (Giai đoạn 3)")
     parser.add_argument("brief_path", type=Path)
     parser.add_argument("--style-preset")
+    parser.add_argument("--category")
     parser.add_argument("--type", dest="video_type", choices=["news", "review", "story"], default="review")
     parser.add_argument("--format", dest="video_format", choices=["tiktok", "youtube"], default="tiktok")
     parser.add_argument("--duration", type=float, default=45.0, help="Gợi ý 30 / 60 / 90 / 120 / 180 giây; vẫn nhận thời lượng cũ")
@@ -513,11 +561,12 @@ def main() -> int:
     parser.add_argument("--source-languages",nargs="+",choices=["vi","en","zh","ko","ja"],default=["vi","en"])
     parser.add_argument("--output-language",choices=["vi"],default="vi")
     parser.add_argument("--ai-clips",type=int,default=0,help="Chuẩn bị prompt cho N shot AI; chưa gọi API tạo video")
+    parser.add_argument("--explainer-v2",action="store_true")
     args = parser.parse_args()
     diagnostics = Diagnostics(Path(__file__).resolve().parents[1] / "logs", debug=args.debug, filename="director_errors.log")
     try:
         path = run_director(args.brief_path, get_settings(), video_type=args.video_type,
-                            video_format=args.video_format, duration_sec=args.duration, debug=args.debug,source_languages=args.source_languages,output_language=args.output_language,ai_clip_limit=args.ai_clips,script_style=args.style,style_preset=args.style_preset)
+                            video_format=args.video_format, duration_sec=args.duration, debug=args.debug,source_languages=args.source_languages,output_language=args.output_language,ai_clip_limit=args.ai_clips,script_style=args.style,style_preset=args.style_preset,category=args.category,content_mode="explainer_v2" if args.explainer_v2 else "event_only")
     except Exception as error:
         diagnostics.record_exception(error, "Director CLI failed")
         print("Director chưa hoàn tất: " + diagnostics.redact(str(error))[:1500])

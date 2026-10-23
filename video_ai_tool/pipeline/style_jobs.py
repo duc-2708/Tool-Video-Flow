@@ -5,17 +5,17 @@ from uuid import uuid4
 
 
 class StyleJobs(PipelineJobs):
-    def submit_analysis(self, filenames, settings):
+    def submit_analysis(self, filenames, settings, *, from_raw=False):
         with self.lock:
             active = next((k for k, v in self.jobs.items() if v["status"] in {"queued", "running"}), None)
             if active:
                 return active
             key = uuid4().hex
             self.jobs[key] = {"status": "queued", "message": "Đang chờ", "results": [], "error": None}
-        self.executor.submit(self._analyze, key, list(filenames), settings)
+        self.executor.submit(self._analyze, key, list(filenames), settings,from_raw)
         return key
 
-    def _analyze(self, key, filenames, settings):
+    def _analyze(self, key, filenames, settings,from_raw=False):
         diagnostics = style_diagnostics(settings)
 
         def progress(message):
@@ -23,7 +23,7 @@ class StyleJobs(PipelineJobs):
                 self.jobs[key].update(status="running", message=diagnostics.redact(message))
 
         try:
-            results = analyze_batch(settings, filenames, progress=progress)
+            results = analyze_batch(settings, filenames, progress=progress,from_raw=from_raw)
             with self.lock:
                 self.jobs[key].update(status="finished", results=results, message="Đã xử lý xong lô video.")
         except Exception as error:

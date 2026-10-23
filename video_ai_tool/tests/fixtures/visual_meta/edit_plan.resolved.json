@@ -1,0 +1,1347 @@
+{
+  "content_timed": true,
+  "style_preset": "@category:cong-nghe",
+  "style_profile": {
+    "version": 1,
+    "name": "công nghệ",
+    "slug": "@category:cong-nghe",
+    "reference_hashes": [
+      "3f4c15b2a0d19cc035407d3f82018c9abf00a727867ae9e796c4370a522ada30",
+      "0177397debc50e2f0dd76dbdaa1c6cd452b6ca77a63fbe3431a79a4a83dc8f75",
+      "e3e64da8b98dae29055873674cea3821497d2b39616cf76c4fcf4504bf94c2ff"
+    ],
+    "reference_files": [
+      "cong-nghe/cong_nghe_1.mp4",
+      "cong-nghe/cong_nghe_2.mp4",
+      "cong-nghe/cong_nghe_4.mp4"
+    ],
+    "reference_texts": [
+      "Giới thiệu file prompt AI với số sao khủng",
+      "So sánh agent rườm rà và sự tối giản",
+      "Câu chuyện phong cách làm việc tối giản",
+      "Thang 7 bước kiểm tra trước khi viết code",
+      "Đánh giá tính năng, bảo mật và cài đặt",
+      "Bóc mẽ số liệu, đánh giá bên thứ ba và kết luận",
+      "Giới thiệu framework FAST tạo AI agent",
+      "Bước F: Cài đặt công cụ AI agent",
+      "Bước A: Kết nối công cụ với agent",
+      "Bước S và T: Giao nhiệm vụ và đóng gói skill tự động",
+      "Nhiều người dùng không hiểu hai thanh hạn mức.",
+      "Giải thích 5-hour limit và các yếu tố ảnh hưởng.",
+      "So sánh 5-hour limit và weekly limit qua hình ảnh chai và bình nước.",
+      "So sánh hạn mức của các gói Pro, Max 5x, Max 20x.",
+      "Quy đổi hạn mức sử dụng ra giá API theo ước lượng cộng đồng.",
+      "Lưu ý về sự biến động của hạn mức và tóm tắt toàn bộ.",
+      "Giới thiệu file prompt AI với số sao khủng nhưng bất ngờ về độ ngắn.",
+      "So sánh cách giải quyết rườm rà của agent thông thường với sự tối giản.",
+      "Kể câu chuyện về phong cách làm việc tối giản và hiệu quả.",
+      "Đưa ra thang 7 bước kiểm tra trước khi để AI viết code.",
+      "Đánh giá các tính năng bảo mật, cách cài đặt và phản ứng cộng đồng.",
+      "Bóc mẽ số liệu benchmark, đánh giá từ bên thứ ba và kết luận.",
+      "Giới thiệu cách tạo AI agent cực kỳ đơn giản với framework FAST.",
+      "Giải thích chữ F trong FAST là cài đặt công cụ AI agent trên máy.",
+      "Giải thích chữ A là kết nối công cụ như Gmail cho agent.",
+      "Giải thích chữ S (giao nhiệm vụ) và chữ T (đóng gói thành skill tự chạy).",
+      "Nhiều người dùng {topic} lâu năm nhưng vẫn chưa hiểu rõ hai thanh hạn mức.",
+      "Giải thích 5-hour limit và các yếu tố làm tụt nhanh hạn mức.",
+      "So sánh 5-hour limit như chai nước nhỏ và weekly limit như bình nước lớn.",
+      "So sánh 3 gói phổ biến Pro, Max 5x và Max 20x.",
+      "Cộng đồng quy đổi hạn mức ra giá API ước lượng cho từng gói.",
+      "Nhấn mạnh hạn mức không phải con số cố định và tóm tắt lại các điểm chính."
+    ],
+    "hook_templates": [
+      "Cách tạo {topic} cho bất kỳ công việc nào của bạn cực kỳ đơn giản",
+      "Một file prompt {topic} viết code lười đi",
+      "Nhiều người dùng {topic} lâu năm nhưng vẫn chưa hiểu rõ..."
+    ],
+    "hook_techniques": [
+      "con số bất ngờ",
+      "câu hỏi / tuyên bố giá trị",
+      "phản bác hiểu lầm"
+    ],
+    "structure": [
+      {
+        "name": "Hook",
+        "fraction": 0.040126823459214145
+      },
+      {
+        "name": "Giải thích",
+        "fraction": 0.08860835949085351
+      },
+      {
+        "name": "Ví dụ",
+        "fraction": 0.08660888453065231
+      },
+      {
+        "name": "Phân tích",
+        "fraction": 0.17717102714075175
+      },
+      {
+        "name": "Đánh giá",
+        "fraction": 0.3056784159905376
+      },
+      {
+        "name": "Cao trào & Kết",
+        "fraction": 0.30180648938799076
+      }
+    ],
+    "shot_seconds": {
+      "mean": 4.58,
+      "minimum": 2.74,
+      "maximum": 7.5
+    },
+    "speech_words_per_sec": {
+      "mean": 3.0,
+      "minimum": 2.8,
+      "maximum": 3.2
+    },
+    "narration_rules": [
+      "Câu hỏi tu từ: Có",
+      "Câu hỏi tu từ: không dùng",
+      "Câu hỏi tu từ: Thứ này có cần tồn tại không?",
+      "Cảm xúc giọng: giải thích, hào hứng",
+      "Cảm xúc giọng: Hóm hỉnh, cuốn hút",
+      "Cảm xúc giọng: tự tin, chuyên nghiệp",
+      "Mức hài hước: Cao, châm biếm nhẹ nhàng",
+      "Mức hài hước: thấp",
+      "Mức hài hước: vừa phải",
+      "Mức thân mật: thân mật",
+      "Mức thân mật: thân mật, hài hước",
+      "Mức thân mật: thân thiện, gần gũi",
+      "Xưng hô: anh em/mình",
+      "Xưng hô: Bạn/Mình/Ông anh",
+      "Xưng hô: bạn/nhiều ông",
+      "Câu dài trung bình khoảng {number} từ; xen câu ngắn và dài theo ý."
+    ],
+    "broll_patterns": [
+      "animated graphics",
+      "animation",
+      "avatar mascot",
+      "hoạt hình vẽ tay trên nền lưới",
+      "screen recording",
+      "text"
+    ],
+    "visual_effects": [
+      "zoom",
+      "pan"
+    ],
+    "transitions": [
+      "cut",
+      "cắt cảnh nhanh",
+      "fade",
+      "slide"
+    ],
+    "captions": {
+      "analysis_warnings": [],
+      "enabled": true,
+      "mode": "phrase",
+      "font_description": "Bold sans-serif",
+      "font_scale": 0.05,
+      "color": "#FFFFFF",
+      "highlight_color": "#00FF00",
+      "stroke_color": "#000000",
+      "color_note": "",
+      "stroke_width_ratio": 0.005,
+      "position": "lower",
+      "emphasis": "Màu sắc nổi bật theo từ khóa",
+      "shadow": "Có"
+    },
+    "audio": {
+      "analysis_warnings": [],
+      "mood": "Hứng khởi, công nghệ",
+      "music_volume": 0.16666666666666666,
+      "sfx_types": [
+        "click",
+        "pop",
+        "success chime",
+        "tiếng pop",
+        "tiếng viết bút",
+        "whoosh"
+      ],
+      "sfx_per_10_sec": 2.0,
+      "sfx_positions": [
+        0.0,
+        8.0,
+        26.0,
+        43.0,
+        59.0,
+        119.0
+      ],
+      "ducking": true,
+      "details": "Âm thanh rõ ràng, nhạc nền nhịp nhàng ăn khớp với chuyển động"
+    },
+    "ending_techniques": [
+      "nhận định tổng kết",
+      "yêu cầu bình luận để nhận tài liệu",
+      "Đặt câu hỏi tương tác với người xem"
+    ],
+    "reusable_rules": [
+      "Bắt đầu video bằng việc chỉ ra một hiểu lầm phổ biến của số đông.",
+      "Chia nhỏ các gói cước phức tạp thành biểu đồ cột trực quan để so sánh nhanh.",
+      "Chia nhỏ hướng dẫn thành các bước trực quan trên màn hình",
+      "Chia nội dung thành các bước hoặc tiêu chuẩn rõ ràng",
+      "Dùng hoạt hình minh họa thay vì chỉ có chữ",
+      "Kết hợp avatar hoạt hình hướng dẫn để tăng sinh động",
+      "Kết hợp hiệu ứng viết tay và tiếng động (SFX) đồng bộ với chuyển động thị giác.",
+      "Kết hợp hài hước châm biếm để tăng tương tác",
+      "Sử dụng con số gây sốc ngay {number} giây đầu",
+      "Sử dụng hình ảnh ẩn dụ (như bình nước/chai nước) để giải thích định mức trừu tượng.",
+      "Sử dụng từ viết tắt dễ nhớ làm khung sườn nội dung",
+      "Đưa ra câu hỏi mở ở cuối video để kêu gọi bình luận",
+      "Đặt câu hỏi kêu gọi hành động cụ thể ở cuối video"
+    ],
+    "rule_frequencies": [
+      {
+        "rule": "Bắt đầu video bằng việc chỉ ra một hiểu lầm phổ biến của số đông.",
+        "video_count": 1
+      },
+      {
+        "rule": "Chia nhỏ các gói cước phức tạp thành biểu đồ cột trực quan để so sánh nhanh.",
+        "video_count": 1
+      },
+      {
+        "rule": "Chia nhỏ hướng dẫn thành các bước trực quan trên màn hình",
+        "video_count": 1
+      },
+      {
+        "rule": "Chia nội dung thành các bước hoặc tiêu chuẩn rõ ràng",
+        "video_count": 1
+      },
+      {
+        "rule": "Dùng hoạt hình minh họa thay vì chỉ có chữ",
+        "video_count": 1
+      },
+      {
+        "rule": "Kết hợp avatar hoạt hình hướng dẫn để tăng sinh động",
+        "video_count": 1
+      },
+      {
+        "rule": "Kết hợp hiệu ứng viết tay và tiếng động (SFX) đồng bộ với chuyển động thị giác.",
+        "video_count": 1
+      },
+      {
+        "rule": "Kết hợp hài hước châm biếm để tăng tương tác",
+        "video_count": 1
+      },
+      {
+        "rule": "Sử dụng con số gây sốc ngay {number} giây đầu",
+        "video_count": 1
+      },
+      {
+        "rule": "Sử dụng hình ảnh ẩn dụ (như bình nước/chai nước) để giải thích định mức trừu tượng.",
+        "video_count": 1
+      },
+      {
+        "rule": "Sử dụng từ viết tắt dễ nhớ làm khung sườn nội dung",
+        "video_count": 1
+      },
+      {
+        "rule": "Đưa ra câu hỏi mở ở cuối video để kêu gọi bình luận",
+        "video_count": 1
+      },
+      {
+        "rule": "Đặt câu hỏi kêu gọi hành động cụ thể ở cuối video",
+        "video_count": 1
+      }
+    ],
+    "category_id": "cong-nghe",
+    "video_type": null,
+    "video_count": 3,
+    "confidence_label": "ổn",
+    "source_signature": "e0ba5c1e3b41ecbbd86e7ff873acee594635d278cccb82df5140f9640bdad46d",
+    "locked_fields": [],
+    "scene_pacing": [
+      {
+        "duration_sec": 30.0,
+        "scene_count": 2,
+        "min_scene_count": 2,
+        "max_scene_count": 2,
+        "avg_scene_sec": 15.0,
+        "min_scene_sec": 10.5,
+        "max_scene_sec": 19.5,
+        "durations_sec": [
+          10.5,
+          19.5
+        ]
+      },
+      {
+        "duration_sec": 60.0,
+        "scene_count": 3,
+        "min_scene_count": 2,
+        "max_scene_count": 4,
+        "avg_scene_sec": 20.0,
+        "min_scene_sec": 6.723529411764706,
+        "max_scene_sec": 40.67647058823529,
+        "durations_sec": [
+          6.723529411764706,
+          12.6,
+          40.67647058823529
+        ]
+      },
+      {
+        "duration_sec": 90.0,
+        "scene_count": 4,
+        "min_scene_count": 3,
+        "max_scene_count": 6,
+        "avg_scene_sec": 22.5,
+        "min_scene_sec": 8.088235294117647,
+        "max_scene_sec": 50.911764705882355,
+        "durations_sec": [
+          8.088235294117647,
+          16.323529411764707,
+          14.676470588235293,
+          50.911764705882355
+        ]
+      },
+      {
+        "duration_sec": 120.0,
+        "scene_count": 5,
+        "min_scene_count": 4,
+        "max_scene_count": 8,
+        "avg_scene_sec": 24.0,
+        "min_scene_sec": 9.063025210084033,
+        "max_scene_sec": 58.22268907563025,
+        "durations_sec": [
+          9.063025210084033,
+          18.516806722689076,
+          17.571428571428573,
+          16.626050420168067,
+          58.22268907563025
+        ]
+      },
+      {
+        "duration_sec": 180.0,
+        "scene_count": 8,
+        "min_scene_count": 6,
+        "max_scene_count": 12,
+        "avg_scene_sec": 22.5,
+        "min_scene_sec": 8.145569620253164,
+        "max_scene_sec": 51.34177215189873,
+        "durations_sec": [
+          8.145569620253164,
+          8.145569620253164,
+          16.45253164556962,
+          15.621835443037973,
+          14.791139240506329,
+          14.791139240506329,
+          51.34177215189873,
+          50.7104430379747
+        ]
+      }
+    ],
+    "narrative_flows": [
+      "Mở đầu bằng con số ấn tượng, sau đó giải thích vấn đề, đưa ra câu chuyện minh họa, phân tích chi tiết các bước, đánh giá khách quan và kết luận bằng bài học thực tế.",
+      "Video dẫn dắt người xem qua một framework {number} bước rõ ràng (F-A-S-T) để tự tạo AI agent, từ cài đặt, kết nối, giao nhiệm vụ đến đóng gói tự động hóa.",
+      "Video mở đầu bằng việc nêu thắc mắc phổ biến của người dùng về giới hạn sử dụng, sau đó lần lượt giải thích từng loại hạn mức, so sánh các gói cước, quy đổi ra giá trị thực tế và đưa ra kết luận tổng kết."
+    ],
+    "connective_phrases": [
+      "Bí mật nằm ở {topic}",
+      "Bạn chỉ xin {topic}",
+      "Chữ tiếp theo là",
+      "Chữ tiếp theo là {variable}",
+      "Chữ đầu tiên là",
+      "Chữ đầu tiên là {variable}",
+      "...nhưng bên ngoài còn một cái lớn hơn...",
+      "...nhưng bên ngoài còn một cái lớn hơn: {topic}",
+      "Nhưng lười không có nghĩa là {topic}",
+      "Nhưng đừng coi đây là...",
+      "Nhưng đừng coi đây là {topic}...",
+      "Nói ngắn gọn lại thì"
+    ],
+    "connective_frequencies": [
+      {
+        "rule": "Bí mật nằm ở {topic}",
+        "video_count": 1
+      },
+      {
+        "rule": "Bạn chỉ xin {topic}",
+        "video_count": 1
+      },
+      {
+        "rule": "Chữ tiếp theo là",
+        "video_count": 1
+      },
+      {
+        "rule": "Chữ tiếp theo là {variable}",
+        "video_count": 1
+      },
+      {
+        "rule": "Chữ đầu tiên là",
+        "video_count": 1
+      },
+      {
+        "rule": "Chữ đầu tiên là {variable}",
+        "video_count": 1
+      },
+      {
+        "rule": "...nhưng bên ngoài còn một cái lớn hơn...",
+        "video_count": 1
+      },
+      {
+        "rule": "...nhưng bên ngoài còn một cái lớn hơn: {topic}",
+        "video_count": 1
+      },
+      {
+        "rule": "Nhưng lười không có nghĩa là {topic}",
+        "video_count": 1
+      },
+      {
+        "rule": "Nhưng đừng coi đây là...",
+        "video_count": 1
+      },
+      {
+        "rule": "Nhưng đừng coi đây là {topic}...",
+        "video_count": 1
+      },
+      {
+        "rule": "Nói ngắn gọn lại thì",
+        "video_count": 1
+      }
+    ],
+    "scene_patterns": [
+      {
+        "purpose": "hook",
+        "fraction": 0.04488330341113106,
+        "shot_count": 3.6666666666666665,
+        "average_shot_sec": 2.0833333333333335,
+        "visual_types": [
+          "animated graphics",
+          "animation",
+          "avatar mascot",
+          "hoạt hình",
+          "text"
+        ],
+        "effects": [
+          "zoom"
+        ],
+        "overlay_styles": [
+          "lower: color highlight",
+          "top: chữ lớn"
+        ],
+        "sfx": [
+          "pop"
+        ],
+        "transition": "cut",
+        "connective_template": "Bạn chỉ xin {topic}"
+      },
+      {
+        "purpose": "giải thích",
+        "fraction": 0.10098743267504488,
+        "shot_count": 4.666666666666667,
+        "average_shot_sec": 3.9766666666666666,
+        "visual_types": [
+          "animation",
+          "app interface",
+          "hoạt hình",
+          "screen recording",
+          "text"
+        ],
+        "effects": [
+          "pan"
+        ],
+        "overlay_styles": [
+          "top: bold",
+          "top: glow"
+        ],
+        "sfx": [
+          "click"
+        ],
+        "transition": "cut",
+        "connective_template": "Bí mật nằm ở {topic}"
+      },
+      {
+        "purpose": "ví dụ",
+        "fraction": 0.0953770197486535,
+        "shot_count": 4.0,
+        "average_shot_sec": 5.11,
+        "visual_types": [
+          "animation",
+          "app interface",
+          "hoạt hình",
+          "screen recording",
+          "text"
+        ],
+        "effects": [
+          "pan"
+        ],
+        "overlay_styles": [
+          "top: bold",
+          "top: glow"
+        ],
+        "sfx": [
+          "click"
+        ],
+        "transition": "cut",
+        "connective_template": "Thứ này có cần {topic}"
+      },
+      {
+        "purpose": "phân tích",
+        "fraction": 0.08976660682226212,
+        "shot_count": 4.0,
+        "average_shot_sec": 5.033333333333333,
+        "visual_types": [
+          "animation",
+          "connectors interface",
+          "hoạt hình",
+          "screen recording",
+          "text"
+        ],
+        "effects": [
+          "zoom in"
+        ],
+        "overlay_styles": [
+          "top: bold",
+          "top: circle"
+        ],
+        "sfx": [
+          "beep"
+        ],
+        "transition": "cut",
+        "connective_template": "Chữ tiếp theo là {variable}"
+      },
+      {
+        "purpose": "đánh giá",
+        "fraction": 0.3366247755834829,
+        "shot_count": 5.333333333333333,
+        "average_shot_sec": 6.6066666666666665,
+        "visual_types": [
+          "animation",
+          "connectors interface",
+          "hoạt hình",
+          "screen recording",
+          "text"
+        ],
+        "effects": [
+          "zoom in"
+        ],
+        "overlay_styles": [
+          "top: bold",
+          "top: circle"
+        ],
+        "sfx": [
+          "beep"
+        ],
+        "transition": "cut",
+        "connective_template": "Chữ tiếp theo là {variable}"
+      },
+      {
+        "purpose": "cao trào",
+        "fraction": 0.33236086175942553,
+        "shot_count": 9.333333333333334,
+        "average_shot_sec": 7.1033333333333335,
+        "visual_types": [
+          "animation",
+          "hoạt hình",
+          "prompt text",
+          "screen recording",
+          "text"
+        ],
+        "effects": [
+          "pan"
+        ],
+        "overlay_styles": [
+          "top: bold",
+          "top: highlight"
+        ],
+        "sfx": [
+          "whoosh"
+        ],
+        "transition": "cut",
+        "connective_template": ""
+      }
+    ],
+    "shots_per_10_sec": 2.471949890271585,
+    "warnings": [
+      "Dùng bản thô của lần gọi trước; ghi chú/model/cấu hình mới chưa được gửi Gemini. Muốn áp dụng mới, chọn Học lại có xác nhận.",
+      "Đã parse lại bản thô tại máy, không gọi Gemini.",
+      "scenes[4]: loại mốc bắt đầu 121 ngoài phạm vi/không hợp lệ.",
+      "scenes[3]: cắt end_sec 121s → 116.71s theo phạm vi video.",
+      "transcript_outline[4]: loại mốc bắt đầu 121 ngoài phạm vi/không hợp lệ.",
+      "transcript_outline[3]: cắt end_sec 121s → 116.71s theo phạm vi video.",
+      "scene_count=5 được đồng bộ về 4 cảnh có trong dữ liệu.",
+      "avg_scene_sec được tính lại từ start_sec/end_sec của các cảnh.",
+      "captions.color: white → #FFFFFF.",
+      "captions.highlight_color: yellow → #FFFF00.",
+      "captions.stroke_color: black → #000000.",
+      "scenes[5]: cắt end_sec 112s → 89.12s theo phạm vi video.",
+      "transcript_outline[5]: cắt end_sec 112s → 89.12s theo phạm vi video.",
+      "captions.color: đen → #000000.",
+      "captions.highlight_color: xanh → #0000FF.",
+      "captions.stroke_color: trắng → #FFFFFF."
+    ]
+  },
+  "render_style": {
+    "captions": {
+      "analysis_warnings": [],
+      "enabled": true,
+      "mode": "phrase",
+      "font_description": "Bold sans-serif",
+      "font_scale": 0.05,
+      "color": "#FFFFFF",
+      "highlight_color": "#00FF00",
+      "stroke_color": "#000000",
+      "color_note": "",
+      "stroke_width_ratio": 0.005,
+      "position": "lower",
+      "emphasis": "Màu sắc nổi bật theo từ khóa",
+      "shadow": "Có"
+    },
+    "ducking": true
+  },
+  "validation_events": [
+    {
+      "rule_id": "attribution",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+    },
+    {
+      "rule_id": "scene_target",
+      "group": 3,
+      "scene_id": null,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Số cảnh 3 dưới mục tiêu 8; không thêm cảnh rỗng."
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 1,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 1, shot 1: sửa b-roll query 'Meta courtroom tech fine news background video background loop' → 'news video'"
+    },
+    {
+      "rule_id": "shot_structure",
+      "group": 2,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 2: chuẩn hóa cấu trúc — overlays: 2 → 4; điền giá trị mặc định"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 2, shot 1: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology animation'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 2, shot 2: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology aerial'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 2, shot 3: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology wide'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 2, shot 4: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology closeup'"
+    },
+    {
+      "rule_id": "shot_structure",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3: chuẩn hóa cấu trúc — overlays: 2 → 11; điền giá trị mặc định"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 1: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 2: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 3: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract wide'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 4: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract closeup'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 5: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract interior'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 6: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract exterior'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 7: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract panoramic'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 8: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract detail'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 9: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract documentary'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 10: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial night'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 11: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial daylight'"
+    },
+    {
+      "rule_id": "hook_length",
+      "group": 3,
+      "scene_id": 1,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Hook quá dài cho ba giây đầu."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Tổng 65 từ; mục tiêu 180 ±20%, chỉ thêm chi tiết có fact."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Tổng 65 từ; mục tiêu 180 ±20%, chỉ thêm chi tiết có fact."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý."
+    },
+    {
+      "rule_id": "overlay_style",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Overlay phải 2–5 từ/số, không lặp nguyên câu lời đọc."
+    },
+    {
+      "rule_id": "overlay_style",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Overlay phải 2–5 từ/số, không lặp nguyên câu lời đọc."
+    },
+    {
+      "rule_id": "overlay_style",
+      "group": 3,
+      "scene_id": 1,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Overlay phải 2–5 từ/số, không lặp nguyên câu lời đọc."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Tổng 53 từ; mục tiêu 68 ±20%, chỉ thêm chi tiết có fact."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Tổng 53 từ; mục tiêu 68 ±20%, chỉ thêm chi tiết có fact."
+    }
+  ],
+  "review_notes": [
+    "Cảnh 1, shot 1: sửa b-roll query 'Meta courtroom tech fine news background video background loop' → 'news video'",
+    "Cảnh 2: chuẩn hóa cấu trúc — overlays: 2 → 4; điền giá trị mặc định",
+    "Cảnh 2, shot 1: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology animation'",
+    "Cảnh 2, shot 2: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology aerial'",
+    "Cảnh 2, shot 3: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology wide'",
+    "Cảnh 2, shot 4: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology closeup'",
+    "Cảnh 3: chuẩn hóa cấu trúc — overlays: 2 → 11; điền giá trị mặc định",
+    "Cảnh 3, shot 1: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract'",
+    "Cảnh 3, shot 2: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial'",
+    "Cảnh 3, shot 3: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract wide'",
+    "Cảnh 3, shot 4: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract closeup'",
+    "Cảnh 3, shot 5: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract interior'",
+    "Cảnh 3, shot 6: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract exterior'",
+    "Cảnh 3, shot 7: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract panoramic'",
+    "Cảnh 3, shot 8: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract detail'",
+    "Cảnh 3, shot 9: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract documentary'",
+    "Cảnh 3, shot 10: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial night'",
+    "Cảnh 3, shot 11: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial daylight'",
+    "[scene_target, nhóm 3, warning] Số cảnh 3 dưới mục tiêu 8; không thêm cảnh rỗng.",
+    "Yêu cầu 60s, thực tế ~27.4s vì dữ liệu mỏng; tăng số nguồn hoặc chọn chủ đề khác.",
+    "Yêu cầu 60s, thực tế ~22.8s vì dữ liệu mỏng; tăng số nguồn hoặc chọn chủ đề khác."
+  ],
+  "adaptive": true,
+  "requested_duration_sec": 60.0,
+  "script_style": "storytelling",
+  "story_outline": {
+    "angle_index": 1,
+    "hook": "Meta phải nộp phạt 25 tỷ USD?",
+    "open_loop": "Liệu Meta có phải trả mức phạt khổng lồ này hay không?",
+    "payoff": "Giám đốc pháp lý của Meta khẳng định công ty sẽ tiến hành kháng cáo quyết định.",
+    "payoff_fact_ids": [
+      10
+    ],
+    "main_points": [
+      {
+        "id": 1,
+        "idea": "Án phạt 25 tỷ USD dành cho Meta",
+        "fact_ids": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": 2,
+        "idea": "Nguồn gốc vụ kiện và quy mô vi phạm",
+        "fact_ids": [
+          5,
+          9
+        ]
+      },
+      {
+        "id": 3,
+        "idea": "Phản ứng của Meta và kế hoạch kháng cáo",
+        "fact_ids": [
+          8,
+          10
+        ]
+      }
+    ],
+    "scenes": [
+      {
+        "scene_id": 1,
+        "point_id": 1,
+        "fact_ids": [
+          1
+        ],
+        "purpose": "hook"
+      },
+      {
+        "scene_id": 2,
+        "point_id": 2,
+        "fact_ids": [
+          5,
+          9
+        ],
+        "purpose": "ví dụ"
+      },
+      {
+        "scene_id": 3,
+        "point_id": 3,
+        "fact_ids": [
+          8,
+          10
+        ],
+        "purpose": "cta"
+      }
+    ]
+  },
+  "title": "Meta bị phạt 25 tỷ USD",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "Hứng khởi, công nghệ",
+    "volume": 0.16666666666666666
+  },
+  "scenes": [
+    {
+      "id": 1,
+      "role": "hook",
+      "style_purpose": "hook",
+      "narration": "Meta bị tòa án bang New Mexico ra lệnh phải nộp phạt 25 tỷ USD.",
+      "shots": [
+        {
+          "visual": {
+            "auto_generated": true,
+            "template": "hook_card",
+            "data": {
+              "text": "Meta bị phạt 25 tỷ USD",
+              "highlight": [
+                "Meta",
+                "bị",
+                "phạt",
+                "25",
+                "tỷ",
+                "USD"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                1
+              ]
+            }
+          },
+          "type": "stock_video",
+          "query": "news video",
+          "duration_sec": 2.7,
+          "effect": "zoom_in",
+          "text_overlay": "Meta bị phạt 25 tỷ USD"
+        },
+        {
+          "visual": {
+            "auto_generated": true,
+            "template": "hook_card",
+            "data": {
+              "text": "Meta bị phạt 25 tỷ USD",
+              "highlight": [
+                "Meta",
+                "bị",
+                "phạt",
+                "25",
+                "tỷ",
+                "USD"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                1
+              ]
+            }
+          },
+          "type": "stock_video",
+          "query": "news video",
+          "duration_sec": 2.7,
+          "effect": "zoom_in",
+          "text_overlay": "Meta bị phạt 25 tỷ USD"
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 1, shot 1: sửa b-roll query 'Meta courtroom tech fine news background video background loop' → 'news video'",
+          "[broll_query, nhóm 2, fixed] Cảnh 1, shot 1: sửa b-roll query 'Meta courtroom tech fine news background video background loop' → 'news video'",
+          "[hook_length, nhóm 3, warning] Hook quá dài cho ba giây đầu.",
+          "[overlay_style, nhóm 3, warning] Overlay phải 2–5 từ/số, không lặp nguyên câu lời đọc.",
+          "Cảnh 1, shot 2: b-roll 'news video' → 'news video aerial' từ nội dung cảnh/fact."
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 1,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 1,
+                "name": "ABC News",
+                "url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "role": "body",
+      "style_purpose": "ví dụ",
+      "narration": "Vụ kiện bắt nguồn từ Cambridge Analytica năm 2016, khiến Meta chịu trách nhiệm hơn 43 triệu lần vi phạm.",
+      "shots": [
+        {
+          "visual": {
+            "auto_generated": true,
+            "template": "source_card",
+            "data": {
+              "text": "",
+              "highlight": [],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "ABC News · Fox Business",
+              "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+              "date": "2026-10-21",
+              "title": "Vụ kiện bắt nguồn từ Cambridge Analytica năm 2016, khiến Meta chịu trách nhiệm hơn 43 triệu lần vi phạm.",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                1,
+                5,
+                9,
+                8,
+                10
+              ]
+            }
+          },
+          "type": "stock_video",
+          "query": "data technology animation",
+          "duration_sec": 3.864,
+          "effect": "none",
+          "text_overlay": "Vụ kiện Cambridge Analytica"
+        },
+        {
+          "visual": {
+            "auto_generated": true,
+            "template": "stat_card",
+            "data": {
+              "text": "Hơn 43 triệu lần vi phạm",
+              "highlight": [
+                "Hơn",
+                "43",
+                "triệu",
+                "lần",
+                "vi",
+                "phạm"
+              ],
+              "value": 43000000.0,
+              "number_text": "43 triệu",
+              "label": "Vụ kiện bắt nguồn từ việc công ty tư vấn chính trị Cambridge Analytica thu thập dữ liệu người dùng",
+              "unit": "",
+              "source": "ABC News",
+              "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                5,
+                9
+              ]
+            }
+          },
+          "type": "stock_image",
+          "query": "data technology aerial",
+          "duration_sec": 3.864,
+          "effect": "none",
+          "text_overlay": "Hơn 43 triệu lần vi phạm"
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "none",
+      "fact_ids": [
+        5,
+        9
+      ],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 2: chuẩn hóa cấu trúc — overlays: 2 → 4; điền giá trị mặc định",
+          "Cảnh 2, shot 1: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology animation'",
+          "Cảnh 2, shot 2: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology aerial'",
+          "Cảnh 2, shot 3: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology wide'",
+          "Cảnh 2, shot 4: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology closeup'",
+          "[shot_structure, nhóm 2, fixed] Cảnh 2: chuẩn hóa cấu trúc — overlays: 2 → 4; điền giá trị mặc định",
+          "[broll_query, nhóm 2, fixed] Cảnh 2, shot 1: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology animation'",
+          "[broll_query, nhóm 2, fixed] Cảnh 2, shot 2: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology aerial'",
+          "[broll_query, nhóm 2, fixed] Cảnh 2, shot 3: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology wide'",
+          "[broll_query, nhóm 2, fixed] Cảnh 2, shot 4: sửa b-roll query 'data privacy breach analytics technology animation code' → 'data technology closeup'",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[word_budget, nhóm 3, warning] Tổng 65 từ; mục tiêu 180 ±20%, chỉ thêm chi tiết có fact.",
+          "[word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.",
+          "[overlay_style, nhóm 3, warning] Overlay phải 2–5 từ/số, không lặp nguyên câu lời đọc.",
+          "[word_budget, nhóm 3, warning] Tổng 53 từ; mục tiêu 68 ±20%, chỉ thêm chi tiết có fact."
+        ],
+        "fact_ids": [
+          5,
+          9
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 5,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 5,
+                "name": "ABC News",
+                "url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+                "confidence": "medium"
+              }
+            ]
+          },
+          {
+            "fact_id": 9,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 9,
+                "name": "ABC News",
+                "url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "role": "cta",
+      "style_purpose": "đánh giá",
+      "narration": "Giám đốc pháp lý C.J. Mahoney khẳng định công ty sẽ tiến hành kháng cáo quyết định này.",
+      "shots": [
+        {
+          "visual": {
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Meta kháng cáo phán quyết",
+              "highlight": [
+                "Meta",
+                "kháng",
+                "cáo",
+                "phán",
+                "quyết"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                8,
+                10
+              ]
+            }
+          },
+          "type": "stock_video",
+          "query": "news abstract",
+          "duration_sec": 2.7,
+          "effect": "zoom_in",
+          "text_overlay": "Meta kháng cáo phán quyết"
+        },
+        {
+          "visual": {
+            "auto_generated": true,
+            "template": "source_card",
+            "data": {
+              "text": "",
+              "highlight": [],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "ABC News · Fox Business",
+              "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+              "date": "2026-10-21",
+              "title": "Giám đốc pháp lý C.J. Mahoney khẳng định công ty sẽ tiến hành kháng cáo quyết định này.",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                1,
+                5,
+                9,
+                8,
+                10
+              ]
+            }
+          },
+          "type": "stock_image",
+          "query": "news abstract aerial",
+          "duration_sec": 2.7,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn nghĩ sao về vụ việc?"
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        8,
+        10
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 3: chuẩn hóa cấu trúc — overlays: 2 → 11; điền giá trị mặc định",
+          "Cảnh 3, shot 1: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract'",
+          "Cảnh 3, shot 2: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial'",
+          "Cảnh 3, shot 3: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract wide'",
+          "Cảnh 3, shot 4: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract closeup'",
+          "Cảnh 3, shot 5: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract interior'",
+          "Cảnh 3, shot 6: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract exterior'",
+          "Cảnh 3, shot 7: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract panoramic'",
+          "Cảnh 3, shot 8: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract detail'",
+          "Cảnh 3, shot 9: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract documentary'",
+          "Cảnh 3, shot 10: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial night'",
+          "Cảnh 3, shot 11: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial daylight'",
+          "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+          "[shot_structure, nhóm 2, fixed] Cảnh 3: chuẩn hóa cấu trúc — overlays: 2 → 11; điền giá trị mặc định",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 1: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 2: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 3: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract wide'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 4: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract closeup'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 5: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract interior'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 6: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract exterior'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 7: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract panoramic'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 8: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract detail'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 9: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract documentary'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 10: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial night'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 11: sửa b-roll query 'legal appeal courtroom tech news abstract motion background' → 'news abstract aerial daylight'",
+          "[word_budget, nhóm 3, warning] Tổng 65 từ; mục tiêu 180 ±20%, chỉ thêm chi tiết có fact.",
+          "[word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.",
+          "[overlay_style, nhóm 3, warning] Overlay phải 2–5 từ/số, không lặp nguyên câu lời đọc.",
+          "[word_budget, nhóm 3, warning] Tổng 53 từ; mục tiêu 68 ±20%, chỉ thêm chi tiết có fact."
+        ],
+        "fact_ids": [
+          8,
+          10
+        ],
+        "source_count": 2,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 8,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 8,
+                "name": "ABC News",
+                "url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+                "confidence": "medium"
+              }
+            ]
+          },
+          {
+            "fact_id": 10,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 10,
+                "name": "Fox Business",
+                "url": "https://www.foxbusiness.com/technology/meta-ordered-pay-25b-jury-finds-misled-facebook-users",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "video_type": "news",
+  "target_duration_sec": 22.784615384615385,
+  "brief_hash": "ca3b094f2d7847c1b21bb93085445aaf494f942701aa86dcf0b354321361ad62",
+  "source_plan_hash": "6e749b4fa75ccd4a74607cfcfcf2660e46c49cecb73a6a161029d5c206403205",
+  "timing_basis": "audio",
+  "warnings": [
+    "Cảnh 1: số shot đổi từ 1 thành 2 theo audio thật.",
+    "Hook có audio thật 5.40s, vượt 3s; cần rút lời đọc nếu muốn hook ngắn hơn.",
+    "Tổng thời lượng theo audio 18.53s khác yêu cầu 22.78s quá 10%; giữ nguyên timing audio, chưa tự đổi tốc độ giọng."
+  ]
+}

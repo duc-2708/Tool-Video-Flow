@@ -1,0 +1,291 @@
+{
+  "discovery_hint": {
+    "category": "công nghệ",
+    "suggestion": {
+      "cluster_id": "d0237613d1fcc762",
+      "topic": "Meta bị phạt 25 tỷ USD",
+      "why_now": "Tin đăng 2026-10-22T09:32:29+00:00; 1 nguồn độc lập đề cập.",
+      "angle": "Đọc nguồn và kiểm chứng sự kiện cụ thể trước khi viết kịch bản.",
+      "suggested_type": "news",
+      "search_queries": {
+        "vi": [
+          "Meta bị phạt 25 tỷ USD"
+        ],
+        "en": [
+          "artificial intelligence Meta bị phạt 25 tỷ USD"
+        ]
+      },
+      "score": 5,
+      "score_reason": "Điểm sơ bộ theo độ mới và số nguồn, chưa có phân tích Gemini.",
+      "source_urls": [
+        "https://vnexpress.net/meta-bi-phat-25-ty-usd-5135615.html"
+      ]
+    }
+  },
+  "research_depth": "deep",
+  "story_angles": [
+    {
+      "angle": "Án phạt lịch sử 25 tỷ USD đối với Meta tại New Mexico",
+      "why": "Tòa án bang New Mexico ra lệnh phạt Meta 25 tỷ USD, được đánh giá là một trong những án phạt lớn nhất lịch sử bang."
+    },
+    {
+      "angle": "Hệ quả từ vụ bê bối Cambridge Analytica năm 2016",
+      "why": "Vụ kiện bắt nguồn từ việc Cambridge Analytica thu thập dữ liệu người dùng Facebook cho chiến dịch bầu cử năm 2016."
+    },
+    {
+      "angle": "Phản ứng pháp lý trái chiều và quyết định kháng cáo của Meta",
+      "why": "Bang New Mexico đưa vụ việc ra xét xử thay vì dàn xếp như 48 tiểu bang khác, trong khi Meta tuyên bố sẽ kháng cáo vì cho rằng mức phạt không hợp hiến."
+    }
+  ],
+  "key_numbers": [
+    {
+      "text": "Meta bị phạt 25 tỷ USD sau vụ kiện dữ liệu người dùng tại New Mexico.",
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "text": "Đại diện bang New Mexico từng đề xuất mức phạt từ 35 tỷ đến 40 tỷ USD.",
+      "fact_ids": [
+        7
+      ]
+    },
+    {
+      "text": "Đội ngũ pháp lý của Meta lập luận mức phạt cao không được vượt quá 3,45 tỷ USD.",
+      "fact_ids": [
+        8
+      ]
+    },
+    {
+      "text": "Bồi thẩm đoàn xác định Meta chịu trách nhiệm cho hơn 43 triệu lần vi phạm luật bảo vệ người tiêu dùng.",
+      "fact_ids": [
+        9
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "text": "Năm 2016, dữ liệu người dùng Facebook bị Cambridge Analytica thu thập phục vụ chiến dịch bầu cử.",
+      "fact_ids": [
+        5
+      ]
+    },
+    {
+      "text": "Thẩm phán Francis Mathew đưa ra phán quyết mức phạt 25 tỷ USD đối với Meta, theo lệnh của tòa án bang New Mexico.",
+      "fact_ids": [
+        1,
+        2
+      ]
+    },
+    {
+      "text": "Giám đốc pháp lý của Meta là C.J. Mahoney khẳng định công ty sẽ tiến hành kháng cáo.",
+      "fact_ids": [
+        10
+      ]
+    }
+  ],
+  "why_it_matters": [
+    {
+      "text": "Tổng chưởng lý bang New Mexico Raúl Torrez nhận định đây là một trong những án phạt lớn nhất lịch sử bang đối với một doanh nghiệp.",
+      "fact_ids": [
+        3
+      ]
+    },
+    {
+      "text": "Tiền phạt từ các vụ vi phạm luật bảo vệ người tiêu dùng tại New Mexico sẽ được phân bổ cho quỹ giáo dục của bang.",
+      "fact_ids": [
+        4
+      ]
+    }
+  ],
+  "counterpoints": [
+    {
+      "text": "48 tiểu bang khác tại Mỹ đã đạt thỏa thuận dàn xếp với Facebook, trong khi bang New Mexico chọn đưa vụ việc ra tòa xét xử.",
+      "fact_ids": [
+        6
+      ]
+    },
+    {
+      "text": "Đội ngũ pháp lý của Meta lập luận mức phạt cao không được vượt quá 3,45 tỷ USD để đảm bảo tính hợp hiến.",
+      "fact_ids": [
+        8
+      ]
+    }
+  ],
+  "topic": "Meta bị phạt 25 tỷ USD",
+  "language": "vi",
+  "source_languages": [
+    "vi",
+    "en"
+  ],
+  "output_language": "vi",
+  "search_queries": [
+    {
+      "source_lang": "vi",
+      "query": "Meta bị phạt 25 tỷ USD",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "artificial intelligence Meta bị phạt 25 tỷ USD",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "Meta bị phạt 25 tỷ USD vụ nào",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "Meta 25 billion dollar fine news coverage",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "chi tiết Meta nhận án phạt 25 tỷ USD báo chí",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "why was Meta fined 25 billion official reports",
+      "region": "us-en"
+    }
+  ],
+  "angle_candidates": [
+    {
+      "angle": "Phân tích tác động tài chính từ mức phạt kỷ lục 25 tỷ USD của Meta tại Mỹ",
+      "why": "Cung cấp cái nhìn chuyên sâu về con số khổng lồ và phản ứng pháp lý giữa Meta và giới chức bang New Mexico."
+    },
+    {
+      "angle": "Hệ lụy kéo dài từ vụ bê bối dữ liệu Cambridge Analytica đối với mạng xã hội Facebook",
+      "why": "Nhìn lại nguyên nhân gốc rễ dẫn đến cuộc chiến pháp lý kéo dài gần một thập kỷ giữa Meta và cơ quan quản lý."
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Meta bị tòa án bang New Mexico ra lệnh phải nộp phạt 25 tỷ USD sau một vụ kiện dữ liệu người dùng.",
+      "source_name": "ABC News",
+      "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+      "confidence": "medium",
+      "evidence_quote": "Meta ordered to pay $25 billion for deceiving users about privacy on Facebook",
+      "source_lang": "en",
+      "fact_vi": "Meta bị tòa án bang New Mexico ra lệnh phải nộp phạt 25 tỷ USD sau một vụ kiện dữ liệu người dùng.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Thẩm phán Francis Mathew là người đưa ra phán quyết mức phạt khổng lồ này đối với công ty Meta.",
+      "source_name": "ABC News",
+      "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+      "confidence": "medium",
+      "evidence_quote": "Judge Francis Mathew handed down the amount",
+      "source_lang": "en",
+      "fact_vi": "Thẩm phán Francis Mathew là người đưa ra phán quyết mức phạt khổng lồ này đối với công ty Meta.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Tổng chưởng lý bang New Mexico Raúl Torrez nhận định đây là một trong những án phạt lớn nhất lịch sử bang đối với một doanh nghiệp.",
+      "source_name": "ABC News",
+      "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+      "confidence": "medium",
+      "evidence_quote": "one of the largest, if not the single largest state verdict against a company in American history",
+      "source_lang": "en",
+      "fact_vi": "Tổng chưởng lý bang New Mexico Raúl Torrez nhận định đây là một trong những án phạt lớn nhất lịch sử bang đối với một doanh nghiệp.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Theo quy định tại bang New Mexico, tiền phạt từ các vụ vi phạm luật bảo vệ người tiêu dùng sẽ được phân bổ cho quỹ giáo dục của bang.",
+      "source_name": "ABC News",
+      "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+      "confidence": "medium",
+      "evidence_quote": "Under the New Mexico Constitution, fines for violations of consumer protection laws go state education spending.",
+      "source_lang": "en",
+      "fact_vi": "Theo quy định tại bang New Mexico, tiền phạt từ các vụ vi phạm luật bảo vệ người tiêu dùng sẽ được phân bổ cho quỹ giáo dục của bang.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Vụ kiện bắt nguồn từ việc công ty tư vấn chính trị Cambridge Analytica thu thập dữ liệu người dùng Facebook phục vụ chiến dịch bầu cử năm 2016.",
+      "source_name": "ABC News",
+      "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+      "confidence": "medium",
+      "evidence_quote": "Cambridge Analytica, harvested Facebook user data to generate targeted political ads for the 2016 election.",
+      "source_lang": "en",
+      "fact_vi": "Vụ kiện bắt nguồn từ việc công ty tư vấn chính trị Cambridge Analytica thu thập dữ liệu người dùng Facebook phục vụ chiến dịch bầu cử năm 2016.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Có 48 tiểu bang khác tại Mỹ đã đạt thỏa thuận dàn xếp với Facebook, trong khi bang New Mexico chọn cách đưa vụ việc ra tòa xét xử.",
+      "source_name": "ABC News",
+      "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+      "confidence": "medium",
+      "evidence_quote": "Forty-eight other states settled with Facebook in a nationwide case, but New Mexico chose to take the social media company to court on its own.",
+      "source_lang": "en",
+      "fact_vi": "Có 48 tiểu bang khác tại Mỹ đã đạt thỏa thuận dàn xếp với Facebook, trong khi bang New Mexico chọn cách đưa vụ việc ra tòa xét xử.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Đại diện phía bang New Mexico từng đề xuất mức phạt từ 35 tỷ đến 40 tỷ USD đối với Meta.",
+      "source_name": "ABC News",
+      "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+      "confidence": "medium",
+      "evidence_quote": "Attorneys for New Mexico had sought $35 billion to $40 billion",
+      "source_lang": "en",
+      "fact_vi": "Đại diện phía bang New Mexico từng đề xuất mức phạt từ 35 tỷ đến 40 tỷ USD đối với Meta.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Đội ngũ pháp lý của Meta lập luận rằng mức phạt cao không được vượt quá 3,45 tỷ USD để đảm bảo tính hợp hiến.",
+      "source_name": "ABC News",
+      "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+      "confidence": "medium",
+      "evidence_quote": "Lawyers for Meta argued for paying no more than $3.4 billion.",
+      "source_lang": "en",
+      "fact_vi": "Đội ngũ pháp lý của Meta lập luận rằng mức phạt cao không được vượt quá 3,45 tỷ USD để đảm bảo tính hợp hiến.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Bồi thẩm đoàn xác định Meta chịu trách nhiệm cho hơn 43 triệu lần vi phạm luật bảo vệ người tiêu dùng của bang New Mexico.",
+      "source_name": "ABC News",
+      "source_url": "https://abcnews.com/Technology/wireStory/meta-ordered-pay-new-mexico-25-billion-deceiving-137452515",
+      "confidence": "medium",
+      "evidence_quote": "found Meta liable for over 43 million violations of New Mexico consumer protection laws",
+      "source_lang": "en",
+      "fact_vi": "Bồi thẩm đoàn xác định Meta chịu trách nhiệm cho hơn 43 triệu lần vi phạm luật bảo vệ người tiêu dùng của bang New Mexico.",
+      "published_at": "2026-10-21"
+    },
+    {
+      "claim": "Giám đốc pháp lý của Meta là C.J. Mahoney lên tiếng khẳng định công ty sẽ tiến hành kháng cáo quyết định này.",
+      "source_name": "Fox Business",
+      "source_url": "https://www.foxbusiness.com/technology/meta-ordered-pay-25b-jury-finds-misled-facebook-users",
+      "confidence": "medium",
+      "evidence_quote": "Meta said it plans to appeal the ruling.",
+      "source_lang": "en",
+      "fact_vi": "Giám đốc pháp lý của Meta là C.J. Mahoney lên tiếng khẳng định công ty sẽ tiến hành kháng cáo quyết định này.",
+      "published_at": "2026-10-21"
+    }
+  ],
+  "trends": [],
+  "hooks": [
+    "Meta vừa phải đối mặt với án phạt lên tới 25 tỷ USD từ một bang tại Mỹ, con số khiến cả Thung lũng Silicon chấn động.",
+    "Chỉ vì những bê bối dữ liệu từ cuộc bầu cử năm 2016, Meta nay tiếp tục nhận thêm trát phạt kỷ lục trong lịch sử tư pháp."
+  ],
+  "audience_questions": [
+    "Vì sao Meta lại phải chịu mức phạt cao kỷ lục 25 tỷ USD tại bang New Mexico?",
+    "Khoản tiền phạt khổng lồ này sẽ đi về đâu và ảnh hưởng thế nào đến tương lai của Facebook?"
+  ],
+  "keywords": [
+    "Meta",
+    "25 tỷ USD",
+    "New Mexico",
+    "Cambridge Analytica",
+    "Facebook"
+  ],
+  "risks": [
+    "Thông tin pháp lý có thể thay đổi tùy thuộc vào kết quả các bước kháng cáo tiếp theo của Meta.",
+    "Tìm web/news hạn chế do một số nguồn trả về dạng snippet hoặc không đọc đầy đủ nội dung.",
+    "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+    "Tìm web/news không khả dụng; đã dùng các nguồn còn lại.",
+    "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+    "Bỏ bài quá ngắn: 69 ký tự, yêu cầu ít nhất 300 ký tự.",
+    "Đã tắt YouTube trends trong lượt nghiên cứu này."
+  ]
+}

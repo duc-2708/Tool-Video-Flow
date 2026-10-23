@@ -1,0 +1,369 @@
+{
+  "content_mode": "explainer_v2",
+  "research_questions": [
+    {
+      "question": "Vì sao Apple quyết định phát hành dòng iPhone Duo trên phạm vi toàn cầu vào thời điểm này?",
+      "query_vi": "vì sao iPhone Duo mở bán toàn cầu nguyên nhân chiến lược Apple",
+      "query_en": "why Apple released iPhone Duo global launch strategic reasons"
+    },
+    {
+      "question": "Cơ chế hoạt động và cấu trúc thiết kế của dòng iPhone Duo có điểm gì đột phá?",
+      "query_vi": "cơ chế thiết kế tính năng mới iPhone Duo",
+      "query_en": "iPhone Duo design features mechanism breakdown"
+    },
+    {
+      "question": "Những ai hoặc nhóm đối tượng thị trường nào chịu ảnh hưởng trực tiếp từ việc ra mắt iPhone Duo?",
+      "query_vi": "ai bị ảnh hưởng bởi iPhone Duo thị trường smartphone",
+      "query_en": "who is affected by iPhone Duo smartphone market impact"
+    },
+    {
+      "question": "Dòng iPhone Duo này khác biệt như thế nào so với các thế hệ iPhone tiêu chuẩn trước đó?",
+      "query_vi": "iPhone Duo khác gì so với các đời iPhone trước",
+      "query_en": "how is iPhone Duo different from previous iPhone models"
+    },
+    {
+      "question": "Bối cảnh thị trường di động hiện tại khi iPhone Duo lên kệ so sánh với những năm trước ra sao?",
+      "query_vi": "so sánh bối cảnh thị trường mở bán iPhone Duo",
+      "query_en": "market context comparison iPhone Duo global release"
+    },
+    {
+      "question": "Có những góc khuất, rủi ro hay ý kiến phản biện nào xoay quanh chiến lược giá và sản phẩm iPhone Duo?",
+      "query_vi": "mặt trái phản biện rủi ro iPhone Duo chiến lược",
+      "query_en": "iPhone Duo criticism drawbacks and risks analysis"
+    },
+    {
+      "question": "Bước đi tiếp theo của Apple và phản ứng dự kiến từ các đối thủ lớn như thế nào sau khi iPhone Duo mở bán?",
+      "query_vi": "tiếp theo là gì sau khi iPhone Duo mở bán toàn cầu",
+      "query_en": "what is next after iPhone Duo global launch competitor reaction"
+    }
+  ],
+  "knowledge_notes": [
+    {
+      "text": "Việc mở bán một dòng sản phẩm mới trên phạm vi toàn cầu thường nhằm tạo ra làn sóng quan tâm đồng loạt từ người dùng khắp nơi. Giống như một rạp chiếu phim phát hành bộ phim bom tấn cùng ngày ở mọi cụm rạp để tận dụng tối đa sức nóng truyền thông.",
+      "analogy": "Giống như việc rạp chiếu phim tung ra một bộ phim bom tấn trên toàn cầu cùng một ngày để tạo hiệu ứng đám đông.",
+      "confidence": "medium",
+      "source": "kiến thức nền"
+    },
+    {
+      "text": "Các tính năng chia đôi màn hình trên thiết bị di động giúp tối ưu hóa không gian hiển thị rộng lớn, cho phép xử lý nhiều tác vụ cùng lúc. Điều này giống như việc chia một chiếc bàn làm việc lớn thành hai khu vực độc lập để vừa xem tài liệu vừa ghi chú.",
+      "analogy": "Giống như việc chia một chiếc bàn làm việc lớn thành hai góc riêng biệt để làm nhiều việc cùng lúc.",
+      "confidence": "low",
+      "source": "kiến thức nền"
+    }
+  ],
+  "discovery_hint": {
+    "category": "công nghệ",
+    "suggestion": {
+      "cluster_id": "dea9c04c629a85eb",
+      "topic": "iPhone Duo bắt đầu mở bán toàn cầu",
+      "why_now": "Tin đăng 2026-10-23T00:28:33+00:00; 1 nguồn độc lập đề cập.",
+      "angle": "Đọc nguồn và kiểm chứng sự kiện cụ thể trước khi viết kịch bản.",
+      "suggested_type": "news",
+      "search_queries": {
+        "vi": [
+          "iPhone Duo bắt đầu mở bán toàn cầu"
+        ],
+        "en": [
+          "artificial intelligence iPhone Duo bắt đầu mở bán toàn cầu"
+        ]
+      },
+      "score": 5,
+      "score_reason": "Điểm sơ bộ theo độ mới và số nguồn, chưa có phân tích Gemini.",
+      "source_urls": [
+        "https://vnexpress.net/iphone-duo-bat-dau-mo-ban-toan-cau-5135827.html"
+      ]
+    }
+  },
+  "research_depth": "deep",
+  "story_angles": [
+    {
+      "angle": "Apple gia nhập thị trường điện thoại gập với iPhone Duo",
+      "why": "Đánh dấu chiếc điện thoại màn hình gập đầu tiên do Apple phát triển và được mở đơn đặt hàng trước với phản hồi ban đầu rất tích cực."
+    },
+    {
+      "angle": "Mức giá cao kỷ lục của dòng iPhone gập",
+      "why": "Giá khởi điểm từ 1.999 USD và có thể vượt mức 3.000 USD cho phiên bản 2TB, cùng với mức giá cao tại thị trường Ấn Độ."
+    },
+    {
+      "angle": "Cải tiến thiết kế và phần mềm chuyên biệt cho thiết bị gập",
+      "why": "Các nút bấm chuyển sang cạnh phải và hỗ trợ tính năng chia đôi màn hình Split View để tối ưu trải nghiệm."
+    }
+  ],
+  "key_numbers": [
+    {
+      "text": "Mức giá khởi điểm của iPhone Duo là 1.999 USD và có thể vượt 3.000 USD cho phiên bản 2TB.",
+      "fact_ids": [
+        2
+      ]
+    },
+    {
+      "text": "Tại Ấn Độ, giá khởi điểm từ 2.99,900 Rs cho bản 256GB và bản cao nhất lên tới 4.49,900 Rs.",
+      "fact_ids": [
+        7
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "text": "Ngày 10/09/2026: iPhone Duo chính thức được công bố.",
+      "fact_ids": [
+        6
+      ]
+    },
+    {
+      "text": "Thứ Sáu: Apple chính thức mở đơn đặt hàng trước cho iPhone Duo.",
+      "fact_ids": [
+        1
+      ]
+    }
+  ],
+  "why_it_matters": [
+    {
+      "text": "iPhone Duo là chiếc điện thoại gập đầu tiên của Apple và được CEO John Ternus mô tả là sự thay đổi mang tính chuyển đổi mạnh mẽ nhất kể từ thế hệ iPhone ban đầu.",
+      "fact_ids": [
+        1,
+        6,
+        8
+      ]
+    },
+    {
+      "text": "Thiết bị nhanh chóng trở thành một sản phẩm mang tính khát khao nhờ vị thế thương hiệu của Apple theo nhận định từ IDC.",
+      "fact_ids": [
+        3
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "text": "iPhone Duo: Chiếc điện thoại gập đầu tiên do Apple phát triển.",
+      "fact_ids": [
+        1,
+        6
+      ]
+    },
+    {
+      "text": "Split View: Tính năng hỗ trợ chia đôi màn hình, cho phép chạy đồng thời hai ứng dụng bằng cách kéo sang cạnh màn hình.",
+      "fact_ids": [
+        5
+      ]
+    }
+  ],
+  "topic": "iPhone Duo bắt đầu mở bán toàn cầu",
+  "language": "vi",
+  "source_languages": [
+    "vi",
+    "en"
+  ],
+  "output_language": "vi",
+  "search_queries": [
+    {
+      "source_lang": "vi",
+      "query": "iPhone Duo bắt đầu mở bán toàn cầu",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "artificial intelligence iPhone Duo bắt đầu mở bán toàn cầu",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "vì sao iPhone Duo mở bán toàn cầu nguyên nhân chiến lược Apple",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "why Apple released iPhone Duo global launch strategic reasons",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "cơ chế thiết kế tính năng mới iPhone Duo",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "iPhone Duo design features mechanism breakdown",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "ai bị ảnh hưởng bởi iPhone Duo thị trường smartphone",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "who is affected by iPhone Duo smartphone market impact",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "iPhone Duo khác gì so với các đời iPhone trước",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "how is iPhone Duo different from previous iPhone models",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "so sánh bối cảnh thị trường mở bán iPhone Duo",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "market context comparison iPhone Duo global release",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "mặt trái phản biện rủi ro iPhone Duo chiến lược",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "iPhone Duo criticism drawbacks and risks analysis",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "tiếp theo là gì sau khi iPhone Duo mở bán toàn cầu",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "what is next after iPhone Duo global launch competitor reaction",
+      "region": "us-en"
+    }
+  ],
+  "angle_candidates": [
+    {
+      "angle": "Chiến lược định giá xa xỉ và tệp khách hàng cao cấp của Apple",
+      "why": "Phân tích lý do Apple đặt giá khởi điểm 1.999 USD và cách hãng nhắm tới nhóm khách hàng sẵn sàng chi trả mạnh tay thay vì phổ cập đại trà."
+    },
+    {
+      "angle": "Thiết kế phần cứng và giải pháp tối ưu phần mềm trên iPhone gập",
+      "why": "Đi sâu vào cách Apple thiết kế màn hình 7,6 inch, bố trí nút bấm bên cạnh phải và tính năng Split View nhằm giải quyết bài toán điện thoại gập."
+    },
+    {
+      "angle": "Sự gia nhập muộn nhưng tạo tiếng vang lớn trong thị trường điện thoại gập",
+      "why": "Đánh giá tác động của Apple khi bước chân vào phân khúc do Samsung và các hãng Android thống trị trong nhiều năm qua."
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Apple chính thức mở đơn đặt hàng trước cho iPhone Duo, chiếc điện thoại gập đầu tiên của hãng, vào thứ Sáu với phản hồi ban đầu rất tích cực.",
+      "source_name": "CNBC",
+      "source_url": "https://www.cnbc.com/2026/10/16/apple-iphone-duo-demand-price.html",
+      "confidence": "medium",
+      "evidence_quote": "Apple's iPhone Duo, its most expensive iPhone ever, went up for preorder Friday, with launch-day pickup inventory selling out",
+      "source_lang": "en",
+      "fact_vi": "Apple chính thức mở đơn đặt hàng trước cho iPhone Duo, chiếc điện thoại gập đầu tiên của hãng, vào thứ Sáu với phản hồi ban đầu rất tích cực.",
+      "published_at": "2026-10-16"
+    },
+    {
+      "claim": "Mức giá khởi điểm của iPhone Duo là 1.999 USD và có thể vượt mức 3.000 USD cho phiên bản bộ nhớ 2TB.",
+      "source_name": "CNBC",
+      "source_url": "https://www.cnbc.com/2026/10/16/apple-iphone-duo-demand-price.html",
+      "confidence": "medium",
+      "evidence_quote": "Apple's first foldable phone starts at $1,999 and passes $3,000 at the 2TB storage tier.",
+      "source_lang": "en",
+      "fact_vi": "Mức giá khởi điểm của iPhone Duo là 1.999 USD và có thể vượt mức 3.000 USD cho phiên bản bộ nhớ 2TB.",
+      "published_at": "2026-10-16"
+    },
+    {
+      "claim": "Nabila Popal từ IDC cho biết iPhone Duo nhanh chóng trở thành một thiết bị gập mang tính khát khao nhờ vị thế thương hiệu của Apple.",
+      "source_name": "CNBC",
+      "source_url": "https://www.cnbc.com/2026/10/16/apple-iphone-duo-demand-price.html",
+      "confidence": "medium",
+      "evidence_quote": "\"Duo is fast becoming an aspirational foldable,\" IDC's Nabila Popal told CNBC",
+      "source_lang": "en",
+      "fact_vi": "Nabila Popal từ IDC cho biết iPhone Duo nhanh chóng trở thành một thiết bị gập mang tính khát khao nhờ vị thế thương hiệu của Apple.",
+      "published_at": "2026-10-16"
+    },
+    {
+      "claim": "Các nút bấm và điều khiển trên màn hình ngoài của iPhone Duo được di chuyển sang cạnh phải để tối ưu hóa không gian hiển thị dọc.",
+      "source_name": "Apple Developer",
+      "source_url": "https://developer.apple.com/videos/play/tech-talks/111466/",
+      "confidence": "medium",
+      "evidence_quote": "Buttons and controls that normally sit at the top and bottom move to the right side of the display in order to maximize vertical space",
+      "source_lang": "en",
+      "fact_vi": "Các nút bấm và điều khiển trên màn hình ngoài của iPhone Duo được di chuyển sang cạnh phải để tối ưu hóa không gian hiển thị dọc.",
+      "published_at": "2026-09-09"
+    },
+    {
+      "claim": "iPhone Duo hỗ trợ tính năng chia đôi màn hình Split View, cho phép người dùng chạy đồng thời hai ứng dụng bằng cách kéo một ứng dụng sang cạnh màn hình.",
+      "source_name": "Apple Developer",
+      "source_url": "https://developer.apple.com/videos/play/tech-talks/111466/",
+      "confidence": "medium",
+      "evidence_quote": "Just drag an app to the side to create a split view. This new 50/50 split divides the display into two halves that work independently",
+      "source_lang": "en",
+      "fact_vi": "iPhone Duo hỗ trợ tính năng chia đôi màn hình Split View, cho phép người dùng chạy đồng thời hai ứng dụng bằng cách kéo một ứng dụng sang cạnh màn hình.",
+      "published_at": "2026-09-09"
+    },
+    {
+      "claim": "iPhone Duo chính thức công bố vào ngày 10/09/2026 và đánh dấu chiếc điện thoại màn hình gập đầu tiên do Apple phát triển.",
+      "source_name": "Wikimedia Foundation, Inc.",
+      "source_url": "https://en.wikipedia.org/wiki/IPhone_Duo",
+      "confidence": "medium",
+      "evidence_quote": "The iPhone Duo is the first foldable smartphone developed and marketed by Apple. The device was announced during an Apple event at Apple Park in",
+      "source_lang": "en",
+      "fact_vi": "iPhone Duo chính thức công bố vào ngày 10/09/2026 và đánh dấu chiếc điện thoại màn hình gập đầu tiên do Apple phát triển.",
+      "published_at": "2026-09-09"
+    },
+    {
+      "claim": "Tại Ấn Độ, iPhone Duo có giá khởi điểm từ 2.99,900 Rs cho phiên bản 256GB và phiên bản cao cấp nhất lên tới 4.49,900 Rs.",
+      "source_name": "The New Indian Express",
+      "source_url": "https://www.newindianexpress.com/lifestyle/tech/2026/Sep/10/apple-enters-foldable-race-with-iphone-duo-drops-base-model-raises-prices",
+      "confidence": "medium",
+      "evidence_quote": "The iPhone Duo starts at ₹2,99,900 in India for the 256GB variant, while the top-end version is priced at ₹4,49,900.",
+      "source_lang": "en",
+      "fact_vi": "Tại Ấn Độ, iPhone Duo có giá khởi điểm từ 2.99,900 Rs cho phiên bản 256GB và phiên bản cao cấp nhất lên tới 4.49,900 Rs.",
+      "published_at": "2026-09-10"
+    },
+    {
+      "claim": "Giám đốc điều hành mới John Ternus mô tả iPhone Duo là sự thay đổi mang tính chuyển đổi mạnh mẽ nhất đối với iPhone kể từ thế hệ ban đầu.",
+      "source_name": "The New Indian Express",
+      "source_url": "https://www.newindianexpress.com/lifestyle/tech/2026/Sep/10/apple-enters-foldable-race-with-iphone-duo-drops-base-model-raises-prices",
+      "confidence": "medium",
+      "evidence_quote": "While launching the device, Ternus described the iPhone Duo as the “most transformational change to iPhone since the original”.",
+      "source_lang": "en",
+      "fact_vi": "Giám đốc điều hành mới John Ternus mô tả iPhone Duo là sự thay đổi mang tính chuyển đổi mạnh mẽ nhất đối với iPhone kể từ thế hệ ban đầu.",
+      "published_at": "2026-09-10"
+    }
+  ],
+  "trends": [],
+  "hooks": [
+    "Chiếc iPhone đắt nhất lịch sử của Apple vừa chính thức mở bán toàn cầu với mức giá khiến nhiều người phải choáng váng.",
+    "Liệu Apple có đang tái định nghĩa thị trường điện thoại màn hình gập với sự xuất hiện của iPhone Duo?",
+    "Không chỉ là một chiếc điện thoại gập thông thường, iPhone Duo mang đến những thay đổi gì sau hơn một thập kỷ chờ đợi?"
+  ],
+  "audience_questions": [
+    "iPhone Duo có gì khác biệt so với các dòng điện thoại gập của Samsung hay Huawei?",
+    "Mức giá từ 1.999 USD của iPhone Duo có thực sự xứng đáng với những nâng cấp mang lại?",
+    "Thiết kế gập và giao diện iOS mới trên iPhone Duo hoạt động thực tế ra sao?"
+  ],
+  "keywords": [
+    "iPhone Duo",
+    "Apple",
+    "điện thoại gập",
+    "A20 Pro",
+    "giá iPhone Duo",
+    "iOS 27"
+  ],
+  "risks": [
+    "Nguồn dữ liệu giới thiệu các thông số kỹ thuật dựa trên thông cáo báo chí và bài viết công nghệ, cần theo dõi thêm đánh giá thực tế dài hạn về độ bền bản lề.",
+    "collection_warnings: Đã lược bỏ các bài viết quá ngắn hoặc không đủ tiêu chuẩn nghiên cứu sâu theo quy định.",
+    "fact #6: quote dài 31 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "Đã loại fact #7: quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+    "Đã loại fact #8: quote dài 26 từ; quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+    "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+    "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+    "Bỏ bài quá ngắn: 221 ký tự, yêu cầu ít nhất 300 ký tự.",
+    "Bỏ URL không phải bài viết cụ thể hoặc là trang chuyên mục/trang chủ.",
+    "Bỏ bài quá ngắn: 76 ký tự, yêu cầu ít nhất 300 ký tự.",
+    "Tìm web/news không khả dụng; đã dùng các nguồn còn lại.",
+    "Đã tắt YouTube trends trong lượt nghiên cứu này."
+  ]
+}

@@ -17,6 +17,18 @@ def measured_audio_duration(path: Path) -> float:
     return duration
 
 
+def pad_audio_to(path: Path,duration: float,timeout=60):
+    """Only append silence; keep narration intact, using bundled FFmpeg."""
+    import uuid
+    from utils.atomic_io import replace_file_retry,discard_temp_file
+    path=Path(path);temporary=path.with_name(f".{path.stem}-{uuid.uuid4().hex}.mp3")
+    try:
+        subprocess.run([get_ffmpeg_exe(),"-hide_banner","-loglevel","error","-y","-i",str(path),"-af","apad","-t",str(duration),"-c:a","libmp3lame",str(temporary)],capture_output=True,check=True,timeout=timeout)
+        replace_file_retry(temporary,path)
+        return measured_audio_duration(path)
+    finally: discard_temp_file(temporary)
+
+
 def video_info(path: Path) -> tuple[int, int, float]:
     reader = read_frames(str(path), pix_fmt="rgb24", output_params=["-frames:v", "1"])
     try:

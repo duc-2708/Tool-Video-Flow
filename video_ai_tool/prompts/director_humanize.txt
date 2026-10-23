@@ -6,7 +6,7 @@ CẤM: "Chào mọi người", "Hôm nay chúng ta sẽ", "Trong thời đại n
 CẤM toàn video: "một số", "nhiều người", "ngày càng", "đóng vai trò quan trọng", "không thể phủ nhận", "trong bối cảnh", "có thể nói rằng".
 Hook ba giây ≤20 từ, nên 6–8 từ. Cảnh còn lại 2–4 câu, mỗi câu ≤28 từ, không mở hai cảnh liền cùng cấu trúc.
 Câu cuối cảnh dẫn sang ý tiếp theo. Kết giải đáp open_loop rồi đặt câu hỏi/nhận định; không tóm cả bài, không cảm ơn đã xem.
-Số và đơn vị viết dạng đọc tự nhiên; tránh ngoặc, viết tắt có cách đọc. Tổng speech_budget, không nhồi chữ vào hook.
+Giữ số/đơn vị dạng chữ số chuẩn để đối chiếu brief; không phiên âm tên nguồn có chữ số. Bước audio sẽ xử lý cách đọc sau kiểm tra. Tránh ngoặc. Tổng speech_budget, không nhồi chữ vào hook.
 Overlay 2–5 từ/số, mỗi shot một overlay hoặc null, không lặp nguyên câu lời đọc. Broll_query/shot_queries tiếng Anh 2–4 từ mỗi query, stock trung tính, không hãng/sản phẩm/người thật; thay đổi hành động/bối cảnh giữa shot, không chép truy vấn tìm bài báo.
 Tự đối chiếu TỪNG khẳng định của bản cuối và overlay với đúng fact_vi trong scene.fact_ids của full_plan.
 Kiểm tra cả dàn ý: hook/câu hỏi không ngầm bịa, payoff trả lời đúng open_loop, không biến nguồn trích thành dữ kiện.
@@ -19,3 +19,5 @@ Nếu không có căn cứ, approved=false, issues chỉ rõ scene_id và reason
 
 
 PHONG CÁCH MẪU (nếu INPUT.style_profile có giá trị): chỉ học CÁCH KỂ từ khuôn hook, structure/style_section, pacing, quy tắc giọng, overlay và cách kết. Không coi bất cứ câu, tên riêng hay con số trong style_profile là fact. Nội dung mới chỉ từ fact_vi/fact_ids của brief; không chép khuôn thành câu chứa dữ kiện video mẫu. Bám blueprint đã căn theo lượng fact/thời lượng; không ép kéo dài. Chỉ sửa selected_scene_ids khi được yêu cầu, giữ fact_ids và cảnh khác.
+
+HỒ SƠ DANH MỤC: nếu style_profile có scene_pacing/scene_patterns/narrative_flows/connective_phrases, dùng bảng phân cảnh và blueprint đã được code co giãn theo thời lượng và lượng fact. Mỗi style_section/connective_template/transition_hint là cách kể, không phải fact. Bám mạch kể theo thứ tự, biến tấu các khuôn câu nối {topic} theo nội dung đã có; mỗi cụm nối tối đa hai lần/video. Không đưa số cảnh, số shot, chỉ số nhịp trong metadata thành số liệu trong narration/overlay. Không đưa tóm tắt/nội dung video mẫu vào lời đọc.

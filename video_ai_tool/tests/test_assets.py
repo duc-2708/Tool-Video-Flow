@@ -100,15 +100,20 @@ def test_pipeline_keeps_original_and_refreshes_only_one_shot(asset_settings: Set
     assert "nền màu/chữ" in (plan_path.parent / "credits.txt").read_text(encoding="utf-8")
 
 
-def test_tts_failure_is_partial_not_fake_speech(asset_settings: Settings) -> None:
+def test_tts_failure_is_explicit_silence_and_remains_renderable(asset_settings: Settings) -> None:
     plan_path = asset_settings.output_dir / "test/edit_plan.json"
     write_json(plan_path, fixture_plan())
     tts = Mock()
     tts.synthesize.side_effect = TimeoutError("Fixture network timeout")
     result = run_assets(plan_path, asset_settings, tts=tts, providers=[])
     manifest = AssetsManifest.model_validate_json(result.read_text(encoding="utf-8"))
-    assert manifest.status == "partial" and all(scene.audio_path is None for scene in manifest.scenes)
+    assert manifest.status == "complete" and all(scene.audio_path and scene.audio_silent for scene in manifest.scenes)
     assert all(scene.audio_error for scene in manifest.scenes)
+    assert all(scene.audio_warnings for scene in manifest.scenes)
+    assert "không có giọng đọc" in (plan_path.parent/"report.md").read_text(encoding="utf-8")
+    from pipeline.run_all import asset_files
+    files,warnings=asset_files(plan_path.parent,plan_path)
+    assert files and warnings
     assert tts.synthesize.call_count == 8
 
 

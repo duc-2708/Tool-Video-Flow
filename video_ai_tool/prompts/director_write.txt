@@ -3,7 +3,7 @@ Giữ nguyên ý và fact_ids của dàn ý; không đề xuất fact mới. Nar
 Theo giọng style. Cả video 2.4–2.8 từ/giây, phân bổ theo blueprint (tính cả Theo nguồn).
 Hook 6–8 từ và không quá 20 từ; body 2–4 câu/cảnh, mỗi câu ≤28 từ, câu cuối dẫn tự nhiên sang cảnh sau.
 Mỗi cảnh một ý chính → chi tiết từ fact → ý nghĩa hoặc câu hỏi dẫn. Open loop phải được giải đáp trong kết.
-Viết số/đơn vị dạng đọc: ba mươi phần trăm, một triệu token. Viết tắt có cách đọc; không ngoặc.
+Giữ chữ số, đơn vị, phần trăm và ngày/tháng/năm đúng fact; giữ nguyên tên nguồn/sản phẩm từ brief. Code chuyển cách đọc khi tạo audio, không tự phiên âm số hoặc tên nguồn. Không ngoặc.
 Broll_query 2–4 từ tiếng Anh, mô tả stock trung tính, không tên hãng/sản phẩm/người thật hoặc chuỗi truy vấn tìm bài báo.
 Có thể trả shot_queries theo từng shot để thay đổi hành động/bối cảnh trong cùng cảnh; không dùng lại một chuỗi chủ đề dài cho tất cả shot.
 Overlays theo đúng số shot, mỗi overlay 2–5 từ/số có ý nghĩa hoặc null.
@@ -11,3 +11,5 @@ Không lặp nguyên câu lời đọc lên overlay. Không kéo dài bằng l�
 
 
 PHONG CÁCH MẪU (nếu INPUT.style_profile có giá trị): chỉ học CÁCH KỂ từ khuôn hook, structure/style_section, pacing, quy tắc giọng, overlay và cách kết. Không coi bất cứ câu, tên riêng hay con số trong style_profile là fact. Nội dung mới chỉ từ fact_vi/fact_ids của brief; không chép khuôn thành câu chứa dữ kiện video mẫu. Bám blueprint đã căn theo lượng fact/thời lượng; không ép kéo dài. Chỉ sửa selected_scene_ids khi được yêu cầu, giữ fact_ids và cảnh khác.
+
+HỒ SƠ DANH MỤC: nếu style_profile có scene_pacing/scene_patterns/narrative_flows/connective_phrases, dùng bảng phân cảnh và blueprint đã được code co giãn theo thời lượng và lượng fact. Mỗi style_section/connective_template/transition_hint là cách kể, không phải fact. Bám mạch kể theo thứ tự, biến tấu các khuôn câu nối {topic} theo nội dung đã có; mỗi cụm nối tối đa hai lần/video. Không đưa số cảnh, số shot, chỉ số nhịp trong metadata thành số liệu trong narration/overlay. Không đưa tóm tắt/nội dung video mẫu vào lời đọc.

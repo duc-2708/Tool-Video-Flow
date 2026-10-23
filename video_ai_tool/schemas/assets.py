@@ -40,6 +40,9 @@ class SceneAssets(StrictModel):
     audio_path: str | None
     audio_duration_sec: float | None = Field(default=None, gt=0)
     audio_error: str | None = None
+    audio_silent: bool = False
+    audio_voice: str | None = None
+    audio_warnings: list[str] = Field(default_factory=list)
     shots: list[ShotAsset]
 
 

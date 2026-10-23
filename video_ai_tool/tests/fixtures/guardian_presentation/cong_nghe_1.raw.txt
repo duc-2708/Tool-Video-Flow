@@ -1,0 +1,313 @@
+{
+  "category_guess": {
+    "category_id": "cong-nghe",
+    "confidence": 0.95,
+    "reason": "Video đánh giá công nghệ, AI và các tool lập trình."
+  },
+  "suggested_type": "review",
+  "scenes": [
+    {
+      "start_sec": 0,
+      "end_sec": 8,
+      "purpose": "hook",
+      "narration_summary": "Giới thiệu file prompt AI với số sao khủng nhưng bất ngờ về độ ngắn.",
+      "word_count": 28,
+      "words_per_sec": 3.5,
+      "shot_count": 2,
+      "average_shot_sec": 4,
+      "visual_types": [
+        "animation",
+        "text"
+      ],
+      "camera_effects": [
+        "zoom"
+      ],
+      "transition_to_next": {
+        "type": "cut",
+        "connective_template": "Bạn chỉ xin {topic}"
+      }
+    },
+    {
+      "start_sec": 8,
+      "end_sec": 26,
+      "purpose": "giải thích",
+      "narration_summary": "So sánh cách giải quyết rườm rà của agent thông thường với sự tối giản.",
+      "word_count": 65,
+      "words_per_sec": 3.6,
+      "shot_count": 3,
+      "average_shot_sec": 6,
+      "visual_types": [
+        "animation",
+        "text"
+      ],
+      "camera_effects": [],
+      "transition_to_next": {
+        "type": "cut",
+        "connective_template": "Bí mật nằm ở {topic}"
+      }
+    },
+    {
+      "start_sec": 26,
+      "end_sec": 43,
+      "purpose": "ví dụ",
+      "narration_summary": "Kể câu chuyện về phong cách làm việc tối giản và hiệu quả.",
+      "word_count": 55,
+      "words_per_sec": 3.2,
+      "shot_count": 2,
+      "average_shot_sec": 8.5,
+      "visual_types": [
+        "animation",
+        "text"
+      ],
+      "camera_effects": [],
+      "transition_to_next": {
+        "type": "cut",
+        "connective_template": "Thứ này có cần {topic}"
+      }
+    },
+    {
+      "start_sec": 43,
+      "end_sec": 59,
+      "purpose": "phân tích",
+      "narration_summary": "Đưa ra thang 7 bước kiểm tra trước khi để AI viết code.",
+      "word_count": 48,
+      "words_per_sec": 3.0,
+      "shot_count": 2,
+      "average_shot_sec": 8,
+      "visual_types": [
+        "animation",
+        "text"
+      ],
+      "camera_effects": [],
+      "transition_to_next": {
+        "type": "cut",
+        "connective_template": "Nhưng lười không có nghĩa là {topic}"
+      }
+    },
+    {
+      "start_sec": 59,
+      "end_sec": 119,
+      "purpose": "đánh giá",
+      "narration_summary": "Đánh giá các tính năng bảo mật, cách cài đặt và phản ứng cộng đồng.",
+      "word_count": 140,
+      "words_per_sec": 2.3,
+      "shot_count": 5,
+      "average_shot_sec": 12,
+      "visual_types": [
+        "animation",
+        "text"
+      ],
+      "camera_effects": [],
+      "transition_to_next": {
+        "type": "cut",
+        "connective_template": "Và giờ là củ bóc mình hứa từ {topic}"
+      }
+    },
+    {
+      "start_sec": 119,
+      "end_sec": 178.24,
+      "purpose": "cao trào",
+      "narration_summary": "Bóc mẽ số liệu benchmark, đánh giá từ bên thứ ba và kết luận.",
+      "word_count": 160,
+      "words_per_sec": 2.7,
+      "shot_count": 6,
+      "average_shot_sec": 10,
+      "visual_types": [
+        "animation",
+        "text"
+      ],
+      "camera_effects": [],
+      "transition_to_next": null
+    }
+  ],
+  "narrative_flow": "Mở đầu bằng con số ấn tượng, sau đó giải thích vấn đề, đưa ra câu chuyện minh họa, phân tích chi tiết các bước, đánh giá khách quan và kết luận bằng bài học thực tế.",
+  "connective_phrases": [
+    "Bạn chỉ xin {topic}",
+    "Bí mật nằm ở {topic}",
+    "Thứ này có cần {topic}",
+    "Nhưng lười không có nghĩa là {topic}",
+    "Và giờ là củ bóc mình hứa từ {topic}"
+  ],
+  "scene_count": 6,
+  "avg_scene_sec": 29.7,
+  "duration_sec": 178.24,
+  "transcript_outline": [
+    {
+      "start_sec": 0,
+      "end_sec": 8,
+      "summary": "Giới thiệu file prompt AI với số sao khủng"
+    },
+    {
+      "start_sec": 8,
+      "end_sec": 26,
+      "summary": "So sánh agent rườm rà và sự tối giản"
+    },
+    {
+      "start_sec": 26,
+      "end_sec": 43,
+      "summary": "Câu chuyện phong cách làm việc tối giản"
+    },
+    {
+      "start_sec": 43,
+      "end_sec": 59,
+      "summary": "Thang 7 bước kiểm tra trước khi viết code"
+    },
+    {
+      "start_sec": 59,
+      "end_sec": 119,
+      "summary": "Đánh giá tính năng, bảo mật và cài đặt"
+    },
+    {
+      "start_sec": 119,
+      "end_sec": 178.24,
+      "summary": "Bóc mẽ số liệu, đánh giá bên thứ ba và kết luận"
+    }
+  ],
+  "hook": {
+    "technique": "con số bất ngờ",
+    "template": "Một file prompt {topic} viết code lười đi",
+    "word_count": 8
+  },
+  "structure": [
+    {
+      "name": "Hook",
+      "duration_sec": 8,
+      "purpose": "Thu hút người xem bằng con số và vấn đề",
+      "transition": "cut"
+    },
+    {
+      "name": "Giải thích",
+      "duration_sec": 18,
+      "purpose": "So sánh cách làm việc thông thường và tối giản",
+      "transition": "cut"
+    },
+    {
+      "name": "Ví dụ",
+      "duration_sec": 17,
+      "purpose": "Kể chuyện minh họa phong cách",
+      "transition": "cut"
+    },
+    {
+      "name": "Phân tích",
+      "duration_sec": 16,
+      "purpose": "Đưa ra khung tiêu chuẩn đánh giá",
+      "transition": "cut"
+    },
+    {
+      "name": "Đánh giá",
+      "duration_sec": 60,
+      "purpose": "Xem xét tính năng và phản ứng cộng đồng",
+      "transition": "cut"
+    },
+    {
+      "name": "Cao trào & Kết",
+      "duration_sec": 59.24,
+      "purpose": "Bóc mẽ số liệu và chốt vấn đề",
+      "transition": "null"
+    }
+  ],
+  "narration_style": {
+    "pronouns": [
+      "Bạn",
+      "Mình",
+      "Ông anh"
+    ],
+    "intimacy": "thân mật, hài hước",
+    "average_sentence_words": 12,
+    "rhetorical_questions": "Thứ này có cần tồn tại không?",
+    "examples": "So sánh agent cồng kềnh với nhân vật cụ thể",
+    "catchphrases": [
+      "Lười nhưng không ẩu",
+      "Thiên tài hay YAGNI đóng gói đẹp?"
+    ],
+    "humor": "Cao, châm biếm nhẹ nhàng",
+    "words_per_sec": 2.8,
+    "voice_gender_estimate": "Nam",
+    "voice_age_estimate": "25-35",
+    "voice_emotion": "Hóm hỉnh, cuốn hút"
+  },
+  "pacing": {
+    "average_shot_sec": 7.5,
+    "cuts_per_10_sec": 1.3,
+    "pattern_interrupts": [
+      8,
+      26,
+      43,
+      59,
+      119
+    ],
+    "rhythm": "Nhanh gọn, dồn dập ở phần đầu, sâu lắng ở phần phân tích và cao trào ở cuối"
+  },
+  "visual_style": {
+    "types": [
+      "animation",
+      "text"
+    ],
+    "transitions": [
+      "cut"
+    ],
+    "camera_effects": [
+      "zoom"
+    ],
+    "aspect_ratio": "9:16",
+    "colors": [
+      "đen",
+      "xanh lá",
+      "vàng"
+    ]
+  },
+  "captions": {
+    "enabled": true,
+    "mode": "word",
+    "font_description": "Bold sans-serif",
+    "font_scale": 0.05,
+    "color": "#FFFFFF",
+    "highlight_color": "#00FF00",
+    "stroke_color": "#000000",
+    "stroke_width_ratio": 0.005,
+    "position": "lower",
+    "emphasis": "Màu sắc nổi bật theo từ khóa",
+    "shadow": "Có"
+  },
+  "audio": {
+    "mood": "Hứng khởi, công nghệ",
+    "music_volume": 0.15,
+    "sfx_types": [
+      "pop",
+      "whoosh",
+      "click"
+    ],
+    "sfx_per_10_sec": 2,
+    "sfx_positions": [
+      0,
+      8,
+      26,
+      43,
+      59,
+      119
+    ],
+    "ducking": true,
+    "details": "Âm thanh rõ ràng, nhạc nền nhịp nhàng ăn khớp với chuyển động"
+  },
+  "cta_ending": {
+    "technique": "Đặt câu hỏi tương tác với người xem",
+    "has_cta": true
+  },
+  "strengths": [
+    "Mở đầu cuốn hút với con số bất ngờ",
+    "Nhịp dựng nhanh, hình ảnh minh họa sinh động",
+    "Lập luận sắc bén, có dẫn chứng số liệu rõ ràng",
+    "Giọng đọc hóm hỉnh, giữ chân người xem đến phút cuối"
+  ],
+  "weaknesses": [
+    "Thời lượng hơi dài đối với một video ngắn thuần túy",
+    "Nhiều thuật ngữ kỹ thuật có thể gây khó hiểu cho người mới"
+  ],
+  "reusable_rules": [
+    "Sử dụng con số gây sốc ngay 3 giây đầu",
+    "Chia nội dung thành các bước hoặc tiêu chuẩn rõ ràng",
+    "Dùng hoạt hình minh họa thay vì chỉ có chữ",
+    "Kết hợp hài hước châm biếm để tăng tương tác",
+    "Đưa ra câu hỏi mở ở cuối video để kêu gọi bình luận"
+  ]
+}
