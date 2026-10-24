@@ -1,0 +1,25 @@
+{
+  "request": {
+    "model": "veo-3.1",
+    "prompt": "Recover existing",
+    "seconds": 4,
+    "format": "tiktok",
+    "resolution": "720p"
+  },
+  "status": "failed",
+  "remote_id": "dashboard_id",
+  "error": "fixture after recovery",
+  "progress": 0,
+  "gateway_failure": {
+    "status": "failed",
+    "error": "fixture after recovery"
+  },
+  "sent_payload": {
+    "model": "veo-3.1",
+    "prompt": "Recover existing",
+    "seconds": 4,
+    "aspect_ratio": "9:16",
+    "resolution": "720p"
+  },
+  "failure_code": "gateway_failed"
+}

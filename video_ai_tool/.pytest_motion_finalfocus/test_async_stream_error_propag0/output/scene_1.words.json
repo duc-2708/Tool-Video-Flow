@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "timing_source": "estimated_characters",
+  "duration_sec": 2.2,
+  "words": [
+    {
+      "text": "Xin",
+      "start": 0.0,
+      "end": 0.942857142857143
+    },
+    {
+      "text": "chào",
+      "start": 0.942857142857143,
+      "end": 2.2
+    }
+  ]
+}

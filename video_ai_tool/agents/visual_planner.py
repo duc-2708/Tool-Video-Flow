@@ -36,9 +36,7 @@ def assign_visuals(plan,brief,*,replace=False):
     all_ids=list(dict.fromkeys(i for s in plan.scenes for i in s.fact_ids if brief_fact(brief,i)))
     sources=list(dict.fromkeys(brief_fact(brief,i).source_name or urlsplit(str(brief_fact(brief,i).source_url)).netloc for i in all_ids))
     slots=[(s,j,shot) for s in plan.scenes for j,shot in enumerate(s.shots)]
-    # Early source card follows hook; final card closes provenance. Never repeat per scene.
-    early=1 if len(slots)>2 else 0
-    source_slots={early,len(slots)-1} if len(slots)>=3 and sources else set()
+    source_slots={len(slots)-1} if len(slots)>=3 and sources else set()
     for position,(scene,j,shot) in enumerate(slots):
         if shot.visual is not None and not shot.visual.auto_generated and not replace: continue
         facts=[brief_fact(brief,i) for i in scene.fact_ids if brief_fact(brief,i)]
@@ -71,8 +69,12 @@ def assign_visuals(plan,brief,*,replace=False):
                 data.source_url=str(facts[0].source_url)
         shot.visual=Visual(template=template,data=data,auto_generated=True)
     cards=[shot for _,_,shot in slots if shot.visual and shot.visual.template=="source_card"]
-    for shot in cards[1:-1]:
+    for shot in cards[:-1]:
         shot.visual=Visual(template="text_focus",data=VisualData(text=shot.text_overlay or "Thông tin từ nguồn"),auto_generated=True)
+    from agents.presentation import normalize_cards,source_card_once
+    source_card_once(plan,brief);normalize_cards(plan,brief)
+    from agents.visual_diversity import select_templates
+    select_templates(plan,brief)
     return plan
 
 

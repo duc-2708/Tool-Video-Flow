@@ -1,0 +1,8 @@
+
+[2026-10-24T02:37:20.088721+00:00] {"event": "gateway_submit", "request": {"model": "veo-3.1", "prompt": "A sphere rests indoors, soft light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:20.091574+00:00] {"event": "gateway_http_error", "http_status": 400, "remote_id": null, "request": {"model": "veo-3.1", "prompt": "A sphere rests indoors, soft light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"error": {"code": "bad_request", "message": "Rejected", "details": {"token": "[REDACTED]", "extra": "unabridged details"}}}}
+
+[2026-10-24T02:37:20.093095+00:00] Videos API POST /videos
+providers.video_gateway.GatewayVideoError: Gateway HTTP 400: Rejected
+

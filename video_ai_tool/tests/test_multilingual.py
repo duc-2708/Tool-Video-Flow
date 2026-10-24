@@ -94,7 +94,7 @@ def test_multilingual_research_end_to_end_mocked(tmp_path,monkeypatch):
         assert schema is ResearchBrief and "Editors can cut and join clips." in prompt
         return json.dumps(english_brief(source),ensure_ascii=False)
     provider.generate_json.side_effect = generate
-    monkeypatch.setattr("agents.researcher.GeminiProvider",lambda settings:provider)
+    monkeypatch.setattr("agents.researcher.provider_for_step",lambda *args,**kwargs:provider)
     collect = Mock(return_value=([source],[]))
     monkeypatch.setattr(WebSearch,"collect",collect)
     path = run_research("Dựng video",settings,source_languages=["en"],web_limit=3,use_youtube=False,progress=lambda _:None)

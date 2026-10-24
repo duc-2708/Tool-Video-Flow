@@ -1,0 +1,60 @@
+{
+  "template_types": 2,
+  "template_counts": {
+    "hook_card": 1,
+    "cta_card": 1
+  },
+  "repeated_cards": [],
+  "generic_cards": [],
+  "still_intervals_over_3_5_sec": [],
+  "empty_cards_over_40_percent": [
+    {
+      "issues": [
+        "card_empty_over_40_percent"
+      ],
+      "occupied": 0.5609358045944105,
+      "deferred_until_cue": false,
+      "graphic": {
+        "x": 23.30304718017578,
+        "y": 132.7925262451172,
+        "width": 223.3939208984375,
+        "height": 108.72746276855469
+      },
+      "caption": {
+        "x": 29.69921875,
+        "y": 242.765625,
+        "width": 202.5,
+        "height": 96
+      },
+      "shot_id": 1,
+      "template": "cta_card",
+      "rule_id": "motion_layout",
+      "group": 3,
+      "scene_id": 8
+    }
+  ],
+  "text_overflow": [],
+  "numbers_not_in_narration_or_brief": [],
+  "caption_gaps_over_0_6_sec": [],
+  "deferred_dom_samples": 0,
+  "scope": "Group 3; DOM samples and beat/display timing, not OCR, semantic fact validation or exhaustive motion detection.",
+  "duration_sec": 3.2413333333333334,
+  "sample_interval_sec": 2.5,
+  "frames": [
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_fix\\test_disabled_motion_mascot_st1\\project\\review_frames\\samples\\frame_0000.png",
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_fix\\test_disabled_motion_mascot_st1\\project\\review_frames\\samples\\frame_0001.png"
+  ],
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_fix\\test_disabled_motion_mascot_st1\\project\\review_frames\\contact_sheet.png",
+  "review_notes": [
+    "[visual_variety, nhóm 2] Cảnh 1: text_focus → hook_card, giữ nguyên dữ liệu.",
+    "[visual_variety, nhóm 2] Cảnh 8: text_focus → cta_card, giữ nguyên dữ liệu.",
+    "[visual_card, nhóm 2] Cảnh 1, shot 1: 'Ý chính cần nhớ' → 'Cắt ghép video'; minh họa icon.",
+    "[visual_variety, nhóm 3] Chưa đủ dữ liệu cho 3 loại mẫu; không tạo số/trích dẫn để bù.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 8: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 1: motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout.",
+    "Cảnh 8: motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout.",
+    "Cảnh 8, shot 1: motion_layout nhóm 3 sau tự sửa: card_empty_over_40_percent."
+  ],
+  "warning_count": 1
+}

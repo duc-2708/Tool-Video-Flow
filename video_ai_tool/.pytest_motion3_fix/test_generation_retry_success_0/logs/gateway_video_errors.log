@@ -1,0 +1,8 @@
+
+[2026-10-24T02:37:20.426326+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A closed plain laptop rests on a wooden desk, soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:20.436005+00:00] {"event": "submit_response", "request": {"model": "veo-3.1", "prompt": "A closed plain laptop rests on a wooden desk, soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": "original", "response": {"id": "original"}}
+
+[2026-10-24T02:37:20.565063+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A lens rests indoors, soft light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:20.579660+00:00] {"event": "submit_response", "request": {"model": "veo-3.1", "prompt": "A lens rests indoors, soft light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": "retry_success", "response": {"id": "retry_success"}}

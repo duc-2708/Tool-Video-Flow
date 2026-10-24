@@ -1,0 +1,30 @@
+{
+  "template_types": 1,
+  "template_counts": {
+    "hook_card": 1
+  },
+  "repeated_cards": [],
+  "generic_cards": [],
+  "still_intervals_over_3_5_sec": [],
+  "empty_cards_over_40_percent": [],
+  "text_overflow": [],
+  "numbers_not_in_narration_or_brief": [],
+  "caption_gaps_over_0_6_sec": [],
+  "deferred_dom_samples": 0,
+  "scope": "Group 3; DOM samples and beat/display timing, not OCR, semantic fact validation or exhaustive motion detection.",
+  "duration_sec": 3.2413333333333334,
+  "sample_interval_sec": 2.5,
+  "frames": [
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_motion_enabled_renderer_c0\\project\\review_frames\\samples\\frame_0000.png",
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_motion_enabled_renderer_c0\\project\\review_frames\\samples\\frame_0001.png"
+  ],
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_motion_enabled_renderer_c0\\project\\review_frames\\contact_sheet.png",
+  "review_notes": [
+    "Cảnh 1, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Hiểu câu chuyện'; chia nhịp theo shot.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 8: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 1: motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout.",
+    "Cảnh 8: motion_layout nhóm 3: dự phòng Pillow, chưa đo bố cục DOM."
+  ],
+  "warning_count": 0
+}

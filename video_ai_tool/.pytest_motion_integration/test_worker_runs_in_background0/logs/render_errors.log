@@ -1,0 +1,9 @@
+
+[2026-10-23T10:10:14.967789+00:00] Worker Render thất bại
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\editor\jobs.py", line 44, in _run
+    result = run_render(plan,mode=mode,settings=settings,progress=progress,diagnostics=diagnostics)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_timeline.py", line 232, in fake_render
+    raise ValueError("Fixture lỗi gốc")
+ValueError: Fixture lỗi gốc
+

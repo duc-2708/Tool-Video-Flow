@@ -1,0 +1,19 @@
+{
+  "plan": null,
+  "warnings": [
+    "Video [schema_basic, nhóm 1]: Expecting value: line 1 column 1 (char 0)"
+  ],
+  "failed_scene_ids": [],
+  "validation_errors": [
+    {
+      "rule_id": "schema_basic",
+      "group": 1,
+      "scene_id": null,
+      "phase": "plan",
+      "action": "error",
+      "message": "Expecting value: line 1 column 1 (char 0)"
+    }
+  ],
+  "attempts": 2,
+  "status": "draft_requires_review"
+}

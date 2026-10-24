@@ -45,7 +45,7 @@ def short(value, limit=180):
 def font(path,size): return ImageFont.truetype(path,max(8,int(size)))
 
 
-def text_block(draw,text,box,theme,scale=.09,fill=None,highlights=(),align="center"):
+def text_block(draw,text,box,theme,scale=.09,fill=None,highlights=(),align="center",valign="top"):
     x,y,w,h=box
     text=short(text,260)
     size=max(9,round(w*scale))
@@ -55,6 +55,7 @@ def text_block(draw,text,box,theme,scale=.09,fill=None,highlights=(),align="cent
         if len(lines)*size*1.35<=h or size<=9: break
         size-=1
     lines=lines[:max(1,int(h/(size*1.35)))]
+    if valign=="center": y+=(h-len(lines)*size*1.35)/2
     highlight={str(s).casefold().strip(".,!?:;") for s in highlights}
     for i,line in enumerate(lines):
         left=x+(w-f.getlength(line))/2 if align=="center" else x
@@ -89,7 +90,8 @@ class Card:
         layer=Image.new("RGBA",self.size)
         draw=ImageDraw.Draw(layer)
         # Upper/middle band reserved for cards; captions occupy the lower safe band.
-        x,y,cw,ch=w*.07,h*.20,w*.86,h*.43
+        from editor.layout import card_box
+        x,y,cw,ch=card_box(self.size,self.name)
         radius=max(8,round(w*float(theme.get("radius",28))/540))
         draw.rounded_rectangle((x+4,y+8,x+cw+4,y+ch+8),radius=radius,fill=(0,0,0,round(255*float(theme.get("shadow",.35)))))
         draw.rounded_rectangle((x,y,x+cw,y+ch),radius=radius,fill=theme["card"])
@@ -101,14 +103,15 @@ class Card:
         if name in {"hook_card","text_focus"}:
             text=data.get("text") or data.get("title") or data.get("label") or "Thông tin nổi bật"
             highlights=data.get("highlight") or text.split()[:min(6,len(text.split()))]
-            text_block(draw,text,box,theme,.12 if name=="hook_card" else .095,highlights=highlights)
+            text_block(draw,text,box,theme,.20 if name=="hook_card" else .18,highlights=highlights,valign="center")
         elif name=="stat_card":
             target=data.get("value") or 0
             text=number_label(number_at(target,t,self.duration),target)
             text_block(draw,text,(bx,by,bw,bh*.42),theme,.25,theme["accent"])
             text_block(draw,data.get("unit",""),(bx,by+bh*.39,bw,bh*.12),theme,.055,theme["secondary"])
             text_block(draw,data.get("label") or "Số liệu từ nguồn",(bx,by+bh*.55,bw,bh*.23),theme,.075)
-            text_block(draw,data.get("source",""),(bx,by+bh*.87,bw,bh*.12),theme,.038,theme["muted"])
+            # Provenance is displayed once on the final source_card; retain
+            # metadata here for grounding/credits without painting a second label.
         elif name=="steps_list":
             items=data.get("items",[])[:4] or [data.get("text") or "Nội dung từ nguồn"]
             row=bh/max(2,len(items))
@@ -138,9 +141,9 @@ class Card:
                 length=bw*abs(v)/maximum*p
                 if length>1: draw.rounded_rectangle((bx,yy+row*.50,bx+length,yy+row*.69),radius=4,fill=theme["accent"] if i%2==0 else theme["secondary"])
         elif name=="source_card":
-            text_block(draw,data.get("source") or "Nguồn bài viết",(bx,by,bw,bh*.22),theme,.10,theme["accent"])
-            text_block(draw,data.get("date", ""),(bx,by+bh*.27,bw,bh*.13),theme,.045,theme["muted"])
-            text_block(draw,data.get("title") or data.get("text", ""),(bx,by+bh*.47,bw,bh*.48),theme,.075)
+            source=" · ".join((data.get("source") or "Nguồn bài viết").split(" · ")[:2])
+            text_block(draw,"Nguồn: "+source,(bx,by,bw,bh*.65),theme,.11,theme["accent"],valign="center")
+            text_block(draw,data.get("date", ""),(bx,by+bh*.72,bw,bh*.25),theme,.05,theme["muted"],valign="center")
         return layer
 
     def frame(self,t,transparent=False):
@@ -157,7 +160,8 @@ class Card:
         layer=self.panel_cache[key].copy()
         draw=ImageDraw.Draw(layer)
         sweep=(max(0.,t)%3)/3
-        x,y,cw,ch=w*.07,h*.20,w*.86,h*.43
+        from editor.layout import card_box
+        x,y,cw,ch=card_box(self.size,self.name)
         draw.rounded_rectangle((x+cw*sweep,y+ch-h*.008,min(x+cw,x+cw*sweep+w*.08),y+ch),radius=2,fill=self.theme["secondary"])
         # Eased entry/exit plus gentle continuous motion; never a frozen >4s hold.
         entry=ease_back(t/.42) if name=="hook_card" else ease_out(t/.4)

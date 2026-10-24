@@ -1,0 +1,6 @@
+
+[2026-10-24T02:37:17.341392+00:00] {"event": "gateway_http_error", "http_status": 401, "remote_id": null, "request": null, "response": {"error": {"message": "Bad [REDACTED]"}}}
+
+[2026-10-24T02:37:17.343790+00:00] Videos API GET /models
+providers.video_gateway.GatewayVideoError: Gateway HTTP 401: Bad [REDACTED]
+

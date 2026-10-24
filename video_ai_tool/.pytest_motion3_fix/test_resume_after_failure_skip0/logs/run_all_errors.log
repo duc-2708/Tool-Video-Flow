@@ -1,0 +1,13 @@
+
+[2026-10-24T02:37:30.953188+00:00] run_all step=assets
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 360, in run_all
+    run_assets(project/"edit_plan.json",settings,progress=lambda done,total,message:emit(step,message,done/max(1,total)))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 52, in assets
+    enter("assets")
+    ~~~~~^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 31, in enter
+    raise RuntimeError("Lỗi [REDACTED] ở "+step)
+RuntimeError: Lỗi [REDACTED] ở assets
+

@@ -1,0 +1,32 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion_finalfocus\\test_motion_enabled_renderer_c0\\project\\render\\dung-video_tiktok_preview.mp4",
+  "filename": "dung-video_tiktok_preview.mp4",
+  "mode": "preview",
+  "duration_sec": 3.2413333333333334,
+  "width": 270,
+  "height": 480,
+  "fps": 10,
+  "size_bytes": 135449,
+  "render_seconds": 0.871,
+  "warnings": [
+    "Cảnh 8, shot 1: dùng nền màu và chữ."
+  ],
+  "caption_timing": "Word sidecar nếu hợp lệ; còn lại ước lượng theo số ký tự",
+  "motion_enabled": true,
+  "motion_scenes": [
+    {
+      "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion_finalfocus\\test_motion_enabled_renderer_c0\\project\\render\\motion_cache\\c2420f308fe51bedf22ff29f86af6bc37cf7d3a6487f818eab06a061c8aea6ba.mp4",
+      "cache_hit": true,
+      "scene_id": 1,
+      "width": 270,
+      "height": 480,
+      "fps": 10,
+      "duration_sec": 1.6206666666666667,
+      "render_seconds": 0.0,
+      "size_bytes": 23535,
+      "sha256": "29994e3e22bfbeebd0190f93715d0cb8676064eaae24dbd34849266b78998dc5",
+      "timing_source": "estimated_characters"
+    }
+  ],
+  "motion_scale": 0.25
+}

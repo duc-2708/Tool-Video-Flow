@@ -1,0 +1,437 @@
+
+[2026-10-24T02:47:03.871040+00:00] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-10-24T02:47:03.872744+00:00] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-10-24T02:47:03.875337+00:00] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-10-24T02:47:03.876731+00:00] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-10-24T02:47:03.879520+00:00] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-10-24T02:47:03.882579+00:00] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-10-24T02:47:03.885437+00:00] Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-10-24T02:47:03.887683+00:00] Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-10-24T02:47:03.891273+00:00] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-10-24T02:47:03.893594+00:00] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-10-24T02:47:03.896965+00:00] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-10-24T02:47:03.898926+00:00] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-10-24T02:47:03.904747+00:00] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-10-24T02:47:03.906679+00:00] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-10-24T02:47:03.917917+00:00] Director lần 1: kiểm tra cảnh [1, 2, 3, 4, 5, 6, 7, 8], fact_counts=[(1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 0)], words=55, duration=45.0
+
+[2026-10-24T02:47:03.948906+00:00] đối tượng=2 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:03.950775+00:00] đối tượng=3 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:03.953045+00:00] đối tượng=4 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:03.953975+00:00] đối tượng=5 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:03.955096+00:00] đối tượng=6 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:03.956088+00:00] đối tượng=7 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:03.968087+00:00] đối tượng=cảnh 1, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:03.969319+00:00] đối tượng=cảnh 2, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:03.970420+00:00] đối tượng=cảnh 3, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:03.972059+00:00] đối tượng=cảnh 4, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:03.973529+00:00] đối tượng=cảnh 5, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:03.974767+00:00] đối tượng=cảnh 6, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:03.976005+00:00] đối tượng=cảnh 7, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:03.976867+00:00] đối tượng=cảnh 8, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:03.983971+00:00] đối tượng=tiêu đề: số=[]; tập số hợp lệ=['2026']; sai=[]
+
+[2026-10-24T02:47:03.989624+00:00] đối tượng=1 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:03.990701+00:00] đối tượng=2 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:03.992253+00:00] đối tượng=3 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:03.993204+00:00] đối tượng=4 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:03.994294+00:00] đối tượng=5 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:03.995123+00:00] đối tượng=6 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:03.995839+00:00] đối tượng=7 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:04.006290+00:00] đối tượng=1 [hook_strength, nhóm 3, warning] Hook cần câu hỏi, con số hoặc mâu thuẫn có căn cứ.
+
+[2026-10-24T02:47:04.007586+00:00] đối tượng=2 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.008810+00:00] đối tượng=3 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.009919+00:00] đối tượng=4 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.010756+00:00] đối tượng=5 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.011591+00:00] đối tượng=6 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.013263+00:00] đối tượng=7 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.014896+00:00] đối tượng=8 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.016169+00:00] đối tượng=2 [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.017102+00:00] đối tượng=3 [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.018102+00:00] đối tượng=4 [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.019553+00:00] đối tượng=5 [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.020578+00:00] đối tượng=6 [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.021401+00:00] đối tượng=7 [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.022210+00:00] đối tượng=2 [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.022911+00:00] đối tượng=3 [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.023673+00:00] đối tượng=4 [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.024373+00:00] đối tượng=5 [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.025564+00:00] đối tượng=6 [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.027140+00:00] đối tượng=7 [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.028272+00:00] đối tượng=2 [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.029631+00:00] đối tượng=2 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.030492+00:00] đối tượng=3 [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.031450+00:00] đối tượng=3 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.032211+00:00] đối tượng=4 [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.033506+00:00] đối tượng=4 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.035784+00:00] đối tượng=5 [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.037231+00:00] đối tượng=5 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.038152+00:00] đối tượng=6 [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.039168+00:00] đối tượng=6 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.040963+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.042561+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.043793+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.045292+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.047328+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-10-24T02:47:04.049121+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-10-24T02:47:04.050364+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-10-24T02:47:04.051523+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-10-24T02:47:04.052856+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-10-24T02:47:04.054124+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-10-24T02:47:04.055578+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-10-24T02:47:04.057405+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-10-24T02:47:04.059511+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-10-24T02:47:04.061240+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-10-24T02:47:04.062901+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-10-24T02:47:04.064595+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-10-24T02:47:04.066488+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-10-24T02:47:04.067671+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-10-24T02:47:04.070852+00:00] Director lần 1, cảnh 1: [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:04.072012+00:00] Director lần 1, cảnh 1: [hook_strength, nhóm 3, warning] Hook cần câu hỏi, con số hoặc mâu thuẫn có căn cứ.
+
+[2026-10-24T02:47:04.073058+00:00] Director lần 1, cảnh 2: Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-10-24T02:47:04.074545+00:00] Director lần 1, cảnh 2: Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-10-24T02:47:04.076543+00:00] Director lần 1, cảnh 2: [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.077921+00:00] Director lần 1, cảnh 2: [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:04.079241+00:00] Director lần 1, cảnh 2: [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.080323+00:00] Director lần 1, cảnh 2: [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.082095+00:00] Director lần 1, cảnh 2: [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.083599+00:00] Director lần 1, cảnh 2: [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.084886+00:00] Director lần 1, cảnh 2: [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.085780+00:00] Director lần 1, cảnh 2: [broll_query, nhóm 2, fixed] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-10-24T02:47:04.086425+00:00] Director lần 1, cảnh 2: [broll_query, nhóm 2, fixed] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-10-24T02:47:04.087649+00:00] Director lần 1, cảnh 3: Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-10-24T02:47:04.089004+00:00] Director lần 1, cảnh 3: Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-10-24T02:47:04.090555+00:00] Director lần 1, cảnh 3: [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.091697+00:00] Director lần 1, cảnh 3: [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:04.092812+00:00] Director lần 1, cảnh 3: [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.093613+00:00] Director lần 1, cảnh 3: [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.094474+00:00] Director lần 1, cảnh 3: [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.096107+00:00] Director lần 1, cảnh 3: [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.097648+00:00] Director lần 1, cảnh 3: [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.098842+00:00] Director lần 1, cảnh 3: [broll_query, nhóm 2, fixed] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-10-24T02:47:04.099685+00:00] Director lần 1, cảnh 3: [broll_query, nhóm 2, fixed] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-10-24T02:47:04.100555+00:00] Director lần 1, cảnh 4: Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-10-24T02:47:04.101425+00:00] Director lần 1, cảnh 4: Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-10-24T02:47:04.102935+00:00] Director lần 1, cảnh 4: [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.104457+00:00] Director lần 1, cảnh 4: [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:04.105950+00:00] Director lần 1, cảnh 4: [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.107660+00:00] Director lần 1, cảnh 4: [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.108861+00:00] Director lần 1, cảnh 4: [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.110019+00:00] Director lần 1, cảnh 4: [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.111359+00:00] Director lần 1, cảnh 4: [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.112850+00:00] Director lần 1, cảnh 4: [broll_query, nhóm 2, fixed] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-10-24T02:47:04.113986+00:00] Director lần 1, cảnh 4: [broll_query, nhóm 2, fixed] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-10-24T02:47:04.114730+00:00] Director lần 1, cảnh 5: Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-10-24T02:47:04.115627+00:00] Director lần 1, cảnh 5: Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-10-24T02:47:04.117224+00:00] Director lần 1, cảnh 5: [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.118688+00:00] Director lần 1, cảnh 5: [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:04.119949+00:00] Director lần 1, cảnh 5: [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.120918+00:00] Director lần 1, cảnh 5: [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.121722+00:00] Director lần 1, cảnh 5: [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.122558+00:00] Director lần 1, cảnh 5: [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.124778+00:00] Director lần 1, cảnh 5: [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.126014+00:00] Director lần 1, cảnh 5: [broll_query, nhóm 2, fixed] Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-10-24T02:47:04.126839+00:00] Director lần 1, cảnh 5: [broll_query, nhóm 2, fixed] Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-10-24T02:47:04.127877+00:00] Director lần 1, cảnh 6: Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-10-24T02:47:04.128841+00:00] Director lần 1, cảnh 6: Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-10-24T02:47:04.130170+00:00] Director lần 1, cảnh 6: [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.131541+00:00] Director lần 1, cảnh 6: [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:04.132977+00:00] Director lần 1, cảnh 6: [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.133723+00:00] Director lần 1, cảnh 6: [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.134717+00:00] Director lần 1, cảnh 6: [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.135596+00:00] Director lần 1, cảnh 6: [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.136406+00:00] Director lần 1, cảnh 6: [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.137967+00:00] Director lần 1, cảnh 6: [broll_query, nhóm 2, fixed] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-10-24T02:47:04.140572+00:00] Director lần 1, cảnh 6: [broll_query, nhóm 2, fixed] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-10-24T02:47:04.142393+00:00] Director lần 1, cảnh 7: Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-10-24T02:47:04.143626+00:00] Director lần 1, cảnh 7: Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-10-24T02:47:04.145446+00:00] Director lần 1, cảnh 7: [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.146836+00:00] Director lần 1, cảnh 7: [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-10-24T02:47:04.148032+00:00] Director lần 1, cảnh 7: [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.148838+00:00] Director lần 1, cảnh 7: [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.149837+00:00] Director lần 1, cảnh 7: [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.150701+00:00] Director lần 1, cảnh 7: [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.151919+00:00] Director lần 1, cảnh 7: [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.152642+00:00] Director lần 1, cảnh 7: [broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-10-24T02:47:04.153672+00:00] Director lần 1, cảnh 7: [broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-10-24T02:47:04.154663+00:00] Director lần 1, cảnh 8: Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-10-24T02:47:04.155464+00:00] Director lần 1, cảnh 8: Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-10-24T02:47:04.156099+00:00] Director lần 1, cảnh 8: [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.157189+00:00] Director lần 1, cảnh 8: [word_budget, nhóm 3, warning] Tổng 69 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.158473+00:00] Director lần 1, cảnh 8: [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.159350+00:00] Director lần 1, cảnh 8: [broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-10-24T02:47:04.159979+00:00] Director lần 1, cảnh 8: [broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-10-24T02:47:04.184854+00:00] đối tượng=2 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.187427+00:00] đối tượng=3 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.189095+00:00] đối tượng=4 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.190504+00:00] đối tượng=5 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.191627+00:00] đối tượng=6 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.193548+00:00] đối tượng=7 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.197192+00:00] đối tượng=cảnh 1, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.200059+00:00] đối tượng=cảnh 2, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.203088+00:00] đối tượng=cảnh 3, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.204714+00:00] đối tượng=cảnh 4, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.206167+00:00] đối tượng=cảnh 5, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.210246+00:00] đối tượng=cảnh 6, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.212568+00:00] đối tượng=cảnh 7, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.214710+00:00] đối tượng=cảnh 8, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.218372+00:00] đối tượng=tiêu đề: số=[]; tập số hợp lệ=['2026']; sai=[]
+
+[2026-10-24T02:47:04.222651+00:00] đối tượng=1 [fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 2 → 3, 3 → 4, 4 → 5, 5 → 6, 6 → 7, giữ shot/thời lượng và các khẳng định có căn cứ.
+
+[2026-10-24T02:47:04.224618+00:00] đối tượng=2 [fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 2 → 3, 3 → 4, 4 → 5, 5 → 6, 6 → 7, giữ shot/thời lượng và các khẳng định có căn cứ.
+
+[2026-10-24T02:47:04.226160+00:00] đối tượng=3 [fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 2 → 3, 3 → 4, 4 → 5, 5 → 6, 6 → 7, giữ shot/thời lượng và các khẳng định có căn cứ.
+
+[2026-10-24T02:47:04.228921+00:00] đối tượng=4 [fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 2 → 3, 3 → 4, 4 → 5, 5 → 6, 6 → 7, giữ shot/thời lượng và các khẳng định có căn cứ.
+
+[2026-10-24T02:47:04.230563+00:00] đối tượng=5 [fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 2 → 3, 3 → 4, 4 → 5, 5 → 6, 6 → 7, giữ shot/thời lượng và các khẳng định có căn cứ.
+
+[2026-10-24T02:47:04.233172+00:00] đối tượng=6 [fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 2 → 3, 3 → 4, 4 → 5, 5 → 6, 6 → 7, giữ shot/thời lượng và các khẳng định có căn cứ.
+
+[2026-10-24T02:47:04.235930+00:00] đối tượng=7 [fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 2 → 3, 3 → 4, 4 → 5, 5 → 6, 6 → 7, giữ shot/thời lượng và các khẳng định có căn cứ.
+
+[2026-10-24T02:47:04.238922+00:00] đối tượng=1 [hook_strength, nhóm 3, warning] Hook cần câu hỏi, con số hoặc mâu thuẫn có căn cứ.
+
+[2026-10-24T02:47:04.240822+00:00] đối tượng=7 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.242738+00:00] đối tượng=8 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.244326+00:00] đối tượng=7 [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.245739+00:00] đối tượng=7 [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.247633+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Tổng 24 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.249663+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.251590+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Tổng 24 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.253382+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-10-24T02:47:04.256533+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-10-24T02:47:04.258102+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-10-24T02:47:04.259580+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-10-24T02:47:04.260522+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-10-24T02:47:04.326238+00:00] đối tượng=7 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:47:04.334569+00:00] đối tượng=7 [visual_grounding, nhóm 1, error] Shot 1: tên riêng mẫu không có trong brief: Example.com.
+
+[2026-10-24T02:47:04.342270+00:00] đối tượng=cảnh 1, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.346297+00:00] đối tượng=cảnh 7, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.349466+00:00] đối tượng=cảnh 8, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-10-24T02:47:04.354868+00:00] đối tượng=tiêu đề: số=[]; tập số hợp lệ=['2026']; sai=[]
+
+[2026-10-24T02:47:04.363238+00:00] đối tượng=1 [hook_strength, nhóm 3, warning] Hook cần câu hỏi, con số hoặc mâu thuẫn có căn cứ.
+
+[2026-10-24T02:47:04.371593+00:00] đối tượng=7 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.376989+00:00] đối tượng=8 [sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.
+
+[2026-10-24T02:47:04.380496+00:00] đối tượng=7 [transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.
+
+[2026-10-24T02:47:04.383350+00:00] đối tượng=7 [repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.
+
+[2026-10-24T02:47:04.388910+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Tổng 24 từ; mục tiêu 30 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.396070+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Tổng 24 từ; mục tiêu 30 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-10-24T02:47:04.403159+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-10-24T02:47:04.405291+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-10-24T02:47:04.409288+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-10-24T02:47:04.415286+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-10-24T02:47:04.430872+00:00] Director failed
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\agents\director.py", line 508, in run_director
+    validate_plan(plan,brief,request,diagnostics=diagnostics,allow_merge=False)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\agents\director.py", line 253, in validate_plan
+    result=run_rules(plan,brief,request,diagnostics=diagnostics,config_path=validation_path,check_style=check_style,allow_merge=allow_merge)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\agents\validation_rules.py", line 572, in run_rules
+    if hard: raise RuleViolation(hard)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+agents.validation_rules.RuleViolation: Cảnh 7 [visual_grounding, nhóm 1]: Shot 1: tên riêng mẫu không có trong brief: Example.com.
+

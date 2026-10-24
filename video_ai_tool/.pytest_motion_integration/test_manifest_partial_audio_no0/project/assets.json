@@ -1,0 +1,13 @@
+{
+  "source_plan_hash": "fixture",
+  "resolved_plan_hash": "7a7509a19b1a22403c9bb8c1be3daa68fd0def27b607be110d4859df67df67ac",
+  "status": "partial",
+  "warnings": [],
+  "scenes": [
+    {
+      "scene_id": 1,
+      "audio_path": null,
+      "shots": []
+    }
+  ]
+}

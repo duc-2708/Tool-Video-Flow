@@ -1,0 +1,32 @@
+
+[2026-10-24T02:37:17.911832+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:17.930365+00:00] Tạo job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 116, in create_job
+    response,cost = client.create(request)
+                    ~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+providers.video_gateway.AmbiguousSubmission: Mất phản hồi
+
+
+[2026-10-24T02:37:17.972363+00:00] Tạo job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 101, in create_job
+    raise AmbiguousSubmission("Yêu cầu này có lần gửi chưa rõ kết quả. Kiểm tra dashboard và dùng resume --remote-id ID; không tạo thêm job.")
+providers.video_gateway.AmbiguousSubmission: Yêu cầu này có lần gửi chưa rõ kết quả. Kiểm tra dashboard và dùng resume --remote-id ID; không tạo thêm job.
+
+
+[2026-10-24T02:37:18.000718+00:00] Tiếp tục job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 174, in _resume_job_once
+    raise GatewayVideoError("Job chưa có remote ID. Kiểm tra dashboard gateway; dùng resume --remote-id ID để tiếp tục mà không tạo mới.")
+providers.video_gateway.GatewayVideoError: Job chưa có remote ID. Kiểm tra dashboard gateway; dùng resume --remote-id ID để tiếp tục mà không tạo mới.
+

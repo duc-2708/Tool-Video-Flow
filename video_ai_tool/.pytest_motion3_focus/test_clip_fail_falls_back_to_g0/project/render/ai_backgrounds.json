@@ -1,0 +1,21 @@
+{
+  "clips": [],
+  "warnings": [
+    "Cảnh 1: network timeout, job may exist; dùng nền gradient."
+  ],
+  "estimate": {
+    "count": 1,
+    "model": "veo-3.1",
+    "seconds": 4,
+    "estimated_vnd_per_job": 2500,
+    "estimated_vnd_max_with_retry": 5000,
+    "slots": [
+      [
+        1,
+        1
+      ]
+    ],
+    "price_notice": "Giá tham khảo từ code, chưa xác minh hóa đơn; generation_failed có thể thêm 1 job có phí."
+  },
+  "disclosure": "Nội dung có hình AI"
+}

@@ -28,9 +28,12 @@ def prepare_graphics(timeline,diagnostics=None):
             timeline.warnings.append("Không đọc được brief đồ họa; các thẻ sự kiện được thay trung tính.")
     # Cap auto source cards before applying explicit editorial decisions.
     cards=[s for c in plan.scenes for s in c.shots if s.visual and s.visual.template=="source_card"]
-    for shot in cards[1:-1]:
+    for shot in cards[:-1]:
         from schemas.visual import Visual,VisualData
         shot.visual=Visual(template="text_focus",data=VisualData(text=shot.text_overlay or "Thông tin từ nguồn"))
+    from agents.presentation import source_card_once,normalize_cards
+    # Surface new card_text to the established provenance policy before painting.
+    source_card_once(plan,brief);normalize_cards(plan,brief,diagnostics=diagnostics)
     from agents.visual_policy import review_for_render,load_decisions
     try: decisions=load_decisions(timeline.project)
     except Exception as error:
@@ -38,6 +41,12 @@ def prepare_graphics(timeline,diagnostics=None):
         if diagnostics: diagnostics.record_exception(error,"Đọc lựa chọn đồ họa; dùng chính sách trung tính")
         timeline.warnings.append("Không đọc được lựa chọn đồ họa; dùng chính sách trung tính mặc định.")
     timeline.visual_review=review_for_render(plan,brief,decisions)
+    for item in timeline.visual_review:
+        if item["action"]=="neutral":
+            scene=next(s for s in plan.scenes if s.id==item["scene_id"])
+            shot=scene.shots[item["shot_id"]-1]
+            shot.card_text=None;shot.emphasis=[]  # Cannot resurrect rejected text after neutralization.
+    source_card_once(plan,brief);normalize_cards(plan,brief,diagnostics=diagnostics)
     for item in timeline.visual_review:
         for message in item["warnings"]:
             warning=f"Cảnh {item['scene_id']}: {message}"
@@ -48,6 +57,11 @@ def prepare_graphics(timeline,diagnostics=None):
             if scene.review_notes is None:
                 scene.review_notes=ReviewNotes(fact_ids=scene.fact_ids,source_count=0,confidence=None,facts=[])
             if warning not in scene.review_notes.warnings: scene.review_notes.warnings.append(warning)
+    # Presentation repairs happen after the established factual policy. No
+    # change to group-1 checks or the immutable resolved plan on disk.
+    from agents.visual_diversity import select_templates,repair_numeric_cards
+    repair_numeric_cards(plan,brief)
+    select_templates(plan,brief)
 
 
 class ProgressTracker:

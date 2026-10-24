@@ -1,0 +1,8 @@
+{
+  "audio_silent": true,
+  "audio_error": "TTS lỗi ở cảnh 2: NoAudioReceived: mock failure",
+  "voice_used": null,
+  "warnings": [
+    "cảnh 2 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 2 trong Assets."
+  ]
+}

@@ -89,7 +89,7 @@ def test_entities_generate_separate_queries(tmp_path):
 def test_no_sources_error_contains_counts_and_persisted_report(tmp_path,monkeypatch):
     settings = Settings(root_dir=tmp_path,gemini_model="offline",gemini_api_key=SecretStr("fixture-private"))
     provider = Mock(model_name="offline")
-    monkeypatch.setattr("agents.researcher.GeminiProvider",lambda settings:provider)
+    monkeypatch.setattr("agents.researcher.provider_for_step",lambda *args,**kwargs:provider)
     monkeypatch.setattr("agents.researcher.generate_queries",lambda *args:[SearchQuery(source_lang="vi",query="query fixture",region="vn-vi")])
     monkeypatch.setattr(WebSearch,"_search",lambda *args:[{"href":"https://example.com/category/news"}])
     with pytest.raises(ResearchError) as caught:

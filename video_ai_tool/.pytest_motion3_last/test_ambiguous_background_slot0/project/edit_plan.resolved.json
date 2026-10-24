@@ -1,0 +1,67 @@
+{
+  "title": "Dựng video",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "calm",
+    "volume": 0.1
+  },
+  "scenes": [
+    {
+      "id": 1,
+      "role": "hook",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 2.0,
+          "effect": "zoom_in",
+          "text_overlay": "Dựng video dễ hiểu",
+          "card_text": "Bảo vệ hạ tầng",
+          "visual": {
+            "template": "hook_card",
+            "data": {
+              "text": "Bảo vệ hạ tầng"
+            }
+          },
+          "ai_prompt": "A single flower rests on a wooden table in soft warm light, static camera, cinematic."
+        }
+      ],
+      "transition_out": "fade",
+      "sfx": "pop",
+      "pattern_interrupt": false,
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "id": 8,
+      "role": "cta",
+      "narration": "Bạn muốn tìm hiểu bước nào?",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 2.0,
+          "effect": "zoom_in",
+          "text_overlay": "Dựng video dễ hiểu",
+          "card_text": "Bảo vệ hạ tầng",
+          "visual": {
+            "template": "hook_card",
+            "data": {
+              "text": "Bảo vệ hạ tầng"
+            }
+          }
+        }
+      ],
+      "transition_out": "fade",
+      "sfx": "pop",
+      "pattern_interrupt": true,
+      "fact_ids": []
+    }
+  ],
+  "source_plan_hash": "fixture",
+  "timing_basis": "audio",
+  "warnings": []
+}

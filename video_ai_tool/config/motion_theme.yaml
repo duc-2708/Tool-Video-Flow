@@ -1,0 +1,6 @@
+# All colours and geometric artwork are local; no reference-video assets.
+themes:
+  studio: {top: '#101b30', bottom: '#080c17', card: '#16263b', foreground: '#f4f7ff', accent: '#ffd052', secondary: '#61d7c3'}
+  cong-nghe: {top: '#111932', bottom: '#080b18', card: '#18213e', foreground: '#f4f7ff', accent: '#66dfff', secondary: '#c49aff'}
+  tin-tuc: {top: '#102039', bottom: '#080e1b', card: '#192e48', foreground: '#ffffff', accent: '#ffd052', secondary: '#75b9f4'}
+  kinh-doanh: {top: '#102a2c', bottom: '#091417', card: '#173338', foreground: '#ffffff', accent: '#8be3be', secondary: '#ffd983'}

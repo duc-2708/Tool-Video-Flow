@@ -469,8 +469,27 @@ def explainer_background_names(ctx):
     return [Finding(scene,message) for scene,message in sentence_background_warnings(ctx.plan,ctx.brief)]
 
 
+def card_text_shape(ctx):
+    if not ctx.plan: return []
+    from agents.presentation import normalize_cards
+    return [Finding(s,m) for s,m in normalize_cards(ctx.plan.model_copy(deep=True),ctx.brief)]
+
+
+def fix_card_text(ctx):
+    from agents.presentation import normalize_cards
+    return "; ".join(m for _,m in normalize_cards(ctx.plan,ctx.brief,diagnostics=ctx.diagnostics))
+
+
+def presentation_voice(ctx):
+    if not ctx.plan: return []
+    from agents.presentation import quality_findings
+    return [Finding(s,m) for s,m in quality_findings(ctx.plan)]
+
+
 # Single source of rule IDs, default groups, checks and local repair functions.
 RULES=(
+    Rule("card_text",2,"Thẻ 3–6 từ, emphasis 1–2 từ; không cắt lời đọc",card_text_shape,fix_card_text),
+    Rule("presentation_voice",3,"Hạn chế rào đón lặp và hook câu hỏi chung",presentation_voice),
     Rule("sentence_grounding",1,"Nhãn câu khớp lời đọc; event có fact, nền không giả làm sự kiện",explainer_sentences,fix_explainer_names),
     Rule("sentence_background_names",3,"Tên riêng trong ví dụ nền chỉ cảnh báo",explainer_background_names),
     Rule("visual_structure",2,"Giữ nhãn đồ họa đúng thứ tự lời đọc",visual_structure,fix_visual_structure),

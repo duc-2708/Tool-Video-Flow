@@ -1,0 +1,25 @@
+# Opt-in: false preserves the old category discovery path exactly.
+enabled: false
+region: VN
+limit_per_source: 8
+TREND_DAILY_CREDIT_LIMIT: 30
+cache_ttl_sec: 21600
+gemini_enabled: true
+providers:
+  scrapecreators_tiktok: true  # Requires SCRAPECREATORS_API_KEY; <=2 requests/region/cache miss.
+  reddit: true
+  hackernews: true            # Technology/business/game categories only.
+  google_trends: true
+  youtube_trending: true     # Requires YOUTUBE_API_KEY, uses existing quota ledger.
+  weibo: false               # CHƯA XÁC NHẬN stable public endpoint.
+  bilibili: false            # CHƯA XÁC NHẬN stable public endpoint.
+categories:
+  tin-tuc: {keywords: ["tin tức", "world news"], subreddits: [worldnews]}
+  cong-nghe: {keywords: ["trí tuệ nhân tạo", "AI technology"], subreddits: [technology, artificial]}
+  thoi-trang: {keywords: ["thời trang", "fashion"], subreddits: [fashion]}
+  giai-tri: {keywords: ["giải trí", "entertainment"], subreddits: [entertainment]}
+  kinh-doanh: {keywords: ["kinh doanh", "business"], subreddits: [business, economics]}
+  suc-khoe-doi-song: {keywords: ["sức khỏe", "health"], subreddits: [Health]}
+  the-thao: {keywords: ["thể thao", "sports"], subreddits: [sports]}
+  du-lich: {keywords: ["du lịch", "travel"], subreddits: [travel]}
+  game: {keywords: ["trò chơi", "gaming"], subreddits: [Games]}

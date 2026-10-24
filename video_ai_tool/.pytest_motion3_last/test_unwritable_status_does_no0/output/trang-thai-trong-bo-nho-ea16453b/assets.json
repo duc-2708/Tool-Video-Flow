@@ -1,0 +1,297 @@
+{
+  "source_plan_hash": "89e11e9e9218b9a0d40b13d5d432810eb54ca8816df9321580d6bea7bdcac67e",
+  "resolved_plan_hash": "a14c56180e3d438e8d05bf368acda513397d7b604630c172b0dc22019ed8af49",
+  "status": "complete",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "audio_path": "audio/scene_1.mp3",
+      "audio_duration_sec": 3.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": null,
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_1_shot_1.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "audio_path": "audio/scene_2.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": null,
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_2_shot_1.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing wide",
+          "media_type": "color",
+          "path": "clips/scene_2_shot_2.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "audio_path": "audio/scene_3.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": null,
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing closeup",
+          "media_type": "color",
+          "path": "clips/scene_3_shot_1.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing interior",
+          "media_type": "color",
+          "path": "clips/scene_3_shot_2.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "audio_path": "audio/scene_4.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": null,
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing exterior",
+          "media_type": "color",
+          "path": "clips/scene_4_shot_1.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing panoramic",
+          "media_type": "color",
+          "path": "clips/scene_4_shot_2.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 6,
+      "audio_path": "audio/scene_6.mp3",
+      "audio_duration_sec": 12.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": null,
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing detail",
+          "media_type": "color",
+          "path": "clips/scene_6_shot_1.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing documentary",
+          "media_type": "color",
+          "path": "clips/scene_6_shot_2.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 3,
+          "query": "video editing aerial night",
+          "media_type": "color",
+          "path": "clips/scene_6_shot_3.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 4,
+          "query": "video editing aerial daylight",
+          "media_type": "color",
+          "path": "clips/scene_6_shot_4.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 7,
+      "audio_path": "audio/scene_7.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": null,
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing aerial sunset",
+          "media_type": "color",
+          "path": "clips/scene_7_shot_1.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial sunrise",
+          "media_type": "color",
+          "path": "clips/scene_7_shot_2.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "audio_path": "audio/scene_8.mp3",
+      "audio_duration_sec": 6.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": null,
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing aerial view",
+          "media_type": "color",
+          "path": "clips/scene_8_shot_1.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial daytime",
+          "media_type": "color",
+          "path": "clips/scene_8_shot_2.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": null,
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "Fallback fixture"
+  ]
+}

@@ -1,0 +1,4 @@
+
+[2026-10-24T02:37:17.514705+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:17.528762+00:00] {"event": "submit_response", "request": {"model": "veo-3.1", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": "video_fixture", "response": {"id": "video_fixture", "status": "queued"}}

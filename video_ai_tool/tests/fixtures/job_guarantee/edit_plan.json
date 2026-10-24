@@ -1,0 +1,992 @@
+{
+  "content_mode": "explainer_v2",
+  "explainer_outline": {
+    "angle": "Job guarantee có thể là lưới an toàn khi AI làm xáo trộn việc làm, nhưng không tự động giải quyết mọi hệ quả.",
+    "hook": "Nếu AI khiến hàng triệu việc làm gặp rủi ro, liệu bảo đảm một công việc có thể là lời giải?",
+    "open_loop": "Những yếu tố nào có thể ảnh hưởng đến hiệu quả của job guarantee?",
+    "payoff": "Vậy job guarantee có thể là lưới đệm, không phải lời giải trọn gói. Hiệu quả có thể phụ thuộc vào ngân sách, việc làm hữu ích và năng lực quản lý.",
+    "beats": [
+      {
+        "id": 1,
+        "kind": "cause",
+        "idea": "Đặt quy mô rủi ro AI làm lý do cần bàn đến các mạng lưới an sinh.",
+        "new_information": "Báo cáo của Tufts University ước tính khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế trong 2 đến 5 năm tới.",
+        "fact_ids": [
+          1
+        ]
+      },
+      {
+        "id": 2,
+        "kind": "mechanism",
+        "idea": "Giải thích vì sao biến động công nghệ có thể khiến một số lao động cần chỗ đệm khi thị trường đổi khác.",
+        "new_information": "Có thể hiểu AI không nhất thiết xóa cả một nghề cùng lúc; khi các tác vụ thay đổi, người lao động có thể cần thời gian và cơ hội để chuyển sang công việc khác.",
+        "fact_ids": []
+      },
+      {
+        "id": 3,
+        "kind": "metaphor",
+        "idea": "Định nghĩa job guarantee bằng hình ảnh một người tuyển dụng cuối cùng.",
+        "new_information": "Theo định nghĩa được nêu trong Windfall Policy Atlas, chính phủ cam kết làm nhà tuyển dụng cứu cánh cuối cùng cho người lao động sẵn sàng làm việc.",
+        "fact_ids": [
+          4
+        ]
+      },
+      {
+        "id": 4,
+        "kind": "comparison",
+        "idea": "Phân biệt bảo đảm việc làm với hỗ trợ tiền mặt như UBI.",
+        "new_information": "Trợ cấp tiền mặt hỗ trợ thu nhập; job guarantee gắn hỗ trợ với một công việc. Một cuộc thăm dò 12.000 người Mỹ ghi nhận mức ủng hộ job guarantee cao hơn UBI để ứng phó với việc AI thay thế lao động.",
+        "fact_ids": [
+          5
+        ]
+      },
+      {
+        "id": 5,
+        "kind": "example",
+        "idea": "Cho thấy một chương trình có thể tạo giá trị ngoài khoản lương.",
+        "new_information": "Chẳng hạn, việc làm gắn với dự án cộng đồng địa phương có thể giúp người tham gia duy trì kỹ năng và nhịp làm việc, thay vì chỉ nhận hỗ trợ thụ động.",
+        "fact_ids": []
+      },
+      {
+        "id": 6,
+        "kind": "counterpoint",
+        "idea": "Kết bằng điều kiện và giới hạn: công việc phải có ích, còn chương trình cần vận hành được.",
+        "new_information": "Theo mình, job guarantee có thể là một lớp đệm chứ không phải lời giải trọn vẹn: tài chính công và khả năng quản lý lực lượng lao động lớn đều là thách thức.",
+        "fact_ids": []
+      }
+    ]
+  },
+  "script_critic": {
+    "explanation": 3,
+    "novelty": 4,
+    "hook": 4,
+    "open_loop": 4,
+    "naturalness": 4,
+    "comments": [
+      "Có giải thích cơ chế chuyển đổi công việc, phân biệt việc làm bảo đảm với trợ cấp tiền mặt, và nêu giới hạn vận hành; tuy nhiên cảnh 2 chủ yếu đưa số liệu rồi làm rõ cách hiểu, chưa giải thích sâu vì sao rủi ro đó dẫn tới nhu cầu về chính sách.",
+      "Mạch đi từ quy mô rủi ro, biến động tác vụ, cơ chế chính sách đến ví dụ và phản biện; các cảnh nhìn chung mang ý mới.",
+      "Câu kết trả lời trực tiếp: chính sách có thể giúp nhưng không thay thế mọi an sinh, đồng thời nêu điều kiện có thể khiến chương trình hụt hơi.",
+      "Code · cảnh 1: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng.",
+      "Code · cảnh 2: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng.",
+      "Code · cảnh 3: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng.",
+      "Code · cảnh 4: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng.",
+      "Code · cảnh 5: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng.",
+      "Code · cảnh 6: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng."
+    ],
+    "weak_scenes": []
+  },
+  "content_timed": true,
+  "style_preset": "@category:cong-nghe",
+  "render_style": {
+    "captions": {
+      "analysis_warnings": [],
+      "enabled": true,
+      "mode": "phrase",
+      "font_description": "Bold sans-serif",
+      "font_scale": 0.05,
+      "color": "#FFFFFF",
+      "highlight_color": "#00FF00",
+      "stroke_color": "#000000",
+      "color_note": "",
+      "stroke_width_ratio": 0.005,
+      "position": "lower",
+      "emphasis": "Màu sắc nổi bật theo từ khóa",
+      "shadow": "Có"
+    },
+    "ducking": true
+  },
+  "review_notes": [],
+  "requested_duration_sec": 60.0,
+  "script_style": "explain",
+  "title": "Bảo đảm việc làm có cứu được thời AI?",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "Hứng khởi, công nghệ",
+    "volume": 0.16666666666666666
+  },
+  "scenes": [
+    {
+      "sentences": [
+        {
+          "type": "opinion",
+          "text": "Những yếu tố nào có thể ảnh hưởng đến hiệu quả của job guarantee?",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "cause",
+      "new_information": "Đặt câu hỏi liệu bảo đảm việc làm có thể giúp người lao động đứng vững trước biến động AI.",
+      "id": 1,
+      "role": "hook",
+      "narration": "Những yếu tố nào có thể ảnh hưởng đến hiệu quả của job guarantee?",
+      "shots": [
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "content_type": "opinion",
+            "auto_generated": true,
+            "template": "hook_card",
+            "data": {
+              "text": "Những yếu tố nào có thể ảnh hưởng đến hiệu quả của job guarantee?",
+              "highlight": [
+                "Những",
+                "yếu",
+                "tố"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "worker facing robot",
+          "duration_sec": 2.7333333333333334,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "auto_generated": true,
+            "template": "source_card",
+            "data": {
+              "text": "",
+              "highlight": [],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "Yahoo! Finance · windfalltrust.org",
+              "source_url": "https://finance.yahoo.com/sectors/technology/articles/tufts-university-releases-first-american-200700863.html",
+              "date": "2026-03-24",
+              "title": "Nguồn dữ kiện sự kiện",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                1,
+                4
+              ]
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "uncertain office worker",
+          "duration_sec": 2.7333333333333334,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+        ],
+        "fact_ids": [],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "sentences": [
+        {
+          "type": "event",
+          "text": "Báo cáo Tufts University ước tính khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế trong 2–5 năm tới.",
+          "fact_ids": [
+            1
+          ]
+        },
+        {
+          "type": "explain",
+          "text": "Có thể hiểu là, đó là rủi ro, không phải kết cục có thể.",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "cause",
+      "new_information": "Đưa ra ước tính về việc làm có nguy cơ và phân biệt rủi ro với kết cục chắc chắn.",
+      "id": 2,
+      "role": "body",
+      "narration": "Báo cáo Tufts University ước tính khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế trong 2–5 năm tới. Có thể hiểu là, đó là rủi ro, không phải kết cục có thể.",
+      "shots": [
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "stat_card",
+            "data": {
+              "text": "Báo cáo Tufts University ước tính khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay",
+              "highlight": [
+                "Báo",
+                "cáo",
+                "Tufts"
+              ],
+              "value": 9300000.0,
+              "number_text": "9,3 triệu",
+              "label": "Báo cáo Tufts University ước tính khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay",
+              "unit": "",
+              "source": "Yahoo! Finance",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                1
+              ]
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "workforce risk chart",
+          "duration_sec": 3.2833333333333337,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "stat_card",
+            "data": {
+              "text": "Báo cáo Tufts University ước tính khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay",
+              "highlight": [
+                "Báo",
+                "cáo",
+                "Tufts"
+              ],
+              "value": 9300000.0,
+              "number_text": "9,3 triệu",
+              "label": "Báo cáo Tufts University ước tính khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay",
+              "unit": "",
+              "source": "Yahoo! Finance",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                1
+              ]
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "worker career transition",
+          "duration_sec": 3.2833333333333337,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 2,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Có thể hiểu là, đó là rủi ro, không phải kết cục có thể.",
+              "highlight": [
+                "Có",
+                "thể",
+                "hiểu"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "person explaining concept",
+          "duration_sec": 3.2833333333333337,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 2,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Có thể hiểu là, đó là rủi ro, không phải kết cục có thể.",
+              "highlight": [
+                "Có",
+                "thể",
+                "hiểu"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "office employee discussion",
+          "duration_sec": 3.2833333333333337,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "whoosh",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 1,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 1,
+                "name": "Yahoo! Finance",
+                "url": "https://finance.yahoo.com/sectors/technology/articles/tufts-university-releases-first-american-200700863.html",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sentences": [
+        {
+          "type": "explain",
+          "text": "AI có thể đổi tác vụ trước khi nghề biến mất; công việc tạm thời có thể cho người lao động thời gian học kỹ năng mới và chuyển hướng.",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "mechanism",
+      "new_information": "Tác vụ có thể đổi trước khi nghề biến mất; thời gian chuyển tiếp giúp người lao động học kỹ năng và tìm hướng mới.",
+      "id": 3,
+      "role": "body",
+      "narration": "AI có thể đổi tác vụ trước khi nghề biến mất; công việc tạm thời có thể cho người lao động thời gian học kỹ năng mới và chuyển hướng.",
+      "shots": [
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "AI có thể đổi tác vụ trước khi nghề biến mất; công việc tạm thời có thể cho",
+              "highlight": [
+                "AI",
+                "có",
+                "thể"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "employee learning skills",
+          "duration_sec": 3.6,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "AI có thể đổi tác vụ trước khi nghề biến mất; công việc tạm thời có thể cho",
+              "highlight": [
+                "AI",
+                "có",
+                "thể"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "career training session",
+          "duration_sec": 3.6,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "AI có thể đổi tác vụ trước khi nghề biến mất; công việc tạm thời có thể cho",
+              "highlight": [
+                "AI",
+                "có",
+                "thể"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "employee training classroom",
+          "duration_sec": 3.6,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[sentence_length, nhóm 3, warning] Câu quá 28 từ; tách tại ranh giới ý."
+        ],
+        "fact_ids": [],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "sentences": [
+        {
+          "type": "event",
+          "text": "Windfall Policy Atlas định nghĩa: chính phủ là nhà tuyển dụng cứu cánh cuối cùng cho người sẵn sàng làm việc.",
+          "fact_ids": [
+            4
+          ]
+        },
+        {
+          "type": "explain",
+          "text": "Có thể hiểu là, khác trợ cấp tiền mặt, mô hình gắn hỗ trợ với công việc.",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "comparison",
+      "new_information": "Bảo đảm việc làm được định nghĩa là chính phủ làm nhà tuyển dụng cứu cánh cuối cùng; khác với trợ cấp tiền mặt, hỗ trợ gắn với công việc.",
+      "id": 4,
+      "role": "body",
+      "narration": "Windfall Policy Atlas định nghĩa: chính phủ là nhà tuyển dụng cứu cánh cuối cùng cho người sẵn sàng làm việc. Có thể hiểu là, khác trợ cấp tiền mặt, mô hình gắn hỗ trợ với công việc.",
+      "shots": [
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Windfall Policy Atlas định nghĩa: chính phủ là nhà tuyển dụng cứu cánh cuối cùng cho người sẵn",
+              "highlight": [
+                "Windfall",
+                "Policy",
+                "Atlas"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                4
+              ]
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "government hiring worker",
+          "duration_sec": 3.3666666666666667,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Windfall Policy Atlas định nghĩa: chính phủ là nhà tuyển dụng cứu cánh cuối cùng cho người sẵn",
+              "highlight": [
+                "Windfall",
+                "Policy",
+                "Atlas"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                4
+              ]
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "cash assistance hand",
+          "duration_sec": 3.3666666666666667,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 2,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Có thể hiểu là, khác trợ cấp tiền mặt, mô hình gắn hỗ trợ với công việc.",
+              "highlight": [
+                "Có",
+                "thể",
+                "hiểu"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "human resources meeting",
+          "duration_sec": 3.3666666666666667,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 2,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Có thể hiểu là, khác trợ cấp tiền mặt, mô hình gắn hỗ trợ với công việc.",
+              "highlight": [
+                "Có",
+                "thể",
+                "hiểu"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "employee organizing workspace",
+          "duration_sec": 3.3666666666666667,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "whoosh",
+      "fact_ids": [
+        4
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+        ],
+        "fact_ids": [
+          4
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 4,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 4,
+                "name": "windfalltrust.org",
+                "url": "https://windfalltrust.org/policy-atlas/job-guarantees-and-public-works-programs",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sentences": [
+        {
+          "type": "explain",
+          "text": "Có thể hình dung đây là chiếc ghế dự phòng: người mất việc vẫn có thể sửa công trình địa phương, giữ kỹ năng và nhịp làm việc trong lúc tìm hướng mới.",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "example",
+      "new_information": "Việc làm cộng đồng có thể giúp người lao động giữ kỹ năng và nhịp làm việc trong khi tìm hướng mới.",
+      "id": 5,
+      "role": "body",
+      "narration": "Có thể hình dung đây là chiếc ghế dự phòng: người mất việc vẫn có thể sửa công trình địa phương, giữ kỹ năng và nhịp làm việc trong lúc tìm hướng mới.",
+      "shots": [
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Có thể hình dung đây là chiếc ghế dự phòng: người mất việc vẫn có thể sửa công",
+              "highlight": [
+                "Có",
+                "thể",
+                "hình"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "community workers repairing",
+          "duration_sec": 3.9333333333333336,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Có thể hình dung đây là chiếc ghế dự phòng: người mất việc vẫn có thể sửa công",
+              "highlight": [
+                "Có",
+                "thể",
+                "hình"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "worker restoring building",
+          "duration_sec": 3.9333333333333336,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Có thể hình dung đây là chiếc ghế dự phòng: người mất việc vẫn có thể sửa công",
+              "highlight": [
+                "Có",
+                "thể",
+                "hình"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "colleague teaching computer",
+          "duration_sec": 3.9333333333333336,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[sentence_length, nhóm 3, warning] Câu quá 28 từ; tách tại ranh giới ý."
+        ],
+        "fact_ids": [],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "sentences": [
+        {
+          "type": "opinion",
+          "text": "Vậy job guarantee có thể là lưới đệm, không phải lời giải trọn gói. Hiệu quả có thể phụ thuộc vào ngân sách, việc làm hữu ích và năng lực quản lý.",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "counterpoint",
+      "new_information": "Chính sách có thể làm lưới đệm, nhưng hiệu quả tùy thuộc vào nguồn lực, chất lượng công việc và khả năng quản lý.",
+      "id": 6,
+      "role": "cta",
+      "narration": "Vậy job guarantee có thể là lưới đệm, không phải lời giải trọn gói. Hiệu quả có thể phụ thuộc vào ngân sách, việc làm hữu ích và năng lực quản lý.",
+      "shots": [
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "content_type": "opinion",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Vậy job guarantee có thể là lưới đệm, không phải lời giải trọn gói. Hiệu quả có thể",
+              "highlight": [
+                "Vậy",
+                "job",
+                "guarantee"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "program budget review",
+          "duration_sec": 3.8222222222222224,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "sentence_index": 1,
+            "content_type": "opinion",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Vậy job guarantee có thể là lưới đệm, không phải lời giải trọn gói. Hiệu quả có thể",
+              "highlight": [
+                "Vậy",
+                "job",
+                "guarantee"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "community project planning",
+          "duration_sec": 3.8222222222222224,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "semantic_query": true,
+          "visual": {
+            "auto_generated": true,
+            "template": "source_card",
+            "data": {
+              "text": "",
+              "highlight": [],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "Yahoo! Finance · windfalltrust.org",
+              "source_url": "https://finance.yahoo.com/sectors/technology/articles/tufts-university-releases-first-american-200700863.html",
+              "date": "2026-03-24",
+              "title": "Nguồn dữ kiện sự kiện",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                1,
+                4
+              ]
+            }
+          },
+          "planning_duration": true,
+          "type": "stock_video",
+          "query": "office employee discussion",
+          "duration_sec": 3.8222222222222224,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "whoosh",
+      "fact_ids": [],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+        ],
+        "fact_ids": [],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    }
+  ],
+  "video_type": "news",
+  "target_duration_sec": 66.13333333333334,
+  "brief_hash": null
+}

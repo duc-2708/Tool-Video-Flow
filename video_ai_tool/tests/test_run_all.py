@@ -271,7 +271,8 @@ def test_ai_clips_are_used_in_separate_bundle_and_original_assets_unchanged(stag
         return {"remote_id":"fixture_remote","clip_path":"clips/fixture_ai.mp4","duration_sec":4.,"actual_cost_vnd":"2500"}
     monkeypatch.setattr(ai,"create_job",create)
     monkeypatch.setattr(ai,"resume_job",resume)
-    project = run_all(RunConfig(topic="AI fixture",ai_clips=1,ai_confirmed=True),settings=settings)
+    # Explicit legacy bundle regression; the default Motion3 mode is a backdrop.
+    project = run_all(RunConfig(topic="AI fixture",ai_clips=1,ai_confirmed=True,ai_background_only=False),settings=settings)
     assert calls == ["research","director","assets","ai_create","ai_resume","render"]
     assert len(requests) == 1 and requests[0].seconds == 4
     assert inputs["render_plan"].parent == project/"ai_render"
@@ -391,7 +392,7 @@ def test_ai_expanded_resolved_shots_lookup_and_warn_without_touching_originals(s
         return {"remote_id": "fixture", "clip_path": "clips/ai.mp4", "duration_sec": 4.}
     monkeypatch.setattr(ai, "create_job", create)
     monkeypatch.setattr(ai, "resume_job", resume)
-    bundle, used = ai.prepare_ai_bundle(project, RunConfig(topic="Expanded", ai_clips=1), settings,
+    bundle, used = ai.prepare_ai_bundle(project, RunConfig(topic="Expanded", ai_clips=1,ai_background_only=False), settings,
         lambda *args: None, lambda: None, Diagnostics(settings.logs_dir, filename="run_all_errors.log"))
     assert used[0]["scene_id"] == scene.id and used[0]["shot_id"] == next_id
     assert bundle.is_file()
@@ -442,7 +443,7 @@ def test_generation_failed_twice_still_renders_broll(stages, monkeypatch):
     gateway.create.side_effect = [({"id":"failed_first"},None),({"id":"failed_retry"},None)]
     gateway.status.return_value = {"status":"failed","error":{"code":"generation_failed","message":"Upstream generation failed"}}
     monkeypatch.setattr("pipeline.ai_video.VideoGateway",lambda *args:gateway)
-    project = run_all(RunConfig(topic="AI failure fallback",ai_clips=1,ai_confirmed=True),settings=settings)
+    project = run_all(RunConfig(topic="AI failure fallback",ai_clips=1,ai_confirmed=True,ai_background_only=False),settings=settings)
     assert gateway.create.call_count == 2
     gateway.download.assert_not_called()
     assert state(project)["status"] == "done" and state(project)["steps"]["ai_video"]["status"] == "skipped"
@@ -457,3 +458,21 @@ def test_run_all_uses_gateway_duration_defaults_from_settings(stages):
     project = run_all(RunConfig(topic="Settings defaults"),settings=settings)
     assert state(project)["config"]["ai_model"] == "seedance-2.5-30s"
     assert state(project)["config"]["ai_seconds"] == 10
+
+
+def test_motion3_default_ai_is_background_and_failure_keeps_cards(stages,monkeypatch):
+    settings,calls,_,inputs=stages
+    settings=settings.model_copy(update={'motion_enabled':True})
+    def backgrounds(project,settings,**kwargs):
+        calls.append('ai_background')
+        assert kwargs['confirmed'] and kwargs['count']==1
+        result={'clips':[],'warnings':['Fixture generation_failed; dùng gradient.']}
+        write_json(project/'render/ai_backgrounds.json',result)
+        return result
+    monkeypatch.setattr('pipeline.controlled_ai.create_backgrounds',backgrounds)
+    project=run_all(RunConfig(topic='Controlled AI',ai_clips=1,ai_confirmed=True),settings=settings)
+    assert calls==['research','director','assets','ai_background','render']
+    assert inputs['render_plan']==project/'edit_plan.resolved.json'
+    assert (project/'edit_plan.resolved.json').read_bytes()==inputs['original_resolved']
+    assert 'generation_failed' in (project/'report.md').read_text(encoding='utf-8')
+    assert state(project)['status']=='done'

@@ -1,0 +1,181 @@
+{
+  "render_style": {
+    "captions": {
+      "analysis_warnings": [],
+      "enabled": true,
+      "mode": "phrase",
+      "font_description": "Chữ đậm dễ đọc",
+      "font_scale": 0.064,
+      "color": "#FFFFFF",
+      "highlight_color": "#FFD741",
+      "stroke_color": "#000000",
+      "color_note": "",
+      "stroke_width_ratio": 0.006,
+      "position": "lower",
+      "emphasis": "Tô màu từ đang đọc",
+      "shadow": "Không rõ"
+    },
+    "ducking": true
+  },
+  "review_notes": [
+    "[visual_variety, nhóm 2] Cảnh 1: text_focus → hook_card, giữ nguyên dữ liệu.",
+    "[visual_variety, nhóm 2] Cảnh 8: text_focus → cta_card, giữ nguyên dữ liệu.",
+    "[visual_card, nhóm 2] Cảnh 1, shot 1: 'Ý chính cần nhớ' → 'Cắt ghép video'; minh họa icon.",
+    "[visual_variety, nhóm 3] Chưa đủ dữ liệu cho 3 loại mẫu; không tạo số/trích dẫn để bù.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 8: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s."
+  ],
+  "title": "Dựng video",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "calm",
+    "volume": 0.1
+  },
+  "scenes": [
+    {
+      "id": 1,
+      "role": "hook",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "card_text": "Cắt ghép video",
+          "emphasis": [
+            "ghép",
+            "video"
+          ],
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 0.55,
+                "action": "mascot_surprised"
+              },
+              {
+                "at_word_index": 3,
+                "at_sec": 0.56371,
+                "action": "reveal"
+              }
+            ],
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "hook_card",
+            "data": {
+              "text": "Cắt ghép video",
+              "highlight": [
+                "ghép",
+                "video"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 2.0,
+          "effect": "zoom_in",
+          "text_overlay": "Cắt ghép video"
+        }
+      ],
+      "transition_out": "fade",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 1: Shot 1: thiếu brief.json để đối chiếu đồ họa sự kiện.",
+          "Cảnh 1: Shot 1: đã dùng bản trung tính; lời đọc giữ nguyên."
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 8,
+      "role": "cta",
+      "narration": "Bạn muốn tìm hiểu bước nào?",
+      "shots": [
+        {
+          "card_text": "Bạn muốn tìm hiểu bước nào",
+          "emphasis": [
+            "bước",
+            "nào"
+          ],
+          "visual": {
+            "beats": [
+              {
+                "at_word_index": 0,
+                "at_sec": 0.0,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 0.55,
+                "action": "mascot_thinking"
+              }
+            ],
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "cta_card",
+            "data": {
+              "text": "Bạn muốn tìm hiểu bước nào",
+              "highlight": [
+                "bước",
+                "nào"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 2.0,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn muốn tìm hiểu bước nào"
+        }
+      ],
+      "transition_out": "fade",
+      "sfx": "pop",
+      "fact_ids": [],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 8: Shot 1: thiếu brief.json để đối chiếu đồ họa sự kiện.",
+          "Cảnh 8: Shot 1: đã dùng bản trung tính; lời đọc giữ nguyên."
+        ],
+        "fact_ids": [],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    }
+  ],
+  "video_type": null,
+  "target_duration_sec": null,
+  "brief_hash": null,
+  "source_plan_hash": "fixture",
+  "timing_basis": "audio",
+  "warnings": []
+}

@@ -1,0 +1,13 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion_integration\\test_supported_and_static_temp0\\cache\\9dfa664d5b2532c31813ed019ac08ed7532796b2e4a74287abbd9857e1c4069b.mp4",
+  "cache_hit": false,
+  "scene_id": 1,
+  "width": 270,
+  "height": 480,
+  "fps": 10,
+  "duration_sec": 0.4,
+  "render_seconds": 3.263,
+  "size_bytes": 6808,
+  "sha256": "4491c7b30fdc3ee64f5ec7f4cd8ae6f0e39d5cfe20d9d7799de132c6faf1dd51",
+  "timing_source": "estimated_characters"
+}

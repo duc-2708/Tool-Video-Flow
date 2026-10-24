@@ -1,5 +1,7 @@
 # 1 = chặn/retry riêng cảnh; 2 = tự sửa code; 3 = chỉ cảnh báo.
 rules:
+  card_text: {group: 2}
+  presentation_voice: {group: 3}
   sentence_background_names:
     group: 3
     description: Tên riêng trong câu explain/opinion/cta chỉ cảnh báo kiểm tra ví dụ nền

@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "timing_source": "estimated_characters",
+  "duration_sec": 3.25,
+  "words": [
+    {
+      "text": "...",
+      "start": 0.0,
+      "end": 1.21875
+    },
+    {
+      "text": "!!!",
+      "start": 1.21875,
+      "end": 2.4375
+    },
+    {
+      "text": "--",
+      "start": 2.4375,
+      "end": 3.25
+    }
+  ]
+}

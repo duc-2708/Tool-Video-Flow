@@ -1,0 +1,20 @@
+{
+  "request": {
+    "model": "veo-3.1",
+    "prompt": "A closed plain laptop rests on a wooden desk, soft warm light, static camera, cinematic.",
+    "seconds": 4,
+    "format": "tiktok",
+    "resolution": "720p"
+  },
+  "remote_id": "original",
+  "status": "queued",
+  "progress": 0,
+  "estimated_cost_vnd": 2500,
+  "actual_cost_vnd": null,
+  "clip_path": null,
+  "error": null,
+  "generation_retry_path": "157e695e2b5828e4b82253f2b5169da0bd9e089740f6fbf830b9c00661cf3f9e.json",
+  "generation_retry_count": 1,
+  "retry_notice": "Tự thử lại tối đa 1 job có thể tính phí sau generation_failed; không retry timeout hoặc thiếu ID.",
+  "generation_retry_completed": true
+}

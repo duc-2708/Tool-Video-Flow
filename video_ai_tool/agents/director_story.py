@@ -45,6 +45,9 @@ def apply_words(plan,rows,diagnostics=None):
             "type":row.shot_types[i] if row.shot_types else shot.type}) for i,shot in enumerate(scene.shots)]
         scene.narration = row.narration
         scene.shots=shots
+        for i,shot in enumerate(shots):
+            if i<len(row.card_texts): shot.card_text=row.card_texts[i]
+            if i<len(row.emphasis): shot.emphasis=row.emphasis[i]
         if row.shot_sfx: scene.sfx=next((s for s in row.shot_sfx if s!="none"),"none")
         if row.structure_warnings:
             if scene.review_notes is None:
@@ -81,6 +84,8 @@ def humanize(plan,brief,provider,settings,diagnostics,*,scene_ids=None,style=Non
             result=HumanizedScript.model_validate(normalized)
             check_words(result.scenes,selected)
             for row in result.scenes: apply_words(plan,[row],diagnostics)
+            from agents.presentation import humanize_locally,repair_generic_hook
+            humanize_locally(plan,brief);repair_generic_hook(plan,brief)
             validate_plan(plan,brief,request,diagnostics=diagnostics,allow_merge=False)
             audit=audit_findings(result.issues)
             if not result.approved and not result.issues:
@@ -97,8 +102,8 @@ def humanize(plan,brief,provider,settings,diagnostics,*,scene_ids=None,style=Non
         except RuleViolation as error:
             last=error
         except Exception as error:
-            from providers.llm_gemini import GeminiTransientError
-            if isinstance(error,GeminiTransientError): raise
+            from providers.llm.base import TransientError
+            if isinstance(error,TransientError): raise
             diagnostics.record_exception(error,"Người hóa/API không phải lỗi luật nhóm 1; không retry văn phong")
             break
         diagnostics.record_exception(last,f"Người hóa lần {attempt+1}: chỉ retry nhóm 1")
@@ -254,6 +259,8 @@ def rewrite_script(brief_path,settings,*,style,scene_id=None):
             # Scene-only rewrite keeps every other scene byte-for-byte.
             if scene_id is None:
                 validate_plan(rewritten,brief,DirectorRequest(video_type=rewritten.video_type or "story",video_format=rewritten.format,duration_sec=rewritten.target_duration_sec or rewritten.duration_sec))
+            from providers.llm.router import add_provider_notes
+            add_provider_notes(rewritten,provider)
             write_json(brief_path.parent/"edit_plan.json",rewritten.model_dump(mode="json"))
             resolve_draft(brief_path.parent)
             return brief_path.parent/"edit_plan.json"

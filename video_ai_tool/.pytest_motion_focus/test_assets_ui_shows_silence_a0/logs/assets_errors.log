@@ -1,0 +1,10 @@
+
+[2026-10-23T09:56:48.732935+00:00] TTS lỗi ở cảnh 2; voice=vi-VN-HoaiMyNeural; attempt=provider; text_length=29; cleaned_text='Bạn có thể cắt và ghép video.'
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\assets.py", line 144, in scene_audio
+    duration=tts.synthesize(clean,voice,path)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 149, in synthesize
+    if path.stem==f"scene_{fail_scene}": raise NoAudioReceived("mock failure")
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+edge_tts.exceptions.NoAudioReceived: mock failure
+

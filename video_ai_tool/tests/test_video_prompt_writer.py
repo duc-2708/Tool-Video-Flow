@@ -122,7 +122,7 @@ def test_changed_prompt_after_failure_cannot_silently_charge_again(stages,monkey
     from pipeline.run_all import run_all,RunConfig
     from pipeline.run_all_ai import prepare_ai_bundle
     settings,_,_,_ = stages
-    config = RunConfig(topic="Safe prompt ledger",ai_clips=1,ai_confirmed=True)
+    config = RunConfig(topic="Safe prompt ledger",ai_clips=1,ai_confirmed=True,ai_background_only=False)
     project = run_all(config,settings=settings,stop_after="assets")
     create = Mock(side_effect=TimeoutError("fixture paid POST timeout"))
     monkeypatch.setattr("pipeline.run_all_ai.create_job",create)

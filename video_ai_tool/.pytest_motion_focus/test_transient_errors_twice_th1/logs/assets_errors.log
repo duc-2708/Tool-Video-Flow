@@ -1,0 +1,37 @@
+
+[2026-10-23T09:56:01.582938+00:00] TTS lỗi ở cảnh 2; đoạn=1; attempt=1/5; voice=vi-VN-HoaiMyNeural; text_length=15; cleaned_text='Lời đọc hợp lệ.'
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 89, in _chunk
+    request.save_sync(str(temporary))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 28, in save_sync
+    if behavior: behavior(text,voice,len(calls))
+                 ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 79, in fail_twice
+    if count<=2: raise error
+                 ^^^^^^^^^^^
+aiohttp.client_exceptions.ClientConnectionError: network
+
+
+[2026-10-23T09:56:01.592720+00:00] TTS lỗi ở cảnh 2; đoạn=1; attempt=2/5; voice=vi-VN-HoaiMyNeural; text_length=15; cleaned_text='Lời đọc hợp lệ.'
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 89, in _chunk
+    request.save_sync(str(temporary))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 28, in save_sync
+    if behavior: behavior(text,voice,len(calls))
+                 ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 79, in fail_twice
+    if count<=2: raise error
+                 ^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\tts_edge.py", line 89, in _chunk
+    request.save_sync(str(temporary))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 28, in save_sync
+    if behavior: behavior(text,voice,len(calls))
+                 ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_tts_resilience.py", line 79, in fail_twice
+    if count<=2: raise error
+                 ^^^^^^^^^^^
+aiohttp.client_exceptions.ClientConnectionError: network
+

@@ -1,0 +1,7 @@
+
+[2026-10-24T02:37:47.766909+00:00] Assets tìm lại cảnh 2 shot 999
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\assets.py", line 354, in refresh_shot
+    raise ValueError(f"Không tìm thấy cảnh {scene_id} / shot {shot_id} trong plan hoặc manifest; hãy tạo lại Assets.")
+ValueError: Không tìm thấy cảnh 2 / shot 999 trong plan hoặc manifest; hãy tạo lại Assets.
+

@@ -1,13 +1,15 @@
 LƯỢT 3 — NGƯỜI HÓA VÀ AUDIT BẢN CUỐI. Chỉ JSON HumanizedScript.
+Mỗi shot có card_texts 3–6 từ riêng và emphasis 1–2 từ, không cắt lời đọc làm thẻ, không kết thúc bằng cho/có thể/và/của. Việt hóa thuật ngữ phổ thông (job guarantee → bảo đảm việc làm), giữ tên riêng/thương hiệu.
+Hook câu đầu tối đa 12 từ: con số có trong brief, hiểu lầm hoặc ngược trực giác; không hỏi chung “Những yếu tố nào...”. Có thể/có lẽ/dường như tối đa 1 lần mỗi 2 cảnh; dùng câu trực tiếp khi fact chắc chắn, giữ mềm với ước đoán. Không lặp khuôn Có thể hiểu là/Có thể hình dung ở các cảnh liền. Không nâng độ chắc chắn của nguồn. Thẻ nguồn chỉ một lần ở cuối.
 Chỉ trả selected_scene_ids, giữ fact_ids và toàn bộ ý nghĩa có căn cứ. Không đổi số cảnh/shot, thời lượng, nguồn.
 Viết tự nhiên như kể cho bạn bè, câu ngắn xen câu dài, bạn/mình vừa phải. Câu hỏi tu từ có căn cứ.
 Các kiểu "Nhưng khoan đã", "Vấn đề là", "Thử tưởng tượng" mỗi kiểu tối đa hai lần/video.
 CẤM: "Chào mọi người", "Hôm nay chúng ta sẽ", "Trong thời đại ngày nay" ở hook.
 CẤM toàn video: "một số", "nhiều người", "ngày càng", "đóng vai trò quan trọng", "không thể phủ nhận", "trong bối cảnh", "có thể nói rằng".
-Hook ba giây ≤20 từ, nên 6–8 từ. Cảnh còn lại 2–4 câu, mỗi câu ≤28 từ, không mở hai cảnh liền cùng cấu trúc.
+Hook ba giây ≤12 từ, nên 6–8 từ. Cảnh còn lại 2–4 câu, mỗi câu ≤28 từ, không mở hai cảnh liền cùng cấu trúc.
 Câu cuối cảnh dẫn sang ý tiếp theo. Kết giải đáp open_loop rồi đặt câu hỏi/nhận định; không tóm cả bài, không cảm ơn đã xem.
 Giữ số/đơn vị dạng chữ số chuẩn để đối chiếu brief; không phiên âm tên nguồn có chữ số. Bước audio sẽ xử lý cách đọc sau kiểm tra. Tránh ngoặc. Tổng speech_budget, không nhồi chữ vào hook.
-Overlay 2–5 từ/số, mỗi shot một overlay hoặc null, không lặp nguyên câu lời đọc. Broll_query/shot_queries tiếng Anh 2–4 từ mỗi query, stock trung tính, không hãng/sản phẩm/người thật; thay đổi hành động/bối cảnh giữa shot, không chép truy vấn tìm bài báo.
+Overlay/card_text 3–6 từ/số, mỗi shot một overlay hoặc null, không lặp nguyên câu lời đọc. Broll_query/shot_queries tiếng Anh 2–4 từ mỗi query, stock trung tính, không hãng/sản phẩm/người thật; thay đổi hành động/bối cảnh giữa shot, không chép truy vấn tìm bài báo.
 Tự đối chiếu TỪNG khẳng định của bản cuối và overlay với đúng fact_vi trong scene.fact_ids của full_plan.
 Kiểm tra cả dàn ý: hook/câu hỏi không ngầm bịa, payoff trả lời đúng open_loop, không biến nguồn trích thành dữ kiện.
 Giữ "Theo <nguồn>" chính xác với nguồn đơn; không dùng cụm chưa xác minh/chưa kiểm chứng/cần xác minh.

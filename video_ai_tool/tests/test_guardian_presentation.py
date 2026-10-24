@@ -145,7 +145,7 @@ def test_research_expands_once_then_continues_with_grounded_data(tmp_path,monkey
     expanded["facts"]+= [{**initial["facts"][0],"source_url":str(s.url),"claim":s.text,"fact_vi":s.text} for s in extras]
     api=FakeLLM([json.dumps(initial),json.dumps(expanded)])
     api.close=Mock()
-    monkeypatch.setattr("agents.researcher.GeminiProvider",lambda _:api)
+    monkeypatch.setattr("agents.researcher.provider_for_step",lambda *args,**kwargs:api)
     monkeypatch.setattr("agents.researcher.generate_queries",fake_queries)
     requests=[]
     def collect(self,query,limit,lang):

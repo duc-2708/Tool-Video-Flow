@@ -117,7 +117,8 @@ def render(settings,project,topic,debug,diagnostics):
             st.session_state[prompt_key] = pending
         prompt = st.text_area("Mô tả clip",value=fallback_prompt(topic),height=120,key=prompt_key)
         simpler = st.checkbox("Đơn giản hơn",key=prompt_key+"_simpler")
-        if st.button("Viết lại prompt",key=prompt_key+"_rewrite",disabled=not bool(settings.gemini_api_key.get_secret_value().strip() and (settings.gemini_director_model.strip() or settings.gemini_model.strip()))):
+        from providers.llm.router import route_ready
+        if st.button("Viết lại prompt",key=prompt_key+"_rewrite",disabled=not route_ready(settings,"director")):
             client = None
             try:
                 client = director_provider(settings,local_diagnostics)

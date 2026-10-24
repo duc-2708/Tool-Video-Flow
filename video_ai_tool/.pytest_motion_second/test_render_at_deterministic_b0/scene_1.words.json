@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "timing_source": "estimated_characters",
+  "duration_sec": 3.0,
+  "words": [
+    {
+      "text": "Bạn",
+      "start": 0.0,
+      "end": 0.36
+    },
+    {
+      "text": "hiểu",
+      "start": 0.36,
+      "end": 0.84
+    },
+    {
+      "text": "nguồn",
+      "start": 0.84,
+      "end": 1.44
+    },
+    {
+      "text": "tin",
+      "start": 1.44,
+      "end": 1.7999999999999998
+    },
+    {
+      "text": "này",
+      "start": 1.7999999999999998,
+      "end": 2.1599999999999997
+    },
+    {
+      "text": "thế",
+      "start": 2.1599999999999997,
+      "end": 2.5199999999999996
+    },
+    {
+      "text": "nào?",
+      "start": 2.5199999999999996,
+      "end": 2.9999999999999996
+    }
+  ]
+}

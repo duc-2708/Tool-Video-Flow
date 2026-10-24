@@ -1,0 +1,123 @@
+{
+  "render_style": {
+    "captions": {
+      "analysis_warnings": [],
+      "enabled": true,
+      "mode": "phrase",
+      "font_description": "Chữ đậm dễ đọc",
+      "font_scale": 0.064,
+      "color": "#FFFFFF",
+      "highlight_color": "#FFD741",
+      "stroke_color": "#000000",
+      "color_note": "",
+      "stroke_width_ratio": 0.006,
+      "position": "lower",
+      "emphasis": "Tô màu từ đang đọc",
+      "shadow": "Không rõ"
+    },
+    "ducking": true
+  },
+  "review_notes": [
+    "Cảnh 1, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s."
+  ],
+  "title": "Dựng video",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "calm",
+    "volume": 0.1
+  },
+  "scenes": [
+    {
+      "id": 1,
+      "role": "hook",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 0.0,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 0.55,
+                "action": "mascot_surprised"
+              }
+            ],
+            "template": "text_focus",
+            "data": {
+              "text": "Một ý chính mới",
+              "highlight": [],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 2.0,
+          "effect": "zoom_in",
+          "text_overlay": "Dựng video dễ hiểu"
+        }
+      ],
+      "transition_out": "fade",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false
+    },
+    {
+      "id": 8,
+      "role": "cta",
+      "narration": "Bạn muốn tìm hiểu bước nào?",
+      "shots": [
+        {
+          "visual": {
+            "template": "text_focus",
+            "data": {
+              "text": "Một ý chính mới",
+              "highlight": [],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 2.0,
+          "effect": "zoom_in",
+          "text_overlay": "Dựng video dễ hiểu"
+        }
+      ],
+      "transition_out": "fade",
+      "sfx": "pop",
+      "fact_ids": [],
+      "pattern_interrupt": true
+    }
+  ],
+  "video_type": null,
+  "target_duration_sec": null,
+  "brief_hash": null,
+  "source_plan_hash": "fixture",
+  "timing_basis": "audio",
+  "warnings": []
+}

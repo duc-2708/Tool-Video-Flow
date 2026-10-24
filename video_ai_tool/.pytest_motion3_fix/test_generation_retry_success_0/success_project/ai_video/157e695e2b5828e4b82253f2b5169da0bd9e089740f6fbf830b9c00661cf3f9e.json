@@ -1,0 +1,17 @@
+{
+  "request": {
+    "model": "veo-3.1",
+    "prompt": "A lens rests indoors, soft light, static camera, cinematic.",
+    "seconds": 4,
+    "format": "tiktok",
+    "resolution": "720p"
+  },
+  "remote_id": "retry_success",
+  "status": "queued",
+  "progress": 0,
+  "estimated_cost_vnd": 2500,
+  "actual_cost_vnd": null,
+  "clip_path": null,
+  "error": null,
+  "generation_retry_of": "4b0c5b3237e62e1faed6faf57b1d742215b6add3a0715b224fc046d86120e08f"
+}

@@ -3,8 +3,8 @@ default: studio
 themes:
   studio:
     background: gradient
-    top: '#101F32'
-    bottom: '#263E55'
+    top: '#101B30'
+    bottom: '#080C17'
     card: '#172D43'
     foreground: '#F8F7F2'
     muted: '#ADC1CD'

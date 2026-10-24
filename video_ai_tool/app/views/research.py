@@ -10,6 +10,7 @@ from pipeline.projects import create_project, load_brief, read_json
 from utils.diagnostics import Diagnostics
 from schemas.languages import LABELS
 from sources.web_search import search_summary
+from providers.llm.router import route_ready, require_route
 
 
 def display_error(message: str, trace: str, debug: bool) -> None:
@@ -41,7 +42,7 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
         youtube_days = st.number_input("YouTube trends: số ngày gần đây", min_value=1, max_value=3650, value=14, step=1)
         vietnamese = st.checkbox("Ưu tiên video tiếng Việt", value=True)
         submitted = st.form_submit_button("Chạy Researcher", type="primary",
-                                          disabled=not bool(settings.gemini_api_key.get_secret_value().strip() and settings.gemini_model.strip()))
+                                          disabled=not route_ready(settings,"researcher"))
     if submitted:
         st.session_state.pop("research_error", None)
         if not entered_topic.strip():
@@ -51,8 +52,7 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
             progress = st.empty()
             try:
                 # Kiểm tra key trước khi tạo thư mục; không tạo project rỗng vì thiếu cấu hình.
-                settings.require_key("gemini")
-                settings.require_gemini_model()
+                require_route(settings,"researcher")
                 destination = destination or create_project(settings.output_dir, entered_topic)
                 with st.spinner("Researcher đang xử lý…"):
                     result = run_research(entered_topic, settings, web_limit=int(web_limit),

@@ -1,0 +1,17 @@
+{
+  "text_hash": "2586c3dc1d8bf09877c571ca4726b0d37ca391c86c1a7520ac0555adb210d475",
+  "audio_silent": false,
+  "audio_error": null,
+  "voice_used": "vi-VN-NamMinhNeural",
+  "warnings": [
+    "Cảnh 2, đoạn 1: dùng văn bản rút gọn với giọng dự phòng."
+  ],
+  "chunks": [
+    {
+      "index": 1,
+      "silent": false,
+      "voice": "vi-VN-NamMinhNeural",
+      "error": null
+    }
+  ]
+}

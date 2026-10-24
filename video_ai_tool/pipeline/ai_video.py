@@ -108,6 +108,8 @@ def create_job(project,request,settings,*,gateway=None,recreate_confirmed=False,
             if history:
                 job.update(previous_attempts=history,recreate_confirmed=True,
                     cost_warning="Người dùng xác nhận dashboard không có job; lần gửi lại có thể phát sinh thêm chi phí.")
+            from pipeline.ai_budget import reserve
+            reserve(settings,str(path)+f':attempt:{len(history)}')
             save_job(path,job,diagnostics)
             try:
                 diagnostics.record(json.dumps({"event":"submit_request", "request":request.payload(), "remote_id":None},ensure_ascii=False))

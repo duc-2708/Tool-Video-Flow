@@ -1,0 +1,5 @@
+AI-generated clip
+Gateway: https://api.buihuuthang.com
+Model: veo-3.1
+Job: video_fixture
+File: ai_deae4d2af6fa23e6a288730227f2e836a351c6de765a24ec8891c7e4ec845d10.mp4

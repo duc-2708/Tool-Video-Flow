@@ -1,0 +1,13 @@
+
+[2026-10-23T10:11:42.121296+00:00] Motion cảnh 1: dùng renderer Pillow dự phòng
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\render_motion.py", line 121, in render_scene
+    with browser_page(size) as page, TemporaryFile() as errors:
+         ~~~~~~~~~~~~^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_motion.py", line 100, in unavailable
+    def unavailable(size): raise error;yield
+                           ^^^^^^^^^^^
+RuntimeError: Chromium missing
+

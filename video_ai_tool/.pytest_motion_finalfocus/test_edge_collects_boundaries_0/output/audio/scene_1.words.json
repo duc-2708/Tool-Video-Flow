@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "timing_source": "word_boundary",
+  "duration_sec": 2.2,
+  "words": [
+    {
+      "text": "Xin",
+      "start": 0.2,
+      "end": 0.5
+    },
+    {
+      "text": "chào",
+      "start": 0.8,
+      "end": 1.2
+    }
+  ]
+}

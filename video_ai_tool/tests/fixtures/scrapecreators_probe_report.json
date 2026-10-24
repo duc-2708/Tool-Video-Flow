@@ -1,0 +1,38 @@
+{
+  "observed_at": "2026-10-23T04:56:55.417456+00:00",
+  "requests": [
+    {
+      "endpoint": "/v1/tiktok/get-trending-feed",
+      "params": {
+        "region": "VN"
+      },
+      "credits_charged": 1,
+      "http_status": 200
+    },
+    {
+      "endpoint": "/v1/tiktok/get-trending-feed",
+      "params": {
+        "region": "US"
+      },
+      "credits_charged": 1,
+      "http_status": 200
+    },
+    {
+      "endpoint": "/v1/tiktok/search/keyword",
+      "params": {
+        "query": "AI"
+      },
+      "credits_charged": 1,
+      "http_status": 200
+    },
+    {
+      "endpoint": "/v1/tiktok/search/hashtag",
+      "params": {
+        "hashtag": "AI"
+      },
+      "credits_charged": 1,
+      "http_status": 200
+    }
+  ],
+  "status": "finished"
+}

@@ -193,14 +193,10 @@ def test_review_notes_replace_labels_but_still_reject_invented_numbers() -> None
 
 def test_director_provider_selects_model_without_changing_researcher(director_settings: Settings, monkeypatch: pytest.MonkeyPatch) -> None:
     import agents.director as module
-    seen = []
-    def factory(settings: Settings):
-        seen.append(settings.gemini_model)
-        return Mock()
-    monkeypatch.setattr(module, "GeminiProvider", factory)
     settings = director_settings.model_copy(update={"gemini_director_model": "separate-director"})
-    module.director_provider(settings, director_diagnostics(settings))
-    assert seen == ["separate-director"] and settings.gemini_model == "research-fixture"
+    provider=module.director_provider(settings, director_diagnostics(settings))
+    assert provider.router.primary=="gemini" and provider.model_name=="separate-director"
+    assert settings.gemini_model == "research-fixture"
 
 
 @pytest.mark.parametrize("phrase", ["Chưa xác minh", "CHƯA KIỂM CHỨNG", "cần xác minh", "Theo thông tin sơ bộ chưa kiểm chứng", "chưa được xác minh", "Chưa\nkiểm chứng"])

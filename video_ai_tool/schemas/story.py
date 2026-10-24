@@ -28,6 +28,8 @@ class StoryOutline(StrictModel):
     scenes: list[OutlineScene]
 
 class SceneWords(StrictModel):
+    card_texts: list[str] = Field(default_factory=list,exclude_if=lambda v:not v)
+    emphasis: list[list[str]] = Field(default_factory=list,exclude_if=lambda v:not v)
     structure_warnings: list[str] = Field(default_factory=list,exclude_if=lambda v:not v)
     shot_queries: list[str] | None = Field(default=None,exclude_if=lambda v:v is None)
     shot_effects: list[str] | None = Field(default=None,exclude_if=lambda v:v is None)

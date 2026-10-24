@@ -6,11 +6,14 @@ from pathlib import Path
 from typing import Literal
 from pydantic import BaseModel,ConfigDict,Field
 from config.settings import get_settings
+from config.video_models import VIDEO_MODELS
 from pipeline.projects import create_project,read_json
 from pipeline.run_all import RunConfig,run_all,saved_config,STEPS,RunCancelled,ApprovalRequired
 from pipeline.topics_history import already_made,history_rows
 from schemas.topic_discovery import DiscoveryHint,TopicSuggestion
 from sources.topic_discovery import discover_topics
+from config.trends import load_trends
+from pipeline.trend_scout import scout
 from agents.researcher import NoResearchDataError
 from utils.atomic_io import write_json_atomic,write_text_atomic,cleanup_tmp_files
 from utils.file_lock import file_lock
@@ -87,7 +90,7 @@ def run_auto(category=None,region="both",time_window_days=3,duration=60,format="
         count=ai_clips or (1 if use_ai_clips else 0)
         cfg=AutoConfig(category=category,region=region,time_window_days=time_window_days,duration=duration,format=format,
             creative_license=creative_license,style=style,style_preset=style_preset,review=review,use_youtube=use_youtube,ai_clips=count,content_mode=content_mode,
-            ai_model=settings.gateway_video_model,ai_seconds=settings.ai_clip_seconds,render_mode=render_mode)
+            ai_model=settings.ai_clip_model or settings.gateway_video_model,ai_seconds=settings.ai_clip_seconds if not settings.ai_clip_model or settings.ai_clip_model==settings.gateway_video_model else VIDEO_MODELS[settings.ai_clip_model][0],render_mode=render_mode)
         if count>settings.ai_clip_max_per_run: raise ValueError("Số clip vượt AI_CLIP_MAX_PER_RUN.")
         if count and not ai_confirmed:
             raise ApprovalRequired(f"Sẽ tạo tối đa {count} clip, model {cfg.ai_model}, {cfg.ai_seconds}s/clip; generation_failed có tối đa một job thử lại có thể tính phí. Cần xác nhận trước khi khám phá.")
@@ -123,7 +126,23 @@ def run_auto(category=None,region="both",time_window_days=3,duration=60,format="
                 emit("discovery","Đang khám phá chủ đề và kiểm tra lịch sử…")
                 import time
                 started=time.perf_counter()
-                result=discover_topics(cfg.category,settings,region=cfg.region,time_window_days=cfg.time_window_days,count=10,use_youtube=cfg.use_youtube,progress_cb=lambda message:emit("discovery",message))
+                trends_config=load_trends(settings)
+                if trends_config.enabled:
+                    try:
+                        result=scout(cfg.category,settings,config=trends_config,region=cfg.region,count=10,
+                            use_youtube=cfg.use_youtube,progress_cb=lambda message:emit("discovery",message))
+                    except Exception as error:
+                        diagnostics.record_exception(error,"Trend Scout lỗi; dùng khám phá RSS/news hiện có")
+                        result={"topics":[],"warnings":["Trend Scout lỗi: "+diagnostics.redact(str(error))]}
+                    meta["topic_provider"]="trend_scout"
+                    write_json_atomic(project/"trend_scout.json",result)
+                    if not result["topics"]:
+                        notices=result["warnings"]+["Trend Scout chưa có chủ đề mới; tiếp tục RSS/news hiện có."]
+                        result=discover_topics(cfg.category,settings,region=cfg.region,time_window_days=cfg.time_window_days,count=10,use_youtube=cfg.use_youtube,progress_cb=lambda message:emit("discovery",message))
+                        result["warnings"]=notices+result["warnings"]
+                        meta["topic_provider"]="rss_fallback"
+                else:
+                    result=discover_topics(cfg.category,settings,region=cfg.region,time_window_days=cfg.time_window_days,count=10,use_youtube=cfg.use_youtube,progress_cb=lambda message:emit("discovery",message))
                 meta["warnings"]=result["warnings"]
                 history=history_rows(settings.output_dir)
                 meta["topics"]=[t for t in result["topics"] if not already_made(t["topic"],history,source_urls=t["source_urls"])][:3]

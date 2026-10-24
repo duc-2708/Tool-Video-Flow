@@ -1,0 +1,7 @@
+
+[2026-10-24T02:37:50.121821+00:00] Open loop chưa có xác nhận ngữ nghĩa; bỏ câu hỏi thay vì tự gán fact
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\agents\explainer_director.py", line 151, in check_open_loop
+    raise ValueError(review.reason or "Kết chưa trả lời câu hỏi mở.")
+ValueError: Chưa trả lời
+

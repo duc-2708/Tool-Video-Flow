@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "veo-3.1",
+    "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.",
+    "seconds": 4,
+    "format": "tiktok",
+    "resolution": "720p"
+  },
+  "remote_id": "failed_retry",
+  "status": "failed",
+  "progress": 0,
+  "estimated_cost_vnd": 2500,
+  "actual_cost_vnd": null,
+  "clip_path": null,
+  "error": "{'code': 'generation_failed', 'message': 'Upstream generation failed'}",
+  "generation_retry_of": "df954a41dc6348c23282df083caff01a02d06f987b3537506796f97d0032cc6d",
+  "gateway_failure": {
+    "status": "failed",
+    "error": {
+      "code": "generation_failed",
+      "message": "Upstream generation failed"
+    }
+  },
+  "sent_payload": {
+    "model": "veo-3.1",
+    "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.",
+    "seconds": 4,
+    "aspect_ratio": "9:16",
+    "resolution": "720p"
+  },
+  "failure_code": "generation_failed"
+}

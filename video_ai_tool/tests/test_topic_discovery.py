@@ -198,7 +198,7 @@ def test_research_uses_hint_queries_but_still_collects_and_grounds(tmp_path,monk
     source=SourceDocument(title="Verified article",url="https://alpha.test/article",source_name="Alpha",platform="web",text="Content "*60,
         retrieved_at=NOW.isoformat(),content_kind="article",source_lang="en")
     provider=Mock(model_name="mock")
-    monkeypatch.setattr(researcher,"GeminiProvider",lambda *args:provider)
+    monkeypatch.setattr(researcher,"provider_for_step",lambda *args,**kwargs:provider)
     monkeypatch.setattr(researcher,"generate_queries",lambda *args:[SearchQuery(source_lang="en",region="us-en",query="independent verification query")])
     collector=Mock()
     collector.collect.return_value=([source],[])

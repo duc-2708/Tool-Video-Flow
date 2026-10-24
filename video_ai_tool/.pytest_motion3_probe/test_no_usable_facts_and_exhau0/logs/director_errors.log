@@ -1,0 +1,36 @@
+
+[2026-10-24T02:46:42.503580+00:00] Director schema/duration/grounding, attempt=1
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\agents\director.py", line 392, in create_edit_plan
+    parsed = normalize_plan_structure(json.loads(raw),diagnostics=diagnostics,query_provider=provider)
+                                      ~~~~~~~~~~^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\json\__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\json\decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\json\decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+[2026-10-24T02:46:42.505493+00:00] Director lần 1: cảnh lỗi=[], luật/giá trị=Expecting value: line 1 column 1 (char 0)
+
+[2026-10-24T02:46:42.508335+00:00] Director schema/duration/grounding, attempt=2
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\agents\director.py", line 392, in create_edit_plan
+    parsed = normalize_plan_structure(json.loads(raw),diagnostics=diagnostics,query_provider=provider)
+                                      ~~~~~~~~~~^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\json\__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\json\decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\json\decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+
+[2026-10-24T02:46:42.511923+00:00] Director lần 2: cảnh lỗi=[], luật/giá trị=Expecting value: line 1 column 1 (char 0)

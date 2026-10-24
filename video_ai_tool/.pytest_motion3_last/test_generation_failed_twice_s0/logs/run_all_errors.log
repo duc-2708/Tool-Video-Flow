@@ -1,0 +1,32 @@
+
+[2026-10-24T02:40:53.242778+00:00] run_all step=ai_video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Upstream generation failed'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 288, in resume_job
+    result = _resume_job_once(retry_path,settings,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Upstream generation failed'}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 367, in run_all
+    render_plan,used = prepare_ai_bundle(project,config,settings,
+                       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda fraction,message:emit(step,message,fraction),check_cancel,diagnostics)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all_ai.py", line 78, in prepare_ai_bundle
+    result = resume_job(job_path,settings,progress=lambda fraction,message:progress(((index-1)+fraction)/config.ai_clips,message))
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 298, in resume_job
+    raise GatewayVideoError(root["error"]) from error
+providers.video_gateway.GatewayVideoError: Thử lại Clip AI không thành công: generation_failed: {'code': 'generation_failed', 'message': 'Upstream generation failed'}. Dùng b-roll thường; không tạo thêm job.
+

@@ -182,7 +182,7 @@ def test_research_facts_stay_web_and_trend_failure_nonfatal(settings,monkeypatch
         assert schema is TrendInsights
         return json.dumps(insight_fixture())
     provider.generate_json.side_effect = generate
-    monkeypatch.setattr(researcher,"GeminiProvider",lambda settings:provider)
+    monkeypatch.setattr(researcher,"provider_for_step",lambda *args,**kwargs:provider)
     monkeypatch.setattr("sources.transcripts.YouTubeTranscriptProvider.fetch",Mock(side_effect=AssertionError("Không được tải transcript")))
     path = run_research("Dựng video",settings,use_youtube=True,use_transcripts=True,progress=lambda message:None)
     brief = ResearchBrief.model_validate_json(path.read_text(encoding="utf-8"))

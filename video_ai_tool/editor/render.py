@@ -54,8 +54,12 @@ class Frames:
         self.theme=theme or load_theme()
         self.cards=OrderedDict()
         self.failed_cards=set()
+        self.motion_paths={}
+        self.motion_readers=OrderedDict()
 
     def close(self):
+        for reader in self.motion_readers.values(): reader.close()
+        self.motion_readers.clear()
         for source in self.cache.values():
             if isinstance(source,VideoFileClip):
                 source.close()
@@ -63,7 +67,28 @@ class Frames:
         self.cards.clear()
 
     def frame(self,shot,t):
+        if shot.scene_id in self.motion_paths:
+            if shot.scene_id not in self.motion_readers:
+                if len(self.motion_readers)>=2:
+                    _,old=self.motion_readers.popitem(last=False);old.close()
+                self.motion_readers[shot.scene_id]=VideoFileClip(str(self.motion_paths[shot.scene_id]),audio=False)
+            self.motion_readers.move_to_end(shot.scene_id)
+            reader=self.motion_readers[shot.scene_id]
+            scene=next(s for s in self.timeline.scenes if s.spec.id==shot.scene_id)
+            return reader.get_frame(min(max(0,t-scene.start),max(0,reader.duration-1/reader.fps)))
         key = (shot.scene_id,shot.shot_id)
+        visual=shot.spec.visual
+        if visual and visual.template!="stock" and (not self.timeline.plan.render_style or self.timeline.plan.render_style.visual_templates):
+            # Graphics use the theme by default. Never decode unverified/irrelevant
+            # stock (including faces/entertainment) behind factual cards.
+            if key in self.failed_cards:
+                return color_card(self.size,shot.spec.card_text or "Ý chính cần nhớ",self.font,shot.scene_id)
+            try: return self.graphic_frame(shot,key,visual,None,max(0.,t-shot.start))
+            except Exception as error:
+                self.diagnostics.record_exception(error,f"Đồ họa cảnh {shot.scene_id}, shot {shot.shot_id}; nền dự phòng")
+                self.failed_cards.add(key)
+                self.timeline.warnings.append(f"Cảnh {shot.scene_id}, shot {shot.shot_id}: mẫu đồ họa không dựng được, dùng nền màu trung tính.")
+                return color_card(self.size,shot.spec.card_text or "Ý chính cần nhớ",self.font,shot.scene_id)
         text = shot.spec.text_overlay or next(s.spec.narration for s in self.timeline.scenes if s.spec.id == shot.scene_id)
         if key not in self.cache:
             while len(self.cache) >= 2:
@@ -114,9 +139,10 @@ class Frames:
     def graphic_frame(self,shot,key,visual,frame,local):
         if key not in self.cards:
             if len(self.cards)>=2: self.cards.popitem(last=False)
-            self.cards[key]=Card(visual.template,visual.data,shot.duration,self.size,self.theme)
+            from editor.templates.core import NAMES
+            self.cards[key]=Card(visual.template if visual.template in NAMES else "text_focus",visual.data,shot.duration,self.size,self.theme)
         card=self.cards[key]
-        if shot.fallback:
+        if shot.fallback or frame is None:
             return card.frame(local)
         # Stock is a supporting, darkened moving background, never foreground.
         base=cover(frame,self.size,"zoom_in",local/shot.duration)
@@ -137,7 +163,7 @@ class Frames:
         return frame
 
 
-def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostics=None):
+def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostics=None,scene_id=None,force_scene=None):
     if mode not in {"preview","final"}:
         raise ValueError("Chế độ phải là preview hoặc final.")
     settings = settings or get_settings()
@@ -149,49 +175,103 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
     try:
         notify(.01,"Đang kiểm tra audio và timeline")
         timeline = build_timeline(Path(plan_path))
+        if settings.motion_enabled:
+            from editor.motion.source import ensure_source_slot
+            ensure_source_slot(timeline)
         prepare_graphics(timeline,diagnostics)
+        if scene_id is not None:
+            selected=next((s for s in timeline.scenes if s.spec.id==scene_id),None)
+            if selected is None: raise ValueError(f"Không có cảnh {scene_id} trong project.")
+            origin=selected.start
+            for shot in selected.shots: shot.start-=origin
+            selected.start=0.;timeline.scenes=[selected];timeline.duration=selected.duration
+        suffix=f"_scene_{scene_id}" if scene_id is not None else ""
         render_dir = confined(timeline.project,"render")
         render_dir.mkdir(exist_ok=True)
         # Avoid simultaneous CLI/UI writers for this project; inputs never locked/modified.
         with file_lock(render_dir/"editor.lock"):
             portrait = timeline.plan.format == "tiktok"
-            size = ((540,960) if portrait else (960,540)) if mode == "preview" else ((1080,1920) if portrait else (1920,1080))
+            full=(settings.render_width,settings.render_height) if portrait else (settings.render_height,settings.render_width)
+            scale=settings.motion_scale if settings.motion_enabled and mode=="preview" else .5 if mode=="preview" else 1.
+            size=tuple(max(2,round(n*scale/2)*2) for n in full)
             font = find_font(settings.root_dir)
             theme=load_theme(timeline.plan.render_style.theme,settings.root_dir)
             captions = Captions(timeline,size,font)
             frames = Frames(timeline,size,font,diagnostics,theme)
+            motion_results=[]
+            if settings.motion_enabled and timeline.plan.render_style.visual_templates:
+                from pipeline.motion_batch import render_batch
+                motion_results=render_batch(timeline,render_dir/"motion_cache",size,font,settings,diagnostics,notify,force_scene=force_scene)
+                frames.motion_paths={r["scene_id"]:r["path"] for r in motion_results}
+                write_json(render_dir/("motion_plan"+suffix+".json"),timeline.plan.model_dump(mode="json"))
+                from editor.motion.sfx import ensure_sfx
+                ensure_sfx(settings.root_dir/"assets/sfx")
             tracker=ProgressTracker(timeline,size,theme)
-            notify(.05,"Đang chuẩn hóa giọng đọc và trộn nhạc")
-            audio,music = build_audio(timeline,settings.root_dir/"assets",resources)
+            notify(.68 if settings.motion_enabled else .05,"Đang chuẩn hóa giọng đọc và trộn nhạc")
+            audio,music = build_audio(timeline,settings.root_dir/"assets",resources,motion=settings.motion_enabled)
             resources.append(audio)
             fps=15 if mode=="preview" else 30
-            video = VideoClip(lambda t: tracker.apply(captions.apply(frames.at(t),t),t),duration=timeline.duration).with_audio(audio).with_fps(fps)
-            filename = f"{slugify(timeline.plan.title)}_{timeline.plan.format}_{mode}.mp4"
+            if settings.motion_enabled: fps=settings.motion_fps
+            def composite(t):
+                scene=next((s for s in timeline.scenes if t<s.start+s.duration),timeline.scenes[-1])
+                frame=frames.at(t)
+                if scene.spec.id not in frames.motion_paths:
+                    frame=captions.apply(frame,t)
+                    return tracker.apply(frame,t)
+                return frame  # HTML already includes its own caption/progress layers.
+            filename = f"{slugify(timeline.plan.title)}_{timeline.plan.format}{suffix}_{mode}.mp4"
             destination = confined(render_dir,filename)
             temporary = confined(render_dir,f".{uuid.uuid4().hex}.mp4")
             temp_audio = confined(render_dir,f".{uuid.uuid4().hex}.m4a")
             try:
-                video.write_videofile(str(temporary),fps=fps,codec="libx264",audio_codec="aac",
-                    audio_bitrate="192k",preset="ultrafast" if mode == "preview" else "medium",
-                    threads=min(8,os.cpu_count() or 2),temp_audiofile=str(temp_audio),
-                    ffmpeg_params=["-crf","27" if mode == "preview" else "20","-movflags","+faststart"],
-                    pixel_format="yuv420p",logger=RenderProgress(notify))
+                fast_motion=bool(motion_results and len(motion_results)==len(timeline.scenes))
+                if fast_motion:
+                    from editor.motion.finish import mux_scenes
+                    mux_scenes(motion_results,timeline,audio,temporary,render_dir,fps,mode,notify)
+                else:
+                    video = VideoClip(composite,duration=timeline.duration).with_audio(audio).with_fps(fps)
+                    video.write_videofile(str(temporary),fps=fps,codec="libx264",audio_codec="aac",
+                        audio_bitrate="192k",preset="ultrafast" if mode == "preview" else "medium",
+                        threads=min(8,os.cpu_count() or 2),temp_audiofile=str(temp_audio),
+                        ffmpeg_params=["-crf","27" if mode == "preview" else "20","-movflags","+faststart"],
+                        pixel_format="yuv420p",logger=RenderProgress((lambda value,message:notify(.65+.35*value,message)) if settings.motion_enabled else notify))
                 replace_file_retry(temporary, destination)
             finally:
                 discard_temp_file(temp_audio)
             original_credits = confined(timeline.project,"credits.txt")
             credits = original_credits.read_text(encoding="utf-8") if original_credits.is_file() else "Chưa có credits.txt của Assets.\n"
             credits += f"\n--- Render ---\nFont: {font.name}\nNhạc nền: {music.name if music else 'Không sử dụng'}\n"
+            ai_used=sum(r.get('ai_background_count',0) for r in motion_results)
+            if ai_used: credits+='\nNội dung có hình AI — nền minh họa tạo bằng Hinton gateway, không phải hình ảnh chứng cứ của sự kiện.\n'
             write_text_atomic(confined(render_dir,"credits.txt"), credits)
             result = {"path":str(destination),"filename":filename,"mode":mode,"duration_sec":timeline.duration,
                 "width":size[0],"height":size[1],"fps":fps,"size_bytes":destination.stat().st_size,
                 "render_seconds":round(time.perf_counter()-started,3),"warnings":timeline.warnings,
                 "caption_timing":"Word sidecar nếu hợp lệ; còn lại ước lượng theo số ký tự"}
-            write_json(confined(render_dir,f"{mode}.json"),result)
+            result.update(ai_backgrounds_used=ai_used,description='Nội dung có hình AI' if ai_used else '')
+            if settings.motion_enabled:
+                from editor.motion.finish import save_review
+                quality=save_review(timeline,motion_results,destination,scene_id=scene_id)
+                result.update(motion_enabled=True,motion_scenes=motion_results,motion_scale=scale,motion_workers=settings.motion_workers,
+                    mascot_enabled=settings.mascot_enabled,motion_theme=settings.motion_theme,fast_motion_mux=fast_motion,
+                    contact_sheet=quality["contact_sheet"],review_notes=quality["review_notes"],warnings=timeline.warnings)
+            if scene_id is not None: result["scene_id"]=scene_id
+            try:
+                from editor.quality import save_quality
+                qc=save_quality(timeline,motion_results,destination,scene_id=scene_id)
+                result.update(quality_report=str(timeline.project/("quality_report"+suffix+".json")),quality_summary={k:qc[k] for k in ('template_types','template_counts','warning_count','deferred_dom_samples')},contact_sheet=qc['contact_sheet'])
+                for key in ('repeated_cards','still_intervals_over_3_5_sec','empty_cards_over_40_percent','text_overflow','numbers_not_in_narration','caption_gaps_over_0_6_sec'):
+                    if qc[key]: timeline.warnings.append(f'[visual_quality, nhóm 3] {key}: {len(qc[key])}; xem quality_report{suffix}.json.')
+            except Exception as error:
+                diagnostics.record_exception(error,'QC nhóm 3 sau Render; giữ MP4 đã dựng')
+                timeline.warnings.append('QC nhóm 3 chưa hoàn tất; MP4 vẫn có, xem render_errors.log.')
+            result['total_seconds']=round(time.perf_counter()-started,3)
+            write_json(confined(render_dir,f"{mode}{suffix}.json"),result)
             reviews=getattr(timeline,"visual_review",[])
             write_json(confined(render_dir,"visual_review.json"),{"shots":reviews,"warnings":timeline.warnings})
             write_text_atomic(confined(render_dir,"report.md"),"# Kiểm tra đồ họa khi Render\n\n"+
-                "\n".join(f"- {message}" for message in timeline.warnings)+"\n\nĐầu vào Edit Plan, audio, clips và credits được giữ nguyên.\n")
+                "\n".join(f"- {message}" for message in timeline.warnings)+"\n\n## Motion review_notes\n\n"+
+                "\n".join("- "+n for n in result.get("review_notes",[]))+"\n\nĐầu vào Edit Plan, audio, clips và credits được giữ nguyên.\n")
             notify(1.,"Render hoàn tất")
             return result
     except Exception as error:
@@ -219,9 +299,17 @@ def main():
     modes.add_argument("--preview",action="store_true")
     modes.add_argument("--final",action="store_true")
     parser.add_argument("--debug",action="store_true")
+    parser.add_argument("--scene",type=int)
+    parser.add_argument("--force-scene",type=int)
+    parser.add_argument("--motion",action="store_true")
+    parser.add_argument("--scale",type=float,choices=[.25,.5,1.])
     args = parser.parse_args()
     try:
         settings = get_settings()
+        options={}
+        if args.motion: options["motion_enabled"]=True
+        if args.scale is not None: options["motion_scale"]=args.scale
+        if options: settings=settings.model_copy(update=options)
     except Exception:
         print("Cấu hình không hợp lệ. Kiểm tra kiểu và khoảng giá trị theo .env.example; không in nội dung cấu hình.")
         raise SystemExit(1) from None
@@ -233,7 +321,8 @@ def main():
             print(f"{percent:3d}% · {message}",flush=True)
             last[0] = percent
     try:
-        result = run_render(args.plan,mode="final" if args.final else args.mode,settings=settings,diagnostics=diagnostics,progress=progress)
+        result = run_render(args.plan,mode="final" if args.final else args.mode,settings=settings,diagnostics=diagnostics,progress=progress,
+            scene_id=args.scene,force_scene=args.force_scene)
         print(f"Đã lưu: {result['path']}\nThời lượng: {result['duration_sec']:.2f}s · {result['width']}x{result['height']} · Render: {result['render_seconds']:.1f}s")
         for warning in result["warnings"]:
             print(diagnostics.redact(warning))

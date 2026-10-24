@@ -69,8 +69,8 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
                         report_error(error,diagnostics,project)
                         st.error(diagnostics.redact(str(error)))
     kinds, formats = ["news", "review", "story"], ["tiktok", "youtube"]
-    model_ready = bool(settings.gemini_api_key.get_secret_value().strip() and
-                       (settings.gemini_director_model.strip() or settings.gemini_model.strip()))
+    from providers.llm.router import route_ready
+    model_ready = route_ready(settings,"director")
     with st.form(f"director_generate_{scope}"):
         video_type = st.selectbox("Loại video", kinds, index=kinds.index(existing.video_type) if existing and existing.video_type in kinds else 1)
         video_format = st.selectbox("Khổ video", formats, index=formats.index(existing.format) if existing else 0,
@@ -205,6 +205,8 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
                 if scene.get("pronunciation_hint"):
                     st.caption("Gợi ý phát âm (ghi chú biên tập): "+scene["pronunciation_hint"])
                 rows = [{field: shot[field] for field in ("type", "query", "duration_sec", "effect", "text_overlay")} for shot in scene["shots"]]
+                for row,shot in zip(rows,scene["shots"]):
+                    row.update(card_text=shot.get("card_text") or "",emphasis=" ".join(shot.get("emphasis") or []))
                 for k,shot in enumerate(scene["shots"],1):
                     if shot.get("visual"):
                         with st.expander(f"Mẫu đồ họa shot {k}: {shot['visual']['template']}"):
@@ -212,12 +214,16 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
                 edited = st.data_editor(rows, hide_index=True, num_rows="fixed",
                     disabled=["type", "duration_sec"],
                     column_config={"type": "Loại shot", "query": st.column_config.TextColumn("Từ khóa b-roll (sửa tại đây)", required=True),
-                                   "duration_sec": "Giây", "effect": "Hiệu ứng", "text_overlay": "Chữ trên hình"},
+                                   "duration_sec": "Giây", "effect": "Hiệu ứng", "text_overlay": "Chữ trên hình",
+                                   "card_text":"Thẻ (3–6 từ)","emphasis":"Nhấn mạnh (1–2 từ)"},
                     key=f"shots_{scope}_{revision}_{scene['id']}")
                 for shot, row in zip(scene["shots"], edited):
+                    old_overlay=shot["text_overlay"]
                     shot["query"] = row["query"]
                     shot["effect"] = row["effect"]
                     shot["text_overlay"] = row["text_overlay"]
+                    shot["card_text"]=(row["text_overlay"] if row["text_overlay"] and row["text_overlay"]!=old_overlay else row.get("card_text")) or None
+                    shot["emphasis"]=(row.get("emphasis") or "").split()[:2]
                 st.caption(f"Chuyển cảnh: {scene['transition_out']} · SFX: {scene['sfx']} · Pattern interrupt: {'Có' if scene['pattern_interrupt'] else 'Không'}")
                 st.markdown("**Ghi chú kiểm chứng · chỉ dành cho biên tập**")
                 try:

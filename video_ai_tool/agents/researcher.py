@@ -10,7 +10,8 @@ from typing import Callable
 from pydantic import ValidationError
 from config.settings import Settings, get_settings
 from providers.llm_base import LLMProvider, ProviderError
-from providers.llm_gemini import GeminiOutputError, GeminiProvider
+from providers.llm.base import GeminiOutputError
+from providers.llm.router import provider_for_step, require_route, add_provider_notes
 from schemas.research_brief import ResearchBrief, TrendInsights
 from schemas.source import SourceDocument
 from agents.trend_insights import summarize_trends
@@ -167,7 +168,8 @@ def validate_depth(brief,sources):
 def create_brief(topic: str, sources: list[SourceDocument], provider: LLMProvider,
                  settings: Settings, cache: JsonCache, warnings: list[str] | None = None,
                  progress: Callable[[str], None] | None = None,
-                 diagnostics: Diagnostics | None = None, grounding_report: dict | None = None) -> ResearchBrief:
+                 diagnostics: Diagnostics | None = None, grounding_report: dict | None = None,
+                 discovery_hint=None) -> ResearchBrief:
     topic = clean_text(topic)
     if not topic or len(topic) > 500:
         raise ResearchError("Chủ đề phải có 1–500 ký tự.")
@@ -183,6 +185,12 @@ def create_brief(topic: str, sources: list[SourceDocument], provider: LLMProvide
     fingerprint_sources = [{k: v for k, v in row.items() if k != "retrieved_at"} for row in source_data]
     inputs = {"topic": topic, "sources": fingerprint_sources, "model": provider.model_name,
               "prompt_hash": cache_key(prompt_template), "warnings": warnings, "schema_version": 5}
+    hint_data=None
+    if discovery_hint is not None:
+        from schemas.topic_discovery import DiscoveryHint
+        hint=DiscoveryHint.model_validate(discovery_hint)
+        hint_data={"topic":hint.suggestion.topic,"why_hot":hint.suggestion.why_now,"angle":hint.suggestion.angle}
+        inputs["topic_inspiration_only"]=hint_data
     cached = cache.get("research-brief-v3", inputs)
     if isinstance(cached, dict):
         try:
@@ -200,7 +208,11 @@ def create_brief(topic: str, sources: list[SourceDocument], provider: LLMProvide
             # Cache cũ/hỏng không được đi qua mà bỏ validate.
             pass
     payload = json.dumps({"topic": topic, "language": "vi", "sources": source_data,
-                          "collection_warnings": warnings}, ensure_ascii=False)
+                          "collection_warnings": warnings, **({"topic_inspiration_only":hint_data} if hint_data else {})}, ensure_ascii=False)
+    if hint_data:
+        prompt_template += ("\nTOPIC_INSPIRATION_ONLY chỉ là gợi ý chủ đề/góc kể từ metadata xu hướng, không phải bằng chứng. "
+                            "Không lấy số view, nội dung TikTok/YouTube hay why_hot làm fact. Mọi fact/source_url/evidence_quote "
+                            "chỉ lấy từ danh sách sources web gốc đã cung cấp; thiếu bằng chứng thì bỏ fact.\n")
     prompt = prompt_template + "\nINPUT_DATA_JSON:\n" + payload
     feedback = ""
     last_error = None
@@ -261,14 +273,13 @@ def run_research(topic: str, settings: Settings, *, web_limit: int = 6, youtube_
     if not topic or len(topic) > 500:
         raise ResearchError("Chủ đề phải có 1–500 ký tự.")
     # Kiểm tra cấu hình bắt buộc trước khi tiêu tốn quota nguồn.
-    settings.require_key("gemini")
-    settings.require_gemini_model()
+    require_route(settings,"researcher")
     settings.ensure_directories()
     cache = JsonCache(settings.cache_dir, settings.cache_ttl_sec)
     if not 1 <= web_limit <= 12:
         raise ValueError("Số nguồn web phải từ 1 đến 12.")
     progress("Gemini đang sinh truy vấn tự nhiên cho từng ngôn ngữ nguồn…")
-    provider = GeminiProvider(settings)
+    provider = provider_for_step(settings,"researcher")
     if hasattr(provider,"progress"):
         provider.progress=progress
     diagnostics = Diagnostics(settings.logs_dir, debug=debug)
@@ -368,7 +379,7 @@ def run_research(topic: str, settings: Settings, *, web_limit: int = 6, youtube_
         initial_error=None
         try:
             brief = create_brief(topic, sources, provider, settings, cache, warnings, progress,
-                                 diagnostics=diagnostics, grounding_report=grounding_report)
+                                 diagnostics=diagnostics, grounding_report=grounding_report,discovery_hint=discovery_hint)
         except NoResearchDataError as error:
             brief=None;initial_error=error
         from agents.research_expansion import thin_research,expand_sources_once,merge_grounded_briefs
@@ -381,7 +392,7 @@ def run_research(topic: str, settings: Settings, *, web_limit: int = 6, youtube_
                 try:
                     extra_report={}
                     base_report=dict(grounding_report)
-                    expanded=create_brief(topic,sources,provider,settings,cache,warnings,progress,diagnostics=diagnostics,grounding_report=extra_report)
+                    expanded=create_brief(topic,sources,provider,settings,cache,warnings,progress,diagnostics=diagnostics,grounding_report=extra_report,discovery_hint=discovery_hint)
                     brief=merge_grounded_briefs(brief,expanded)
                     grounding_report.update(extra_report)
                     grounding_report["kept"]=len(brief.facts)
@@ -423,6 +434,7 @@ def run_research(topic: str, settings: Settings, *, web_limit: int = 6, youtube_
             except Exception as error:
                 diagnostics.record_exception(error, "YouTube trends là phần tùy chọn; giữ Research facts")
                 warnings.append("Không lấy được YouTube trends; giữ nguyên facts từ web và tiếp tục Research.")
+        add_provider_notes(brief,provider)
         brief.risks = list(dict.fromkeys(brief.risks + warnings))
     finally:
         provider.close()

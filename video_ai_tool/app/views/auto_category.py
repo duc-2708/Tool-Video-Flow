@@ -1,5 +1,6 @@
 """One button: category -> discover -> existing verified video pipeline."""
 from pathlib import Path
+from providers.llm.router import route_ready
 import streamlit as st
 from app.style_controls import select_style
 from config.categories import categories_for
@@ -43,7 +44,7 @@ def render(settings,project,topic,debug,diagnostics):
         confirmed=st.checkbox("Tôi xác nhận chi phí trước khi bắt đầu",key=f"auto_ai_confirm_{count}_{settings.gateway_video_model}_{settings.ai_clip_seconds}_{st.session_state.get('auto_ai_nonce',0)}")
     params=dict(category=category,region=region,time_window_days=days,duration=duration,format=format_name,creative_license=creative,
         style=style,style_preset=style_preset,review=mode!="Tự động hoàn toàn",use_youtube=youtube,ai_clips=int(count),ai_confirmed=confirmed,content_mode="explainer_v2" if explainer_v2 else "event_only")
-    ready=bool(settings.gemini_api_key.get_secret_value().strip() and settings.gemini_model.strip() and
+    ready=bool(route_ready(settings,"researcher") and route_ready(settings,"director") and
         (not ai or confirmed and settings.gateway_api_key.get_secret_value().strip()))
     if st.button("Tạo video",type="primary",width="stretch",disabled=bool(active) or not ready,key="auto_start"):
         st.session_state["auto_worker"]=manager.submit_auto(params,settings)

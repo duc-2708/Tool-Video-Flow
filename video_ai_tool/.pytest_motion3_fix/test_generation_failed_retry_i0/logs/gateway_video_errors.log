@@ -1,0 +1,98 @@
+
+[2026-10-24T02:37:19.646657+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A closed plain laptop rests on a wooden desk, soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:19.657486+00:00] {"event": "submit_response", "request": {"model": "veo-3.1", "prompt": "A closed plain laptop rests on a wooden desk, soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": "first_remote", "response": {"id": "first_remote"}}
+
+[2026-10-24T02:37:19.692443+00:00] {"event": "generation_error", "remote_id": "first_remote", "request": {"model": "veo-3.1", "prompt": "A closed plain laptop rests on a wooden desk, soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"status": "failed", "error": {"code": "generation_failed", "message": "Provider failed [REDACTED]", "details": {"reason": "safety_or_upstream", "nested": [1, 2, 3]}}}}
+
+[2026-10-24T02:37:19.705486+00:00] Tiếp tục job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Provider failed [REDACTED]', 'details': {'reason': 'safety_or_upstream', 'nested': [1, 2, 3]}}
+
+
+[2026-10-24T02:37:19.797587+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A lens rests indoors, soft light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:19.810535+00:00] {"event": "submit_response", "request": {"model": "veo-3.1", "prompt": "A lens rests indoors, soft light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": "second_remote", "response": {"id": "second_remote"}}
+
+[2026-10-24T02:37:19.850231+00:00] {"event": "generation_error", "remote_id": "second_remote", "request": {"model": "veo-3.1", "prompt": "A lens rests indoors, soft light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"status": "failed", "error": {"code": "generation_failed", "message": "Provider failed [REDACTED]", "details": {"reason": "safety_or_upstream", "nested": [1, 2, 3]}}}}
+
+[2026-10-24T02:37:19.867725+00:00] Tiếp tục job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Provider failed [REDACTED]', 'details': {'reason': 'safety_or_upstream', 'nested': [1, 2, 3]}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Provider failed [REDACTED]', 'details': {'reason': 'safety_or_upstream', 'nested': [1, 2, 3]}}
+
+
+[2026-10-24T02:37:19.882083+00:00] Clip AI đã dùng hết một lần thử lại
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Provider failed [REDACTED]', 'details': {'reason': 'safety_or_upstream', 'nested': [1, 2, 3]}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 288, in resume_job
+    result = _resume_job_once(retry_path,settings,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Provider failed [REDACTED]', 'details': {'reason': 'safety_or_upstream', 'nested': [1, 2, 3]}}
+
+
+[2026-10-24T02:37:19.911369+00:00] {"event": "generation_error", "remote_id": "first_remote", "request": {"model": "veo-3.1", "prompt": "A closed plain laptop rests on a wooden desk, soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"status": "failed", "error": {"code": "generation_failed", "message": "Provider failed [REDACTED]", "details": {"reason": "safety_or_upstream", "nested": [1, 2, 3]}}}}
+
+[2026-10-24T02:37:19.929403+00:00] Tiếp tục job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Provider failed [REDACTED]', 'details': {'reason': 'safety_or_upstream', 'nested': [1, 2, 3]}}
+
+
+[2026-10-24T02:37:19.991390+00:00] {"event": "generation_error", "remote_id": "second_remote", "request": {"model": "veo-3.1", "prompt": "A lens rests indoors, soft light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"status": "failed", "error": {"code": "generation_failed", "message": "Provider failed [REDACTED]", "details": {"reason": "safety_or_upstream", "nested": [1, 2, 3]}}}}
+
+[2026-10-24T02:37:20.007240+00:00] Tiếp tục job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Provider failed [REDACTED]', 'details': {'reason': 'safety_or_upstream', 'nested': [1, 2, 3]}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Provider failed [REDACTED]', 'details': {'reason': 'safety_or_upstream', 'nested': [1, 2, 3]}}
+
+
+[2026-10-24T02:37:20.029878+00:00] Clip AI đã dùng hết một lần thử lại
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Provider failed [REDACTED]', 'details': {'reason': 'safety_or_upstream', 'nested': [1, 2, 3]}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 288, in resume_job
+    result = _resume_job_once(retry_path,settings,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'Provider failed [REDACTED]', 'details': {'reason': 'safety_or_upstream', 'nested': [1, 2, 3]}}
+

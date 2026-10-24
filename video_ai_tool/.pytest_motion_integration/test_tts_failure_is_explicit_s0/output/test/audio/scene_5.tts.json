@@ -1,0 +1,8 @@
+{
+  "audio_silent": true,
+  "audio_error": "TTS lỗi ở cảnh 5: TimeoutError: Fixture network timeout",
+  "voice_used": null,
+  "warnings": [
+    "cảnh 5 không có giọng đọc: TTS lỗi; dùng im lặng và caption. Chạy lại riêng audio cảnh 5 trong Assets."
+  ]
+}

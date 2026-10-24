@@ -1,0 +1,2070 @@
+{
+  "content_mode": "explainer_v2",
+  "explainer_outline": {
+    "angle": "Kỷ nguyên tấn công mạng hỗ trợ bởi AI và chiến dịch Black October năm 2026",
+    "hook": "Tháng mười năm 2026, thuật ngữ 'Black October' chấn động cộng đồng an ninh mạng.",
+    "open_loop": "",
+    "payoff": "",
+    "beats": [
+      {
+        "id": 1,
+        "kind": "cause",
+        "idea": "Sự xuất hiện của chiến dịch Black October với hàng loạt lỗ hổng phần mềm.",
+        "new_information": "Vào tháng 10 năm 2026, thuật ngữ 'Black October' lan truyền trong cộng đồng công nghệ và an ninh mạng để chỉ một loạt các lỗ hổng phần mềm nghiêm trọng.",
+        "fact_ids": [
+          1
+        ]
+      },
+      {
+        "id": 2,
+        "kind": "mechanism",
+        "idea": "Cơ chế tự động hóa tìm kiếm lỗ hổng nhờ trí tuệ nhân tạo.",
+        "new_information": "Hệ thống AI cho phép quét và khai thác các điểm yếu trong hệ thống với tốc độ vượt trội giống như việc dùng máy quét vạn năng thử mọi ổ khóa cùng lúc.",
+        "fact_ids": [
+          2
+        ]
+      },
+      {
+        "id": 3,
+        "kind": "example",
+        "idea": "Mối đe dọa thực tế nhắm vào hạ tầng trọng yếu.",
+        "new_information": "Các cơ quan liên bang Mỹ từng cảnh báo tác nhân mạng đang nhắm vào các bộ điều khiển công nghiệp Siemens S7 series dựa trên các tập lệnh khai thác do AI tạo ra.",
+        "fact_ids": [
+          6
+        ]
+      },
+      {
+        "id": 4,
+        "kind": "comparison",
+        "idea": "Sự khác biệt giữa phòng thủ truyền thống và nguy cơ AI mới.",
+        "new_information": "Hệ thống phòng thủ cũ dựa trên danh sách mã độc quen thuộc dễ bị bỏ sót trước các biến thể mới do AI tự sinh ra liên tục.",
+        "fact_ids": [
+          4
+        ]
+      },
+      {
+        "id": 5,
+        "kind": "counterpoint",
+        "idea": "Nguy cơ nội bộ từ việc sử dụng AI không kiểm soát.",
+        "new_information": "Đa số người dùng cá nhân tại nơi làm việc vẫn dễ dãi sử dụng các công cụ AI chưa được phê duyệt, vô tình tạo ra khoảng trống bảo mật.",
+        "fact_ids": [
+          5
+        ]
+      },
+      {
+        "id": 6,
+        "kind": "consequence",
+        "idea": "Lời cảnh tỉnh chung cho toàn bộ ngành công nghệ.",
+        "new_information": "Hơn một trăm công ty công nghệ đã phải lên tiếng cảnh báo rằng các cuộc tấn công mạng nhắm vào bệnh viện và hạ tầng điện không còn là rủi ro xa xôi.",
+        "fact_ids": [
+          3
+        ]
+      }
+    ]
+  },
+  "script_critic": {
+    "explanation": 3,
+    "novelty": 4,
+    "hook": 4,
+    "open_loop": 5,
+    "naturalness": 4,
+    "comments": [
+      "The script explains the mechanism of AI hacking reasonably well using the master key analogy.",
+      "Each scene introduces a distinct point keeping novelty high.",
+      "The hook uses a strong timeline and topic name to grab attention.",
+      "The open loop question at the end ties directly into the payoff.",
+      "Code · cảnh 3: Beat chỉ kể lại tin; thêm cơ chế/ví dụ/ẩn dụ/mặt trái mới, không lặp số liệu.",
+      "Code · cảnh 5: Beat chỉ kể lại tin; thêm cơ chế/ví dụ/ẩn dụ/mặt trái mới, không lặp số liệu.",
+      "Code · cảnh 6: Beat chỉ kể lại tin; thêm cơ chế/ví dụ/ẩn dụ/mặt trái mới, không lặp số liệu."
+    ],
+    "weak_scenes": [
+      {
+        "scene_id": 5,
+        "reason": "Scene 5 relies mostly on stating the survey statistic without deeply unpacking the broader systemic mechanism."
+      }
+    ]
+  },
+  "content_timed": true,
+  "style_preset": "@category:cong-nghe",
+  "style_profile": {
+    "version": 1,
+    "name": "công nghệ",
+    "slug": "@category:cong-nghe",
+    "reference_hashes": [
+      "3f4c15b2a0d19cc035407d3f82018c9abf00a727867ae9e796c4370a522ada30",
+      "0177397debc50e2f0dd76dbdaa1c6cd452b6ca77a63fbe3431a79a4a83dc8f75",
+      "e3e64da8b98dae29055873674cea3821497d2b39616cf76c4fcf4504bf94c2ff"
+    ],
+    "reference_files": [
+      "cong-nghe/cong_nghe_1.mp4",
+      "cong-nghe/cong_nghe_2.mp4",
+      "cong-nghe/cong_nghe_4.mp4"
+    ],
+    "reference_texts": [
+      "Giới thiệu file prompt AI với số sao khủng",
+      "So sánh agent rườm rà và sự tối giản",
+      "Câu chuyện phong cách làm việc tối giản",
+      "Thang 7 bước kiểm tra trước khi viết code",
+      "Đánh giá tính năng, bảo mật và cài đặt",
+      "Bóc mẽ số liệu, đánh giá bên thứ ba và kết luận",
+      "Giới thiệu framework FAST tạo AI agent",
+      "Bước F: Cài đặt công cụ AI agent",
+      "Bước A: Kết nối công cụ với agent",
+      "Bước S và T: Giao nhiệm vụ và đóng gói skill tự động",
+      "Nhiều người dùng không hiểu hai thanh hạn mức.",
+      "Giải thích 5-hour limit và các yếu tố ảnh hưởng.",
+      "So sánh 5-hour limit và weekly limit qua hình ảnh chai và bình nước.",
+      "So sánh hạn mức của các gói Pro, Max 5x, Max 20x.",
+      "Quy đổi hạn mức sử dụng ra giá API theo ước lượng cộng đồng.",
+      "Lưu ý về sự biến động của hạn mức và tóm tắt toàn bộ.",
+      "Giới thiệu file prompt AI với số sao khủng nhưng bất ngờ về độ ngắn.",
+      "So sánh cách giải quyết rườm rà của agent thông thường với sự tối giản.",
+      "Kể câu chuyện về phong cách làm việc tối giản và hiệu quả.",
+      "Đưa ra thang 7 bước kiểm tra trước khi để AI viết code.",
+      "Đánh giá các tính năng bảo mật, cách cài đặt và phản ứng cộng đồng.",
+      "Bóc mẽ số liệu benchmark, đánh giá từ bên thứ ba và kết luận.",
+      "Giới thiệu cách tạo AI agent cực kỳ đơn giản với framework FAST.",
+      "Giải thích chữ F trong FAST là cài đặt công cụ AI agent trên máy.",
+      "Giải thích chữ A là kết nối công cụ như Gmail cho agent.",
+      "Giải thích chữ S (giao nhiệm vụ) và chữ T (đóng gói thành skill tự chạy).",
+      "Nhiều người dùng {topic} lâu năm nhưng vẫn chưa hiểu rõ hai thanh hạn mức.",
+      "Giải thích 5-hour limit và các yếu tố làm tụt nhanh hạn mức.",
+      "So sánh 5-hour limit như chai nước nhỏ và weekly limit như bình nước lớn.",
+      "So sánh 3 gói phổ biến Pro, Max 5x và Max 20x.",
+      "Cộng đồng quy đổi hạn mức ra giá API ước lượng cho từng gói.",
+      "Nhấn mạnh hạn mức không phải con số cố định và tóm tắt lại các điểm chính."
+    ],
+    "hook_templates": [
+      "Cách tạo {topic} cho bất kỳ công việc nào của bạn cực kỳ đơn giản",
+      "Một file prompt {topic} viết code lười đi",
+      "Nhiều người dùng {topic} lâu năm nhưng vẫn chưa hiểu rõ..."
+    ],
+    "hook_techniques": [
+      "con số bất ngờ",
+      "câu hỏi / tuyên bố giá trị",
+      "phản bác hiểu lầm"
+    ],
+    "structure": [
+      {
+        "name": "Hook",
+        "fraction": 0.040126823459214145
+      },
+      {
+        "name": "Giải thích",
+        "fraction": 0.08860835949085351
+      },
+      {
+        "name": "Ví dụ",
+        "fraction": 0.08660888453065231
+      },
+      {
+        "name": "Phân tích",
+        "fraction": 0.17717102714075175
+      },
+      {
+        "name": "Đánh giá",
+        "fraction": 0.3056784159905376
+      },
+      {
+        "name": "Cao trào & Kết",
+        "fraction": 0.30180648938799076
+      }
+    ],
+    "shot_seconds": {
+      "mean": 4.58,
+      "minimum": 2.74,
+      "maximum": 7.5
+    },
+    "speech_words_per_sec": {
+      "mean": 3.0,
+      "minimum": 2.8,
+      "maximum": 3.2
+    },
+    "narration_rules": [
+      "Câu hỏi tu từ: Có",
+      "Câu hỏi tu từ: không dùng",
+      "Câu hỏi tu từ: Thứ này có cần tồn tại không?",
+      "Cảm xúc giọng: giải thích, hào hứng",
+      "Cảm xúc giọng: Hóm hỉnh, cuốn hút",
+      "Cảm xúc giọng: tự tin, chuyên nghiệp",
+      "Mức hài hước: Cao, châm biếm nhẹ nhàng",
+      "Mức hài hước: thấp",
+      "Mức hài hước: vừa phải",
+      "Mức thân mật: thân mật",
+      "Mức thân mật: thân mật, hài hước",
+      "Mức thân mật: thân thiện, gần gũi",
+      "Xưng hô: anh em/mình",
+      "Xưng hô: Bạn/Mình/Ông anh",
+      "Xưng hô: bạn/nhiều ông",
+      "Câu dài trung bình khoảng {number} từ; xen câu ngắn và dài theo ý."
+    ],
+    "broll_patterns": [
+      "animated graphics",
+      "animation",
+      "avatar mascot",
+      "hoạt hình vẽ tay trên nền lưới",
+      "screen recording",
+      "text"
+    ],
+    "visual_effects": [
+      "zoom",
+      "pan"
+    ],
+    "transitions": [
+      "cut",
+      "cắt cảnh nhanh",
+      "fade",
+      "slide"
+    ],
+    "captions": {
+      "analysis_warnings": [],
+      "enabled": true,
+      "mode": "phrase",
+      "font_description": "Bold sans-serif",
+      "font_scale": 0.05,
+      "color": "#FFFFFF",
+      "highlight_color": "#00FF00",
+      "stroke_color": "#000000",
+      "color_note": "",
+      "stroke_width_ratio": 0.005,
+      "position": "lower",
+      "emphasis": "Màu sắc nổi bật theo từ khóa",
+      "shadow": "Có"
+    },
+    "audio": {
+      "analysis_warnings": [],
+      "mood": "Hứng khởi, công nghệ",
+      "music_volume": 0.16666666666666666,
+      "sfx_types": [
+        "click",
+        "pop",
+        "success chime",
+        "tiếng pop",
+        "tiếng viết bút",
+        "whoosh"
+      ],
+      "sfx_per_10_sec": 2.0,
+      "sfx_positions": [
+        0.0,
+        8.0,
+        26.0,
+        43.0,
+        59.0,
+        119.0
+      ],
+      "ducking": true,
+      "details": "Âm thanh rõ ràng, nhạc nền nhịp nhàng ăn khớp với chuyển động"
+    },
+    "ending_techniques": [
+      "nhận định tổng kết",
+      "yêu cầu bình luận để nhận tài liệu",
+      "Đặt câu hỏi tương tác với người xem"
+    ],
+    "reusable_rules": [
+      "Bắt đầu video bằng việc chỉ ra một hiểu lầm phổ biến của số đông.",
+      "Chia nhỏ các gói cước phức tạp thành biểu đồ cột trực quan để so sánh nhanh.",
+      "Chia nhỏ hướng dẫn thành các bước trực quan trên màn hình",
+      "Chia nội dung thành các bước hoặc tiêu chuẩn rõ ràng",
+      "Dùng hoạt hình minh họa thay vì chỉ có chữ",
+      "Kết hợp avatar hoạt hình hướng dẫn để tăng sinh động",
+      "Kết hợp hiệu ứng viết tay và tiếng động (SFX) đồng bộ với chuyển động thị giác.",
+      "Kết hợp hài hước châm biếm để tăng tương tác",
+      "Sử dụng con số gây sốc ngay {number} giây đầu",
+      "Sử dụng hình ảnh ẩn dụ (như bình nước/chai nước) để giải thích định mức trừu tượng.",
+      "Sử dụng từ viết tắt dễ nhớ làm khung sườn nội dung",
+      "Đưa ra câu hỏi mở ở cuối video để kêu gọi bình luận",
+      "Đặt câu hỏi kêu gọi hành động cụ thể ở cuối video"
+    ],
+    "rule_frequencies": [
+      {
+        "rule": "Bắt đầu video bằng việc chỉ ra một hiểu lầm phổ biến của số đông.",
+        "video_count": 1
+      },
+      {
+        "rule": "Chia nhỏ các gói cước phức tạp thành biểu đồ cột trực quan để so sánh nhanh.",
+        "video_count": 1
+      },
+      {
+        "rule": "Chia nhỏ hướng dẫn thành các bước trực quan trên màn hình",
+        "video_count": 1
+      },
+      {
+        "rule": "Chia nội dung thành các bước hoặc tiêu chuẩn rõ ràng",
+        "video_count": 1
+      },
+      {
+        "rule": "Dùng hoạt hình minh họa thay vì chỉ có chữ",
+        "video_count": 1
+      },
+      {
+        "rule": "Kết hợp avatar hoạt hình hướng dẫn để tăng sinh động",
+        "video_count": 1
+      },
+      {
+        "rule": "Kết hợp hiệu ứng viết tay và tiếng động (SFX) đồng bộ với chuyển động thị giác.",
+        "video_count": 1
+      },
+      {
+        "rule": "Kết hợp hài hước châm biếm để tăng tương tác",
+        "video_count": 1
+      },
+      {
+        "rule": "Sử dụng con số gây sốc ngay {number} giây đầu",
+        "video_count": 1
+      },
+      {
+        "rule": "Sử dụng hình ảnh ẩn dụ (như bình nước/chai nước) để giải thích định mức trừu tượng.",
+        "video_count": 1
+      },
+      {
+        "rule": "Sử dụng từ viết tắt dễ nhớ làm khung sườn nội dung",
+        "video_count": 1
+      },
+      {
+        "rule": "Đưa ra câu hỏi mở ở cuối video để kêu gọi bình luận",
+        "video_count": 1
+      },
+      {
+        "rule": "Đặt câu hỏi kêu gọi hành động cụ thể ở cuối video",
+        "video_count": 1
+      }
+    ],
+    "category_id": "cong-nghe",
+    "video_type": null,
+    "video_count": 3,
+    "confidence_label": "ổn",
+    "source_signature": "e0ba5c1e3b41ecbbd86e7ff873acee594635d278cccb82df5140f9640bdad46d",
+    "locked_fields": [],
+    "scene_pacing": [
+      {
+        "duration_sec": 30.0,
+        "scene_count": 2,
+        "min_scene_count": 2,
+        "max_scene_count": 2,
+        "avg_scene_sec": 15.0,
+        "min_scene_sec": 10.5,
+        "max_scene_sec": 19.5,
+        "durations_sec": [
+          10.5,
+          19.5
+        ]
+      },
+      {
+        "duration_sec": 60.0,
+        "scene_count": 3,
+        "min_scene_count": 2,
+        "max_scene_count": 4,
+        "avg_scene_sec": 20.0,
+        "min_scene_sec": 6.723529411764706,
+        "max_scene_sec": 40.67647058823529,
+        "durations_sec": [
+          6.723529411764706,
+          12.6,
+          40.67647058823529
+        ]
+      },
+      {
+        "duration_sec": 90.0,
+        "scene_count": 4,
+        "min_scene_count": 3,
+        "max_scene_count": 6,
+        "avg_scene_sec": 22.5,
+        "min_scene_sec": 8.088235294117647,
+        "max_scene_sec": 50.911764705882355,
+        "durations_sec": [
+          8.088235294117647,
+          16.323529411764707,
+          14.676470588235293,
+          50.911764705882355
+        ]
+      },
+      {
+        "duration_sec": 120.0,
+        "scene_count": 5,
+        "min_scene_count": 4,
+        "max_scene_count": 8,
+        "avg_scene_sec": 24.0,
+        "min_scene_sec": 9.063025210084033,
+        "max_scene_sec": 58.22268907563025,
+        "durations_sec": [
+          9.063025210084033,
+          18.516806722689076,
+          17.571428571428573,
+          16.626050420168067,
+          58.22268907563025
+        ]
+      },
+      {
+        "duration_sec": 180.0,
+        "scene_count": 8,
+        "min_scene_count": 6,
+        "max_scene_count": 12,
+        "avg_scene_sec": 22.5,
+        "min_scene_sec": 8.145569620253164,
+        "max_scene_sec": 51.34177215189873,
+        "durations_sec": [
+          8.145569620253164,
+          8.145569620253164,
+          16.45253164556962,
+          15.621835443037973,
+          14.791139240506329,
+          14.791139240506329,
+          51.34177215189873,
+          50.7104430379747
+        ]
+      }
+    ],
+    "narrative_flows": [
+      "Mở đầu bằng con số ấn tượng, sau đó giải thích vấn đề, đưa ra câu chuyện minh họa, phân tích chi tiết các bước, đánh giá khách quan và kết luận bằng bài học thực tế.",
+      "Video dẫn dắt người xem qua một framework {number} bước rõ ràng (F-A-S-T) để tự tạo AI agent, từ cài đặt, kết nối, giao nhiệm vụ đến đóng gói tự động hóa.",
+      "Video mở đầu bằng việc nêu thắc mắc phổ biến của người dùng về giới hạn sử dụng, sau đó lần lượt giải thích từng loại hạn mức, so sánh các gói cước, quy đổi ra giá trị thực tế và đưa ra kết luận tổng kết."
+    ],
+    "connective_phrases": [
+      "Bí mật nằm ở {topic}",
+      "Bạn chỉ xin {topic}",
+      "Chữ tiếp theo là",
+      "Chữ tiếp theo là {variable}",
+      "Chữ đầu tiên là",
+      "Chữ đầu tiên là {variable}",
+      "...nhưng bên ngoài còn một cái lớn hơn...",
+      "...nhưng bên ngoài còn một cái lớn hơn: {topic}",
+      "Nhưng lười không có nghĩa là {topic}",
+      "Nhưng đừng coi đây là...",
+      "Nhưng đừng coi đây là {topic}...",
+      "Nói ngắn gọn lại thì"
+    ],
+    "connective_frequencies": [
+      {
+        "rule": "Bí mật nằm ở {topic}",
+        "video_count": 1
+      },
+      {
+        "rule": "Bạn chỉ xin {topic}",
+        "video_count": 1
+      },
+      {
+        "rule": "Chữ tiếp theo là",
+        "video_count": 1
+      },
+      {
+        "rule": "Chữ tiếp theo là {variable}",
+        "video_count": 1
+      },
+      {
+        "rule": "Chữ đầu tiên là",
+        "video_count": 1
+      },
+      {
+        "rule": "Chữ đầu tiên là {variable}",
+        "video_count": 1
+      },
+      {
+        "rule": "...nhưng bên ngoài còn một cái lớn hơn...",
+        "video_count": 1
+      },
+      {
+        "rule": "...nhưng bên ngoài còn một cái lớn hơn: {topic}",
+        "video_count": 1
+      },
+      {
+        "rule": "Nhưng lười không có nghĩa là {topic}",
+        "video_count": 1
+      },
+      {
+        "rule": "Nhưng đừng coi đây là...",
+        "video_count": 1
+      },
+      {
+        "rule": "Nhưng đừng coi đây là {topic}...",
+        "video_count": 1
+      },
+      {
+        "rule": "Nói ngắn gọn lại thì",
+        "video_count": 1
+      }
+    ],
+    "scene_patterns": [
+      {
+        "purpose": "hook",
+        "fraction": 0.04488330341113106,
+        "shot_count": 3.6666666666666665,
+        "average_shot_sec": 2.0833333333333335,
+        "visual_types": [
+          "animated graphics",
+          "animation",
+          "avatar mascot",
+          "hoạt hình",
+          "text"
+        ],
+        "effects": [
+          "zoom"
+        ],
+        "overlay_styles": [
+          "lower: color highlight",
+          "top: chữ lớn"
+        ],
+        "sfx": [
+          "pop"
+        ],
+        "transition": "cut",
+        "connective_template": "Bạn chỉ xin {topic}"
+      },
+      {
+        "purpose": "giải thích",
+        "fraction": 0.10098743267504488,
+        "shot_count": 4.666666666666667,
+        "average_shot_sec": 3.9766666666666666,
+        "visual_types": [
+          "animation",
+          "app interface",
+          "hoạt hình",
+          "screen recording",
+          "text"
+        ],
+        "effects": [
+          "pan"
+        ],
+        "overlay_styles": [
+          "top: bold",
+          "top: glow"
+        ],
+        "sfx": [
+          "click"
+        ],
+        "transition": "cut",
+        "connective_template": "Bí mật nằm ở {topic}"
+      },
+      {
+        "purpose": "ví dụ",
+        "fraction": 0.0953770197486535,
+        "shot_count": 4.0,
+        "average_shot_sec": 5.11,
+        "visual_types": [
+          "animation",
+          "app interface",
+          "hoạt hình",
+          "screen recording",
+          "text"
+        ],
+        "effects": [
+          "pan"
+        ],
+        "overlay_styles": [
+          "top: bold",
+          "top: glow"
+        ],
+        "sfx": [
+          "click"
+        ],
+        "transition": "cut",
+        "connective_template": "Thứ này có cần {topic}"
+      },
+      {
+        "purpose": "phân tích",
+        "fraction": 0.08976660682226212,
+        "shot_count": 4.0,
+        "average_shot_sec": 5.033333333333333,
+        "visual_types": [
+          "animation",
+          "connectors interface",
+          "hoạt hình",
+          "screen recording",
+          "text"
+        ],
+        "effects": [
+          "zoom in"
+        ],
+        "overlay_styles": [
+          "top: bold",
+          "top: circle"
+        ],
+        "sfx": [
+          "beep"
+        ],
+        "transition": "cut",
+        "connective_template": "Chữ tiếp theo là {variable}"
+      },
+      {
+        "purpose": "đánh giá",
+        "fraction": 0.3366247755834829,
+        "shot_count": 5.333333333333333,
+        "average_shot_sec": 6.6066666666666665,
+        "visual_types": [
+          "animation",
+          "connectors interface",
+          "hoạt hình",
+          "screen recording",
+          "text"
+        ],
+        "effects": [
+          "zoom in"
+        ],
+        "overlay_styles": [
+          "top: bold",
+          "top: circle"
+        ],
+        "sfx": [
+          "beep"
+        ],
+        "transition": "cut",
+        "connective_template": "Chữ tiếp theo là {variable}"
+      },
+      {
+        "purpose": "cao trào",
+        "fraction": 0.33236086175942553,
+        "shot_count": 9.333333333333334,
+        "average_shot_sec": 7.1033333333333335,
+        "visual_types": [
+          "animation",
+          "hoạt hình",
+          "prompt text",
+          "screen recording",
+          "text"
+        ],
+        "effects": [
+          "pan"
+        ],
+        "overlay_styles": [
+          "top: bold",
+          "top: highlight"
+        ],
+        "sfx": [
+          "whoosh"
+        ],
+        "transition": "cut",
+        "connective_template": ""
+      }
+    ],
+    "shots_per_10_sec": 2.471949890271585,
+    "warnings": [
+      "Dùng bản thô của lần gọi trước; ghi chú/model/cấu hình mới chưa được gửi Gemini. Muốn áp dụng mới, chọn Học lại có xác nhận.",
+      "Đã parse lại bản thô tại máy, không gọi Gemini.",
+      "scenes[4]: loại mốc bắt đầu 121 ngoài phạm vi/không hợp lệ.",
+      "scenes[3]: cắt end_sec 121s → 116.71s theo phạm vi video.",
+      "transcript_outline[4]: loại mốc bắt đầu 121 ngoài phạm vi/không hợp lệ.",
+      "transcript_outline[3]: cắt end_sec 121s → 116.71s theo phạm vi video.",
+      "scene_count=5 được đồng bộ về 4 cảnh có trong dữ liệu.",
+      "avg_scene_sec được tính lại từ start_sec/end_sec của các cảnh.",
+      "captions.color: white → #FFFFFF.",
+      "captions.highlight_color: yellow → #FFFF00.",
+      "captions.stroke_color: black → #000000.",
+      "scenes[5]: cắt end_sec 112s → 89.12s theo phạm vi video.",
+      "transcript_outline[5]: cắt end_sec 112s → 89.12s theo phạm vi video.",
+      "captions.color: đen → #000000.",
+      "captions.highlight_color: xanh → #0000FF.",
+      "captions.stroke_color: trắng → #FFFFFF."
+    ]
+  },
+  "render_style": {
+    "captions": {
+      "analysis_warnings": [],
+      "enabled": true,
+      "mode": "phrase",
+      "font_description": "Bold sans-serif",
+      "font_scale": 0.05,
+      "color": "#FFFFFF",
+      "highlight_color": "#00FF00",
+      "stroke_color": "#000000",
+      "color_note": "",
+      "stroke_width_ratio": 0.005,
+      "position": "lower",
+      "emphasis": "Màu sắc nổi bật theo từ khóa",
+      "shadow": "Có"
+    },
+    "ducking": true
+  },
+  "validation_events": [
+    {
+      "rule_id": "presentation_voice",
+      "group": 3,
+      "scene_id": 1,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Hook cần con số có căn cứ/hiểu lầm/ngược trực giác trong tối đa 12 từ; tránh câu hỏi chung."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 5,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 5,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 5,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 5: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "visual_background",
+      "group": 3,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Shot 4: ví dụ nền, nên kiểm tra lại (cta); không coi là fact sự kiện."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Câu quá 28 từ; tách tại ranh giới ý."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Câu quá 28 từ; tách tại ranh giới ý."
+    }
+  ],
+  "review_notes": [
+    "[presentation_voice, nhóm 3] Cảnh 1: Hook cần con số có căn cứ/hiểu lầm/ngược trực giác trong tối đa 12 từ; tránh câu hỏi chung.",
+    "Critic/code cảnh báo: đã sửa đúng cảnh [3, 5, 6] trong một vòng; điểm hiển thị là điểm trước sửa.",
+    "Đã bỏ câu hỏi mở chưa được đoạn kết giải đáp; không tự gán fact.",
+    "Cảnh 6: Beat chỉ kể lại tin; thêm cơ chế/ví dụ/ẩn dụ/mặt trái mới, không lặp số liệu.",
+    "Cảnh 1: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng.",
+    "Cảnh 2: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng.",
+    "Cảnh 3: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng.",
+    "Cảnh 5: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng.",
+    "Cảnh 6: Vượt ngân sách lời đọc: rút beat còn khoảng 30 từ, hook tối đa 20 từ; giữ ý mới và fact event quan trọng.",
+    "LLM director: openai lỗi tạm thời (429) sau retry; chuyển dự phòng gemini đúng một lần cho lời gọi này.",
+    "Cảnh 1, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Báo động an ninh mạng'; chia nhịp theo shot.",
+    "Cảnh 1: timing từ boundary_projected/word_boundary; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 2, shot 2: motion_beats nhóm 2: không khớp từ khóa 'Phân tích mã nguồn'; chia nhịp theo shot.",
+    "Cảnh 2, shot 3: motion_beats nhóm 2: không khớp từ khóa 'Ý chính cần nhớ'; chia nhịp theo shot.",
+    "Cảnh 3, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Hệ thống công nghiệp'; chia nhịp theo shot.",
+    "Cảnh 3, shot 2: motion_beats nhóm 2: không khớp từ khóa 'Phòng máy chủ'; chia nhịp theo shot.",
+    "Cảnh 3, shot 4: motion_beats nhóm 2: không khớp từ khóa 'Ý chính cần nhớ'; chia nhịp theo shot.",
+    "Cảnh 3: timing từ boundary_projected/word_boundary; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 4, shot 2: motion_beats nhóm 2: không khớp từ khóa 'Khiên an ninh mạng'; chia nhịp theo shot.",
+    "Cảnh 5, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Nhân viên văn phòng'; chia nhịp theo shot.",
+    "Cảnh 5, shot 2: motion_beats nhóm 2: không khớp từ khóa 'Người dùng máy tính'; chia nhịp theo shot.",
+    "Cảnh 5, shot 4: motion_beats nhóm 2: không khớp từ khóa 'Ý chính cần nhớ'; chia nhịp theo shot.",
+    "Cảnh 5: timing từ boundary_projected/word_boundary; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 6, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Lưới điện quốc gia'; chia nhịp theo shot.",
+    "Cảnh 6, shot 2: motion_beats nhóm 2: không khớp từ khóa 'Trung tâm dữ liệu'; chia nhịp theo shot.",
+    "Cảnh 6, shot 3: motion_beats nhóm 2: không khớp từ khóa 'Tác động công nghệ'; chia nhịp theo shot.",
+    "Cảnh 6, shot 4: motion_beats nhóm 2: không khớp từ khóa 'Hạ tầng trọng yếu'; chia nhịp theo shot.",
+    "Cảnh 6: timing từ boundary_projected/word_boundary; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s."
+  ],
+  "requested_duration_sec": 60.0,
+  "script_style": "explain",
+  "title": "Báo động đỏ Black October và kỷ nguyên AI hack hạ tầng",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "Hứng khởi, công nghệ",
+    "volume": 0.16666666666666666
+  },
+  "scenes": [
+    {
+      "sentences": [
+        {
+          "type": "event",
+          "text": "Tháng 10 năm 2026, thuật ngữ Black October lan truyền khi hàng loạt lỗ hổng phần mềm xuất hiện.",
+          "fact_ids": [
+            1
+          ]
+        }
+      ],
+      "information_kind": "cause",
+      "new_information": "Tháng mười năm 2026, thuật ngữ Black October lan truyền trong cộng đồng an ninh mạng với các lỗ hổng nghiêm trọng.",
+      "id": 1,
+      "role": "hook",
+      "narration": "Tháng 10 năm 2026, thuật ngữ Black October lan truyền khi hàng loạt lỗ hổng phần mềm xuất hiện.",
+      "shots": [
+        {
+          "card_text": "Báo động an ninh mạng",
+          "emphasis": [
+            "an ninh mạng"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 0.0,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 0.55,
+                "action": "mascot_surprised"
+              }
+            ],
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "hook_card",
+            "data": {
+              "text": "Báo động an ninh mạng",
+              "highlight": [
+                "an ninh mạng"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                1
+              ]
+            }
+          },
+          "type": "text_card",
+          "query": "automated document processing",
+          "duration_sec": 3.192,
+          "effect": "zoom_in",
+          "text_overlay": "Tháng 10 năm 2026, thuật ngữ Black October lan truyền khi hàng loạt lỗ hổng phần mềm xuất hiện."
+        },
+        {
+          "card_text": "Lỗ hổng phần mềm",
+          "emphasis": [
+            "lỗ hổng"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 3.192,
+                "action": "count_up"
+              },
+              {
+                "at_sec": 3.742,
+                "action": "mascot_surprised"
+              },
+              {
+                "at_word_index": 13,
+                "at_sec": 3.9875,
+                "action": "reveal"
+              }
+            ],
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "stat_card",
+            "data": {
+              "text": "Lỗ hổng phần mềm",
+              "highlight": [
+                "lỗ hổng"
+              ],
+              "value": 10.0,
+              "number_text": "10",
+              "label": "Lỗ hổng phần mềm",
+              "unit": "",
+              "source": "Harshith Vaddiparthy",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                1
+              ]
+            }
+          },
+          "type": "text_card",
+          "query": "computer data processing",
+          "duration_sec": 3.192,
+          "effect": "zoom_in",
+          "text_overlay": "Tháng 10 năm 2026, thuật ngữ Black October lan truyền khi hàng loạt lỗ hổng phần mềm xuất hiện."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "[presentation_voice, nhóm 3, warning] Hook cần con số có căn cứ/hiểu lầm/ngược trực giác trong tối đa 12 từ; tránh câu hỏi chung."
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 1,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 1,
+                "name": "Harshith Vaddiparthy",
+                "url": "https://www.harshith.com/blog/black-october-2026-ai-cybersecurity",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sentences": [
+        {
+          "type": "explain",
+          "text": "Có lẽ trí tuệ nhân tạo đang giúp kẻ gian tự động quét và khai thác điểm yếu với tốc độ cực nhanh, hệt như việc dùng máy quét vạn năng thử mọi ổ khóa cùng một lúc.",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "mechanism",
+      "new_information": "Hệ thống AI tự động tìm kiếm lỗ hổng với tốc độ vượt trội giống như việc dùng máy quét vạn năng thử mọi ổ khóa cùng lúc.",
+      "id": 2,
+      "role": "body",
+      "narration": "Có lẽ trí tuệ nhân tạo đang giúp kẻ gian tự động quét và khai thác điểm yếu với tốc độ cực nhanh, hệt như việc dùng máy quét vạn năng thử mọi ổ khóa cùng một lúc.",
+      "shots": [
+        {
+          "card_text": "Quét tự động bằng ai",
+          "emphasis": [
+            "ai"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 0.55,
+                "action": "mascot_point"
+              },
+              {
+                "at_word_index": 11,
+                "at_sec": 2.2375,
+                "action": "reveal"
+              }
+            ],
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Quét tự động bằng ai",
+              "highlight": [
+                "ai"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "text_card",
+          "query": "engineer checking system",
+          "duration_sec": 2.952,
+          "effect": "zoom_in",
+          "text_overlay": "Có lẽ trí tuệ nhân tạo đang giúp kẻ gian tự động quét và khai thác điểm yếu với tốc độ cực nhanh, hệt như việc dùng máy quét vạn năng thử mọi ổ khóa cùng một lúc."
+        },
+        {
+          "card_text": "Phân tích mã nguồn",
+          "emphasis": [
+            "mã nguồn"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 2.952,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 3.502,
+                "action": "mascot_point"
+              }
+            ],
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Phân tích mã nguồn",
+              "highlight": [
+                "mã nguồn"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "text_card",
+          "query": "computer data processing",
+          "duration_sec": 2.952,
+          "effect": "zoom_in",
+          "text_overlay": "Có lẽ trí tuệ nhân tạo đang giúp kẻ gian tự động quét và khai thác điểm yếu với tốc độ cực nhanh, hệt như việc dùng máy quét vạn năng thử mọi ổ khóa cùng một lúc."
+        },
+        {
+          "card_text": "Ý chính cần nhớ",
+          "emphasis": [
+            "cần",
+            "nhớ"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 5.904,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 6.454,
+                "action": "mascot_point"
+              }
+            ],
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Ý chính cần nhớ",
+              "highlight": [
+                "cần",
+                "nhớ"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "text_card",
+          "query": "engineer checking system",
+          "duration_sec": 2.952,
+          "effect": "zoom_in",
+          "text_overlay": "Có lẽ trí tuệ nhân tạo đang giúp kẻ gian tự động quét và khai thác điểm yếu với tốc độ cực nhanh, hệt như việc dùng máy quét vạn năng thử mọi ổ khóa cùng một lúc."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "whoosh",
+      "fact_ids": [],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[sentence_length, nhóm 3, warning] Câu quá 28 từ; tách tại ranh giới ý."
+        ],
+        "fact_ids": [],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "sentences": [
+        {
+          "type": "event",
+          "text": "Ngày 19 tháng 8, các cơ quan Mỹ cảnh báo tác nhân mạng nhắm vào bộ điều khiển công nghiệp.",
+          "fact_ids": [
+            6
+          ]
+        },
+        {
+          "type": "explain",
+          "text": "Điều này giống như việc gắn cửa cuốn tự động thông minh vào một ngôi nhà cổ kỹ thuật cũ kỹ.",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "example",
+      "new_information": "Các cơ quan liên bang Mỹ cảnh báo tác nhân mạng nhắm vào bộ điều khiển công nghiệp Siemens bằng tập lệnh AI.",
+      "id": 3,
+      "role": "body",
+      "narration": "Ngày 19 tháng 8, các cơ quan Mỹ cảnh báo tác nhân mạng nhắm vào bộ điều khiển công nghiệp. Điều này giống như việc gắn cửa cuốn tự động thông minh vào một ngôi nhà cổ kỹ thuật cũ kỹ.",
+      "shots": [
+        {
+          "card_text": "Hệ thống công nghiệp",
+          "emphasis": [
+            "công nghiệp"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 0.0,
+                "action": "reveal"
+              },
+              {
+                "at_word_index": 0,
+                "at_sec": 0.125,
+                "action": "count_up"
+              },
+              {
+                "at_word_index": 0,
+                "at_sec": 0.3720950704225352,
+                "action": "count_end"
+              },
+              {
+                "at_sec": 0.55,
+                "action": "mascot_point"
+              }
+            ],
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "stat_card",
+            "data": {
+              "text": "Hệ thống công nghiệp",
+              "highlight": [
+                "công nghiệp"
+              ],
+              "value": 19.0,
+              "number_text": "19",
+              "label": "Hệ thống công nghiệp",
+              "unit": "",
+              "source": "Fox News",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                6
+              ]
+            }
+          },
+          "type": "text_card",
+          "query": "person explaining concept",
+          "duration_sec": 2.766,
+          "effect": "zoom_in",
+          "text_overlay": "Ngày 19 tháng 8, các cơ quan Mỹ cảnh báo tác nhân mạng nhắm vào bộ điều khiển công nghiệp. Điều này giống như việc gắn cửa cuốn tự động thông minh vào một ngôi nhà cổ kỹ thuật cũ kỹ."
+        },
+        {
+          "card_text": "Phòng máy chủ",
+          "emphasis": [
+            "máy chủ"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 2.766,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 2.766,
+                "action": "count_up"
+              },
+              {
+                "at_sec": 3.316,
+                "action": "mascot_point"
+              }
+            ],
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "stat_card",
+            "data": {
+              "text": "Phòng máy chủ",
+              "highlight": [
+                "máy chủ"
+              ],
+              "value": 19.0,
+              "number_text": "19",
+              "label": "Phòng máy chủ",
+              "unit": "",
+              "source": "Fox News",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                6
+              ]
+            }
+          },
+          "type": "text_card",
+          "query": "person explaining concept",
+          "duration_sec": 2.766,
+          "effect": "zoom_in",
+          "text_overlay": "Ngày 19 tháng 8, các cơ quan Mỹ cảnh báo tác nhân mạng nhắm vào bộ điều khiển công nghiệp. Điều này giống như việc gắn cửa cuốn tự động thông minh vào một ngôi nhà cổ kỹ thuật cũ kỹ."
+        },
+        {
+          "card_text": "Cửa cuốn tự động",
+          "emphasis": [
+            "tự động"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 6.081999999999998,
+                "action": "mascot_point"
+              },
+              {
+                "at_word_index": 26,
+                "at_sec": 6.75446,
+                "action": "reveal"
+              }
+            ],
+            "sentence_index": 2,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Cửa cuốn tự động",
+              "highlight": [
+                "tự động"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "text_card",
+          "query": "engineer checking system",
+          "duration_sec": 2.766,
+          "effect": "zoom_in",
+          "text_overlay": "Ngày 19 tháng 8, các cơ quan Mỹ cảnh báo tác nhân mạng nhắm vào bộ điều khiển công nghiệp. Điều này giống như việc gắn cửa cuốn tự động thông minh vào một ngôi nhà cổ kỹ thuật cũ kỹ."
+        },
+        {
+          "card_text": "Ý chính cần nhớ",
+          "emphasis": [
+            "cần",
+            "nhớ"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 8.298,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 8.848,
+                "action": "mascot_point"
+              }
+            ],
+            "sentence_index": 2,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Ý chính cần nhớ",
+              "highlight": [
+                "cần",
+                "nhớ"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "text_card",
+          "query": "engineer checking system",
+          "duration_sec": 2.766,
+          "effect": "zoom_in",
+          "text_overlay": "Ngày 19 tháng 8, các cơ quan Mỹ cảnh báo tác nhân mạng nhắm vào bộ điều khiển công nghiệp. Điều này giống như việc gắn cửa cuốn tự động thông minh vào một ngôi nhà cổ kỹ thuật cũ kỹ."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        6
+      ],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+        ],
+        "fact_ids": [
+          6
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 6,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 6,
+                "name": "Fox News",
+                "url": "https://www.foxnews.com/opinion/ai-cyberattack-could-turn-off-americas-lights-before-washington-understands-why",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sentences": [
+        {
+          "type": "explain",
+          "text": "Đừng coi đây là kiểu bảo vệ cũ kỹ dựa vào danh sách quen thuộc, bởi nó rất dễ bỏ sót các biến thể mã độc hoàn toàn mới.",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "comparison",
+      "new_information": "Phòng thủ cũ dựa trên danh sách quen thuộc dễ bị bỏ sót trước biến thể do AI tự sinh ra liên tục.",
+      "id": 4,
+      "role": "body",
+      "narration": "Đừng coi đây là kiểu bảo vệ cũ kỹ dựa vào danh sách quen thuộc, bởi nó rất dễ bỏ sót các biến thể mã độc hoàn toàn mới.",
+      "shots": [
+        {
+          "card_text": "Tường lửa bảo vệ",
+          "emphasis": [
+            "tường lửa"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 0.55,
+                "action": "mascot_point"
+              },
+              {
+                "at_word_index": 5,
+                "at_sec": 1.025,
+                "action": "reveal"
+              }
+            ],
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Tường lửa bảo vệ",
+              "highlight": [
+                "tường lửa"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "text_card",
+          "query": "person explaining concept",
+          "duration_sec": 3.648,
+          "effect": "zoom_in",
+          "text_overlay": "Đừng coi đây là kiểu bảo vệ cũ kỹ dựa vào danh sách quen thuộc, bởi nó rất dễ bỏ sót các biến thể mã độc hoàn toàn mới."
+        },
+        {
+          "card_text": "Khiên an ninh mạng",
+          "emphasis": [
+            "an ninh mạng"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 3.648,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 4.1979999999999995,
+                "action": "mascot_point"
+              }
+            ],
+            "sentence_index": 1,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Khiên an ninh mạng",
+              "highlight": [
+                "an ninh mạng"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "text_card",
+          "query": "person explaining concept",
+          "duration_sec": 3.648,
+          "effect": "zoom_in",
+          "text_overlay": "Đừng coi đây là kiểu bảo vệ cũ kỹ dựa vào danh sách quen thuộc, bởi nó rất dễ bỏ sót các biến thể mã độc hoàn toàn mới."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "whoosh",
+      "fact_ids": [],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[sentence_length, nhóm 3, warning] Câu quá 28 từ; tách tại ranh giới ý."
+        ],
+        "fact_ids": [],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "sentences": [
+        {
+          "type": "event",
+          "text": "Khảo sát cho thấy phần lớn người trả lời tin rằng dùng công cụ AI không được phê duyệt là chấp nhận được.",
+          "fact_ids": [
+            5
+          ]
+        },
+        {
+          "type": "explain",
+          "text": "Thói quen này tương tự việc nhờ người qua đường đọc hộ tài liệu mật mà không hề kiểm tra danh tính kỹ càng.",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "counterpoint",
+      "new_information": "Đa số người dùng cá nhân tại nơi làm việc vẫn dễ dãi sử dụng công cụ AI chưa được phê duyệt.",
+      "id": 5,
+      "role": "body",
+      "narration": "Khảo sát cho thấy phần lớn người trả lời tin rằng dùng công cụ AI không được phê duyệt là chấp nhận được. Thói quen này tương tự việc nhờ người qua đường đọc hộ tài liệu mật mà không hề kiểm tra danh tính kỹ càng.",
+      "shots": [
+        {
+          "card_text": "Nhân viên văn phòng",
+          "emphasis": [
+            "nhân viên"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 0.0,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 0.55,
+                "action": "mascot_point"
+              }
+            ],
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Nhân viên văn phòng",
+              "highlight": [
+                "nhân viên"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                5
+              ]
+            }
+          },
+          "type": "text_card",
+          "query": "office employee discussion",
+          "duration_sec": 2.946,
+          "effect": "zoom_in",
+          "text_overlay": "Khảo sát cho thấy phần lớn người trả lời tin rằng dùng công cụ AI không được phê duyệt là chấp nhận được. Thói quen này tương tự việc nhờ người qua đường đọc hộ tài liệu mật mà không hề kiểm tra danh tính kỹ càng."
+        },
+        {
+          "card_text": "Người dùng máy tính",
+          "emphasis": [
+            "máy tính"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 2.946,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 3.4959999999999978,
+                "action": "mascot_point"
+              }
+            ],
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Người dùng máy tính",
+              "highlight": [
+                "máy tính"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                5
+              ]
+            }
+          },
+          "type": "text_card",
+          "query": "human resources meeting",
+          "duration_sec": 2.946,
+          "effect": "zoom_in",
+          "text_overlay": "Khảo sát cho thấy phần lớn người trả lời tin rằng dùng công cụ AI không được phê duyệt là chấp nhận được. Thói quen này tương tự việc nhờ người qua đường đọc hộ tài liệu mật mà không hề kiểm tra danh tính kỹ càng."
+        },
+        {
+          "card_text": "Tài liệu mật",
+          "emphasis": [
+            "mật"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 6.442000000000003,
+                "action": "mascot_point"
+              },
+              {
+                "at_word_index": 35,
+                "at_sec": 8.260554,
+                "action": "reveal"
+              }
+            ],
+            "sentence_index": 2,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Tài liệu mật",
+              "highlight": [
+                "mật"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "text_card",
+          "query": "employee organizing workspace",
+          "duration_sec": 2.946,
+          "effect": "zoom_in",
+          "text_overlay": "Khảo sát cho thấy phần lớn người trả lời tin rằng dùng công cụ AI không được phê duyệt là chấp nhận được. Thói quen này tương tự việc nhờ người qua đường đọc hộ tài liệu mật mà không hề kiểm tra danh tính kỹ càng."
+        },
+        {
+          "card_text": "Ý chính cần nhớ",
+          "emphasis": [
+            "cần",
+            "nhớ"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 8.838,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 9.388000000000002,
+                "action": "mascot_point"
+              }
+            ],
+            "sentence_index": 2,
+            "content_type": "explain",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Ý chính cần nhớ",
+              "highlight": [
+                "cần",
+                "nhớ"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "text_card",
+          "query": "employee organizing workspace",
+          "duration_sec": 2.9459999999999997,
+          "effect": "zoom_in",
+          "text_overlay": "Khảo sát cho thấy phần lớn người trả lời tin rằng dùng công cụ AI không được phê duyệt là chấp nhận được. Thói quen này tương tự việc nhờ người qua đường đọc hộ tài liệu mật mà không hề kiểm tra danh tính kỹ càng."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        5
+      ],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+          "[visual_background, nhóm 3, warning] Shot 5: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+        ],
+        "fact_ids": [
+          5
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 5,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 5,
+                "name": "Information Week",
+                "url": "https://www.informationweek.com/incident-response/how-ai-is-changing-cybersecurity-threats-and-how-it-isn-t-",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "sentences": [
+        {
+          "type": "event",
+          "text": "Hơn 100 công ty công nghệ đã công bố thư ngỏ cảnh báo rủi ro tấn công hạ tầng điện và bệnh viện.",
+          "fact_ids": [
+            3
+          ]
+        },
+        {
+          "type": "cta",
+          "text": "Làm thế nào để hệ thống hạ tầng trọng yếu phòng thủ trước các mã độc tự động sinh ra bởi AI?",
+          "fact_ids": []
+        }
+      ],
+      "information_kind": "consequence",
+      "new_information": "Hơn một trăm công ty công nghệ cảnh báo các cuộc tấn công mạng nhắm vào bệnh viện và hạ tầng điện không còn xa xôi.",
+      "id": 6,
+      "role": "cta",
+      "narration": "Hơn 100 công ty công nghệ đã công bố thư ngỏ cảnh báo rủi ro tấn công hạ tầng điện và bệnh viện. Làm thế nào để hệ thống hạ tầng trọng yếu phòng thủ trước các mã độc tự động sinh ra bởi AI?",
+      "shots": [
+        {
+          "card_text": "Lưới điện quốc gia",
+          "emphasis": [
+            "lưới điện"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 0.0,
+                "action": "reveal"
+              },
+              {
+                "at_word_index": 0,
+                "at_sec": 0.125,
+                "action": "count_up"
+              },
+              {
+                "at_word_index": 0,
+                "at_sec": 0.4749137931034483,
+                "action": "count_end"
+              },
+              {
+                "at_sec": 0.55,
+                "action": "mascot_thinking"
+              }
+            ],
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "stat_card",
+            "data": {
+              "text": "Lưới điện quốc gia",
+              "highlight": [
+                "lưới điện"
+              ],
+              "value": 100.0,
+              "number_text": "100",
+              "label": "Lưới điện quốc gia",
+              "unit": "",
+              "source": "Tech Insider",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                3
+              ]
+            }
+          },
+          "type": "text_card",
+          "query": "automated document processing",
+          "duration_sec": 2.952,
+          "effect": "zoom_in",
+          "text_overlay": "Hơn 100 công ty công nghệ đã công bố thư ngỏ cảnh báo rủi ro tấn công hạ tầng điện và bệnh viện. Làm thế nào để hệ thống hạ tầng trọng yếu phòng thủ trước các mã độc tự động sinh ra bởi AI?"
+        },
+        {
+          "card_text": "Trung tâm dữ liệu",
+          "emphasis": [
+            "dữ liệu"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 2.951999999999998,
+                "action": "count_up"
+              },
+              {
+                "at_sec": 2.952,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 3.501999999999998,
+                "action": "mascot_thinking"
+              }
+            ],
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "stat_card",
+            "data": {
+              "text": "Trung tâm dữ liệu",
+              "highlight": [
+                "dữ liệu"
+              ],
+              "value": 100.0,
+              "number_text": "100",
+              "label": "Trung tâm dữ liệu",
+              "unit": "",
+              "source": "Tech Insider",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                3
+              ]
+            }
+          },
+          "type": "text_card",
+          "query": "computer data processing",
+          "duration_sec": 2.952,
+          "effect": "zoom_in",
+          "text_overlay": "Hơn 100 công ty công nghệ đã công bố thư ngỏ cảnh báo rủi ro tấn công hạ tầng điện và bệnh viện. Làm thế nào để hệ thống hạ tầng trọng yếu phòng thủ trước các mã độc tự động sinh ra bởi AI?"
+        },
+        {
+          "card_text": "Tác động công nghệ",
+          "emphasis": [
+            "công",
+            "nghệ"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 5.903999999999996,
+                "action": "count_up"
+              },
+              {
+                "at_sec": 5.904,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 6.453999999999996,
+                "action": "mascot_thinking"
+              }
+            ],
+            "sentence_index": 1,
+            "auto_generated": true,
+            "template": "stat_card",
+            "data": {
+              "text": "Tác động công nghệ",
+              "highlight": [
+                "công",
+                "nghệ"
+              ],
+              "value": 100.0,
+              "number_text": "100",
+              "label": "Tác động công nghệ",
+              "unit": "",
+              "source": "Tech Insider",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [
+                3
+              ]
+            }
+          },
+          "type": "text_card",
+          "query": "engineer checking system",
+          "duration_sec": 2.952,
+          "effect": "zoom_in",
+          "text_overlay": "Hơn 100 công ty công nghệ đã công bố thư ngỏ cảnh báo rủi ro tấn công hạ tầng điện và bệnh viện. Làm thế nào để hệ thống hạ tầng trọng yếu phòng thủ trước các mã độc tự động sinh ra bởi AI?"
+        },
+        {
+          "card_text": "Hạ tầng trọng yếu",
+          "emphasis": [
+            "hạ tầng"
+          ],
+          "semantic_query": true,
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 8.856,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 9.406000000000002,
+                "action": "mascot_thinking"
+              }
+            ],
+            "sentence_index": 2,
+            "content_type": "cta",
+            "auto_generated": true,
+            "template": "text_focus",
+            "data": {
+              "text": "Hạ tầng trọng yếu",
+              "highlight": [
+                "hạ tầng"
+              ],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": []
+            }
+          },
+          "type": "text_card",
+          "query": "engineer checking system",
+          "duration_sec": 2.952,
+          "effect": "zoom_in",
+          "text_overlay": "Hơn 100 công ty công nghệ đã công bố thư ngỏ cảnh báo rủi ro tấn công hạ tầng điện và bệnh viện. Làm thế nào để hệ thống hạ tầng trọng yếu phòng thủ trước các mã độc tự động sinh ra bởi AI?"
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "whoosh",
+      "fact_ids": [
+        3
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "[visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (cta); không coi là fact sự kiện."
+        ],
+        "fact_ids": [
+          3
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 3,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 3,
+                "name": "Tech Insider",
+                "url": "https://tech-insider.org/openai-100-companies-ai-cyberattack-warning-2026/",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "video_type": "news",
+  "target_duration_sec": 77.8,
+  "brief_hash": null,
+  "source_plan_hash": "c71c9ebd430554d8ac3e599c232e3666ec81b05cbe5c29ae2df1aae59a97fe5e",
+  "timing_basis": "audio",
+  "warnings": [
+    "Hook có audio thật 6.38s, vượt 3s; cần rút lời đọc nếu muốn hook ngắn hơn.",
+    "Cảnh 2: số shot đổi từ 4 thành 3 theo audio thật.",
+    "Cảnh 4: số shot đổi từ 3 thành 2 theo audio thật.",
+    "Cảnh 5: số shot đổi từ 5 thành 4 theo audio thật.",
+    "Cảnh 6: số shot đổi từ 5 thành 4 theo audio thật.",
+    "Tổng thời lượng theo audio 57.19s khác yêu cầu 77.80s quá 10%; giữ nguyên timing audio, chưa tự đổi tốc độ giọng."
+  ]
+}

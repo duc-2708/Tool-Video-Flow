@@ -1,0 +1,130 @@
+
+[2026-10-24T02:40:07.503625+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:07.508833+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:07.566998+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:07.594102+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:07.600113+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:07.788426+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:07.794822+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:08.429581+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:08.438742+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:08.445885+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:08.460453+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:08.557567+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+
+
+[2026-10-24T02:40:08.605800+00:00] Không lưu được run_state.json; trạng thái đang giữ trong bộ nhớ. Kiểm tra quyền ghi trước khi đóng app/resume.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 257, in save
+    write_json(state_path,state)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 177, in write
+    raise PermissionError("fixture status file is unwritable")
+PermissionError: fixture status file is unwritable
+

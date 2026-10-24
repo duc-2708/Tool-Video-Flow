@@ -1,0 +1,16 @@
+{
+  "request": {
+    "model": "veo-3.1",
+    "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.",
+    "seconds": 4,
+    "format": "tiktok",
+    "resolution": "720p"
+  },
+  "remote_id": "remote_durable",
+  "status": "processing",
+  "progress": 0,
+  "estimated_cost_vnd": 2500,
+  "actual_cost_vnd": "2500",
+  "clip_path": null,
+  "error": null
+}

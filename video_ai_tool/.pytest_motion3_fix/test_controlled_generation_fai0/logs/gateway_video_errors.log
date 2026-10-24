@@ -1,0 +1,152 @@
+
+[2026-10-24T02:37:16.564981+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:16.574677+00:00] {"event": "submit_response", "request": {"model": "veo-3.1", "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": "initial", "response": {"id": "initial"}}
+
+[2026-10-24T02:37:16.615795+00:00] {"event": "generation_error", "remote_id": "initial", "request": {"model": "veo-3.1", "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"status": "failed", "error": {"code": "generation_failed", "message": "upstream fixture failure"}}}
+
+[2026-10-24T02:37:16.628086+00:00] Tiếp tục job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+
+[2026-10-24T02:37:16.709763+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:16.719474+00:00] {"event": "submit_response", "request": {"model": "veo-3.1", "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": "simpler", "response": {"id": "simpler"}}
+
+[2026-10-24T02:37:16.757014+00:00] {"event": "generation_error", "remote_id": "simpler", "request": {"model": "veo-3.1", "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"status": "failed", "error": {"code": "generation_failed", "message": "upstream fixture failure"}}}
+
+[2026-10-24T02:37:16.768987+00:00] Tiếp tục job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+
+[2026-10-24T02:37:16.780755+00:00] Clip AI đã dùng hết một lần thử lại
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 288, in resume_job
+    result = _resume_job_once(retry_path,settings,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+
+[2026-10-24T02:37:16.786275+00:00] Clip AI nền cảnh 1; dùng gradient, không dừng render
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 288, in resume_job
+    result = _resume_job_once(retry_path,settings,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\controlled_ai.py", line 60, in create_backgrounds
+    job=resume_job(job_path,settings,progress=notify,wait_sec=300)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 298, in resume_job
+    raise GatewayVideoError(root["error"]) from error
+providers.video_gateway.GatewayVideoError: Thử lại Clip AI không thành công: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}. Dùng b-roll thường; không tạo thêm job.
+
+
+[2026-10-24T02:37:16.859568+00:00] {"event": "generation_error", "remote_id": "initial", "request": {"model": "veo-3.1", "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"status": "failed", "error": {"code": "generation_failed", "message": "upstream fixture failure"}}}
+
+[2026-10-24T02:37:16.871109+00:00] Tiếp tục job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+
+[2026-10-24T02:37:16.925709+00:00] {"event": "generation_error", "remote_id": "simpler", "request": {"model": "veo-3.1", "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"status": "failed", "error": {"code": "generation_failed", "message": "upstream fixture failure"}}}
+
+[2026-10-24T02:37:16.937409+00:00] Tiếp tục job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+
+[2026-10-24T02:37:16.948862+00:00] Clip AI đã dùng hết một lần thử lại
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 288, in resume_job
+    result = _resume_job_once(retry_path,settings,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+
+[2026-10-24T02:37:16.954529+00:00] Clip AI nền cảnh 1; dùng gradient, không dừng render
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 264, in resume_job
+    return _resume_job_once(path,settings,remote_id=remote_id,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 288, in resume_job
+    result = _resume_job_once(retry_path,settings,**kwargs)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 202, in _resume_job_once
+    raise GenerationFailed("generation_failed: " + job["error"])
+providers.video_gateway.GenerationFailed: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\controlled_ai.py", line 60, in create_backgrounds
+    job=resume_job(job_path,settings,progress=notify,wait_sec=300)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 298, in resume_job
+    raise GatewayVideoError(root["error"]) from error
+providers.video_gateway.GatewayVideoError: Thử lại Clip AI không thành công: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}. Dùng b-roll thường; không tạo thêm job.
+

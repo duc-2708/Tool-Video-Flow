@@ -1,0 +1,50 @@
+{
+  "topic": "AI fixture",
+  "language": "vi",
+  "source_languages": [
+    "vi",
+    "en"
+  ],
+  "output_language": "vi",
+  "angle_candidates": [
+    {
+      "angle": "Quy trình",
+      "why": "Dễ hiểu"
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Có thể cắt và ghép video.",
+      "source_name": "Fixture",
+      "source_url": "https://example.com/",
+      "confidence": "medium",
+      "evidence_quote": null,
+      "source_lang": "vi"
+    },
+    {
+      "claim": "Có thể cắt và ghép video.",
+      "source_name": "Fixture",
+      "source_url": "https://example.com/",
+      "confidence": "medium",
+      "evidence_quote": null,
+      "source_lang": "vi"
+    },
+    {
+      "claim": "Có thể cắt và ghép video.",
+      "source_name": "Fixture",
+      "source_url": "https://example.com/",
+      "confidence": "medium",
+      "evidence_quote": null,
+      "source_lang": "vi"
+    }
+  ],
+  "trends": [],
+  "hooks": [
+    "Bắt đầu từ đâu?"
+  ],
+  "audience_questions": [],
+  "keywords": [
+    "video"
+  ],
+  "risks": []
+}

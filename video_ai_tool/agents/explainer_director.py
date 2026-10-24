@@ -52,14 +52,13 @@ def script_plan(script,outline,brief,request,settings):
     scenes=[]
     for index,row in enumerate(script.scenes):
         sentences=[s.model_copy(deep=True) for s in row.sentences]
-        for sentence in sentences:
-            if sentence.type in {"explain","opinion"} and not re.search(SOFT,sentence.text,re.I):
-                sentence.text=("Theo mình, " if sentence.type=="opinion" else "Có thể hiểu là, ")+sentence.text[:1].lower()+sentence.text[1:]
         queries=row.shot_queries or ["person explaining concept"]
         scenes.append(Scene(id=row.scene_id,role="hook" if index==0 else "cta" if index==len(script.scenes)-1 else "body",
             narration=" ".join(s.text for s in sentences),sentences=sentences,information_kind=row.kind,new_information=row.new_information,
             fact_ids=list(dict.fromkeys(i for s in sentences if s.type=="event" for i in s.fact_ids)),
-            shots=[Shot(type="stock_video",semantic_query=True,query=q,duration_sec=3.,planning_duration=True,effect="zoom_in",text_overlay=None) for q in queries],
+            shots=[Shot(type="stock_video",semantic_query=True,query=q,duration_sec=3.,planning_duration=True,effect="zoom_in",text_overlay=None,
+                card_text=row.shot_cards[j].card_text if j<len(row.shot_cards) else None,
+                emphasis=row.shot_cards[j].emphasis if j<len(row.shot_cards) else []) for j,q in enumerate(queries)],
             transition_out="fade",sfx="none",pattern_interrupt=index%2==1))
     title=script.title
     from agents.content_plan import vietnamese_title
@@ -70,6 +69,8 @@ def script_plan(script,outline,brief,request,settings):
         script_style="explain",creative_license=request.creative_license,explainer_outline=outline)
     from pipeline.style_profile import apply_defaults
     apply_defaults(plan,request.style_profile)
+    from agents.presentation import humanize_locally,repair_generic_hook
+    humanize_locally(plan,brief);repair_generic_hook(plan,brief)
     limit_attribution(plan,brief)
     from agents.explainer_visuals import build_v2_shots
     build_v2_shots(plan,brief)
@@ -78,7 +79,8 @@ def script_plan(script,outline,brief,request,settings):
 
 def script_from_plan(plan):
     return ExplainerScript(title=plan.title,scenes=[dict(scene_id=s.id,kind=s.information_kind or "mechanism",new_information=s.new_information or s.narration,
-        sentences=[p.model_dump(mode="json") for p in s.sentences],shot_queries=[q.query for q in s.shots]) for s in plan.scenes])
+        sentences=[p.model_dump(mode="json") for p in s.sentences],shot_queries=[q.query for q in s.shots],
+        shot_cards=[dict(card_text=q.card_text or "",emphasis=q.emphasis) for q in s.shots]) for s in plan.scenes])
 
 
 def quality_notes(outline,plan=None):
