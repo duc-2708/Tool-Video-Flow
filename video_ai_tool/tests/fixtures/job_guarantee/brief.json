@@ -1,0 +1,452 @@
+{
+  "content_mode": "explainer_v2",
+  "research_questions": [
+    {
+      "question": "Vì sao ý tưởng bảo đảm việc làm (job guarantee) lại được đưa ra trong bối cảnh tự động hóa AI?",
+      "query_vi": "tại sao bảo đảm việc làm giải pháp thất nghiệp AI",
+      "query_en": "why job guarantee AI unemployment solution context"
+    },
+    {
+      "question": "Cơ chế hoạt động của một chương trình bảo đảm việc làm quy mô lớn trước rủi ro AI là như thế nào?",
+      "query_vi": "cơ chế hoạt động chương trình bảo đảm việc làm quốc gia",
+      "query_en": "how federal job guarantee program mechanism works automation"
+    },
+    {
+      "question": "Những nhóm lao động nào sẽ chịu ảnh hưởng nặng nề nhất và là đối tượng mục tiêu của giải pháp này?",
+      "query_vi": "ai bị ảnh hưởng mất việc do AI nhóm lao động nào",
+      "query_en": "who is affected by AI job displacement vulnerable workers"
+    },
+    {
+      "question": "Giải pháp bảo đảm việc làm thời đại AI khác biệt thế nào so với các chính sách an sinh truyền thống?",
+      "query_vi": "bảo đảm việc làm khác gì an sinh xã hội truyền thống",
+      "query_en": "how is AI job guarantee different from traditional welfare"
+    },
+    {
+      "question": "So sánh bối cảnh kinh tế hiện tại với các cuộc cách mạng công nghiệp trước đây khi bàn về việc làm",
+      "query_vi": "so sánh bối cảnh thất nghiệp công nghệ lịch sử và AI",
+      "query_en": "comparing historical technological unemployment context with AI"
+    },
+    {
+      "question": "Những mặt trái, thách thức tài chính và phản biện kinh tế nào đối với ý tưởng bảo đảm việc làm?",
+      "query_vi": "mặt trái thách thức phản biện chính sách bảo đảm việc làm",
+      "query_en": "criticism drawbacks financial challenges job guarantee policy"
+    },
+    {
+      "question": "Các bước đi chính sách tiếp theo và giải pháp thay thế khả thi nào đang được các nhà kinh tế thảo luận?",
+      "query_vi": "tiếp theo là gì chính sách việc làm AI nhà kinh tế đề xuất",
+      "query_en": "what next policy proposals alternatives AI employment economics"
+    }
+  ],
+  "knowledge_notes": [
+    {
+      "text": "Bảo đảm việc làm là cơ chế chính phủ đứng ra làm người tuyển dụng cuối cùng, cam kết tạo công ăn việc làm cho bất kỳ ai muốn làm nhưng không tìm được việc trên thị trường.",
+      "analogy": "Giống như người tổ chức trò chơi luôn giữ một chiếc ghế dự phòng chắc chắn cho người chơi bất ngờ bị loại khỏi vòng xoay.",
+      "confidence": "medium",
+      "source": "kiến thức nền"
+    },
+    {
+      "text": "Sự xuất hiện của công nghệ tự động hóa nâng cao tạo ra nỗi lo về việc nhiều lao động bị thay thế hàng loạt, thúc đẩy nhu cầu tìm kiếm các mạng lưới an sinh vững chắc hơn.",
+      "analogy": "Giống như việc nâng cấp hệ thống đường ray xe lửa khiến những người lái xe ngựa cũ loay hoay không biết đi về đâu nếu thiếu một bến đỗ mới.",
+      "confidence": "medium",
+      "source": "kiến thức nền"
+    },
+    {
+      "text": "Các chương trình việc làm đảm bảo thường tập trung vào các dự án cộng đồng địa phương, giúp người lao động duy trì kỹ năng và thu nhập thay vì chỉ nhận trợ cấp thụ động.",
+      "analogy": "Giống như việc cho phép người thợ mộc tạm thời sửa sang lại các công trình công cộng khi xưởng mộc chính đang được tự động hóa máy móc.",
+      "confidence": "low",
+      "source": "kiến thức nền"
+    },
+    {
+      "text": "Khác với các khoản trợ cấp tiền mặt truyền thống, chính sách việc làm gắn liền với hoạt động lao động thực tế, giúp duy trì cấu trúc nhịp sống và giá trị xã hội cho người thất nghiệp.",
+      "analogy": "Giống như việc tặng dụng cụ làm vườn và hướng dẫn trồng cây thay vì chỉ phát những giỏ rau có sẵn.",
+      "confidence": "low",
+      "source": "kiến thức nền"
+    },
+    {
+      "text": "Các ý tưởng bảo đảm việc làm thường vấp phải những tranh luận về gánh nặng tài chính công và khả năng quản lý hiệu quả một lực lượng lao động quy mô lớn.",
+      "analogy": "Giống như bài toán phân công công việc cho một lượng lớn nhân sự bất ngờ dồn về một phòng ban mà không tính toán trước nguồn lực vận hành.",
+      "confidence": "medium",
+      "source": "kiến thức nền"
+    },
+    {
+      "text": "Lịch sử các cuộc cách mạng công nghệ luôn đi kèm với sự dịch chuyển việc làm, nơi những nghề nghiệp cũ biến mất và những ngành nghề mới dần hình thành theo thời gian.",
+      "analogy": "Giống như sự thay đổi từ việc thắp đèn dầu sang dùng bóng đèn điện, làm thay đổi hoàn toàn công việc của những người thợ gom dầu.",
+      "confidence": "medium",
+      "source": "kiến thức nền"
+    },
+    {
+      "text": "Các nhóm lao động làm việc với văn bản, dữ liệu hoặc các tác vụ lặp đi lặp lại thường đối diện với mức độ biến động công việc rõ rệt hơn trong giai đoạn chuyển đổi công nghệ.",
+      "analogy": "Giống như những người chép sách tay nhanh chóng phải tìm hướng đi mới khi máy in công nghiệp xuất hiện.",
+      "confidence": "low",
+      "source": "kiến thức nền"
+    },
+    {
+      "text": "Nhiều nhà kinh tế học tiếp tục thảo luận và so sánh giữa các giải pháp như thu nhập cơ bản và việc làm đảm bảo để tìm ra phương án tối ưu đối phó với rủi ro mất việc.",
+      "analogy": "Giống như việc các kỹ sư cân nhắc giữa việc lắp túi khí hay hệ thống phanh tự động để bảo vệ người lái xe tốt nhất.",
+      "confidence": "low",
+      "source": "kiến thức nền"
+    }
+  ],
+  "discovery_hint": {
+    "category": "công nghệ",
+    "suggestion": {
+      "cluster_id": "7018f72785f718bf",
+      "topic": "Is a job guarantee the solution to mass AI unemployment?",
+      "why_now": "Tin đăng 2026-10-23T10:00:30+00:00; 1 nguồn độc lập đề cập.",
+      "angle": "Đọc nguồn và kiểm chứng sự kiện cụ thể trước khi viết kịch bản.",
+      "suggested_type": "news",
+      "search_queries": {
+        "vi": [
+          "Is a job guarantee the solution to mass AI unemployment?"
+        ],
+        "en": [
+          "artificial intelligence Is a job guarantee the solution to mass AI unemployment?"
+        ]
+      },
+      "score": 5,
+      "score_reason": "Điểm sơ bộ theo độ mới và số nguồn, chưa có phân tích Gemini.",
+      "source_urls": [
+        "https://www.theguardian.com/technology/2026/oct/23/job-guarantee-ai-mass-unemployment"
+      ]
+    }
+  },
+  "research_depth": "deep",
+  "story_angles": [
+    {
+      "angle": "Nguy cơ mất việc làm do AI tại Mỹ theo báo cáo của Tufts University",
+      "why": "Báo cáo cung cấp các số liệu cụ thể về số lượng việc làm có nguy cơ và tỷ lệ rủi ro ở các ngành nghề và lĩnh vực khác nhau."
+    },
+    {
+      "angle": "Chính sách bảo đảm việc làm như một giải pháp đối phó AI",
+      "why": "Định nghĩa chính sách từ Windfall Policy Atlas và kết quả thăm dò từ Blue Rose Research cho thấy sự quan tâm đến giải pháp này."
+    }
+  ],
+  "key_numbers": [
+    {
+      "text": "Khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế trong 2 đến 5 năm tới theo Báo cáo Rủi ro Việc làm do AI tại Mỹ của Tufts University.",
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "text": "Tỷ lệ rủi ro mất việc do AI tại ngành Thông tin đạt mức 18 phần trăm.",
+      "fact_ids": [
+        2
+      ]
+    },
+    {
+      "text": "Tỷ lệ rủi ro thay thế đối với nghề nhà văn và tác giả ở mức cao nhất là 57 phần trăm.",
+      "fact_ids": [
+        3
+      ]
+    },
+    {
+      "text": "Cuộc thăm dò do Blue Rose Research thực hiện có sự tham gia của 12.000 người Mỹ.",
+      "fact_ids": [
+        5
+      ]
+    },
+    {
+      "text": "Khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế trong vòng 2 đến 5 năm tới.",
+      "fact_ids": [
+        6
+      ]
+    },
+    {
+      "text": "AI có thể thay thế một nửa số lượng việc làm văn phòng cấp độ đầu vào trong khoảng từ 1 đến 5 năm tới.",
+      "fact_ids": [
+        9
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "text": "Trong 2 đến 5 năm tới, khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế theo báo cáo của Tufts University.",
+      "fact_ids": [
+        1
+      ]
+    },
+    {
+      "text": "Trong vòng 1 đến 5 năm tới, AI có thể thay thế một nửa số lượng việc làm văn phòng cấp độ đầu vào theo dự đoán của CEO Anthropic Dario Amodei.",
+      "fact_ids": [
+        9
+      ]
+    },
+    {
+      "text": "Trong vòng 2 đến 5 năm tới, khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế theo Chỉ số Rủi ro Việc làm AI của Mỹ do Tufts University công bố.",
+      "fact_ids": [
+        6
+      ]
+    }
+  ],
+  "why_it_matters": [
+    {
+      "text": "Chính sách bảo đảm việc làm nhận được mức độ ủng hộ cao hơn thu nhập cơ bản phổ quát UBI trong cuộc thăm dò 12.000 người Mỹ do Blue Rose Research thực hiện nhằm đối phó với việc AI thay thế lao động.",
+      "fact_ids": [
+        5
+      ]
+    },
+    {
+      "text": "Chính sách việc làm đảm bảo do liên bang tài trợ và địa phương quản lý đóng vai trò là công cụ ổn định kinh tế vĩ mô hiệu quả cho thời đại tự động hóa.",
+      "fact_ids": [
+        8
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "text": "Bảo đảm việc làm: Cam kết của chính phủ đóng vai trò là nhà tuyển dụng cứu cánh cuối cùng cho mọi người lao động sẵn sàng làm việc, theo định nghĩa của Windfall Policy Atlas.",
+      "fact_ids": [
+        4
+      ]
+    },
+    {
+      "text": "Việc làm đảm bảo (job guarantee): cam kết của chính phủ đóng vai trò là nhà tuyển dụng cứu cánh cuối cùng cho bất kỳ người lao động nào sẵn sàng làm việc.",
+      "fact_ids": [
+        7
+      ]
+    }
+  ],
+  "topic": "Is a job guarantee the solution to mass AI unemployment?",
+  "language": "vi",
+  "source_languages": [
+    "vi",
+    "en"
+  ],
+  "output_language": "vi",
+  "search_queries": [
+    {
+      "source_lang": "vi",
+      "query": "Is a job guarantee the solution to mass AI unemployment?",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "artificial intelligence Is a job guarantee the solution to mass AI unemployment?",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "tại sao bảo đảm việc làm giải pháp thất nghiệp AI",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "why job guarantee AI unemployment solution context",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "cơ chế hoạt động chương trình bảo đảm việc làm quốc gia",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "how federal job guarantee program mechanism works automation",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "ai bị ảnh hưởng mất việc do AI nhóm lao động nào",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "who is affected by AI job displacement vulnerable workers",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "bảo đảm việc làm khác gì an sinh xã hội truyền thống",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "how is AI job guarantee different from traditional welfare",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "so sánh bối cảnh thất nghiệp công nghệ lịch sử và AI",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "comparing historical technological unemployment context with AI",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "mặt trái thách thức phản biện chính sách bảo đảm việc làm",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "criticism drawbacks financial challenges job guarantee policy",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "tiếp theo là gì chính sách việc làm AI nhà kinh tế đề xuất",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "what next policy proposals alternatives AI employment economics",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "vi",
+      "query": "Is a job guarantee the solution to mass AI unemployment? diễn biến nguyên nhân tác động",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "vi",
+      "query": "Is a job guarantee the solution to mass AI unemployment? chi tiết số liệu cập nhật",
+      "region": "vn-vi"
+    },
+    {
+      "source_lang": "en",
+      "query": "artificial intelligence Is a job guarantee the solution to mass AI unemployment? background details impact",
+      "region": "us-en"
+    },
+    {
+      "source_lang": "en",
+      "query": "artificial intelligence Is a job guarantee the solution to mass AI unemployment? latest developments evidence",
+      "region": "us-en"
+    }
+  ],
+  "angle_candidates": [
+    {
+      "angle": "Phân tích nguy cơ thay thế việc làm do AI từ dữ liệu thực tế",
+      "why": "Dựa trên báo cáo định lượng rõ ràng từ Đại học Tufts về tỷ lệ mất việc theo ngành nghề."
+    },
+    {
+      "angle": "Giải pháp bảo đảm việc làm công từ chính phủ trước làn sóng AI",
+      "why": "Khai thác khái niệm employer of last resort và các khảo sát công chúng về mong muốn giữ vững phẩm giá nghề nghiệp."
+    }
+  ],
+  "facts": [
+    {
+      "claim": "Tufts University phát hành Báo cáo Rủi ro Việc làm do AI tại Mỹ, cho thấy khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế trong 2 đến 5 năm tới.",
+      "source_name": "Yahoo! Finance",
+      "source_url": "https://finance.yahoo.com/sectors/technology/articles/tufts-university-releases-first-american-200700863.html",
+      "confidence": "medium",
+      "evidence_quote": "About 9.3 million U.S. jobs could be displaced within the next two to five years.",
+      "source_lang": "en",
+      "fact_vi": "Tufts University phát hành Báo cáo Rủi ro Việc làm do AI tại Mỹ, cho thấy khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế trong 2 đến 5 năm tới.",
+      "published_at": "2026-03-24"
+    },
+    {
+      "claim": "Nghiên cứu của Tufts University ghi nhận tỷ lệ rủi ro mất việc do AI tại ngành Thông tin đạt mức 18 phần trăm.",
+      "source_name": "Yahoo! Finance",
+      "source_url": "https://finance.yahoo.com/sectors/technology/articles/tufts-university-releases-first-american-200700863.html",
+      "confidence": "medium",
+      "evidence_quote": "Information sector jobs face an 18 percent risk.",
+      "source_lang": "en",
+      "fact_vi": "Nghiên cứu của Tufts University ghi nhận tỷ lệ rủi ro mất việc do AI tại ngành Thông tin đạt mức 18 phần trăm.",
+      "published_at": "2026-03-24"
+    },
+    {
+      "claim": "Báo cáo của Tufts University chỉ ra rằng các nghề nghiệp như nhà văn và tác giả chịu tỷ lệ rủi ro thay thế cao nhất ở mức 57 phần trăm.",
+      "source_name": "Yahoo! Finance",
+      "source_url": "https://finance.yahoo.com/sectors/technology/articles/tufts-university-releases-first-american-200700863.html",
+      "confidence": "medium",
+      "evidence_quote": "Writers and authors face a 57 percent displacement rate.",
+      "source_lang": "en",
+      "fact_vi": "Báo cáo của Tufts University chỉ ra rằng các nghề nghiệp như nhà văn và tác giả chịu tỷ lệ rủi ro thay thế cao nhất ở mức 57 phần trăm.",
+      "published_at": "2026-03-24"
+    },
+    {
+      "claim": "Windfall Policy Atlas định nghĩa chính sách bảo đảm việc làm là cam kết của chính phủ đóng vai trò là nhà tuyển dụng cứu cánh cuối cùng cho mọi người lao động sẵn sàng làm việc.",
+      "source_name": "windfalltrust.org",
+      "source_url": "https://windfalltrust.org/policy-atlas/job-guarantees-and-public-works-programs",
+      "confidence": "medium",
+      "evidence_quote": "A job guarantee is a commitment by the government to serve as employer of last resort, offering a publicly funded job at a set wage",
+      "source_lang": "en",
+      "fact_vi": "Windfall Policy Atlas định nghĩa chính sách bảo đảm việc làm là cam kết của chính phủ đóng vai trò là nhà tuyển dụng cứu cánh cuối cùng cho mọi người lao động sẵn sàng làm việc.",
+      "published_at": "2026-10-19"
+    },
+    {
+      "claim": "Cuộc thăm dò 12.000 người Mỹ do Blue Rose Research thực hiện cho thấy mức độ ủng hộ chính sách bảo đảm việc làm cao hơn thu nhập cơ bản phổ quấn UBI để đối phó với việc AI thay thế lao động.",
+      "source_name": "windfalltrust.org",
+      "source_url": "https://windfalltrust.org/policy-atlas/job-guarantees-and-public-works-programs",
+      "confidence": "medium",
+      "evidence_quote": "Blue Rose Research polled 12,000 Americans and found more support for job guarantees than for universal basic income as a response to AI-driven displacement.",
+      "source_lang": "en",
+      "fact_vi": "Cuộc thăm dò 12.000 người Mỹ do Blue Rose Research thực hiện cho thấy mức độ ủng hộ chính sách bảo đảm việc làm cao hơn thu nhập cơ bản phổ quấn UBI để đối phó với việc AI thay thế lao động.",
+      "published_at": "2026-10-19"
+    },
+    {
+      "claim": "Tufts University đã công bố Chỉ số Rủi ro Việc làm AI của Mỹ, ước tính khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế trong vòng 2 đến 5 năm tới.",
+      "source_name": "Yahoo! Finance",
+      "source_url": "https://finance.yahoo.com/sectors/technology/articles/tufts-university-releases-first-american-200700863.html",
+      "confidence": "medium",
+      "evidence_quote": "About 9.3 million U.S. jobs could be displaced within the next two to five years.",
+      "source_lang": "en",
+      "fact_vi": "Tufts University đã công bố Chỉ số Rủi ro Việc làm AI của Mỹ, ước tính khoảng 9,3 triệu việc làm tại Mỹ có nguy cơ bị thay thế trong vòng 2 đến 5 năm tới.",
+      "published_at": "2026-03-24"
+    },
+    {
+      "claim": "Chính sách việc làm đảm bảo (job guarantee) được định nghĩa là cam kết của chính phủ đóng vai trò là nhà tuyển dụng cứu cánh cuối cùng cho bất kỳ người lao động nào sẵn sàng làm việc.",
+      "source_name": "windfalltrust.org",
+      "source_url": "https://windfalltrust.org/policy-atlas/job-guarantees-and-public-works-programs",
+      "confidence": "medium",
+      "evidence_quote": "A job guarantee is a commitment by the government to serve as employer of last resort, offering a publicly funded job at a set wage",
+      "source_lang": "en",
+      "fact_vi": "Chính sách việc làm đảm bảo (job guarantee) được định nghĩa là cam kết của chính phủ đóng vai trò là nhà tuyển dụng cứu cánh cuối cùng cho bất kỳ người lao động nào sẵn sàng làm việc.",
+      "published_at": "2026-10-19"
+    },
+    {
+      "claim": "Viện Levy Economics Institute nhận định chương trình việc làm đảm bảo do liên bang tài trợ và địa phương quản lý là công cụ ổn định kinh tế vĩ mô hiệu quả cho thời đại tự động hóa.",
+      "source_name": "windfalltrust.org",
+      "source_url": "https://windfalltrust.org/policy-atlas/job-guarantees-and-public-works-programs",
+      "confidence": "medium",
+      "evidence_quote": "The Levy Economics Institute has long championed the Job Guarantee, with Pavlina Tcherneva arguing in The Case for a Job Guarantee that a federally funded,",
+      "source_lang": "en",
+      "fact_vi": "Viện Levy Economics Institute nhận định chương trình việc làm đảm bảo do liên bang tài trợ và địa phương quản lý là công cụ ổn định kinh tế vĩ mô hiệu quả cho thời đại tự động hóa.",
+      "published_at": "2026-10-19"
+    },
+    {
+      "claim": "CEO Anthropic Dario Amodei dự đoán AI có thể thay thế một nửa số lượng việc làm văn phòng cấp độ đầu vào trong khoảng thời gian từ 1 đến 5 năm tới.",
+      "source_name": "Carnegie Endowment for International Peace",
+      "source_url": "https://carnegieendowment.org/research/2026/04/the-ai-labor-debate-three-views-on-the-future-of-work",
+      "confidence": "medium",
+      "evidence_quote": "Anthropic CEO Dario Amodei believes that “AI could displace half of all entry-level white-collar jobs in the next 1–5 years,”",
+      "source_lang": "en",
+      "fact_vi": "CEO Anthropic Dario Amodei dự đoán AI có thể thay thế một nửa số lượng việc làm văn phòng cấp độ đầu vào trong khoảng thời gian từ 1 đến 5 năm tới.",
+      "published_at": "2026-04-23"
+    }
+  ],
+  "trends": [],
+  "hooks": [
+    "AI không chỉ cướp đi công việc tay chân mà đang nhắm thẳng vào các ngành nghề tri thức cao.",
+    "Liệu chính phủ có nên đóng vai trò là nhà tuyển dụng cuối cùng khi hàng triệu việc làm biến mất vì tự động hóa?"
+  ],
+  "audience_questions": [
+    "Ngành nghề nào đang đối mặt với rủi ro mất việc cao nhất do AI?",
+    "Chính sách bảo đảm việc làm khác gì so với trợ cấp tiền mặt phổ quát UBI?",
+    "Liệu con người có thể tìm thấy cơ hội mới trong khu vực công khi AI thay thế lao động tư nhân?"
+  ],
+  "keywords": [
+    "AI unemployment",
+    "job guarantee",
+    "employer of last resort",
+    "Tufts University AI index",
+    "workforce displacement"
+  ],
+  "risks": [
+    "Dữ liệu về bảo đảm việc làm chủ yếu mang tính chính sách và nghiên cứu mô hình lịch sử.",
+    "Bỏ nguồn không đọc được bài đầy đủ; một số số liệu dự báo có biên độ rộng tùy tốc độ phát triển công nghệ.",
+    "fact #4: quote dài 37 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "Có trích đoạn nguồn không đồng nghĩa fact đã được kiểm chứng độc lập; cần rà soát trước khi viết kịch bản.",
+    "dữ liệu mỏng, kịch bản sẽ ít chi tiết",
+    "Bỏ nguồn không đọc được bài đầy đủ; không dùng snippet tìm kiếm làm fact.",
+    "Tìm web/news không khả dụng; đã dùng các nguồn còn lại.",
+    "Đã tắt YouTube trends trong lượt nghiên cứu này.",
+    "Đã loại fact #2: quote không tìm thấy nguyên văn trong nguồn; chép nguyên văn từ source.text, không dịch/viết lại, tối đa 25 từ.",
+    "fact #3: quote dài 37 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "fact #4: quote dài 41 từ, đã rút xuống 25 từ đầu nguyên văn và kiểm tra lại.",
+    "Đã mở rộng Research 1 lần: thêm 3 nguồn; 5 → 9 fact hợp lệ."
+  ]
+}

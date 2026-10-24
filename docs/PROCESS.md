@@ -1,6 +1,6 @@
 # Quy trình dự án Video AI Tool
 
-Cập nhật đối chiếu: **2026-10-23**, múi giờ người dùng Asia/Saigon.
+Cập nhật đối chiếu: **2026-10-24**, múi giờ người dùng Asia/Saigon.
 Tài liệu này mô tả bản code tại máy, không phải cam kết dịch vụ bên ngoài.
 
 **BẮT BUỘC đọc toàn bộ tài liệu này trước khi sửa bất kỳ thứ gì.** Sau mỗi
@@ -266,7 +266,7 @@ ROOT/
 
 | Module/file quan trọng | Vai trò và lưu ý |
 |---|---|
-| `config/settings.py`, `.env.example` | 54 biến ứng dụng, validate kiểu/phạm vi, precedence, không tự export env; tùy chọn OpenAI/LLM mềm, mục 9 |
+| `config/settings.py`, `.env.example` | 63 biến ứng dụng, validate kiểu/phạm vi, precedence, không tự export env; tùy chọn OpenAI/LLM mềm, mục 9 |
 | `providers/llm/base.py`, `gemini_client.py`, `openai_client.py`, `router.py` | Client JSON đã parse/text, lỗi chuẩn, Responses SDK, chọn theo bước và một failover; facade tương thích agent JSON text |
 | `config/trends.py`, `trends.yaml`, `schemas/trends.py` | Công tắc/ngân sách/TTL/nguồn; metadata TrendItem/Topic tách khỏi facts |
 | `pipeline/trend_scout.py`, `trend_scout_jobs.py`, `app/views/trend_scout.py` | Gom/chấm đề xuất, CLI/worker/UI và handoff Research |
@@ -281,6 +281,10 @@ ROOT/
 | `agents/plan_structure.py`, `broll_queries.py`, `content_plan.py`, `adaptive.py` | Chuẩn hóa mảng/query/timing, co theo dữ liệu; khác nhau giữa mode cũ và v2 |
 | `agents/director_numbers.py`, `vietnamese_tts.py`, `director_title.py`, `director_sources.py` | Số/đơn vị/ngày, tiêu đề cấp video, alias tên nguồn và allowed_sources |
 | `agents/proper_names.py`, `visual_planner.py`, `visual_policy.py` | Bộ dò tên chung, chọn thẻ, đối chiếu đồ họa và lựa chọn trung tính/giữ nguyên |
+| `agents/presentation.py`, `editor/layout.py`, `pipeline/presentation_review.py` | Cụm card_text/emphasis, cảnh báo giọng, bố cục chung và dựng bản review riêng từ project được cung cấp |
+| `agents/visual_diversity.py`, `utils/caption_timing.py`, `editor/quality.py` | Motion3: thẻ riêng/không trùng, chọn mẫu theo dữ liệu, cảnh báo số, display caption và QC/contact sheet 2.5s |
+| `editor/motion/icons.py`, `config/icons.yaml`, `assets/icons/` | Chip/icon Lucide local ghim commit, giấy phép ISC+MIT notice, thiếu map dùng lightbulb |
+| `pipeline/controlled_ai.py`, `ai_budget.py`, `motion_review.py` | Clip AI nền opt-in, tái dùng job/slot receipt, ngân sách POST/ngày và hồi quy project không thay audio |
 | `agents/video_prompt_writer.py`, `pipeline/video_prompts.py` | Prompt ngắn an toàn; chỉnh prompt không tự tạo clip trả phí |
 | `sources/web_search.py` | Bài đầy đủ, SSRF/public URL, fallback HTML, quyết định giữ/loại |
 | `sources/topic_discovery.py`, `youtube.py`, `youtube_trends.py`, `youtube_resolver.py` | RSS/news, ledger quota, trends, resolve/scan nguồn YouTube |
@@ -331,9 +335,14 @@ Tên lạ không thuộc Settings không trở thành cấu hình ứng dụng; 
 
 | Tên biến | Mặc định trong code | Ý nghĩa/phạm vi |
 |---|---|---|
+| `RENDER_WIDTH` | `1080` | Chiều rộng bản cuối dọc, 240–3840; YouTube đảo hai chiều, làm tròn pixel chẵn. |
+| `RENDER_HEIGHT` | `1920` | Chiều cao bản cuối dọc, 240–3840; preview thu nhỏ riêng, final không chịu MOTION_SCALE. |
 | `MOTION_ENABLED` | `false` | Bật HTML motion trong Render; tắt giữ renderer cũ, thiếu engine/lỗi cảnh dùng Pillow. |
+| `MOTION_WORKERS` | `2` | 1–4 worker cảnh, mỗi thread sở hữu Playwright/browser/FFmpeg riêng; không chia page giữa thread. |
+| `MOTION_THEME` | `auto` | auto dùng style_profile.category_id → palette config/motion_theme.yaml, không có thì studio; UI có thể chọn riêng. |
+| `MASCOT_ENABLED` | `true` | SVG hình khối riêng chỉ hook/kết khi Motion bật; thiếu/bị từ chối SVG thì bỏ qua, không gọi API. |
 | `MOTION_FPS` | `30` | 1–60 fps khi motion bật, áp dụng cả preview/final. |
-| `MOTION_SCALE` | `1.0` | .25–1.0; nhân khung final, làm tròn kích thước chẵn; .5 = 540×960 dọc. Ba biến để trống dùng mặc định. |
+| `MOTION_SCALE` | `1.0` | .25–1.0; scale preview khi bật motion; .5 = 540×960 dọc. Final luôn dùng RENDER_WIDTH/HEIGHT đầy đủ. Ba biến motion để trống dùng mặc định. |
 | `GEMINI_API_KEY` | `trống (không có giá trị khóa trong tài liệu)` | Key Google Gemini, SecretStr; chỉ cần khi gọi Gemini. |
 | `OPENAI_API_KEY` | `trống (không có giá trị khóa trong tài liệu)` | SecretStr; thiếu key/model thì OpenAI tắt, không làm lỗi cấu hình chung. |
 | `OPENAI_MODEL` | `trống` | Model text OpenAI dùng cho Researcher/Trend khi chọn openai; không đoán model/quyền tài khoản. |
@@ -373,6 +382,10 @@ Tên lạ không thuộc Settings không trở thành cấu hình ứng dụng; 
 | `GATEWAY_ALLOWED_MODELS` | `["veo-3.1", "seedance-2.5-30s"]` | Danh sách IDs, nhận chuỗi phân cách phẩy hoặc JSON array; không tự xác minh quyền tài khoản. |
 | `AI_CLIP_SECONDS` | `4` | 1–30 và đúng tập seconds của model. Không đặt tường minh thì lấy seconds đầu của model (Veo 4, Seedance 5). |
 | `AI_CLIP_MAX_PER_RUN` | `3` | 0–20: trần clip muốn tạo, không phải số clip mặc định được bật; generation_failed có thể thêm một job/clip. |
+| `AI_CLIPS_PER_VIDEO` | `0` | Mặc định tắt Clip AI nền; 0–20, còn bị giới hạn theo slot hook/cao trào, MAX_PER_RUN và ngân sách. UI vẫn cần xác nhận phí. |
+| `AI_CLIP_MODEL` | `trống → GATEWAY_VIDEO_MODEL` | Tùy chọn, chỉ veo-3.1 hoặc seedance-2.5-30s; không đổi model của job đã gửi. |
+| `AI_CLIP_MAX_SEC` | `6` | Trần thời lượng một clip nền, 1–30; chỉ chọn số giây thuộc tập model hỗ trợ và <=trần. |
+| `AI_CLIP_BUDGET_PER_DAY` | `3` | Số POST tối đa/ngày Asia/Saigon; 0 chặn tạo mới. Retry/lỗi/ambiguous vẫn tính, cache/resume GET không thêm lượt. |
 | `YOUTUBE_API_KEY` | `trống (không có giá trị khóa trong tài liệu)` | Key YouTube Data API, SecretStr; thiếu thì trends tùy chọn bỏ qua, scan cần key. |
 | `SCRAPECREATORS_API_KEY` | `trống (không có giá trị khóa trong tài liệu)` | Key metadata TikTok cho Trend Scout, SecretStr, header x-api-key; thiếu thì bỏ nguồn có phí. |
 | `PEXELS_API_KEY` | `trống (không có giá trị khóa trong tài liệu)` | Key stock phụ, SecretStr; trống không gọi provider Pexels. |
@@ -410,6 +423,8 @@ trong tài liệu thành giá trị hiện hành của Đức (U02).
 - `config/themes.yaml`: studio (gradient tối), paper (giấy sáng); màu nền,
   card/foreground/muted/accent/secondary, radius/shadow, ảnh tùy chọn. Ảnh chỉ
   ở `assets/backgrounds/`, không tải ảnh nền từ URL tùy ý.
+- `config/motion_theme.yaml`: palette HTML theo category_id, khác theme Pillow;
+  MOTION_THEME/Render UI có thể override; màu sai/contrast thấp được sửa nhóm2.
 - `config/style_profiles/`: `_default.json`, `<category>.json`,
   `<category>.<news|review|story>.json`, lock files. Đây là profile, **không phải
   key/model config**. Token chọn danh mục có dạng `@category:cong-nghe`.
@@ -453,6 +468,8 @@ Render có chính sách đồ họa phục hồi riêng tại mục 5.4.
 
 | rule_id | Nhóm mặc định hiệu lực | Ý nghĩa trong registry | Hàm check / repair |
 |---|---:|---|---|
+| `card_text` | 2 | Cụm thẻ 3–6 từ, emphasis 1–2 từ, không lấy lời đọc cắt cụt/đuôi giới từ | `card_text_shape / fix_card_text` |
+| `presentation_voice` | 3 | Có thể/có lẽ/dường như tối đa1 mỗi2 cảnh; hook không hỏi chung và câu đầu<=12 từ | `presentation_voice / —` |
 | `sentence_grounding` | 1 | Nhãn câu khớp lời đọc; event có fact, nền không giả làm sự kiện | `explainer_sentences / fix_explainer_names` |
 | `sentence_background_names` | 3 | Tên riêng trong ví dụ nền chỉ cảnh báo | `explainer_background_names / —` |
 | `visual_structure` | 2 | Giữ nhãn đồ họa đúng thứ tự lời đọc | `visual_structure / fix_visual_structure` |
@@ -508,6 +525,11 @@ Render có chính sách đồ họa phục hồi riêng tại mục 5.4.
 - V2 bỏ kiểm tra cần fact cho mọi scene/background, bỏ giới hạn lặp fact và
   adaptive duration kiểu cũ. Event trong scene vẫn có IDs đúng; không bắt bịa
   fact cho cảnh ẩn dụ. Mỗi beat có information_kind và new_information.
+- Không tự chèn “Có thể hiểu là” vào mọi câu explain/opinion. Định nghĩa/cơ chế
+  có thể viết trực tiếp; dự đoán/ước đoán giữ độ mềm. Humanized được nhắc hạn chế
+  có thể/có lẽ/dường như, bỏ khuôn diễn giải thừa bằng code; **không** biến dự báo
+  có may/might/could/ước/nguy cơ trong fact thành lời khẳng định. Nếu chưa rút
+  được rào đón thật sự thì ghi nhóm3, không làm yếu hoặc đổi nhãn event để lách nhóm1.
 - Timing Director cũ `content_timed`: max(words/2.6 + .8, 2.5)s/cảnh, round
   theo shot_seconds.mean, tối đa 4 shot. V2 dùng tốc độ profile clamp 2.5–3.0
   từ/s (thiếu profile dùng 2.7), cùng .8s đệm và tối thiểu 2.5s, rồi pad/chia
@@ -577,10 +599,20 @@ Render có chính sách đồ họa phục hồi riêng tại mục 5.4.
   không miễn luật căn cứ narration của Director. Cảnh báo vào review_notes in
   memory, `render/visual_review.json`, `render/report.md`, result warnings, rồi
   báo cáo pipeline. Không ghi ngược vào resolved plan gốc.
-- **Giới hạn xác định từ code**: `run_all_ai.prepare_ai_bundle` hiện không copy
-  `brief.json` hoặc `visual_decisions.json` sang `ai_render/`. Render trên bundle
-  đó có thể thiếu căn cứ/lựa chọn và dùng đồ họa event trung tính. Không khẳng
-  định lựa chọn đã truyền xuyên bundle; đây là việc còn cần xử lý/kiểm thử.
+- Shot có `card_text` riêng và `emphasis[]` (1–2 từ nằm trong cụm), mặc định
+  bỏ serialize khi chưa có để giữ hash plan cũ. Explainer sinh `shot_cards[]`,
+  nhánh written/humanized cũ nhận `card_texts[]`/`emphasis[][]`; thiếu thì chọn
+  cụm danh từ/số lượng/ẩn dụ hoàn chỉnh từ ý câu, không lấy N từ đầu lời đọc.
+  `normalize_cards` đồng bộ sang visual.data.text/highlight, label của stat và
+  text_overlay nếu có. Nhóm2 cấm đuôi cho/có thể/và/của... và giới hạn3–6 từ.
+  Nội dung mới vẫn đi qua **cùng** visual_issues; không xóa dấu vết số/tên bịa
+  chỉ để thẻ hợp định dạng. Render expose card_text trước provenance review,
+  xóa pending card bị bác sau neutralization để không phục hồi chữ sai.
+  Không sửa bất kỳ hàm/nhóm luật căn cứ1 hiện có.
+- Motion3: nhánh legacy `run_all_ai.prepare_ai_bundle` copy brief.json và
+  visual_decisions.json sang ai_render nếu có, để không mất căn cứ/lựa chọn.
+  Nhánh AI nền mới dùng project gốc, không thay thẻ/manifest. Quyết định vẫn
+  đối chiếu hash narration, không miễn kiểm tra căn cứ lời đọc Director.
 
 ## 6. Style Learner, danh mục và Scan YouTube
 
@@ -730,7 +762,7 @@ không thêm engine đồ họa nặng, không thực thi expression trong data.
 | stat_card | value, number_text, unit, label, source | Đếm tăng đến value; value là giá trị gốc, number_text giữ biểu diễn; không dùng năm như stat tùy tiện |
 | steps_list | items[] (thực tế hiển thị tối đa 4), text/highlight | 2–4 bước/ý, hiện dần và dấu tích; rút gọn/co chữ |
 | compare_bars | bars[{label,value,unit,fact_id}], fact_ids | 2–4 thanh; auto-select nhánh cũ hiện thận trọng với % cùng đơn vị; không chứng minh hai số cùng cơ sở chỉ bằng việc cùng đơn vị |
-| source_card | source, source_url, date, title, fact_ids | Thẻ nguồn gần đầu/cuối; không cần mở mỗi cảnh bằng Theo... |
+| source_card | source, source_url, date, fact_ids | Chỉ một thẻ ở shot cuối, hiện “Nguồn: <1–2 tên báo>” và ngày; không vẽ title/nhãn nội bộ |
 | text_focus | text, highlight[] | Giải thích/kết luận/ẩn dụ hoặc đồ họa trung tính fallback |
 | stock | Không vẽ thẻ | Giữ b-roll và caption; vẫn cover không méo |
 | progress_tracker | render_style.progress_tracker/progress_labels, timeline cảnh | Overlay suốt video, tối đa 6 nhóm hiển thị; không phải giá trị template trong Visual enum |
@@ -740,7 +772,11 @@ fact/scene; v2 từ ý câu và loại thông tin. Data event chịu grounding m
 Không tự điền giá trị mẫu trong trang “Xem trước mẫu” vào video sản xuất.
 
 Theme studio/paper sinh nền local; ảnh nền tùy chọn confined trong backgrounds.
-Stock là nền cover, chuyển động nhẹ, blur/tối dưới thẻ. Card có reveal/easing/
+Shot có đồ họa dùng nền theme mặc định; **không mở decoder/tải stock** sau
+thẻ, tránh mặt người/giải trí không được kiểm tra. Stock chỉ còn dùng với shot
+stock; không có detector nội dung ảnh được quảng cáo như đã triển khai.
+Query Explainer lấy từ ý câu/chủ đề qua contextual_queries, không giữ query
+cũ lạc đề hoặc nối hậu tố máy quay để giả khác. Card có reveal/easing/
 nhịp refresh để giảm khung tĩnh; tests kiểm thay đổi frame, không đo sức hấp dẫn
 thị giác. Dữ liệu thiếu/dài dùng default/rút gọn/co font; lỗi Card dùng nền an toàn.
 
@@ -752,21 +788,29 @@ Render thực tế: preview dọc 540×960/ngang 960×540, 15fps/preset ultrafas
 final 1080×1920 hoặc 1920×1080, 30fps/preset medium/CRF20, libx264+aac,
 yuv420p, faststart. Cắt/loop nguồn ngắn theo timeline; crop-cover giữa, không
 kéo méo. Fade/zoom/whip dùng phần đuôi ngắn, không chồng narration/cắt mất cảnh.
+Kích thước trên là mặc định RENDER_WIDTH=1080/RENDER_HEIGHT=1920; có thể cấu
+hình hai chiều. Preview tĩnh scale .5, preview motion theo MOTION_SCALE;
+**final luôn scale1** để .env đặt .5 thử nhanh không vô tình xuất final540p.
 
 Caption Pillow có word/phrase/sentence, classic/pill; phrase khoảng 3 từ, gộp
 nhóm đuôi 1 từ. Có `.words.json` hợp lệ thì dùng, không có thì chia theo ký tự.
 **Edge hiện lấy WordBoundary và ghi sidecar** (chi tiết mục 8.1); MP3/cache cũ
 không có timing thì ước lượng theo ký tự, không gọi lại Edge để lấy mốc.
-Vùng có thẻ khoảng .68–.82 chiều cao để tránh
-đè đồ họa/TikTok; co/wrap chữ. Cảnh im lặng vẫn có caption dù profile tắt caption.
+Vùng phụ đề tính theo đáy thẻ từ editor/layout.py + khe1.6% chiều cao; font
+mục tiêu7.5% chiều cao, co nếu quá dài, không vượt .82 chiều cao/TikTok.
+Cảnh có thẻ luôn nhóm3 từ (đuôi lẻ gộp4), kể cả profile mode sentence.
+text_focus/hook căn chữ giữa theo chiều dọc trong panel vừa nội dung, không
+neo chữ nhỏ ở đầu một thẻ quá cao. Cảnh im lặng vẫn có caption dù profile tắt caption.
 
 Âm thanh: decode PCM stereo 44.1k, normalize peak giọng mục tiêu .85 (gain tối
 đa 8), nhạc local chọn tên mood trước, loop/fade, RMS duck về khoảng .22 khi có
 lời, SFX nếu file đúng whoosh/pop tồn tại, peak limiter cuối .98. Không phải
 chuẩn loudness LUFS chuyên nghiệp. Thiếu music/SFX bỏ qua; không tự tải nhạc.
 
-Tại mốc audit assets/music và assets/sfx chỉ có .gitkeep, nên không hứa preview
-hiện tại có nhạc/SFX. Có cơ chế nhưng chưa có tài nguyên nghe thật tương ứng.
+Tại mốc audit đầu assets/music và assets/sfx chỉ có .gitkeep. Motion2 đã tạo
+pop/whoosh/click/chime WAV từ sine/noise cùng GENERATED_SFX_LICENSE.txt CC0;
+không tải âm thanh mẫu. Music vẫn tùy tài nguyên local, không hứa có nhạc nền
+nếu thư mục trống. Tắt Motion giữ cơ chế SFX cũ khi đã có file tương ứng.
 
 ### 7.1 Motion graphics HTML — giai đoạn 1
 
@@ -775,11 +819,12 @@ hiện tại có nhạc/SFX. Có cơ chế nhưng chưa có tài nguyên nghe th
   `hook_card`/`steps_list`/`compare_bars`; MoviePy vẫn ghép cảnh/transition,
   giọng/nhạc/SFX/ducking và progress_tracker như cũ. Mẫu khác dùng đúng callback
   Pillow hiện có trong cùng cảnh; không thay nội dung hoặc luật kiểm chứng.
-- Kích thước motion = khung final × MOTION_SCALE, số pixel chẵn: TikTok
+- Kích thước motion preview = khung final × MOTION_SCALE, số pixel chẵn: TikTok
   1080×1920 (scale=1) hoặc 540×960 (.5); YouTube 1920×1080/960×540. FPS theo
-  MOTION_FPS=30, **ghi đè độ phân giải/FPS preview cũ chỉ khi bật motion**;
-  preset/CRF/audio vẫn theo mode preview/final. Tắt motion giữ preview15/final30.
-- CSS có nền tối, hạt sáng nhẹ, vùng đồ họa khoảng .19–.62, caption .71–.81;
+  MOTION_FPS=30; final bỏ scale và lấy đầy đủ RENDER_WIDTH/HEIGHT. Preset/CRF/
+  audio vẫn theo mode preview/final. Tắt motion giữ preview15/final30.
+- CSS có nền tối, hạt sáng nhẹ, vùng thẻ hook .21–.55/steps .18–.58,
+  caption ngay dưới +.016 chiều cao, trong safe .82;
   font DTPhudu/local qua find_font, nhúng data URI. Nền gradient và hạt raster
   bằng code thành PNG vì dithering CSS-gradient làm hash thay đổi 1–2 mức màu
   khi tua lại. Không lấy mascot/ảnh từ mẫu. Browser bị chặn HTTP/nguồn ngoài.
@@ -804,7 +849,8 @@ hiện tại có nhạc/SFX. Có cơ chế nhưng chưa có tài nguyên nghe th
   hai `bars[].value` đã có, không thêm trường số liệu chưa được grounding.
   Action chỉ chọn hiệu ứng có sẵn, không thực thi JavaScript từ JSON.
 - Caption HTML nhóm3 từ, gộp từ cuối lẻ thành4; có classic/pill, màu chữ/
-  highlight/stroke/font_scale/stroke_width_ratio lấy render_style.captions.
+  highlight/stroke/stroke_width_ratio lấy render_style.captions; font mục tiêu
+  7.5% chiều cao, tự co khi chữ dài (không dùng width-based font_scale nhỏ cũ).
   Cụm đặt ở vùng dưới an toàn, từ đang đọc đổi màu, chữ dài co/rút gọn. Shot
   Pillow trong cùng cảnh dùng caption Pillow, không chồng hai bộ phụ đề.
 - Chromium chụp JPEG sau mỗi renderAt(i/fps), pipe trực tiếp FFmpeg image2pipe
@@ -859,6 +905,228 @@ File của lần Motion1 (APP, trừ ROOT/docs/PROCESS.md): tạo
 `pipeline/run_all_ai.py`, `editor/render.py`, `schemas/visual.py`,
 `config/settings.py`, `app/views/render.py`, `requirements.txt`, `.env.example`,
 `README.md`, `ROOT/docs/PROCESS.md`. `.env` thật không được script sửa.
+
+### 7.2 Review trình bày “Bảo đảm việc làm”
+
+- Project thực là `output/auto-cong-nghe-d37c14e9`, được tìm qua history và xác
+  nhận bởi Đức; slug MP4 “bao-dam-viec-lam-co-cuu-duoc-thoi-ai” không phải tên
+  thư mục. Chẩn đoán gốc: `build_v2_shots`/`assign_visuals` dùng excerpt18–22 từ,
+  `script_plan` chèn Có thể hiểu là vào mọi câu nền, source slots ở đầu/cuối
+  và title nhãn nội bộ; panel text_focus neo đầu hộp, caption tính theo chiều
+  rộng và nằm quá xa; stock không liên quan vẫn được giải mã dưới thẻ.
+- Hook HTML không có nền thẻ riêng: caption bám đáy chữ/số/badge thực tế bằng
+  DOM geometry, không bám đáy vùng trống dự phòng; giữ khoảng cách 1,6% chiều
+  cao, giới hạn vùng an toàn. Badge hook không được lấy `source` metadata.
+- Sửa nguồn sinh: schema shot có card_text/emphasis, writer nhận yêu cầu cụm
+  riêng; normalizer chọn cụm danh từ/số/ẩn dụ hoàn chỉnh và đồng bộ các field
+  sẵn có để **giữ nguyên** checker số/tên/trích dẫn nhóm1. Card text không được
+  xóa dấu vết claim sai. Thẻ nguồn chuẩn hóa đúng1 ở shot cuối; source title/
+  nhãn nội bộ và source nhỏ ở stat_card không được vẽ. Metadata/credits vẫn giữ.
+- B-roll card mặc định theme gradient tối, bỏ stock search và decoder cho shot
+  đồ họa; không giả có mô hình nhận diện mặt/ảnh giải trí. Query gắn ý câu/chủ đề,
+  không broadcast query cũ. `config/themes.yaml` studio chuyển về gradient tối
+  gần HTML; paper không đổi. Không sửa narration/audio trong Render.
+- `pipeline/presentation_review.py` là công cụ hồi quy **riêng chủ đề được cung
+  cấp**, không phải script mẫu cho mọi video. Tạo project review mới, giữ brief,
+  sửa hook từ fact9,3 triệu, diễn đạt lại cảnh nền3/5/6 từ knowledge_notes/ẩn dụ
+  đã có, kiểm tra lại bằng validate_plan nhóm1, tạo Edge TTS rồi Assets/Render
+  thật. Không gọi Gemini/OpenAI/stock/AI clip, không giả trạng thái run_all done.
+  Tạo audio mới vì lời đọc đổi, không ghép audio cũ sai lời với caption mới.
+- Artifact: `presentation_review.json`, `editorial_review.md`, edit_plan/
+  resolved/assets/audio/credits/render trong project review; ảnh mỗi cảnh và
+  thẻ nguồn cuối ở `output/review_frames/`. So SHA256 toàn bộ48 input được đọc
+  của project gốc trước/sau. Bản review đã xác nhận `original_inputs_unchanged=true`.
+  Kết quả run cuối và test được ghi ở mục11.5/13.4, không lấy số cũ làm nghiệm thu.
+- Chạy từ APP: `python -m pipeline.presentation_review output/auto-cong-nghe-d37c14e9`.
+  Lệnh gọi Edge TTS miễn key và tạo project mới mỗi lần; muốn chỉ xuất lại bằng
+  audio đã có, dùng `python -m editor.render <review>/edit_plan.resolved.json --mode final`.
+  Không sửa `.env` thật. Trong editor, RENDER_WIDTH/HEIGHT là cấu hình đầu ra;
+  preview .5 không làm final xuống540p.
+
+Các file mới: `agents/presentation.py`, `editor/layout.py`,
+`pipeline/presentation_review.py`, `tests/test_presentation.py`,
+`tests/fixtures/job_guarantee/{edit_plan.json,brief.json}`. Tích hợp tại schema
+edit_plan/explainer/story, Director/story/explainer/visual_planner, registry+
+validation.yaml (hai rule2/3), theme/settings, prompt explainer/humanize,
+stock_assets, graphics/captions/templates/render/motion, UI Edit Plan,
+`.env.example`, README và quy trình này. Không sửa hàm checker/nhóm1.
+
+### 7.3 Motion graphics — giai đoạn 2
+
+**Bước0 đã kiểm tra trước mở rộng:** CSS/JS, ba template, render_scene,
+WordBoundary/ước lượng, captions, cache và MOTION_ENABLED có sẵn. Chạy riêng
+`tests/test_motion.py`: **17 passed/35 deprecations/31.51s**, Chromium thật.
+Không thiếu phần nào của Giai đoạn1; mascot original là yêu cầu mới của Giai đoạn2,
+không dùng mascot/hình/logo từ mẫu. Không gọi Gemini/OpenAI/gateway cho việc này.
+
+Renderer mở rộng **trên** pipeline/render_motion.py, không tạo pipeline nội dung
+mới. Visual.template thêm enum; VisualData dùng nguyên text/highlight/value/unit,
+items/bars/source/source_url/date/fact_ids. **Không thêm field số liệu lách
+validator, không đổi các hàm/nhóm1.** Tất cả dữ kiện vẫn do checker hiện có xét;
+beating/layout/mascot là trình bày, không trở thành bằng chứng.
+
+| HTML template | Dữ liệu cần | Hành vi khi thiếu |
+|---|---|---|
+| hook_card, text_focus | card_text3–6 từ → data.text, emphasis → highlight | Chọn cụm hoàn chỉnh theo ý câu, không lấy đoạn đầu lời đọc |
+| stat_card | value hữu hạn + cụm nhãn | text_focus, không dựng số0 để bù dữ liệu thiếu |
+| steps_list | ít nhất2 items không rỗng | text_focus |
+| compare_bars, line_growth | ít nhất2 bars có label/value hữu hạn | text_focus; không sinh giá trị biểu đồ mới |
+| ring_percent | value trong0–100 | text_focus; vòng/count-up theo số được cung cấp |
+| strike_replace | ít nhất2 bars là số cũ/mới, unit | text_focus, không tự tạo số đối chiếu |
+| source_card | source; date nếu có | text_focus; vẫn chuẩn hóa duy nhất1 ở shot cuối, chỉ vẽ “Nguồn: tên báo”+ngày |
+| quote_card | text3–6 từ trích rõ + source/source_url | text_focus ý chính, không dựng quote giả từ lời kể |
+| timeline | ít nhất2 items mốc đã có | text_focus, hiện mốc theo beats |
+| versus | hai bars hoặc hai items văn bản | text_focus, hai cột, không ép số0 vào so sánh chữ |
+| progress_tracker | items cho shot, hoặc render_style.progress_tracker/progress_labels cho overlay | Không bịa nhãn nội dung; overlay theo nhóm cảnh, tối đa6 |
+
+- Chữ thẻ lấy card_text/emphasis qua normalizer hiện có. Source chỉ chứa tên
+  1–2 báo/ngày, metadata còn giữ trong brief/credits. Quote không phải chỉ dẫn
+  cho phép trích dẫn ngoài brief. Không sao chép narration thành nguyên thẻ dài.
+  Plan cũ chưa có source_card được `editor/motion/source.py` bổ sung slot cuối
+  từ metadata brief **trước** prepare_graphics/review_for_render hiện có; không
+  thêm tên/ngày/số ngoài brief, không bỏ qua kiểm tra căn cứ. Thiếu brief thì
+  không tự chế thẻ nguồn. Bật/tắt Motion không sửa bản plan trên đĩa.
+- `agents/motion_beats.py` chạy **sau audio** ở Assets khi MOTION_ENABLED,
+  trước tính resolved hash; Render cho project cũ tạo lại trên bản sao in-memory
+  và lưu `render/motion_plan.json`, không sửa resolved/manifest gốc. Chỉ lúc này
+  mới có words.json; không hứa Director ở lượt viết đã biết timing giọng thật.
+  at_sec và index0 tính trong cảnh; match nguyên cụm rồi từ khóa đã chuẩn hóa,
+  số bắt đầu count_up/kết count_end, “thay vì/không phải” có strike_replace.
+  `reveal_item_N`/`count_up_item_N`/`count_end_item_N` gắn riêng hàng/số,
+  không lấy cue tiêu đề để bật tất cả hàng. JS chờ cue rồi fade trong.16s,
+  đếm trong khoảng từ bắt đầu→kết thúc đọc số; matcher hỗ trợ số chữ Việt.
+  Beat cũ lệch>0.2s không ghi đè cue mới đã match, sửa nhóm2 và lưu notes;
+  custom cue không có match vẫn được giữ khi hợp lệ. Có test ảnh/DOM trước–sau
+  mốc (không chỉ so timestamp JSON), kể cả số và hai hàng timeline khác nhau.
+  Nhịp từ shot_seconds.mean và shots_per_10_sec, clamp khoảngrefresh<=3s;
+  mỗi cảnh có beat sau.5s, khoảngbeats<=3.5s. Beat không khớp chia đều nhóm2.
+  Các beat authored hợp lệ được giữ, không thay lời đọc/fact/type để khớp hình.
+- **Độ lệch<=.2s chỉ được kiểm với mốc words.json**; word_boundary thực hay
+  projected/estimated/time-scaled được ghi rõ. Chưa đo sai số so âm thanh người
+  nói. Nền glow/pulse thay đổi theo t tuyệt đối, không timer/CSS animation.
+- `config/motion_theme.yaml`: studio, cong-nghe xanh/tím, tin-tuc xanh/vàng,
+  kinh-doanh. Auto lấy style_profile.category_id, thiếu dùng studio; UI/.env có
+  chọn riêng. Màu hợp lệ/contrast>=4.5 với card hoặc tự dùng trắng/đen rõ hơn.
+  Font local DTPhudu; nền gradient/hạt raster deterministic; **không mở stock
+  sau thẻ**, chưa có detector ảnh/query-semantic được quảng cáo là đã có.
+- Bốn mascot tự vẽ SVG hình khối tại `assets/mascot/{idle,point,surprised,thinking}.svg`,
+  CC0, có LICENSE.txt. MASCOT_ENABLED=true chỉ hook/kết khi Motion bật; beats đổi
+  trạng thái, vào/ra/bobbing nhẹ. Thay bằng SVG đơn giản cùng tên; loader chỉ cho
+  shape an toàn, cấm script/image/href/style/event/URL ngoài, file<=100KB.
+  Thiếu/không an toàn thì không hiện mascot, không làm sập cảnh. Không clone mẫu.
+- Chuyển cảnh cut/fade/slide từ profile nếu khớp, còn lại map transition_out
+  whip→slide/zoom→fade. Thực hiện exit/entry **trong thời lượng cảnh**, không xếp
+  chồng lời/cắt mất audio; không phải crossfade hai narration. Pop/whoosh/click/
+  chime theo beat chính, cách tối thiểu.35s; thiếu file thì code sine/noise tạo
+  WAV nhẹ tại assets/sfx, CC0 riêng. File người dùng đã có giữ nguyên. Nhạc local
+  theo mood, volume profile khi motion, ducking/limiter hiện có; không tải nhạc.
+- `pipeline/motion_batch.py`: ThreadPoolExecutor, mặc định2 (1–4), **mỗi worker
+  sở hữu browser/page/FFmpeg/decoder riêng**, không chia sync Page giữa thread.
+  Cache vẫn khóa/SHA mỗi cảnh, identity không chứa số worker; kết quả trả theo
+  thứ tự scene. Force chỉ bỏ qua cache một scene, không xóa khóa/state/hash.
+  Nếu mọi scene có clip: FFmpeg concat với duration chính xác → fps → H264/AAC,
+  mux audio đã mix, không giải mã/ghép lại từng khung qua Python. Cảnh thiếu
+  engine/fail dùng Pillow; template mới không có Pillow riêng → text_focus.
+  Tắt Motion giữ nhánh render cũ. Khung nháp theo scale, final vẫn full resolution.
+- QC chạy sau render, kết quả `render/motion_review.json` và review_notes trong
+  render/report.md/UI. DOM được đo ở mẫu mỗi shot **sau một lượt layout repair**:
+  co font, panel co theo chữ, caption ngay dưới và safe area; vùng nội dung
+  DOM text/graphic làm proxy diện tích, không phải OCR/đếm pixel mực in. Còn
+  tràn/overlap/blank>40% thì nhóm3, không chặn. Chuyển động kiểm bằng lịchbeats
+  + frame deterministic, chưa phải computer vision theo mọi pixel toàn video.
+  Review ảnh mỗi scene và contact_sheet.png dưới output/<project>/review_frames;
+  cảnh có source lấy mốc source, không lấy giữa cảnh rồi bỏ sót thẻ nguồn.
+  QC lấy mẫu sau cue; chữ còn chủ động ẩn/fade không bị báo overflow vì transform
+  trước lượt xuất hiện. Mẫu chưa đủ phần tử được đánh deferred_until_cue, không
+  nhận là đã kiểm đạt. Thay đổi riêng QC đã kiểm hash renderAt giữ nguyên,
+  hậu kiểm lại report/ảnh, không đổi MP4 hoặc sửa hash cache để ép dùng bản cũ.
+- UI Render: Motion/Mascot/theme, Xem trước cảnh (scale.5), Render lại chỉ cảnh
+  này (force cache scene), thread không gọi Streamlit, nút khóa khi đang chạy.
+  CLI dùng `--motion --mode preview --scale 0.5 --scene 2 [--force-scene 2]`.
+  Preview cảnh ghi filename/report riêng, không ghi lại Edit Plan/Assets.
+  `motion_plan_scene_N.json`/`motion_review_scene_N.json` và contact_sheet_scene_N.png
+  giữ riêng để không ghi đè báo cáo/contact sheet của render cả video.
+
+Luật trình bày local mới (không tạo thêm luật chặn Director):
+
+| rule_id | Nhóm | Vị trí / sửa |
+|---|---:|---|
+| motion_data | 2 | scene_payload: thiếu dữ liệu → text_focus |
+| motion_beats | 2 | motion_beats.py: match hoặc phân bổ/refresh |
+| motion_theme, motion_contrast | 2 | motion/theme.py: màu hợp lệ/tăng tương phản |
+| motion_layout | 2 rồi3 | runtime.js fit một lần, QA còn lỗi ghi cảnh báo |
+| motion_rhythm | 3 | finish.py kiểm khoảngbeats>3.5s, không retry LLM |
+| visual_card | 2 | visual_diversity.py: thẻ chung ngoài kết/trùng2thẻ trước → cụm ý chính hoặc icon |
+| visual_number | 2 | Render sau căn cứ: giá trị không có narration/brief → thẻ chữ, không đếm số giả |
+| visual_variety | 2 rồi3 | Chọn mẫu từ dữ liệu đã có, tránh kề nhau; thiếu loại dữ liệu chỉ cảnh báo |
+| visual_quality | 3 | quality.py: báo cáo/ảnh 2.5s sau Render, không chặn MP4 |
+
+File bổ sung: `agents/motion_beats.py`, `config/motion_theme.yaml`,
+`editor/motion/{theme,sfx,source,finish}.py`, `pipeline/{motion_batch,motion_benchmark}.py`,
+4SVG+license và 4WAV+license, `tests/test_motion_v2.py`. Tích hợp tại Settings,
+Visual enum, Assets.persist, render_motion.py, editor.render/audio_mix/jobs,
+HTML/CSS, UI Render, test_motion/render_ui/timeline, .env.example/README/PROCESS.
+Đường Render vẫn chỉ đọc input, không thay validation nhóm1.
+
+Benchmark60s: `python -m pipeline.motion_benchmark <project>/edit_plan.resolved.json`.
+Tool tạo project mới, giữ toàn bộ lời đọc, resample rồi atempo/cắt-pad theo sample
+để đủ60s; ghi rõ audio đã đổi tốc độ **chỉ cho phép đo**, không gọi API. Đã bắt
+lỗi đếm sample24k theo44.1k trong lượt thử đầu, dừng lượt đó, thêm test PCM; lượt
+bị hủy không tính kết quả. Kết quả đo nghiệm thu và pytest cuối ở mục11.5/13.4.
+
+### 7.4 Motion graphics — giai đoạn 3 (đang kiểm chứng)
+
+Nhóm1 giữ nguyên. `agents/visual_diversity.py` bổ sung luật trình bày local:
+visual_card (2: bỏ thẻ chung ngoài kết, không trùng hai thẻ trước), visual_number
+(2: Render sau provenance review đối chiếu giá trị với narration/brief rồi đổi
+thẻ chữ nếu sai), visual_variety (2 chọn template theo dữ liệu, 3 cảnh báo khi
+không đủ dữ liệu cho3loại), visual_quality (3 báo cáo sau Render). Director vẫn
+đưa dữ liệu gốc qua cùng visual_issues/validator1; không xóa claim sai để lách.
+
+Hai template thêm icon_card/cta_card dùng text/highlight hiện có. Selector chọn
+ring cho%, strike_replace trước/sau khi đã có2bars, steps/timeline/versus khi
+cóitems, icon cho khái niệm, cta cho kết; không chế số/quote để đạt đa dạng.
+`StyleProfile.visual_template_ratios` tùy chọn định hướng tỷ lệ; dữ liệu/nhịp
+thực tế và tránh template kề nhau được ưu tiên. Source vẫn đúng1slot cuối.
+
+Chip trên cùng/icon đọc config/icons.yaml, mặc định lightbulb. ChínSVG Lucide
+ghim commit7faf87628a1ad6175975bc595344337ce14a7db4 tại assets/icons,
+LICENSE đầy đủ ISC cùng noticeMIT/Feather; provenance.json ghi nguồn. Không
+lấy mascot/ảnh/âm thanh của video mẫu. Thiếu icon/map dùng icon mặc định,
+SVG không an toàn bỏ qua. Mascot/SFX/transition tái dùng Motion2.
+
+Caption dùng `utils/caption_timing.py`: giữ nguyên start cue, kéo display end
+đến từ kế để không trống khi còn lời đọc, ghép đuôi1từ vào cụm kề; words.json
+gốc không sửa. HTML/Pillow dùng cùng display policy. Hết lời có thể trống.
+
+`editor/quality.py` sau Render xuất quality_report.json cấp project, PNG mỗi
+2.5s vào review_frames/samples và contact_sheet.png. Preview riêng cảnh có
+suffix_scene_N. Chỉ là DOM/lịchbeats/display timing, không OCR/giám định nghĩa;
+QC lỗi không làm mất MP4, ghi log/cảnh báo. UI Render hiển thị tóm tắt/báo cáo.
+
+Clip AI nền là tùy chọn rõ ràng tại `pipeline/controlled_ai.py`; mặc định0.
+Chỉ slot không chứa số/thẻ dữ liệu ở hook/cao trào; tối đa1slot/cảnh. Thẻ và
+caption luôn giữ phía trên, clip chỉ nền mờ nhẹ. Prompt ai_prompt của Director
+được giữ nếu hợp lệ, thiếu dùng fallback an toàn; Render không gọi text LLM.
+Jobs create/resume/remoteID/cache/receipt dùng lại pipeline.ai_video. Ngân sách
+POST/ngày Asia/Saigon được reserve atomic dưới .cache/ai_clip_budget.json trước
+POST, bao gồm retry/lỗi; hỏng ledger fail closed. Model chỉ2ID hiện có, giây
+phải thuộc model và <=AI_CLIP_MAX_SEC. generation_failed thêm tối đa1job;
+timeout/ambiguous không POST lại, gradient và giữ job để reconcile. Không đổi
+guard bảo vệ phí theo một yêu cầu retry timeout không an toàn.
+
+RunConfig.ai_background_only=true mặc định: run_all dùng nền AI trên project
+gốc thay vì thay thẻ; legacy bundle vẫn đọc được và copy brief/visual_decisions.
+UI Render xác nhận số/model/giây/giá tham khảo/tối đa2job trước khi submit.
+MOTION tắt thì không tạo clip nền. Clip đã có chỉ Render khi AI được bật,
+đối chiếu SHA/job local; không gọi mạng khi xuất lại. Metadata/credits có nhãn
+“Nội dung có hình AI” khi thật sự dùng clip. Giá code chỉ tham khảo, không hóa đơn.
+
+Project đối chiếu đã tìm được: auto-cong-nghe-e7db24d3, tiêu đề “Báo động đỏ
+Black October và kỷ nguyên AI hack hạ tầng”, audio57.192s. Fixture thật ở
+tests/fixtures/black_october có hash nguồn. Kết quả pytest/render/clip thật:
+**ĐANG KIỂM CHỨNG**, chưa nhận mock là API thành công. Bản review sẽ tạo project
+mới giữ nguyên audio/brief/manifest/input gốc; không sửa status/hash để ép chạy.
 
 ## 8. Assets, TTS, stock và AI clip
 
@@ -961,7 +1229,9 @@ max_output_tokens, temperature, timeout) → **dict đã parse**, generate_text 
 str. Router thực thi cùng interface; `RoutedProvider` là facade JSON text cho
 agent hiện có. ResearchBrief vẫn dùng ResearchFactsResponse rồi
 compact_facts_json như Gemini trước đây. Schema lưu đĩa, prompt nội dung,
-normalizer và 38 luật nghiệp vụ không đổi.
+normalizer và 38 luật nghiệp vụ ở mốc refactor LLM không đổi. Sau review trình bày,
+registry có thêm `card_text` nhóm2 và `presentation_voice` nhóm3, tổng cộng 40 luật;
+không đổi các checker/nhóm1 hiện có.
 
 | Bước | Provider chọn | Model Gemini | Model OpenAI |
 |---|---|---|---|
@@ -1286,7 +1556,29 @@ file env sang file tạm, chặn dotenv đọc .env thật. Test nào cần conf
 file/biến giả. Tests không gọi API thật; có test FFmpeg/MP3/MP4/Pillow local và
 Streamlit AppTest. Không chạy hai suite dùng cùng --basetemp song song.
 
-Kết quả sau Motion1 **2026-10-23: 878 passed, 0 failed,
+Kết quả toàn bộ suite Motion2 cuối **2026-10-24: 935 passed, 0 failed,
+45 cảnh báo deprecation trong335.58s**. Kiểm riêng QC chữ chưa tới cue,
+fixture lỗi và ngữ cảnh preview riêng cảnh: **3 passed/28.54s**. Hai test mới
+thêm sau lúc suite collect, không nhận là đã nằm trong số935. Preview cảnh nội
+dung giữ vị trí/progress/mascot của toàn video, không bị coi thành cảnh kết.
+Bao gồm test DOM/ảnh cue trước–sau.2s,
+số chữ Việt/beat cũ, cache/worker/preview cảnh và luật căn cứ cũ.
+Mốc trước sửa hiển thị theo cue:928 passed/582.82s + post2/24.80s;
+không dùng mốc đó thay nghiệm thu cuối.
+Không gọi API; Chromium/FFmpeg/Streamlit AppTest local và mock providers.
+Kiểm thêm `pip check`: không có dependency hỏng. Quyền/checker nhóm1 giữ nguyên.
+
+Mốc toàn bộ suite sau sửa trình bày **2026-10-23: 897 passed, 0 failed,
+38 cảnh báo deprecation trong 789.99s** (19 test trình bày mới; không gọi API
+trong tests). Sau đó chỉ chỉnh anchor caption/badge của hook HTML và chạy lại
+`tests/test_motion.py tests/test_presentation.py tests/test_visual_templates.py`:
+**55 passed, 35 cảnh báo deprecation trong 82.38s**, có kiểm DOM gap hook,
+chặn badge source, hash tua lùi, cache và render Chromium thật tại máy.
+Lần full chạy song song với render1080p nên thời gian không so trực tiếp với
+lần không có tải render. Chromium/cache có thể bị vô hiệu nếu sửa JS/CSS/module
+trong khi test đang đo cache; không sửa dependency trong một lượt đo.
+
+Mốc sau Motion1 **2026-10-23: 878 passed, 0 failed,
 38 cảnh báo deprecation trong 387.77s** (17 test motion mới, không API mạng).
 Các test Chromium chạy thật tại máy sau khi cài browser; kiểm hash khi tua cùng
 mốc, callback Pillow, ghép audio/cache và fallback thiếu engine. Tắt motion giữ
@@ -1393,6 +1685,14 @@ không bảo đảm dịch vụ ngoài sẽ luôn thành công.
 - [x] Motion graphics giai đoạn1: WordBoundary/sidecar + ước lượng, ba mẫu HTML,
   renderAt deterministic, cache cảnh, preview scale/ETA và fallback Pillow;
   giữ luật/prompt nội dung Director, thêm duy nhất Visual.beats tùy chọn.
+- [x] Motion2: đủ13 mẫu HTML, source slot cuối từ brief, beats sau audio,
+  SVG/SFX original, category palette, worker cảnh/cache, FFmpeg mux, QC nhóm2/3,
+  review frames/contact sheet và preview/force riêng cảnh; xem kết quả cuối mục13.4.
+- [x] Review trình bày: card_text/emphasis riêng, rule2/3, hook ngắn có căn cứ,
+  thẻ nguồn cuối duy nhất, theme-only b-roll card, caption sát thẻ/cỡ lớn và
+  final1080×1920 riêng preview scale; hồi quy job-guarantee giữ input gốc.
+- [ ] Motion3: đa dạng/icon/CTA, sửa thẻ/số/caption, clip nền có consent/quota/receipt,
+  QC2.5s; đang chạy pytest và chờ bằng chứng render/clip thật (mục7.4).
 - [x] UI 11 trang, tác vụ dài qua worker, project list, một nút/duyệt/resume/hủy hợp tác.
 - [x] Windows atomic I/O/locks/snapshot, test cách ly cấu hình thật.
 - [x] Đã lưu tài liệu quy trình gốc, registry cấu hình/luật và quy tắc cập nhật bắt buộc.
@@ -1403,10 +1703,10 @@ còn giới hạn heuristic. Xem bảng chưa xác nhận bên dưới trước 
 ### 13.2 Đang làm/chờ làm, không tự mở rộng phạm vi
 
 - [x] Lần công việc hiện tại: kiểm kê và viết docs/PROCESS.md + AGENTS.md, không đổi runtime.
-- [x] Bổ sung Trend Scout theo yêu cầu mới; giữ Director và 38 rule không đổi,
+- [x] Bổ sung Trend Scout theo yêu cầu mới; ở mốc đó giữ Director và 38 rule không đổi,
   thêm test mock/fixture thật và cập nhật các mục quy trình tương ứng.
 - [ ] Đồng bộ/gỡ nội dung cũ mâu thuẫn trong README/chuyên đề, sau khi người dùng cho phạm vi sửa thêm.
-- [ ] Truyền brief/visual_decisions sang ai_render và thêm hồi quy đồ họa khi dùng bundle AI.
+- [x] Truyền brief/visual_decisions sang legacy ai_render; Motion3 có nhánh AI nền giữ nguyên thẻ/input.
 - [ ] Thống nhất preset preview cũ với renderer; làm rõ/xóa `ai_failure_action=ask` còn giữ kiểu nhưng thực tế skip.
 - [ ] Rà riêng detector tên chủ đề discovery: `validate_suggestion` còn heuristic riêng,
   không dùng proper_names chung; log từng có false positive “Trung”. Không nói đã sửa nhánh này.
@@ -1434,7 +1734,9 @@ còn giới hạn heuristic. Xem bảng chưa xác nhận bên dưới trước 
 | U09 | Endpoint Weibo/Bilibili công khai ổn định chưa được xác nhận; nguồn miễn phí/YouTube mostPopular chưa nghiệm thu live trong lần Scout | config/trends.yaml, providers/trends/; Weibo/Bilibili giữ tắt, Reddit/Google RSS có thể bị chặn và sẽ bỏ qua, tests chỉ mock |
 | U10 | Chất lượng gom/chấm Trend Scout bằng Gemini thật và “chưa phổ biến ở VN” chưa đo | pipeline/trend_scout.py, output/trend_scout_latest.json; lượt này chỉ probe ScrapeCreators, test Gemini mock; điểm là ước lượng, không phải xác minh sự kiện |
 | U11 | Model/quyền, quota/giá và chất lượng OpenAI thật trong tài khoản hiện hành | providers/llm/openai_client.py, router.py, .env do Đức tự chỉnh bằng editor; đã đối chiếu SDK/docs và test mock, chưa gọi API OpenAI/Gemini trả phí mới trong lần refactor |
-| U12 | Độ khớp từ với giọng Edge thực tế mới và tốc độ/RAM motion toàn video dài/máy khác | providers/tts_edge.py, utils/word_timing.py, pipeline/render_motion.py; WordBoundary đã mock, demo dùng audio có sẵn với timing ước lượng; cần nghe/đối chiếu sidecar của lần Assets mới, không nhận projected là timing chính xác. Benchmark10s không đại diện final90–180s. |
+| U12 | Độ chính xác đồng bộ từ và tốc độ/RAM motion toàn video dài/máy khác | providers/tts_edge.py, utils/word_timing.py, pipeline/render_motion.py; review job-guarantee đã gọi Edge thật cho 6 cảnh, không có cảnh im lặng: 4 sidecar word_boundary, 2 boundary_projected. Chưa đo sai số bằng nghe/đối chiếu từng từ; không nhận projected là timing chính xác. Benchmark10s và final52s không đại diện final90–180s. |
+| U13 | Chất lượng lời kể/card_text do LLM thật với prompt mới; Việt hóa mọi thuật ngữ và nhận diện nội dung stock bằng thị giác | agents/presentation.py, prompts/explainer_v2.txt, director_humanize.txt; project review sửa biên tập dựa trên brief có sẵn, không gọi LLM trả phí. Từ điển Việt hóa chỉ các cụm được khai báo, giữ tên riêng; theme-only tránh stock lạc đề chứ không dùng detector ảnh. |
+| U14 | QC Motion2 không phải OCR/computer vision toàn video, độ cuốn hút chưa có người chấm; timing audio projected/time-scaled chưa xác minh≤.2s | editor/motion/runtime.js, finish.py, agents/motion_beats.py; DOM samples/lịchbeats/framehash có test, cần xem contact_sheet/video và nghe đối chiếu. Lỗi còn lại nhóm3 giữ trong motion_review.json, không đổi luật1. Benchmark60s dùng audio atempo riêng, không ngoại suy production dài. |
 
 ### 13.4 Bằng chứng hồi quy local đang có
 
@@ -1451,6 +1753,45 @@ còn giới hạn heuristic. Xem bảng chưa xác nhận bên dưới trước 
   có cảnh báo chất lượng, không tuyên bố đã đạt mọi tiêu chí explainer.
 - `output/barclays-templates-66279d6a/render/`: demo template 30s từ tài nguyên
   cũ có khoảng nghỉ minh họa; không coi là video v2 mới đầy đủ giọng.
+- `output/bao-dam-viec-lam-co-cuu-duoc-thoi-ai-review-443529c8/` là bản review
+  của `auto-cong-nghe-d37c14e9`: 9 fact từ brief cũ, 6 cảnh, Edge TTS mới,
+  MP4 final1080×1920/30fps dài52.376s; không gọi LLM/stock/clip AI. Cảnh nền3/5/6
+  được biên tập từ knowledge_notes chứ không nhận là kết quả LLM mới. Bằng chứng
+  hash48 input gốc không đổi ở `presentation_review.json`; `report.md` ghi rõ
+  cảnh báo/nguồn/giới hạn. Bảy PNG kiểm tra ở `output/review_frames/` gồm mỗi
+  cảnh và thẻ nguồn cuối; số đo render cuối lấy từ `render/final.json`.
+  Lượt cuối sau chỉnh hook HTML: **385.046s**, **5.760.636 byte**; codec được
+  đối chiếu H.264/yuv420p + AAC stereo trên MP4 cuối bằng FFmpeg.
+  Hash MP4 cuối lưu trong `presentation_review.json`; đây là một lượt
+  local, không phải cam kết thời gian cho mọi máy/dự án.
+- Motion2 cuối: `output/motion-v2-di-san-cua-bioware-sau-khi-khep-lai-17f09ede/`,
+  từ project gần nhất `auto-cong-nghe-0481505b` (yêu cầu60s, audio gốc70.704s).
+  Benchmark giữ toàn bộ lời đọc, atempo~1.1784 sau resample về44.1k để đủ60s;
+  đây là bản đo riêng, không sửa audio/input gốc. **54 file gốc không đổi**.
+  Hai MP4 trong render/motion_scale_0_5.mp4 và motion_scale_1_0.mp4;
+  FFmpeg xác nhận60.00s/30fps/H264 yuv420p(tv,BT709)/AAC ngay từ lượt lạnh.
+  Bảng thời gian thực:
+
+  | Scale | Kích thước | Render lạnh | Hậu kiểm QC riêng | Tổng thực thi | Đỉnh working set cây tiến trình |
+  |---|---|---:|---:|---:|---:|
+  | .5 | 540×960 | 55.937s | 40.368s | 96.305s | 1321.1 MB |
+  | 1.0 | 1080×1920 | 101.083s | 21.155s | 122.238s | 1803.0 MB |
+
+  Lạnh0/6 cache hit, không chạy suite cùng lúc. Hậu kiểm QC sau cue chạy riêng
+  khi suite đang hoạt động, ghi rõ khác tải; **không đổi pixel/video**, SHA256
+  MP4 trước/sau không đổi và mã renderAt giữ hashfd3b490e…500. Không cộng nhập
+  hai giai đoạn rồi nhận đó là một lượt lạnh đơn lẻ. Nháp gồm cả hậu kiểm dưới
+  3phút tại phép đo này; không phải SLA các project/máy khác. RAM gồm
+  Python/Chrome/FFmpeg con, có thể đếm trùng shared pages.
+  `benchmark.json`, `benchmark.md`, `DELIVERY.md` có số đo/file manifest/giới hạn.
+  Sáu ảnh + contact_sheet.png trong review_frames; 22 mẫu DOM sau tự fit,
+  còn2 cảnh báo nhóm3: c5/shot2 text_overflow cần xem tay và c6/shot3 blank>40%;
+  1 mẫu deferred_until_cue chưa đánh giá đủ. Không tuyên bố đã sạch mọi layout.
+  Source_card đúng một lần cuối, SVG hình khối riêng hook/kết.
+  `output/motion_v2_gallery/contact_sheet.png` và gallery.json minh họa đủ13 mẫu;
+  số/quote ở gallery là **dữ liệu giả có nhãn**, không vào facts hay video tin.
+  Lượt thử fbf7106f bị hủy vì sample-rate, đã đánh valid_benchmark=false;
+  các lượt0e477ab6/cea470db trước chỉnh cue chỉ là trung gian, không dùng bàn giao.
 
 ## 14. Quy tắc bắt buộc khi AI/người làm việc
 
@@ -1485,6 +1826,10 @@ còn giới hạn heuristic. Xem bảng chưa xác nhận bên dưới trước 
 
 | Ngày | Thay đổi | File | Lý do |
 |---|---|---|---|
+| 2026-10-24 | Motion3 triển khai: thẻ riêng/selector/chip Lucide/caption display, AI nền opt-in và budget/slot receipt, QC2.5s; đang nghiệm thu suite/render/API | APP/agents/visual_diversity.py, editor/quality.py, editor/motion/icons.py, config/icons.yaml, assets/icons/, pipeline/controlled_ai.py, ai_budget.py, motion_review.py và các tích hợp; tests/test_motion_v3.py; ROOT/docs/PROCESS.md | Giữ nhóm1/input gốc, kiểm tra mới2/3; không nhận mock hoặc giá tham khảo là API/hóa đơn thật |
+| 2026-10-24 | Chốt Motion2: hiển thị thật theo cue trong.16s, số chữ Việt/count từng mục, sửa beat cũ; QC sau cue không nhầm chữ ẩn; preview riêng cảnh giữ ngữ cảnh mascot/progress; benchmark60s cuối17f09ede và hash MP4 bất biến sau hậu kiểm; full935 passed/45 warnings/335.58s, postQC/preview3 passed/28.54s | APP/agents/motion_beats.py, editor/motion/runtime.js, pipeline/render_motion.py, pipeline/motion_batch.py, editor/audio_mix.py, tests/test_motion_v2.py; ROOT/docs/PROCESS.md; output/...17f09ede/benchmark.json, DELIVERY.md | Kiểm bằng DOM/ảnh thay vì chỉ timestampJSON, giữ tất cả nhóm1; số đo/giới hạn cuối ở13.4 |
+| 2026-10-23 | Motion2: mở rộng13 template, source cuối, beats theo words, palette/SVG/SFX original, thread2 cảnh/cache/FFmpeg mux, QA và preview/force cảnh; benchmark60s hai scale trong project riêng | APP/agents/motion_beats.py; config/settings.py, motion_theme.yaml; schemas/visual.py; editor/motion/{theme,sfx,source,finish}.py, base.css, runtime.js; editor/render.py, audio_mix.py, jobs.py; pipeline/assets.py, render_motion.py, motion_batch.py, motion_benchmark.py; app/views/render.py; assets/mascot/, sfx/; tests/test_motion_v2.py, test_motion.py, test_render_ui.py, test_timeline.py; .env.example, README, ROOT/docs/PROCESS.md | Hoàn thiện phần trình bày/chịu lỗi và hiệu năng, giữ checker/nhóm1, không gọi API và không sửa input Render gốc; full928 passed/45 warnings/582.82s, post2 passed/24.80s; benchmark/file bàn giao ở13.4 |
+| 2026-10-23 | Tách card_text/emphasis, thêm card_text nhóm2/presentation_voice nhóm3; bỏ forced modal, hook12 từ, Việt hóa thuật ngữ; một thẻ nguồn cuối, caption sát thẻ/cỡ lớn, nền theme-only và final1080×1920 độc lập scale nháp; review job-guarantee trong project mới | APP/agents/presentation.py, explainer_director.py, explainer_visuals.py, visual_planner.py, director_story.py, validation_rules.py, story_style.py; schemas/edit_plan.py, explainer.py, story.py; config/validation.yaml, settings.py, themes.yaml; prompts/explainer_v2.txt, director_humanize.txt; editor/layout.py, captions.py, templates/core.py, graphics.py, render.py, motion/runtime.js; pipeline/stock_assets.py, render_motion.py, presentation_review.py; app/views/edit_plan.py; tests/test_presentation.py, test_visual_templates.py, test_motion.py, fixtures/job_guarantee; .env.example, README, ROOT/docs/PROCESS.md | Sửa nguồn sinh/thể hiện, giữ toàn bộ checker và nhóm1, không chép lời đọc lên thẻ; full897 passed/38 warnings/789.99s, hồi quy sau chỉnh hook55 passed/35 warnings/82.38s; artifact ở mục13.4 |
 | 2026-10-23 | Motion graphics giai đoạn1: WordBoundary/cache/sidecar, ba mẫu HTML deterministic + beat/caption profile, Chromium→FFmpeg cache cảnh và fallback Pillow, scale/FPS/ETA, benchmark local hai scale; không sửa luật/prompt Director; pytest878 passed/38 deprecations/387.77s, pip check qua | APP/providers/tts_edge.py, utils/word_timing.py, pipeline/assets.py, render_motion.py, motion_demo.py, run_all_ai.py, editor/motion/, editor/render.py, schemas/visual.py, config/settings.py, app/views/render.py, requirements.txt, .env.example, README.md, tests/test_motion.py; ROOT/docs/PROCESS.md | Đồ họa theo lời đọc có đường dự phòng và kiểm thử/benchmark local; kết quả đo cuối ở mục7.1 |
 | 2026-10-23 | Thêm LLMClient Gemini/OpenAI + router theo bước, OpenAI SDK 3.37.0 Responses/JSON/RPM/backoff, fallback một lần, cấu hình tùy chọn và readiness UI; giữ schema/prompt/luật, Style chỉ Gemini; pytest 861 passed/3 warnings/709.71s, pip check qua, không gọi LLM thật | APP/providers/llm/*.py, providers/llm_gemini.py, config/settings.py, .env.example, requirements.txt, agents/researcher.py, director.py, director_story.py, sources/topic_discovery.py, pipeline/trend_scout.py, app/streamlit_app.py, app/views/*.py, app/ai_prompt_controls.py, tests/test_llm_router.py, tests/conftest.py và mock integration tương ứng; ROOT/docs/PROCESS.md | Cho chọn model từng bước và chịu lỗi tạm thời qua provider khác mà không làm thay đổi nghiệp vụ hoặc bắt buộc key OpenAI |
 | 2026-10-23 | Thêm Trend Scout opt-in trước Research, metadata-only adapters/cache/ngân sách UTC/lịch sử SQLite v2/UI/CLI; probe thật 4 HTTP200, mỗi call API báo 1 credit; pytest 808 passed/3 warnings/385.44s (40 test Scout mới) | APP/pipeline/trend_scout*.py, providers/trends/, schemas/trends.py, config/trends.*, settings.py, db/repository.py, auto_category.py, run_all.py, agents/researcher.py, app/views/trend_scout.py, app/streamlit_app.py, tools/probe_scrapecreators.py, tests/test_trend_scout.py, tests/fixtures/scrapecreators_*.json, .env.example; ROOT/docs/PROCESS.md | Chọn chủ đề hot trước kiểm chứng, giới hạn phí và cô lập lỗi; không sửa Director/không thêm luật chặn |

@@ -99,8 +99,8 @@ def style_issues(plan):
             add(scene,"Kết bằng nhận định/câu hỏi, không tóm bài hoặc cảm ơn đã xem.")
         for shot in scene.shots:
             if shot.text_overlay:
-                if not 2<=len(shot.text_overlay.split())<=5 or shot.text_overlay.casefold().strip(".!?") in {s.casefold().strip(".!?") for s in sentences}:
-                    add(scene,"Overlay phải 2–5 từ/số, không lặp nguyên câu lời đọc.")
+                if not 3<=len(shot.text_overlay.split())<=6 or shot.text_overlay.casefold().strip(".!?") in {s.casefold().strip(".!?") for s in sentences}:
+                    add(scene,"Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.")
         if i>=3 and not any(s.pattern_interrupt for s in plan.scenes[i-2:i+1]):
             add(scene,"Cần pattern interrupt mỗi 2–3 cảnh.")
     return errors

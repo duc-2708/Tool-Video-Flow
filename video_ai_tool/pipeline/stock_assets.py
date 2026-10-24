@@ -135,7 +135,8 @@ def resolve_stock(shot: Shot, scene_id: int, shot_id: int, narration: str, video
                   project: Path, providers: list[StockProvider], downloader: MediaDownloader,
                   diagnostics: Diagnostics, exclude: tuple[str, str] | None = None) -> ShotAsset:
     failures = []
-    if shot.type != "text_card":
+    graphic=bool(shot.visual and shot.visual.template!="stock")
+    if shot.type != "text_card" and not graphic:
         # Duyệt hết video trước khi fallback ảnh; Pixabay luôn đứng trước Pexels.
         for kind in ("video", "image"):
             for provider in providers:
@@ -185,7 +186,7 @@ def resolve_stock(shot: Shot, scene_id: int, shot_id: int, narration: str, video
     text = diagnostics.redact(shot.text_overlay or narration)
     path = project / "clips" / f"scene_{scene_id}_shot_{shot_id}_fallback_{cache_key([text, video_format])[:10]}.png"
     color_card(path, text, video_format)
-    intentional = shot.type == "text_card"
+    intentional = shot.type == "text_card" or graphic
     return ShotAsset(shot_id=shot_id, query=shot.query, media_type="color", path=path.relative_to(project).as_posix(),
         provider="generated", fallback=not intentional,
         fallback_reason=None if intentional else "Không có stock phù hợp; dùng nền màu và chữ. " + "; ".join(dict.fromkeys(failures)))

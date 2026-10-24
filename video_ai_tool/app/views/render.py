@@ -18,8 +18,21 @@ def show_result(result,project,diagnostics):
         st.warning("File MP4 chưa có hoặc đã được di chuyển.")
         return
     st.caption(f"{result['duration_sec']:.2f} giây · {result['width']} × {result['height']} · {result['fps']} fps · {path.stat().st_size/1024**2:.2f} MB · Dựng trong {result['render_seconds']:.1f} giây")
+    if result.get('quality_summary'):
+        qc=result['quality_summary']
+        st.caption(f"Kiểm tra hình ảnh: {qc['template_types']} loại mẫu · {qc['warning_count']} cảnh báo · {qc['deferred_dom_samples']} mẫu DOM chưa hiện đủ.")
+        with st.expander('Báo cáo chất lượng hình ảnh'):
+            try:
+                report=read_json(confined(project,Path(result['quality_report']).name))
+                st.json(report)
+            except (OSError,ValueError): st.info('Chưa đọc được báo cáo chất lượng.')
     st.video(str(path))
-    st.download_button("Tải MP4",data=path.read_bytes(),file_name=path.name,mime="video/mp4",key=f"download_{result['mode']}")
+    st.download_button("Tải MP4",data=path.read_bytes(),file_name=path.name,mime="video/mp4",key=f"download_{path.name}")
+    sheet=confined(project/"review_frames",Path(result.get("contact_sheet") or "contact_sheet.png").name)
+    if sheet.is_file() and result.get("motion_enabled"):
+        with st.expander("Khung hình kiểm tra và ghi chú Motion"):
+            st.image(str(sheet))
+            for note in result.get("review_notes",[]): st.write(diagnostics.redact(note))
     if result.get("warnings"):
         with st.expander("Các shot dùng fallback / cảnh báo"):
             for warning in result["warnings"]:
@@ -42,10 +55,47 @@ def render(settings,project,topic,debug,diagnostics):
     manager = render_jobs()
     state_key = f"render_job_{project.name}"
     active = manager.active(project)
+    from editor.motion.theme import theme_names
+    motion=st.toggle("Bật Motion",value=settings.motion_enabled,disabled=bool(active))
+    mascot=st.toggle("Bật mascot hình khối riêng",value=settings.mascot_enabled,disabled=bool(active))
+    themes=["auto",*theme_names(settings.root_dir)]
+    theme=st.selectbox("Theme Motion",themes,index=themes.index(settings.motion_theme) if settings.motion_theme in themes else 0,disabled=bool(active))
+    settings=settings.model_copy(update={"motion_enabled":motion,"mascot_enabled":mascot,"motion_theme":theme})
+    ai_on=st.toggle('Clip AI làm nền (có phí)',value=bool(settings.ai_clips_per_video),disabled=bool(active) or not motion)
+    ai_count=0;ai_confirmed=False
+    if ai_on and motion:
+        from pipeline.controlled_ai import estimate
+        from pipeline.ai_budget import remaining
+        from schemas.assets import ResolvedEditPlan
+        try:
+            data=ResolvedEditPlan.model_validate(read_json(plan))
+            info=estimate(data,settings,count=max(1,settings.ai_clips_per_video))
+            ai_count=info['count']
+            st.caption(f"Sẽ dùng tối đa {ai_count} clip hook/cao trào · {info['model']} · {info['seconds']}s · ngân sách còn {remaining(settings)} lượt POST hôm nay.")
+            st.warning(f"Tham khảo {info['estimated_vnd_per_job']:,}đ/job; tối đa {info['estimated_vnd_max_with_retry']:,}đ nếu generation_failed phải thử lại. Giá thực xem dashboard. Không retry POST khi timeout/thiếu ID.")
+            ai_confirmed=st.checkbox('Tôi xác nhận số clip, model, thời lượng và chi phí dự kiến',disabled=bool(active))
+            if not settings.gateway_api_key.get_secret_value().strip():
+                ai_confirmed=False;st.info('Thiếu GATEWAY_API_KEY; dùng gradient hoặc điền key bằng editor.')
+        except (OSError,ValueError) as error: st.warning(diagnostics.redact(str(error)))
+    settings=settings.model_copy(update={'ai_clips_per_video':ai_count if ai_on else 0})
+    try: scene_ids=[scene["id"] for scene in read_json(plan)["scenes"]]
+    except (OSError,ValueError,KeyError): scene_ids=[]
+    if scene_ids:
+        with st.expander("Xem trước / render lại một cảnh"):
+            scene_id=st.selectbox("Cảnh",scene_ids)
+            a,b=st.columns(2)
+            preview_settings=settings.model_copy(update={"motion_scale":.5})
+            if a.button("Xem trước cảnh",disabled=bool(active)):
+                st.session_state[state_key]=manager.submit(plan,"preview",preview_settings,diagnostics.secrets,scene_id=scene_id)
+                st.rerun()
+            if b.button("Render lại chỉ cảnh này",disabled=bool(active)):
+                st.session_state[state_key]=manager.submit(plan,"preview",preview_settings,diagnostics.secrets,scene_id=scene_id,force_scene=scene_id)
+                st.rerun()
     left,right = st.columns(2)
     for column,label,mode in [(left,"Render xem nhanh","preview"),(right,"Render bản cuối","final")]:
-        if column.button(label,disabled=bool(active),width="stretch"):
-            st.session_state[state_key] = manager.submit(plan,mode,settings,diagnostics.secrets)
+        if column.button(label,disabled=bool(active) or bool(ai_count and not ai_confirmed),width="stretch"):
+            options={'ai_background_count':ai_count,'ai_confirmed':True} if ai_count else {}
+            st.session_state[state_key] = manager.submit(plan,mode,settings,diagnostics.secrets,**options)
             st.rerun()
     job_id = st.session_state.get(state_key) or active
     job = manager.snapshot(job_id) if job_id else None
@@ -64,6 +114,7 @@ def render(settings,project,topic,debug,diagnostics):
                     st.code(current["traceback"],language="text")
         elif current["status"] == "complete":
             st.success("Render hoàn tất. Có thể xem và tải MP4 bên dưới.")
+            if current.get("result",{}).get("scene_id") is not None: show_result(current["result"],project,diagnostics)
         if running and current["status"] in {"complete","failed"}:
             st.rerun()
     progress_panel()

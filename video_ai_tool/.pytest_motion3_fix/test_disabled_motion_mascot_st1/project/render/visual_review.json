@@ -1,0 +1,74 @@
+{
+  "shots": [
+    {
+      "scene_id": 1,
+      "shot_id": 1,
+      "content_type": "explain",
+      "action": "neutral",
+      "choice": null,
+      "warnings": [
+        "Shot 1: thiếu brief.json để đối chiếu đồ họa sự kiện.",
+        "Shot 1: đã dùng bản trung tính; lời đọc giữ nguyên."
+      ],
+      "visual": {
+        "content_type": "explain",
+        "auto_generated": true,
+        "template": "text_focus",
+        "data": {
+          "text": "Tìm hiểu diễn biến và tác động",
+          "highlight": [],
+          "value": null,
+          "number_text": "",
+          "label": "",
+          "unit": "",
+          "source": "",
+          "source_url": "",
+          "date": "",
+          "title": "",
+          "items": [],
+          "bars": [],
+          "fact_ids": []
+        }
+      }
+    },
+    {
+      "scene_id": 8,
+      "shot_id": 1,
+      "content_type": "explain",
+      "action": "neutral",
+      "choice": null,
+      "warnings": [
+        "Shot 1: thiếu brief.json để đối chiếu đồ họa sự kiện.",
+        "Shot 1: đã dùng bản trung tính; lời đọc giữ nguyên."
+      ],
+      "visual": {
+        "content_type": "explain",
+        "auto_generated": true,
+        "template": "text_focus",
+        "data": {
+          "text": "Tìm hiểu diễn biến và tác động",
+          "highlight": [],
+          "value": null,
+          "number_text": "",
+          "label": "",
+          "unit": "",
+          "source": "",
+          "source_url": "",
+          "date": "",
+          "title": "",
+          "items": [],
+          "bars": [],
+          "fact_ids": []
+        }
+      }
+    }
+  ],
+  "warnings": [
+    "Cảnh 1: Shot 1: thiếu brief.json để đối chiếu đồ họa sự kiện.",
+    "Cảnh 1: Shot 1: đã dùng bản trung tính; lời đọc giữ nguyên.",
+    "Cảnh 8: Shot 1: thiếu brief.json để đối chiếu đồ họa sự kiện.",
+    "Cảnh 8: Shot 1: đã dùng bản trung tính; lời đọc giữ nguyên.",
+    "Cảnh 8, shot 1: motion_layout nhóm 3 sau tự sửa: card_empty_over_40_percent.",
+    "[visual_quality, nhóm 3] empty_cards_over_40_percent: 1; xem quality_report.json."
+  ]
+}

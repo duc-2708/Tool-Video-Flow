@@ -1,0 +1,7 @@
+
+[2026-10-24T02:37:40.367436+00:00] run_all step=assets
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 312, in run_all
+    raise ValueError(f"Artifact của bước {LABELS[step]} đã đổi; không dùng dữ liệu cũ. Kiểm tra file hoặc dùng --force tạo project mới.")
+ValueError: Artifact của bước Assets đã đổi; không dùng dữ liệu cũ. Kiểm tra file hoặc dùng --force tạo project mới.
+

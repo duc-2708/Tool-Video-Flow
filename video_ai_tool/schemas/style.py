@@ -349,7 +349,25 @@ class ScenePattern(StrictModel):
     connective_template: str = ""
 
 
+class VisualTemplateRatios(StrictModel):
+    # Fixed fields keep EditPlan's structured-output schema free of free maps.
+    hook_card: float = Field(default=1,ge=0)
+    stat_card: float = Field(default=1,ge=0)
+    ring_percent: float = Field(default=1,ge=0)
+    strike_replace: float = Field(default=1,ge=0)
+    versus: float = Field(default=1,ge=0)
+    compare_bars: float = Field(default=1,ge=0)
+    line_growth: float = Field(default=1,ge=0)
+    steps_list: float = Field(default=1,ge=0)
+    timeline: float = Field(default=1,ge=0)
+    text_focus: float = Field(default=1,ge=0)
+    icon_card: float = Field(default=1,ge=0)
+    quote_card: float = Field(default=1,ge=0)
+    cta_card: float = Field(default=1,ge=0)
+
+
 class StyleProfile(StrictModel):
+    visual_template_ratios: VisualTemplateRatios | None = Field(default=None,exclude_if=lambda v:v is None)
     visual_theme: str = Field(default="studio",exclude_if=lambda v:v=="studio")
     visual_templates: bool = Field(default=True,exclude_if=lambda v:v)
     progress_tracker: bool = Field(default=False,exclude_if=lambda v:not v)

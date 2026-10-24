@@ -1,0 +1,40 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_scene_cache_hit_skips_chr0\\cache\\7e9ca7c20cb65b5e4dcda09b048a6d9e285072c9a00573e885de304deb8d2829.mp4",
+  "cache_hit": false,
+  "scene_id": 1,
+  "width": 270,
+  "height": 480,
+  "fps": 10,
+  "duration_sec": 0.3,
+  "render_seconds": 2.614,
+  "size_bytes": 13165,
+  "sha256": "9e240a781d5e6542b79c50375277e1da687bc97e1aaeebdb9cc14fd00cdfe9be",
+  "timing_source": "estimated_characters",
+  "quality": [
+    {
+      "issues": [],
+      "occupied": 0.5980815012707777,
+      "deferred_until_cue": true,
+      "graphic": {
+        "x": 24.383827209472656,
+        "y": 128.18568420410156,
+        "width": 221.22454833984375,
+        "height": 118.02705383300781
+      },
+      "caption": {
+        "x": 29.69921875,
+        "y": 263.43359375,
+        "width": 202.5,
+        "height": 96
+      },
+      "shot_id": 1,
+      "template": "steps_list",
+      "rule_id": "motion_layout",
+      "group": 3
+    }
+  ],
+  "repair_notes": [
+    "motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."
+  ],
+  "review_frame": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_scene_cache_hit_skips_chr0\\cache\\7e9ca7c20cb65b5e4dcda09b048a6d9e285072c9a00573e885de304deb8d2829.review.png"
+}

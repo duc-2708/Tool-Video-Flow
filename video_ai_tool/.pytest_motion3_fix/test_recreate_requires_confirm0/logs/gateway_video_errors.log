@@ -1,0 +1,31 @@
+
+[2026-10-24T02:37:18.853781+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:18.878002+00:00] Tạo job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 116, in create_job
+    response,cost = client.create(request)
+                    ~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+providers.video_gateway.AmbiguousSubmission: fixture response lost
+
+
+[2026-10-24T02:37:18.994901+00:00] Người dùng xác nhận đã kiểm tra dashboard không có job và yêu cầu tạo lại. Có thể phát sinh thêm chi phí; không hoàn tiền/hủy job cũ.
+
+[2026-10-24T02:37:19.155408+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:19.196905+00:00] {"event": "submit_response", "request": {"model": "veo-3.1", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": "explicit_new_id", "response": {"id": "explicit_new_id"}}
+
+[2026-10-24T02:37:19.324102+00:00] Tạo job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 95, in create_job
+    raise GatewayVideoError("Job đã có remote ID; hãy tiếp tục job có sẵn, không tạo lại.")
+providers.video_gateway.GatewayVideoError: Job đã có remote ID; hãy tiếp tục job có sẵn, không tạo lại.
+

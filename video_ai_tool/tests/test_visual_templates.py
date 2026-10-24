@@ -54,13 +54,13 @@ def fixture():
     return plan,brief
 
 
-def test_auto_selection_and_only_two_source_cards():
+def test_auto_selection_and_only_one_final_source_card():
     plan,brief=fixture()
     brief.facts[0].fact_vi="Sản phẩm có 5.000 người dùng."
     for scene in plan.scenes: scene.fact_ids=[1]
     assign_visuals(plan,brief)
     templates=[s.visual.template for c in plan.scenes for s in c.shots]
-    assert templates[0]=="hook_card" and templates.count("source_card")==2
+    assert templates[0]=="hook_card" and templates.count("source_card")==1 and templates[-1]=="source_card"
     assert "stat_card" in templates and "text_focus" in templates
     assert not visual_issues(plan,brief)
 
@@ -101,7 +101,9 @@ def test_pill_caption_stays_clear_of_card(tmp_path):
     timeline=SimpleNamespace(scenes=[scene],plan=SimpleNamespace(render_style=StyleRenderDefaults(captions=CaptionStyle(appearance="pill",position="center"))))
     caption=Captions(timeline,(540,960),find_font(ROOT_DIR)).overlay(1)
     bbox=caption.getbbox()
-    assert bbox and bbox[1]>=960*.64 and bbox[3]<960*.83
+    from editor.layout import card_box
+    _,y,_,height=card_box((540,960),"text_focus")
+    assert bbox and bbox[1]>=y+height and bbox[1]-(y+height)<960*.04 and bbox[3]<960*.82
 
 
 def test_theme_image_never_escapes_backgrounds(tmp_path):

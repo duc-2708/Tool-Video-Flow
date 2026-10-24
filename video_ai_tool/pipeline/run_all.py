@@ -55,6 +55,7 @@ class RunConfig(BaseModel):
     style_preset: str | None = Field(default=None,exclude_if=lambda v:v is None)
     script_style: Literal["storytelling","news","explain","review"] = "storytelling"
     ai_clips: int = Field(default=0,ge=0,le=20)
+    ai_background_only: bool = Field(default=True,exclude_if=lambda v:v)
     ai_model: str = "veo-3.1"
     ai_seconds: int = 4
     render_mode: Literal["preview","final"] = "preview"
@@ -194,8 +195,10 @@ def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event
         config = config.model_copy(update={"voice":settings.default_voice})
     if config.resume is None:
         defaults = {}
+        if 'ai_clips' not in config.model_fields_set:
+            defaults['ai_clips']=settings.ai_clips_per_video
         if "ai_model" not in config.model_fields_set:
-            defaults["ai_model"] = settings.gateway_video_model
+            defaults["ai_model"] = settings.ai_clip_model or settings.gateway_video_model
         if "ai_seconds" not in config.model_fields_set:
             from config.video_models import VIDEO_MODELS
             selected = defaults.get("ai_model",config.ai_model)
@@ -367,9 +370,13 @@ def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event
                         state["ai_render_plan"] = render_plan.relative_to(project).as_posix()
                         files,warnings = asset_files(project,render_plan.parent/"edit_plan.json")
                         files += [confined(project,clip["job_path"]) for clip in used]
+                        if (project/'render/ai_backgrounds.json').is_file():
+                            files.append(project/'render/ai_backgrounds.json')
+                            warnings.extend(read_json(project/'render/ai_backgrounds.json').get('warnings',[]))
                     elif step == "render":
                         plan_path = confined(project,state["ai_render_plan"]) if state["steps"]["ai_video"]["status"] == "done" and state.get("ai_render_plan") else project/"edit_plan.resolved.json"
-                        result = run_render(plan_path,mode=config.render_mode,settings=settings,progress=lambda fraction,message:emit(step,message,fraction))
+                        render_settings=settings.model_copy(update={'ai_clips_per_video':config.ai_clips}) if config.ai_clips and config.ai_background_only else settings
+                        result = run_render(plan_path,mode=config.render_mode,settings=render_settings,progress=lambda fraction,message:emit(step,message,fraction))
                         source = confined(project,str(Path(result["path"]).resolve().relative_to(project)))
                         target = confined(project,"render/"+source.name)
                         copy_artifact(source,target)
@@ -457,7 +464,9 @@ def main():
     args = parser.parse_args()
     try:
         settings = get_settings()
-        values = saved_config(args.resume).model_dump() if args.resume else {"voice":settings.default_voice,"ai_model":settings.gateway_video_model,"ai_seconds":settings.ai_clip_seconds}
+        chosen=settings.ai_clip_model or settings.gateway_video_model
+        from config.video_models import VIDEO_MODELS
+        values = saved_config(args.resume).model_dump() if args.resume else {"voice":settings.default_voice,"ai_model":chosen,"ai_seconds":settings.ai_clip_seconds if chosen==settings.gateway_video_model else VIDEO_MODELS[chosen][0],"ai_clips":settings.ai_clips_per_video}
         for key in ("category","style_preset","script_style","topic","video_type","video_format","duration_sec","voice","youtube_days","web_limit","ai_clips","ai_model","ai_seconds","render_mode","source_languages","output_language"):
             value = getattr(args,key)
             if value is not None:

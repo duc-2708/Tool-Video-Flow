@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Literal
 from pydantic import BaseModel,ConfigDict,Field
 from config.settings import get_settings
+from config.video_models import VIDEO_MODELS
 from pipeline.projects import create_project,read_json
 from pipeline.run_all import RunConfig,run_all,saved_config,STEPS,RunCancelled,ApprovalRequired
 from pipeline.topics_history import already_made,history_rows
@@ -89,7 +90,7 @@ def run_auto(category=None,region="both",time_window_days=3,duration=60,format="
         count=ai_clips or (1 if use_ai_clips else 0)
         cfg=AutoConfig(category=category,region=region,time_window_days=time_window_days,duration=duration,format=format,
             creative_license=creative_license,style=style,style_preset=style_preset,review=review,use_youtube=use_youtube,ai_clips=count,content_mode=content_mode,
-            ai_model=settings.gateway_video_model,ai_seconds=settings.ai_clip_seconds,render_mode=render_mode)
+            ai_model=settings.ai_clip_model or settings.gateway_video_model,ai_seconds=settings.ai_clip_seconds if not settings.ai_clip_model or settings.ai_clip_model==settings.gateway_video_model else VIDEO_MODELS[settings.ai_clip_model][0],render_mode=render_mode)
         if count>settings.ai_clip_max_per_run: raise ValueError("Số clip vượt AI_CLIP_MAX_PER_RUN.")
         if count and not ai_confirmed:
             raise ApprovalRequired(f"Sẽ tạo tối đa {count} clip, model {cfg.ai_model}, {cfg.ai_seconds}s/clip; generation_failed có tối đa một job thử lại có thể tính phí. Cần xác nhận trước khi khám phá.")

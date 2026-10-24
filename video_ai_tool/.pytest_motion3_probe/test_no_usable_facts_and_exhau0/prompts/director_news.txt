@@ -1,0 +1,3 @@
+# file: prompts/director_news.txt
+Loại news: mở thông tin chính → bối cảnh có căn cứ → ý nghĩa trong giới hạn fact → CTA theo dõi/câu hỏi.
+Không nói "vừa xảy ra", "mới nhất", "đang hot" nếu claim không chứng minh thời điểm/tín hiệu.

@@ -18,6 +18,18 @@ def copy_artifact(source,destination):
 
 
 def prepare_ai_bundle(project,config,settings,progress,check_cancel,diagnostics):
+    if getattr(config,'ai_background_only',False):
+        from pipeline.controlled_ai import create_backgrounds
+        if not settings.motion_enabled:
+            diagnostics.record('Clip AI nền cần MOTION_ENABLED; bỏ qua, chưa gửi API.')
+            return project/'edit_plan.resolved.json',[]
+        if config.ai_seconds>settings.ai_clip_max_sec:
+            raise ValueError('Thời lượng đã chọn vượt AI_CLIP_MAX_SEC; không gửi job, dùng gradient.')
+        check_cancel()
+        options=settings.model_copy(update={'ai_clip_model':config.ai_model,'ai_clip_seconds':config.ai_seconds})
+        result=create_backgrounds(project,options,confirmed=True,count=config.ai_clips,progress=progress)
+        check_cancel()
+        return project/'edit_plan.resolved.json',result['clips']
     original,resolved,manifest = load_assets(project/"edit_plan.json")
     originals = shot_lookup(original)
     resolved_shots = shot_lookup(resolved)
@@ -83,6 +95,8 @@ def prepare_ai_bundle(project,config,settings,progress,check_cancel,diagnostics)
     bundle = confined(project,"ai_render")
     bundle.mkdir(exist_ok=True)
     copy_artifact(project/"edit_plan.json",confined(bundle,"edit_plan.json"))
+    for name in ('brief.json','visual_decisions.json'):
+        if (project/name).is_file(): copy_artifact(project/name,confined(bundle,name))
     for scene in manifest.scenes:
         if not scene.audio_path:
             raise ValueError(f"Thiếu audio cảnh {scene.scene_id}; chạy lại Assets.")

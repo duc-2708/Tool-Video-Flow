@@ -18,14 +18,19 @@ class Settings(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     root_dir: Path = ROOT_DIR
+    render_width: int = Field(default=1080,ge=240,le=3840)
+    render_height: int = Field(default=1920,ge=240,le=3840)
     motion_enabled: bool = False
     motion_fps: int = Field(default=30,ge=1,le=60)
     motion_scale: float = Field(default=1.,ge=.25,le=1.)
-    @field_validator("motion_enabled","motion_fps","motion_scale",mode="before")
+    motion_workers: int = Field(default=2,ge=1,le=4)
+    motion_theme: str = "auto"
+    mascot_enabled: bool = True
+    @field_validator("motion_enabled","motion_fps","motion_scale","motion_workers","motion_theme","mascot_enabled",mode="before")
     @classmethod
     def optional_motion_defaults(cls,value,info):
         if value is None or isinstance(value,str) and not value.strip():
-            return {"motion_enabled":False,"motion_fps":30,"motion_scale":1.}[info.field_name]
+            return {"motion_enabled":False,"motion_fps":30,"motion_scale":1.,"motion_workers":2,"motion_theme":"auto","mascot_enabled":True}[info.field_name]
         return value
     openai_api_key: SecretStr = SecretStr("")
     openai_model: str = ""
@@ -67,6 +72,21 @@ class Settings(BaseModel):
     gateway_allowed_models: list[str] = Field(default_factory=lambda: ["veo-3.1", "seedance-2.5-30s"])
     ai_clip_seconds: int = Field(default=4, ge=1, le=30)
     ai_clip_max_per_run: int = Field(default=3, ge=0, le=20)
+    ai_clips_per_video: int = Field(default=0,ge=0,le=20)
+    ai_clip_model: str = ""
+    ai_clip_max_sec: int = Field(default=6,ge=1,le=30)
+    ai_clip_budget_per_day: int = Field(default=3,ge=0,le=100)
+    @field_validator('ai_clips_per_video','ai_clip_model','ai_clip_max_sec','ai_clip_budget_per_day',mode='before')
+    @classmethod
+    def optional_controlled_ai(cls,value,info):
+        if value is None or isinstance(value,str) and not value.strip():
+            return {'ai_clips_per_video':0,'ai_clip_model':'','ai_clip_max_sec':6,'ai_clip_budget_per_day':3}[info.field_name]
+        return value
+    @field_validator('ai_clip_model')
+    @classmethod
+    def controlled_model(cls,value):
+        if value and value not in VIDEO_MODELS: raise ValueError('AI_CLIP_MODEL chỉ nhận veo-3.1 hoặc seedance-2.5-30s.')
+        return value
     youtube_api_key: SecretStr = SecretStr("")
     scrapecreators_api_key: SecretStr = SecretStr("")
     pexels_api_key: SecretStr = SecretStr("")

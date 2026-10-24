@@ -40,5 +40,6 @@ class Visual(StrictModel):
     sentence_index: int | None = Field(default=None,ge=1,exclude_if=lambda v:v is None)
     content_type: Literal["event","explain","opinion","cta"] = Field(default="event",exclude_if=lambda v:v=="event")
     auto_generated: bool = Field(default=False,exclude_if=lambda v:not v)
-    template: Literal["hook_card", "stat_card", "steps_list", "compare_bars", "source_card", "text_focus", "stock"] = "stock"
+    template: Literal["hook_card", "stat_card", "steps_list", "compare_bars", "source_card", "text_focus", "stock",
+        "progress_tracker", "ring_percent", "line_growth", "strike_replace", "quote_card", "timeline", "versus", "icon_card", "cta_card"] = "stock"
     data: VisualData = Field(default_factory=VisualData)

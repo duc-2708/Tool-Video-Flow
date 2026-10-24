@@ -506,7 +506,7 @@ def run_director(brief_path: Path, settings: Settings, *, video_type: str = "rev
         if plan.content_mode!="explainer_v2": remove_repeated_attribution(plan,brief)
         finalize_content_plan(plan,brief,ai_clip_limit=ai_clip_limit,diagnostics=diagnostics)
         validate_plan(plan,brief,request,diagnostics=diagnostics,allow_merge=False)
-        fill_plan_prompts(plan,brief,provider,diagnostics,limit=ai_clip_limit)
+        fill_plan_prompts(plan,brief,provider,diagnostics,limit=ai_clip_limit,controlled=True)
         path = brief_path.parent / "edit_plan.json"
         add_provider_notes(plan,provider)
         write_json(path, plan.model_dump(mode="json"))

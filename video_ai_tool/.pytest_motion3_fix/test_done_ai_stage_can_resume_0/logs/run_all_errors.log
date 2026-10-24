@@ -1,0 +1,12 @@
+
+[2026-10-24T02:37:44.079917+00:00] run_all step=render
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 377, in run_all
+    result = run_render(plan_path,mode=config.render_mode,settings=render_settings,progress=lambda fraction,message:emit(step,message,fraction))
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 75, in render
+    enter("render")
+    ~~~~~^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_run_all.py", line 31, in enter
+    raise RuntimeError("Lỗi [REDACTED] ở "+step)
+RuntimeError: Lỗi [REDACTED] ở render
+

@@ -1,0 +1,9 @@
+
+[2026-10-24T02:37:18.638847+00:00] {"event": "generation_error", "remote_id": "dashboard_id", "request": {"model": "veo-3.1", "prompt": "Recover existing", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"status": "failed", "error": "fixture after recovery"}}
+
+[2026-10-24T02:37:18.659241+00:00] Tiếp tục job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 203, in _resume_job_once
+    raise GatewayVideoError(job["error"])
+providers.video_gateway.GatewayVideoError: fixture after recovery
+

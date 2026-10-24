@@ -1,0 +1,10 @@
+{
+  "sources": [
+    {
+      "url": "https://example.com/"
+    }
+  ],
+  "warnings": [
+    "Cảnh báo nguồn fixture"
+  ]
+}

@@ -1,0 +1,62 @@
+
+[2026-10-24T02:37:50.235457+00:00] card_text nhóm 2; cảnh 4; Shot 4: card_text 'Ví dụ hồ' → 'Ý chính cần nhớ'; emphasis=['cần', 'nhớ'].
+
+[2026-10-24T02:37:50.242543+00:00] đối tượng=4 [card_text, nhóm 2, fixed] Shot 4: card_text 'Ví dụ hồ' → 'Ý chính cần nhớ'; emphasis=['cần', 'nhớ'].
+
+[2026-10-24T02:37:50.246297+00:00] đối tượng=4 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:37:50.248242+00:00] đối tượng=5 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:37:50.250199+00:00] đối tượng=6 [presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.
+
+[2026-10-24T02:37:50.279003+00:00] đối tượng=1 [visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.281641+00:00] đối tượng=1 [visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.283848+00:00] đối tượng=2 [visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.289177+00:00] đối tượng=2 [visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.296371+00:00] đối tượng=2 [visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.302521+00:00] đối tượng=3 [visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.304781+00:00] đối tượng=3 [visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.306789+00:00] đối tượng=3 [visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.309930+00:00] đối tượng=4 [visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.312009+00:00] đối tượng=4 [visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.317456+00:00] đối tượng=4 [visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.319973+00:00] đối tượng=4 [visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.321775+00:00] đối tượng=5 [visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.325147+00:00] đối tượng=5 [visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.331557+00:00] đối tượng=5 [visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.333166+00:00] đối tượng=6 [visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.338928+00:00] đối tượng=6 [visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.341095+00:00] đối tượng=6 [visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.344507+00:00] đối tượng=6 [visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.
+
+[2026-10-24T02:37:50.350084+00:00] đối tượng=cảnh 1, luật=grounding_numbers, số=['5000'], tập số brief=['1000', '2300000000', '4000', '5%', '5000', '60%', '9']
+
+[2026-10-24T02:37:50.353706+00:00] đối tượng=cảnh 2, luật=grounding_numbers, số=[], tập số brief=['1000', '2300000000', '4000', '5%', '5000', '60%', '9']
+
+[2026-10-24T02:37:50.356386+00:00] đối tượng=cảnh 3, luật=grounding_numbers, số=[], tập số brief=['1000', '2300000000', '4000', '5%', '5000', '60%', '9']
+
+[2026-10-24T02:37:50.359188+00:00] đối tượng=cảnh 4, luật=grounding_numbers, số=[], tập số brief=['1000', '2300000000', '4000', '5%', '5000', '60%', '9']
+
+[2026-10-24T02:37:50.362294+00:00] đối tượng=cảnh 5, luật=grounding_numbers, số=[], tập số brief=['1000', '2300000000', '4000', '5%', '5000', '60%', '9']
+
+[2026-10-24T02:37:50.365042+00:00] đối tượng=cảnh 6, luật=grounding_numbers, số=[], tập số brief=['1000', '2300000000', '4000', '5%', '5000', '60%', '9']
+
+[2026-10-24T02:37:50.370499+00:00] đối tượng=tiêu đề: số=[]; tập số hợp lệ=['1000', '2026', '2300000000', '4000', '5%', '5000', '60%', '9']; sai=[]

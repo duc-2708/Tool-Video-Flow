@@ -79,9 +79,11 @@ class Captions:
             if getattr(scene,"audio_silent",False):
                 timing=None
                 if not any(c.isalnum() for c in text): text="Không có nội dung lời đọc."
-            words = word_timings(text,scene.duration,timing)
-            count = 1 if self.style.mode == "word" else 3
-            if self.style.mode == "sentence":
+            from utils.caption_timing import display_words,phrase_groups
+            words = display_words(word_timings(text,scene.duration,timing),scene.duration)
+            mode="phrase" if any(getattr(s.spec,"visual",None) and s.spec.visual.template!="stock" for s in scene.shots) else self.style.mode
+            count = 1 if mode == "word" else 3
+            if mode == "sentence":
                 groups, current = [], []
                 for word in words:
                     current.append(word)
@@ -91,8 +93,8 @@ class Captions:
                 if current:
                     groups.append(current)
             else:
-                groups = [words[i:i+count] for i in range(0,len(words),count)]
-            if self.style.mode == "phrase" and len(groups)>1 and len(groups[-1]) == 1:
+                groups = phrase_groups(words,count)
+            if mode == "phrase" and len(groups)>1 and len(groups[-1]) == 1:
                 groups[-2].extend(groups.pop())
             for group in groups:
                 for active,(_,start,end) in enumerate(group):
@@ -104,13 +106,15 @@ class Captions:
             return None
         scene=next((s for s in self.timeline.scenes if s.start<=time<s.start+s.duration),None)
         visual=next((getattr(s.spec,"visual",None) for s in getattr(scene,"shots",[]) if s.start<=time<s.start+s.duration),None) if scene else None
-        key = entry[2:]+(bool(visual and visual.template!="stock"),)
+        key = entry[2:]+(visual.template if visual else "stock",)
         if key in self.cache:
             return self.cache[key]
         width,height = self.size
         font = self.font
+        if visual and visual.template!="stock":
+            font=ImageFont.truetype(font.path,round(height*.075))
         lines = wrap_lines(" ".join(entry[2]),font,width*.76)
-        band=.12 if visual and visual.template!="stock" else .24
+        band=.20 if visual and visual.template!="stock" else .24
         while len(lines)*font.size*1.35 > height*band and font.size > 12:
             font = ImageFont.truetype(font.path,font.size-1)
             lines = wrap_lines(" ".join(entry[2]),font,width*.76)
@@ -123,8 +127,8 @@ class Captions:
         elif self.style.position == "top":
             top = height*.12
         if visual and visual.template!="stock":
-            # Templates reserve y=.20-.63; TikTok lower exclusion starts at .82.
-            top=max(height*.68,min(height*.82-len(lines)*step,height*.74))
+            from editor.layout import caption_box
+            _,top,_,_=caption_box(self.size,visual.template)
         consumed = 0
         for index,line in enumerate(lines):
             x = (width-font.getlength(line))/2

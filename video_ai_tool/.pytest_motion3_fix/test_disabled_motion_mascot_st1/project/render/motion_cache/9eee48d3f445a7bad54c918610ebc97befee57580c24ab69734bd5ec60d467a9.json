@@ -1,0 +1,42 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_fix\\test_disabled_motion_mascot_st1\\project\\render\\motion_cache\\9eee48d3f445a7bad54c918610ebc97befee57580c24ab69734bd5ec60d467a9.mp4",
+  "cache_hit": false,
+  "scene_id": 8,
+  "width": 270,
+  "height": 480,
+  "fps": 5,
+  "duration_sec": 1.6206666666666667,
+  "render_seconds": 5.073,
+  "size_bytes": 32139,
+  "sha256": "3878d6740a2a6b9e15889bdd28da1f45079ec06291409006377fadffb8ffb3bc",
+  "timing_source": "estimated_characters",
+  "quality": [
+    {
+      "issues": [
+        "card_empty_over_40_percent"
+      ],
+      "occupied": 0.5609358045944105,
+      "deferred_until_cue": false,
+      "graphic": {
+        "x": 23.30304718017578,
+        "y": 132.7925262451172,
+        "width": 223.3939208984375,
+        "height": 108.72746276855469
+      },
+      "caption": {
+        "x": 29.69921875,
+        "y": 242.765625,
+        "width": 202.5,
+        "height": 96
+      },
+      "shot_id": 1,
+      "template": "cta_card",
+      "rule_id": "motion_layout",
+      "group": 3
+    }
+  ],
+  "repair_notes": [
+    "motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."
+  ],
+  "review_frame": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_fix\\test_disabled_motion_mascot_st1\\project\\render\\motion_cache\\9eee48d3f445a7bad54c918610ebc97befee57580c24ab69734bd5ec60d467a9.review.png"
+}

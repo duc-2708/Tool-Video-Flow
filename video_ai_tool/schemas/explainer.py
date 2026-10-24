@@ -51,6 +51,11 @@ class ExplainerOutline(StrictModel):
     beats: list[ExplainerBeat] = Field(min_length=2,max_length=20)
 
 
+class ShotCard(StrictModel):
+    card_text: str = ""
+    emphasis: list[str] = Field(default_factory=list)
+
+
 class ExplainerScene(StrictModel):
     scene_id: int
     kind: InfoKind
@@ -58,6 +63,7 @@ class ExplainerScene(StrictModel):
     sentences: list[ScriptSentence] = Field(min_length=1)
     # One distinct concept per query, aligned to successive narration segments.
     shot_queries: list[NonEmptyText] = Field(default_factory=list)
+    shot_cards: list[ShotCard] = Field(default_factory=list,exclude_if=lambda v:not v)
 
 
 class ExplainerScript(StrictModel):

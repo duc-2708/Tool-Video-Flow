@@ -63,3 +63,22 @@ def test_render_page_active_worker_keeps_buttons_disabled(tmp_path,monkeypatch):
     assert not app.exception
     assert all(button.disabled for button in app.button if button.label.startswith("Render"))
     assert app.get("progress")[0].proto.value == 42
+
+
+@pytest.mark.parametrize("label,forced",[("Xem trước cảnh",False),("Render lại chỉ cảnh này",True)])
+def test_scene_preview_controls_use_shared_worker(tmp_path,monkeypatch,label,forced):
+    settings=Settings(root_dir=tmp_path)
+    monkeypatch.setattr("config.settings.get_settings",lambda:settings)
+    project=create_project(settings.output_dir,"Fixture scene preview")
+    write_json(project/"edit_plan.resolved.json",{"scenes":[{"id":7}]})
+    manager=Mock();manager.active.return_value=None;manager.snapshot.return_value=None;manager.submit.return_value="scene-job"
+    monkeypatch.setattr("app.views.render.render_jobs",lambda:manager)
+    app=open_render()
+    next(t for t in app.toggle if t.label=="Bật Motion").set_value(True).run()
+    next(b for b in app.button if b.label==label).click().run()
+    assert not app.exception
+    call=manager.submit.call_args
+    assert call.args[0]==project/"edit_plan.resolved.json" and call.args[1]=="preview"
+    assert call.args[2].motion_enabled and call.args[2].motion_scale==.5
+    assert call.kwargs["scene_id"]==7
+    assert call.kwargs.get("force_scene")== (7 if forced else None)

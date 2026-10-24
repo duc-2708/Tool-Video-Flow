@@ -1,0 +1,997 @@
+{
+  "validation_events": [
+    {
+      "rule_id": "presentation_voice",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+    },
+    {
+      "rule_id": "presentation_voice",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+    },
+    {
+      "rule_id": "presentation_voice",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+    },
+    {
+      "rule_id": "presentation_voice",
+      "group": 3,
+      "scene_id": 5,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+    },
+    {
+      "rule_id": "presentation_voice",
+      "group": 3,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+    },
+    {
+      "rule_id": "presentation_voice",
+      "group": 3,
+      "scene_id": 7,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+    },
+    {
+      "rule_id": "attribution",
+      "group": 2,
+      "scene_id": 1,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+    },
+    {
+      "rule_id": "attribution",
+      "group": 2,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+    },
+    {
+      "rule_id": "attribution",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+    },
+    {
+      "rule_id": "attribution",
+      "group": 2,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+    },
+    {
+      "rule_id": "attribution",
+      "group": 2,
+      "scene_id": 5,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+    },
+    {
+      "rule_id": "attribution",
+      "group": 2,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+    },
+    {
+      "rule_id": "attribution",
+      "group": 2,
+      "scene_id": 7,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+    },
+    {
+      "rule_id": "fact_reuse",
+      "group": 2,
+      "scene_id": 1,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ."
+    },
+    {
+      "rule_id": "fact_reuse",
+      "group": 2,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ."
+    },
+    {
+      "rule_id": "fact_reuse",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ."
+    },
+    {
+      "rule_id": "fact_reuse",
+      "group": 2,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ."
+    },
+    {
+      "rule_id": "fact_reuse",
+      "group": 2,
+      "scene_id": 5,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ."
+    },
+    {
+      "rule_id": "fact_reuse",
+      "group": 2,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ."
+    },
+    {
+      "rule_id": "fact_reuse",
+      "group": 2,
+      "scene_id": 7,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ."
+    },
+    {
+      "rule_id": "hook_strength",
+      "group": 3,
+      "scene_id": 1,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Hook cần câu hỏi, con số hoặc mâu thuẫn có căn cứ."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 7,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn."
+    },
+    {
+      "rule_id": "sentence_length",
+      "group": 3,
+      "scene_id": 8,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn."
+    },
+    {
+      "rule_id": "transitions",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Hai cảnh liên tiếp mở bằng cùng cấu trúc."
+    },
+    {
+      "rule_id": "transitions",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Hai cảnh liên tiếp mở bằng cùng cấu trúc."
+    },
+    {
+      "rule_id": "transitions",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Hai cảnh liên tiếp mở bằng cùng cấu trúc."
+    },
+    {
+      "rule_id": "transitions",
+      "group": 3,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Hai cảnh liên tiếp mở bằng cùng cấu trúc."
+    },
+    {
+      "rule_id": "transitions",
+      "group": 3,
+      "scene_id": 7,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Hai cảnh liên tiếp mở bằng cùng cấu trúc."
+    },
+    {
+      "rule_id": "repeated_ideas",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật."
+    },
+    {
+      "rule_id": "repeated_ideas",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật."
+    },
+    {
+      "rule_id": "repeated_ideas",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật."
+    },
+    {
+      "rule_id": "repeated_ideas",
+      "group": 3,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật."
+    },
+    {
+      "rule_id": "repeated_ideas",
+      "group": 3,
+      "scene_id": 7,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 7,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 7,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 8,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact."
+    },
+    {
+      "rule_id": "word_budget",
+      "group": 3,
+      "scene_id": 8,
+      "phase": "plan",
+      "action": "warning",
+      "message": "Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý."
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 2,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 3,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 4,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing aerial night'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 6,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daylight'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 7,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunset'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 7,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial sunrise'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 8,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing aerial view'"
+    },
+    {
+      "rule_id": "broll_query",
+      "group": 2,
+      "scene_id": 8,
+      "phase": "plan",
+      "action": "fixed",
+      "message": "Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daytime'"
+    }
+  ],
+  "title": "Dựng video",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "calm",
+    "volume": 0.1
+  },
+  "scenes": [
+    {
+      "id": 1,
+      "role": "hook",
+      "narration": "Theo example.com, Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        2
+      ],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+          "[fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ.",
+          "[hook_strength, nhóm 3, warning] Hook cần câu hỏi, con số hoặc mâu thuẫn có căn cứ."
+        ],
+        "fact_ids": [
+          2
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 2,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 1,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 2,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 3,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "role": "body",
+      "narration": "Theo example.com, Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "rocket launch",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": "Theo example.com, Bạn có thể cắt và ghép video."
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing wide",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        2
+      ],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'",
+          "Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'",
+          "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+          "[fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ.",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.",
+          "[repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.",
+          "[word_budget, nhóm 3, warning] Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.",
+          "[word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.",
+          "[broll_query, nhóm 2, fixed] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'",
+          "[broll_query, nhóm 2, fixed] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'"
+        ],
+        "fact_ids": [
+          2
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 2,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 1,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 2,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 3,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "role": "body",
+      "narration": "Theo example.com, Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing closeup",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing interior",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        3
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'",
+          "Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'",
+          "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+          "[fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ.",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.",
+          "[repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.",
+          "[word_budget, nhóm 3, warning] Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.",
+          "[word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'",
+          "[broll_query, nhóm 2, fixed] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'"
+        ],
+        "fact_ids": [
+          3
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 3,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 1,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 2,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 3,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "role": "body",
+      "narration": "Theo example.com, Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing exterior",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing panoramic",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        3
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'",
+          "Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'",
+          "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+          "[fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ.",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.",
+          "[repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.",
+          "[word_budget, nhóm 3, warning] Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.",
+          "[word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.",
+          "[broll_query, nhóm 2, fixed] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'",
+          "[broll_query, nhóm 2, fixed] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'"
+        ],
+        "fact_ids": [
+          3
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 3,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 1,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 2,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 3,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "role": "body",
+      "narration": "Theo example.com, Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing detail",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing documentary",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing aerial night",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing aerial daylight",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing aerial night'",
+          "Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daylight'",
+          "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+          "[fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ.",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.",
+          "[repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.",
+          "[word_budget, nhóm 3, warning] Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.",
+          "[word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.",
+          "[broll_query, nhóm 2, fixed] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing aerial night'",
+          "[broll_query, nhóm 2, fixed] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daylight'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 1,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 1,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 2,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 3,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "role": "body",
+      "narration": "Theo example.com, Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing aerial sunset",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing aerial sunrise",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunset'",
+          "Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial sunrise'",
+          "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+          "[fact_reuse, nhóm 2, fixed] Đã khử ID trùng, ưu tiên fact tương đương; gộp cảnh 5 → 6, giữ shot/thời lượng và các khẳng định có căn cứ.",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[transitions, nhóm 3, warning] Hai cảnh liên tiếp mở bằng cùng cấu trúc.",
+          "[repeated_ideas, nhóm 3, warning] Lặp nguyên ý/lời cảnh khác; giảm thời lượng hoặc thêm fact thật.",
+          "[word_budget, nhóm 3, warning] Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.",
+          "[word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.",
+          "[broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunset'",
+          "[broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial sunrise'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 1,
+        "confidence": "medium",
+        "facts": [
+          {
+            "fact_id": 1,
+            "source_count": 1,
+            "confidence": "medium",
+            "sources": [
+              {
+                "fact_id": 1,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 2,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              },
+              {
+                "fact_id": 3,
+                "name": "example.com",
+                "url": "https://example.com/",
+                "confidence": "medium"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "role": "cta",
+      "narration": "Bạn muốn tìm hiểu bước nào?",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing aerial view",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing aerial daytime",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing aerial view'",
+          "Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daytime'",
+          "[sentence_length, nhóm 3, warning] Cảnh cần 2–4 câu, ý chính rồi chi tiết và câu dẫn.",
+          "[word_budget, nhóm 3, warning] Tổng 60 từ; mục tiêu 117 ±20%, chỉ thêm chi tiết có fact.",
+          "[word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.",
+          "[broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing aerial view'",
+          "[broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial daytime'"
+        ],
+        "fact_ids": [],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    }
+  ],
+  "video_type": "news",
+  "target_duration_sec": 45.0,
+  "brief_hash": "52c90cb810265ffc3c8d835391771e73908be0210ca42ed717d4bcfcd498bf54",
+  "source_plan_hash": "4e53c07aea56ab120015faed8f95a0aca353039f48fcb76f3fd693a284c6a28b",
+  "timing_basis": "audio",
+  "warnings": [
+    "Fallback fixture"
+  ]
+}

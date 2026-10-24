@@ -1,0 +1,32 @@
+{
+  "request": {
+    "model": "veo-3.1",
+    "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.",
+    "seconds": 4,
+    "format": "tiktok",
+    "resolution": "720p"
+  },
+  "remote_id": "original",
+  "status": "failed",
+  "progress": 0,
+  "estimated_cost_vnd": 2500,
+  "actual_cost_vnd": null,
+  "clip_path": null,
+  "error": "{'code': 'generation_failed'}",
+  "generation_retry_count": 1,
+  "generation_retry_path": "missing.json",
+  "gateway_failure": {
+    "status": "failed",
+    "error": {
+      "code": "generation_failed"
+    }
+  },
+  "sent_payload": {
+    "model": "veo-3.1",
+    "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.",
+    "seconds": 4,
+    "aspect_ratio": "9:16",
+    "resolution": "720p"
+  },
+  "failure_code": "generation_failed"
+}

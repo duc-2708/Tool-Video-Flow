@@ -1,0 +1,15 @@
+
+[2026-10-24T02:28:34.609632+00:00] Clip AI nền cảnh 1; dùng gradient, không dừng render
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\controlled_ai.py", line 59, in create_backgrounds
+    job_path=create_job(project,request,settings)
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+TimeoutError: network timeout, job may exist
+

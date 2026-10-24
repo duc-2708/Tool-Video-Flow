@@ -1,0 +1,35 @@
+{
+  "request": {
+    "model": "veo-3.1",
+    "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.",
+    "seconds": 4,
+    "format": "tiktok",
+    "resolution": "720p"
+  },
+  "remote_id": "initial",
+  "status": "failed",
+  "progress": 0,
+  "estimated_cost_vnd": 2500,
+  "actual_cost_vnd": null,
+  "clip_path": null,
+  "error": "Thử lại Clip AI không thành công: generation_failed: {'code': 'generation_failed', 'message': 'upstream fixture failure'}. Dùng b-roll thường; không tạo thêm job.",
+  "gateway_failure": {
+    "status": "failed",
+    "error": {
+      "code": "generation_failed",
+      "message": "upstream fixture failure"
+    }
+  },
+  "sent_payload": {
+    "model": "veo-3.1",
+    "prompt": "A plain camera lens rests on a wooden table in soft warm light, static camera, cinematic.",
+    "seconds": 4,
+    "aspect_ratio": "9:16",
+    "resolution": "720p"
+  },
+  "failure_code": "generation_failed",
+  "generation_retry_path": "a512d9696696c1d4bf2610f024b1b63285c6eceee534a1b477fd581ee36b7c52.json",
+  "generation_retry_count": 1,
+  "retry_notice": "Tự thử lại tối đa 1 job có thể tính phí sau generation_failed; không retry timeout hoặc thiếu ID.",
+  "generation_retry_exhausted": true
+}

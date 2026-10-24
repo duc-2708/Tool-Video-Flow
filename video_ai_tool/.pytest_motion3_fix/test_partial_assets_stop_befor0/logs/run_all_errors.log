@@ -1,0 +1,10 @@
+
+[2026-10-24T02:37:39.343116+00:00] run_all step=assets
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 361, in run_all
+    files,warnings = asset_files(project,project/"edit_plan.json")
+                     ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 120, in asset_files
+    raise ValueError("Assets chưa hoàn tất; chạy lại Assets trước khi Render.")
+ValueError: Assets chưa hoàn tất; chạy lại Assets trước khi Render.
+

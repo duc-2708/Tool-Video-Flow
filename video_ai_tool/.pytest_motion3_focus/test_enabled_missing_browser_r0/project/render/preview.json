@@ -1,0 +1,45 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_enabled_missing_browser_r0\\project\\render\\dung-video_tiktok_preview.mp4",
+  "filename": "dung-video_tiktok_preview.mp4",
+  "mode": "preview",
+  "duration_sec": 3.2413333333333334,
+  "width": 270,
+  "height": 480,
+  "fps": 10,
+  "size_bytes": 159012,
+  "render_seconds": 0.971,
+  "warnings": [
+    "Cảnh 8, shot 1: dùng nền màu và chữ.",
+    "Cảnh 1: Motion không sẵn sàng; dùng đồ họa Pillow hiện có. Kiểm tra Playwright/Chromium và logs/render_errors.log.",
+    "Cảnh 1: motion_layout nhóm 3: dự phòng Pillow, chưa đo bố cục DOM.",
+    "Cảnh 8: motion_layout nhóm 3: dự phòng Pillow, chưa đo bố cục DOM."
+  ],
+  "caption_timing": "Word sidecar nếu hợp lệ; còn lại ước lượng theo số ký tự",
+  "ai_backgrounds_used": 0,
+  "description": "",
+  "motion_enabled": true,
+  "motion_scenes": [],
+  "motion_scale": 0.25,
+  "motion_workers": 2,
+  "mascot_enabled": true,
+  "motion_theme": "auto",
+  "fast_motion_mux": false,
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_enabled_missing_browser_r0\\project\\review_frames\\contact_sheet.png",
+  "review_notes": [
+    "Cảnh 1, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Mẫu kiểm thử'; chia nhịp theo shot.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 8: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 1: motion_layout nhóm 3: dự phòng Pillow, chưa đo bố cục DOM.",
+    "Cảnh 8: motion_layout nhóm 3: dự phòng Pillow, chưa đo bố cục DOM."
+  ],
+  "quality_report": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_enabled_missing_browser_r0\\project\\quality_report.json",
+  "quality_summary": {
+    "template_types": 1,
+    "template_counts": {
+      "hook_card": 1
+    },
+    "warning_count": 0,
+    "deferred_dom_samples": 0
+  },
+  "total_seconds": 1.619
+}

@@ -1,0 +1,32 @@
+CREDITS — tài nguyên trong bản dựng có clip AI
+
+Cảnh 1: giọng đọc Microsoft Edge TTS (vi-VN-HoaiMyNeural).
+Cảnh 1 / shot 1: nền màu/chữ tạo bằng code. File: clips/scene_1_shot_1.png
+Cảnh 2: giọng đọc Microsoft Edge TTS (vi-VN-HoaiMyNeural).
+Cảnh 2 / shot 1: nền màu/chữ tạo bằng code. File: clips/scene_2_shot_1.png
+Cảnh 2 / shot 2: nền màu/chữ tạo bằng code. File: clips/scene_2_shot_2.png
+Cảnh 2 / shot 3: AI-generated, gateway api.buihuuthang.com, model veo-3.1, job fixture.
+File: clips/ai.mp4
+Cảnh 3: giọng đọc Microsoft Edge TTS (vi-VN-HoaiMyNeural).
+Cảnh 3 / shot 1: nền màu/chữ tạo bằng code. File: clips/scene_3_shot_1.png
+Cảnh 3 / shot 2: nền màu/chữ tạo bằng code. File: clips/scene_3_shot_2.png
+Cảnh 4: giọng đọc Microsoft Edge TTS (vi-VN-HoaiMyNeural).
+Cảnh 4 / shot 1: nền màu/chữ tạo bằng code. File: clips/scene_4_shot_1.png
+Cảnh 4 / shot 2: nền màu/chữ tạo bằng code. File: clips/scene_4_shot_2.png
+Cảnh 6: giọng đọc Microsoft Edge TTS (vi-VN-HoaiMyNeural).
+Cảnh 6 / shot 1: nền màu/chữ tạo bằng code. File: clips/scene_6_shot_1.png
+Cảnh 6 / shot 2: nền màu/chữ tạo bằng code. File: clips/scene_6_shot_2.png
+Cảnh 6 / shot 3: nền màu/chữ tạo bằng code. File: clips/scene_6_shot_3.png
+Cảnh 6 / shot 4: nền màu/chữ tạo bằng code. File: clips/scene_6_shot_4.png
+Cảnh 7: giọng đọc Microsoft Edge TTS (vi-VN-HoaiMyNeural).
+Cảnh 7 / shot 1: nền màu/chữ tạo bằng code. File: clips/scene_7_shot_1.png
+Cảnh 7 / shot 2: nền màu/chữ tạo bằng code. File: clips/scene_7_shot_2.png
+Cảnh 8: giọng đọc Microsoft Edge TTS (vi-VN-HoaiMyNeural).
+Cảnh 8 / shot 1: nền màu/chữ tạo bằng code. File: clips/scene_8_shot_1.png
+Cảnh 8 / shot 2: nền màu/chữ tạo bằng code. File: clips/scene_8_shot_2.png
+
+Pixabay: https://pixabay.com/service/license-summary/
+Pexels: https://www.pexels.com/license/
+
+NGUỒN NGHIÊN CỨU — ngôn ngữ gốc; ngày xuất bản
+- Fixture | https://example.com/ | Không rõ ngày | ngôn ngữ gốc: vi

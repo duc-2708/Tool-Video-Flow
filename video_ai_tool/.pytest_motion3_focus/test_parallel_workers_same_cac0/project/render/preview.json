@@ -1,0 +1,135 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_parallel_workers_same_cac0\\project\\render\\dung-video_tiktok_preview.mp4",
+  "filename": "dung-video_tiktok_preview.mp4",
+  "mode": "preview",
+  "duration_sec": 3.2413333333333334,
+  "width": 270,
+  "height": 480,
+  "fps": 5,
+  "size_bytes": 132134,
+  "render_seconds": 10.358,
+  "warnings": [
+    "Cảnh 1, shot 1: motion_layout nhóm 3 sau tự sửa: card_empty_over_40_percent.",
+    "Cảnh 8, shot 1: motion_layout nhóm 3 sau tự sửa: card_empty_over_40_percent.",
+    "[visual_quality, nhóm 3] repeated_cards: 1; xem quality_report.json.",
+    "[visual_quality, nhóm 3] empty_cards_over_40_percent: 2; xem quality_report.json."
+  ],
+  "caption_timing": "Word sidecar nếu hợp lệ; còn lại ước lượng theo số ký tự",
+  "ai_backgrounds_used": 0,
+  "description": "",
+  "motion_enabled": true,
+  "motion_scenes": [
+    {
+      "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\b72e6940fc5dd4340e74b10c1f26f4d596f5a7a59acb5d631d3c6f3f105f09f1.mp4",
+      "cache_hit": false,
+      "scene_id": 1,
+      "width": 270,
+      "height": 480,
+      "fps": 5,
+      "duration_sec": 1.6206666666666667,
+      "render_seconds": 8.5,
+      "size_bytes": 26491,
+      "sha256": "68b6a16d4c211830746f7dbccc059d6429e50c484b0d2c0d555923fc5721dfbf",
+      "timing_source": "estimated_characters",
+      "quality": [
+        {
+          "issues": [
+            "card_empty_over_40_percent"
+          ],
+          "occupied": 0.3457629260160926,
+          "deferred_until_cue": false,
+          "graphic": {
+            "x": 37.0379638671875,
+            "y": 147.961181640625,
+            "width": 195.916259765625,
+            "height": 78.43310546875
+          },
+          "caption": {
+            "x": 29.69921875,
+            "y": 227.640625,
+            "width": 202.5,
+            "height": 96
+          },
+          "shot_id": 1,
+          "template": "text_focus",
+          "rule_id": "motion_layout",
+          "group": 3
+        }
+      ],
+      "repair_notes": [
+        "motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."
+      ],
+      "review_frame": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\b72e6940fc5dd4340e74b10c1f26f4d596f5a7a59acb5d631d3c6f3f105f09f1.review.png",
+      "ai_background_count": 0
+    },
+    {
+      "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\8f6d5f02d274818241e71a0de1072535f04343ba9a3cf85546bde0179e291d3f.mp4",
+      "cache_hit": true,
+      "scene_id": 8,
+      "width": 270,
+      "height": 480,
+      "fps": 5,
+      "duration_sec": 1.6206666666666667,
+      "render_seconds": 0.0,
+      "size_bytes": 27341,
+      "sha256": "0b031c486589b355a8289bd7d094cf4d26a37310b2fdac34e888a88f7f9fe6bd",
+      "timing_source": "estimated_characters",
+      "quality": [
+        {
+          "issues": [
+            "card_empty_over_40_percent"
+          ],
+          "occupied": 0.3457629260160926,
+          "deferred_until_cue": false,
+          "graphic": {
+            "x": 37.0379638671875,
+            "y": 147.961181640625,
+            "width": 195.916259765625,
+            "height": 78.43310546875
+          },
+          "caption": {
+            "x": 29.69921875,
+            "y": 227.640625,
+            "width": 202.5,
+            "height": 96
+          },
+          "shot_id": 1,
+          "template": "text_focus",
+          "rule_id": "motion_layout",
+          "group": 3
+        }
+      ],
+      "repair_notes": [
+        "motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."
+      ],
+      "review_frame": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\8f6d5f02d274818241e71a0de1072535f04343ba9a3cf85546bde0179e291d3f.review.png",
+      "ai_background_count": 0
+    }
+  ],
+  "motion_scale": 0.25,
+  "motion_workers": 2,
+  "mascot_enabled": false,
+  "motion_theme": "auto",
+  "fast_motion_mux": true,
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_parallel_workers_same_cac0\\project\\review_frames\\contact_sheet.png",
+  "review_notes": [
+    "Cảnh 1, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 8, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 8: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 1: motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout.",
+    "Cảnh 1, shot 1: motion_layout nhóm 3 sau tự sửa: card_empty_over_40_percent.",
+    "Cảnh 8: motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout.",
+    "Cảnh 8, shot 1: motion_layout nhóm 3 sau tự sửa: card_empty_over_40_percent."
+  ],
+  "quality_report": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_parallel_workers_same_cac0\\project\\quality_report.json",
+  "quality_summary": {
+    "template_types": 1,
+    "template_counts": {
+      "text_focus": 2
+    },
+    "warning_count": 3,
+    "deferred_dom_samples": 0
+  },
+  "total_seconds": 11.164
+}

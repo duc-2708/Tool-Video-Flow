@@ -1,0 +1,16 @@
+{
+  "checks": [],
+  "review_notes": [
+    "Cảnh 1, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Mẫu kiểm thử'; chia nhịp theo shot.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 8: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 1: motion_layout nhóm 3: dự phòng Pillow, chưa đo bố cục DOM.",
+    "Cảnh 8: motion_layout nhóm 3: dự phòng Pillow, chưa đo bố cục DOM."
+  ],
+  "frames": [
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_enabled_missing_browser_r0\\project\\review_frames\\scene_1.png",
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_enabled_missing_browser_r0\\project\\review_frames\\scene_8.png"
+  ],
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_enabled_missing_browser_r0\\project\\review_frames\\contact_sheet.png",
+  "scope": "DOM samples after one layout repair; not semantic fact validation or exhaustive per-frame proof"
+}

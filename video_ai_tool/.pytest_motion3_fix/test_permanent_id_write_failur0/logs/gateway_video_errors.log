@@ -1,0 +1,66 @@
+
+[2026-10-24T02:37:18.478449+00:00] {"event": "submit_request", "request": {"model": "veo-3.1", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:18.481686+00:00] Lưu remote ID thất bại lần 1/3; remote_id=remote_recover_me. Không gửi lại POST.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 52, in persist_remote_id
+    save_job(path,job,diagnostics)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_video_gateway.py", line 227, in save
+    raise PermissionError("fixture all ID writes fail")
+PermissionError: fixture all ID writes fail
+
+
+[2026-10-24T02:37:18.484524+00:00] Lưu remote ID thất bại lần 2/3; remote_id=remote_recover_me. Không gửi lại POST.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 52, in persist_remote_id
+    save_job(path,job,diagnostics)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_video_gateway.py", line 227, in save
+    raise PermissionError("fixture all ID writes fail")
+PermissionError: fixture all ID writes fail
+
+
+[2026-10-24T02:37:18.486907+00:00] Lưu remote ID thất bại lần 3/3; remote_id=remote_recover_me. Không gửi lại POST.
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 52, in persist_remote_id
+    save_job(path,job,diagnostics)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_video_gateway.py", line 227, in save
+    raise PermissionError("fixture all ID writes fail")
+PermissionError: fixture all ID writes fail
+
+
+[2026-10-24T02:37:18.490960+00:00] Không lưu được lỗi gửi job; giữ nguyên lỗi chứa remote ID để khôi phục
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 117, in create_job
+    persist_remote_id(path,job,response.get("id"),diagnostics)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 59, in persist_remote_id
+    raise GatewayVideoError(diagnostics.redact(
+        f"Gateway đã tạo job, remote ID: {remote_id}, nhưng không lưu được sau 3 lần. "
+        "Dùng ID này để tiếp tục job có sẵn; không tạo lại vì có thể tính phí thêm."))
+providers.video_gateway.GatewayVideoError: Gateway đã tạo job, remote ID: remote_recover_me, nhưng không lưu được sau 3 lần. Dùng ID này để tiếp tục job có sẵn; không tạo lại vì có thể tính phí thêm.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 131, in create_job
+    save_job(path,job,diagnostics)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_video_gateway.py", line 227, in save
+    raise PermissionError("fixture all ID writes fail")
+PermissionError: fixture all ID writes fail
+
+
+[2026-10-24T02:37:18.493811+00:00] Tạo job AI Video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 117, in create_job
+    persist_remote_id(path,job,response.get("id"),diagnostics)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\ai_video.py", line 59, in persist_remote_id
+    raise GatewayVideoError(diagnostics.redact(
+        f"Gateway đã tạo job, remote ID: {remote_id}, nhưng không lưu được sau 3 lần. "
+        "Dùng ID này để tiếp tục job có sẵn; không tạo lại vì có thể tính phí thêm."))
+providers.video_gateway.GatewayVideoError: Gateway đã tạo job, remote ID: remote_recover_me, nhưng không lưu được sau 3 lần. Dùng ID này để tiếp tục job có sẵn; không tạo lại vì có thể tính phí thêm.
+

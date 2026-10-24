@@ -1,0 +1,32 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_fix\\test_disabled_motion_mascot_st0\\project\\render\\dung-video_tiktok_preview.mp4",
+  "filename": "dung-video_tiktok_preview.mp4",
+  "mode": "preview",
+  "duration_sec": 3.2413333333333334,
+  "width": 540,
+  "height": 960,
+  "fps": 15,
+  "size_bytes": 424958,
+  "render_seconds": 3.582,
+  "warnings": [
+    "Cảnh 1: Shot 1: thiếu brief.json để đối chiếu đồ họa sự kiện.",
+    "Cảnh 1: Shot 1: đã dùng bản trung tính; lời đọc giữ nguyên.",
+    "Cảnh 8: Shot 1: thiếu brief.json để đối chiếu đồ họa sự kiện.",
+    "Cảnh 8: Shot 1: đã dùng bản trung tính; lời đọc giữ nguyên."
+  ],
+  "caption_timing": "Word sidecar nếu hợp lệ; còn lại ước lượng theo số ký tự",
+  "ai_backgrounds_used": 0,
+  "description": "",
+  "quality_report": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_fix\\test_disabled_motion_mascot_st0\\project\\quality_report.json",
+  "quality_summary": {
+    "template_types": 2,
+    "template_counts": {
+      "hook_card": 1,
+      "cta_card": 1
+    },
+    "warning_count": 0,
+    "deferred_dom_samples": 0
+  },
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_fix\\test_disabled_motion_mascot_st0\\project\\review_frames\\contact_sheet.png",
+  "total_seconds": 3.995
+}

@@ -1,0 +1,1 @@
+Original synthesized sine/noise SFX created by editor/motion/sfx.py, CC0 1.0. No samples, music or third-party recordings. Existing user files retain their own licenses.

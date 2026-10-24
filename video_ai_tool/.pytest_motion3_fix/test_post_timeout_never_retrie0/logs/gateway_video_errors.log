@@ -1,0 +1,20 @@
+
+[2026-10-24T02:37:17.164168+00:00] {"event": "gateway_submit", "request": {"model": "veo-3.1", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:17.174584+00:00] Videos API POST /videos
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\video_gateway.py", line 101, in _request
+    response = self.session.request(method,self.base+path,
+        headers={"Authorization":"[REDACTED] "+self.key,"Accept":"video/mp4" if stream else "application/json"},
+        params=params,json=body,stream=stream,allow_redirects=False,
+        timeout=(min(10,self.settings.request_timeout_sec),self.settings.request_timeout_sec))
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+requests.exceptions.Timeout: Authorization: [REDACTED]
+

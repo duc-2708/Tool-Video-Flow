@@ -45,6 +45,9 @@ def apply_words(plan,rows,diagnostics=None):
             "type":row.shot_types[i] if row.shot_types else shot.type}) for i,shot in enumerate(scene.shots)]
         scene.narration = row.narration
         scene.shots=shots
+        for i,shot in enumerate(shots):
+            if i<len(row.card_texts): shot.card_text=row.card_texts[i]
+            if i<len(row.emphasis): shot.emphasis=row.emphasis[i]
         if row.shot_sfx: scene.sfx=next((s for s in row.shot_sfx if s!="none"),"none")
         if row.structure_warnings:
             if scene.review_notes is None:
@@ -81,6 +84,8 @@ def humanize(plan,brief,provider,settings,diagnostics,*,scene_ids=None,style=Non
             result=HumanizedScript.model_validate(normalized)
             check_words(result.scenes,selected)
             for row in result.scenes: apply_words(plan,[row],diagnostics)
+            from agents.presentation import humanize_locally,repair_generic_hook
+            humanize_locally(plan,brief);repair_generic_hook(plan,brief)
             validate_plan(plan,brief,request,diagnostics=diagnostics,allow_merge=False)
             audit=audit_findings(result.issues)
             if not result.approved and not result.issues:

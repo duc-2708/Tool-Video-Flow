@@ -1,0 +1,2959 @@
+{
+  "version": 1,
+  "input_hash": "b9a72a6863c152b7cce8e11d8ef0d212dc45ea9baee6bc0b3d96d8e10a00efe8",
+  "stages": {
+    "outline": {
+      "status": "done",
+      "data": {
+        "angle": "Công việc đổi cách tổ chức",
+        "hook": "Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+        "open_loop": "Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+        "payoff": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+        "beats": [
+          {
+            "id": 1,
+            "kind": "cause",
+            "idea": "Ý 0",
+            "new_information": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm.",
+            "fact_ids": [
+              1
+            ]
+          },
+          {
+            "id": 2,
+            "kind": "mechanism",
+            "idea": "Ý 1",
+            "new_information": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+            "fact_ids": []
+          },
+          {
+            "id": 3,
+            "kind": "metaphor",
+            "idea": "Ý 2",
+            "new_information": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+            "fact_ids": []
+          },
+          {
+            "id": 4,
+            "kind": "example",
+            "idea": "Ý 3",
+            "new_information": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+            "fact_ids": []
+          },
+          {
+            "id": 5,
+            "kind": "counterpoint",
+            "idea": "Ý 4",
+            "new_information": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+            "fact_ids": []
+          },
+          {
+            "id": 6,
+            "kind": "consequence",
+            "idea": "Ý 5",
+            "new_information": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+            "fact_ids": []
+          }
+        ]
+      },
+      "hash": "3782de3765abb80a78e129afe76fb190811972dfa482c4c2befeb9e1be2aba78",
+      "completed_at": "2026-10-24T02:37:50.481507+00:00"
+    },
+    "written": {
+      "status": "done",
+      "data": {
+        "title": "AI đổi cách chia việc như thế nào?",
+        "scenes": [
+          {
+            "scene_id": 1,
+            "kind": "cause",
+            "new_information": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm.",
+            "sentences": [
+              {
+                "type": "event",
+                "text": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm.",
+                "fact_ids": [
+                  1
+                ]
+              },
+              {
+                "type": "explain",
+                "text": "Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+                "fact_ids": []
+              }
+            ],
+            "shot_queries": [
+              "office employee discussion",
+              "customer loan application",
+              "financial analyst meeting"
+            ],
+            "shot_cards": [
+              {
+                "card_text": "5.000 việc làm",
+                "emphasis": [
+                  "việc",
+                  "làm"
+                ]
+              },
+              {
+                "card_text": "Cách tổ chức công việc",
+                "emphasis": [
+                  "công",
+                  "việc"
+                ]
+              },
+              {
+                "card_text": "Sao tự động",
+                "emphasis": [
+                  "tự",
+                  "động"
+                ]
+              }
+            ]
+          },
+          {
+            "scene_id": 2,
+            "kind": "mechanism",
+            "new_information": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+                "fact_ids": []
+              }
+            ],
+            "shot_queries": [
+              "human resources meeting",
+              "employee organizing workspace",
+              "automated document processing"
+            ],
+            "shot_cards": [
+              {
+                "card_text": "Thường công việc",
+                "emphasis": [
+                  "công",
+                  "việc"
+                ]
+              },
+              {
+                "card_text": "Cách tổ chức công việc",
+                "emphasis": [
+                  "công",
+                  "việc"
+                ]
+              },
+              {
+                "card_text": "Công việc chia",
+                "emphasis": [
+                  "việc",
+                  "chia"
+                ]
+              }
+            ]
+          },
+          {
+            "scene_id": 3,
+            "kind": "metaphor",
+            "new_information": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+                "fact_ids": []
+              }
+            ],
+            "shot_queries": [
+              "bank teller counter",
+              "computer data processing",
+              "engineer checking system"
+            ],
+            "shot_cards": [
+              {
+                "card_text": "Hình dung chuyện",
+                "emphasis": [
+                  "dung",
+                  "chuyện"
+                ]
+              },
+              {
+                "card_text": "Dung chuyện giống",
+                "emphasis": [
+                  "chuyện",
+                  "giống"
+                ]
+              },
+              {
+                "card_text": "Chuyện giống bếp",
+                "emphasis": [
+                  "giống",
+                  "bếp"
+                ]
+              }
+            ]
+          },
+          {
+            "scene_id": 4,
+            "kind": "example",
+            "new_information": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+                "fact_ids": []
+              }
+            ],
+            "shot_queries": [
+              "employee sorting documents",
+              "customer application review",
+              "customer application review",
+              "office employee discussion"
+            ],
+            "shot_cards": [
+              {
+                "card_text": "Ví dụ hồ",
+                "emphasis": [
+                  "dụ",
+                  "hồ"
+                ]
+              },
+              {
+                "card_text": "Dụ hồ sơ",
+                "emphasis": [
+                  "hồ",
+                  "sơ"
+                ]
+              },
+              {
+                "card_text": "Hồ sơ đi",
+                "emphasis": [
+                  "sơ",
+                  "đi"
+                ]
+              },
+              {
+                "card_text": "Ví dụ hồ",
+                "emphasis": [
+                  "dụ",
+                  "hồ"
+                ]
+              }
+            ]
+          },
+          {
+            "scene_id": 5,
+            "kind": "counterpoint",
+            "new_information": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+                "fact_ids": []
+              }
+            ],
+            "shot_queries": [
+              "employee training classroom",
+              "colleague teaching computer",
+              "professional learning workshop"
+            ],
+            "shot_cards": [
+              {
+                "card_text": "Mặt trái thường",
+                "emphasis": [
+                  "trái",
+                  "thường"
+                ]
+              },
+              {
+                "card_text": "Trái thường nằm",
+                "emphasis": [
+                  "thường",
+                  "nằm"
+                ]
+              },
+              {
+                "card_text": "Thường nằm ở",
+                "emphasis": [
+                  "nằm",
+                  "ở"
+                ]
+              }
+            ]
+          },
+          {
+            "scene_id": 6,
+            "kind": "consequence",
+            "new_information": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+            "sentences": [
+              {
+                "type": "opinion",
+                "text": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+                "fact_ids": []
+              },
+              {
+                "type": "cta",
+                "text": "Bạn muốn học kỹ năng nào để thích nghi?",
+                "fact_ids": []
+              }
+            ],
+            "shot_queries": [
+              "office employee discussion",
+              "human resources meeting",
+              "employee organizing workspace",
+              "bank teller counter",
+              "customer loan application"
+            ],
+            "shot_cards": [
+              {
+                "card_text": "Ý chính cần nhớ",
+                "emphasis": [
+                  "cần",
+                  "nhớ"
+                ]
+              },
+              {
+                "card_text": "Theo tự động",
+                "emphasis": [
+                  "tự",
+                  "động"
+                ]
+              },
+              {
+                "card_text": "Tự động hóa",
+                "emphasis": [
+                  "động",
+                  "hóa"
+                ]
+              },
+              {
+                "card_text": "Động hóa đổi",
+                "emphasis": [
+                  "hóa",
+                  "đổi"
+                ]
+              },
+              {
+                "card_text": "",
+                "emphasis": []
+              }
+            ]
+          }
+        ]
+      },
+      "hash": "24b92cb1c2b2cfa1563a2bd4bc1f0665ef451dd64432ee60a5cd190661f0d280",
+      "completed_at": "2026-10-24T02:37:50.669998+00:00"
+    },
+    "humanized": {
+      "status": "done",
+      "data": {
+        "content_mode": "explainer_v2",
+        "explainer_outline": {
+          "angle": "Công việc đổi cách tổ chức",
+          "hook": "Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+          "open_loop": "Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+          "payoff": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+          "beats": [
+            {
+              "id": 1,
+              "kind": "cause",
+              "idea": "Ý 0",
+              "new_information": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm.",
+              "fact_ids": [
+                1
+              ]
+            },
+            {
+              "id": 2,
+              "kind": "mechanism",
+              "idea": "Ý 1",
+              "new_information": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+              "fact_ids": []
+            },
+            {
+              "id": 3,
+              "kind": "metaphor",
+              "idea": "Ý 2",
+              "new_information": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+              "fact_ids": []
+            },
+            {
+              "id": 4,
+              "kind": "example",
+              "idea": "Ý 3",
+              "new_information": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+              "fact_ids": []
+            },
+            {
+              "id": 5,
+              "kind": "counterpoint",
+              "idea": "Ý 4",
+              "new_information": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+              "fact_ids": []
+            },
+            {
+              "id": 6,
+              "kind": "consequence",
+              "idea": "Ý 5",
+              "new_information": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+              "fact_ids": []
+            }
+          ]
+        },
+        "content_timed": true,
+        "validation_events": [
+          {
+            "rule_id": "card_text",
+            "group": 2,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Shot 4: card_text 'Ví dụ hồ' → 'Ý chính cần nhớ'; emphasis=['cần', 'nhớ']."
+          },
+          {
+            "rule_id": "presentation_voice",
+            "group": 3,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+          },
+          {
+            "rule_id": "presentation_voice",
+            "group": 3,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+          },
+          {
+            "rule_id": "presentation_voice",
+            "group": 3,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 1,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 1,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 2,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 2,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 2,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 3,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 3,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 3,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 1: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 4: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+          }
+        ],
+        "review_notes": [
+          "[presentation_voice, nhóm 3] Cảnh 4: Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[presentation_voice, nhóm 3] Cảnh 5: Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[presentation_voice, nhóm 3] Cảnh 6: Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[visual_variety, nhóm 2] Cảnh 1: text_focus → icon_card, giữ nguyên dữ liệu.",
+          "[visual_variety, nhóm 2] Cảnh 2: text_focus → icon_card, giữ nguyên dữ liệu.",
+          "[visual_variety, nhóm 2] Cảnh 3: text_focus → icon_card, giữ nguyên dữ liệu.",
+          "[visual_variety, nhóm 2] Cảnh 4: text_focus → icon_card, giữ nguyên dữ liệu.",
+          "[visual_variety, nhóm 2] Cảnh 5: text_focus → icon_card, giữ nguyên dữ liệu.",
+          "[visual_variety, nhóm 2] Cảnh 6: text_focus → cta_card, giữ nguyên dữ liệu.",
+          "[visual_card, nhóm 2] Cảnh 1, shot 3: 'Cách tổ chức công việc' → 'Sao tự động'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 2, shot 1: 'Cách tổ chức công việc' → 'Thường công việc'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 2, shot 3: 'Cách tổ chức công việc' → 'Công việc chia'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 3, shot 1: 'Ý chính cần nhớ' → 'Hình dung chuyện'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 3, shot 2: 'Ý chính cần nhớ' → 'Dung chuyện giống'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 3, shot 3: 'Ý chính cần nhớ' → 'Chuyện giống bếp'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 4, shot 1: 'Ý chính cần nhớ' → 'Ví dụ hồ'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 4, shot 2: 'Ý chính cần nhớ' → 'Dụ hồ sơ'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 4, shot 3: 'Ý chính cần nhớ' → 'Hồ sơ đi'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 4, shot 4: 'Ý chính cần nhớ' → 'Ví dụ hồ'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 5, shot 1: 'Ý chính cần nhớ' → 'Mặt trái thường'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 5, shot 2: 'Ý chính cần nhớ' → 'Trái thường nằm'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 5, shot 3: 'Ý chính cần nhớ' → 'Thường nằm ở'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 6, shot 2: 'Ý chính cần nhớ' → 'Theo tự động'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 6, shot 3: 'Ý chính cần nhớ' → 'Tự động hóa'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 6, shot 4: 'Ý chính cần nhớ' → 'Động hóa đổi'; minh họa icon."
+        ],
+        "requested_duration_sec": 60.0,
+        "script_style": "explain",
+        "title": "AI đổi cách chia việc như thế nào?",
+        "format": "tiktok",
+        "voice": "vi-VN-HoaiMyNeural",
+        "music": {
+          "mood": "calm",
+          "volume": 0.08
+        },
+        "scenes": [
+          {
+            "sentences": [
+              {
+                "type": "event",
+                "text": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm.",
+                "fact_ids": [
+                  1
+                ]
+              },
+              {
+                "type": "explain",
+                "text": "Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "cause",
+            "new_information": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm.",
+            "id": 1,
+            "role": "hook",
+            "narration": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm. Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+            "shots": [
+              {
+                "card_text": "5.000 việc làm",
+                "emphasis": [
+                  "việc",
+                  "làm"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "auto_generated": true,
+                  "template": "hook_card",
+                  "data": {
+                    "text": "5.000 việc làm",
+                    "highlight": [
+                      "việc",
+                      "làm"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": [
+                      1
+                    ]
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "office employee discussion",
+                "duration_sec": 3.3530864197530867,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Cách tổ chức công việc",
+                "emphasis": [
+                  "công",
+                  "việc"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 2,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Cách tổ chức công việc",
+                    "highlight": [
+                      "công",
+                      "việc"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "customer loan application",
+                "duration_sec": 3.3530864197530867,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Sao tự động",
+                "emphasis": [
+                  "tự",
+                  "động"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 2,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Sao tự động",
+                    "highlight": [
+                      "tự",
+                      "động"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "financial analyst meeting",
+                "duration_sec": 3.3530864197530867,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [
+              1
+            ],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+              ],
+              "fact_ids": [
+                1
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 1,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "The Guardian",
+                      "url": "https://www.theguardian.com/business/live/2026/oct/22/barclays-profits-jump-looming-bank-tax-french-bond-yields-hit-fresh-24-year-high-latest-live-updates",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "mechanism",
+            "new_information": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+            "id": 2,
+            "role": "body",
+            "narration": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+            "shots": [
+              {
+                "card_text": "Thường công việc",
+                "emphasis": [
+                  "công",
+                  "việc"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Thường công việc",
+                    "highlight": [
+                      "công",
+                      "việc"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "human resources meeting",
+                "duration_sec": 3.1061728395061725,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Cách tổ chức công việc",
+                "emphasis": [
+                  "công",
+                  "việc"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Cách tổ chức công việc",
+                    "highlight": [
+                      "công",
+                      "việc"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "employee organizing workspace",
+                "duration_sec": 3.1061728395061725,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Công việc chia",
+                "emphasis": [
+                  "việc",
+                  "chia"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Công việc chia",
+                    "highlight": [
+                      "việc",
+                      "chia"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "automated document processing",
+                "duration_sec": 3.1061728395061725,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+              ],
+              "fact_ids": [],
+              "source_count": 0,
+              "confidence": null,
+              "facts": []
+            }
+          },
+          {
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "metaphor",
+            "new_information": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+            "id": 3,
+            "role": "body",
+            "narration": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+            "shots": [
+              {
+                "card_text": "Hình dung chuyện",
+                "emphasis": [
+                  "dung",
+                  "chuyện"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Hình dung chuyện",
+                    "highlight": [
+                      "dung",
+                      "chuyện"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "bank teller counter",
+                "duration_sec": 3.4765432098765436,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Dung chuyện giống",
+                "emphasis": [
+                  "chuyện",
+                  "giống"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Dung chuyện giống",
+                    "highlight": [
+                      "chuyện",
+                      "giống"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "computer data processing",
+                "duration_sec": 3.4765432098765436,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Chuyện giống bếp",
+                "emphasis": [
+                  "giống",
+                  "bếp"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Chuyện giống bếp",
+                    "highlight": [
+                      "giống",
+                      "bếp"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "engineer checking system",
+                "duration_sec": 3.4765432098765436,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+              ],
+              "fact_ids": [],
+              "source_count": 0,
+              "confidence": null,
+              "facts": []
+            }
+          },
+          {
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "example",
+            "new_information": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+            "id": 4,
+            "role": "body",
+            "narration": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+            "shots": [
+              {
+                "card_text": "Ví dụ hồ",
+                "emphasis": [
+                  "dụ",
+                  "hồ"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Ví dụ hồ",
+                    "highlight": [
+                      "dụ",
+                      "hồ"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "employee sorting documents",
+                "duration_sec": 2.8851851851851853,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Dụ hồ sơ",
+                "emphasis": [
+                  "hồ",
+                  "sơ"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Dụ hồ sơ",
+                    "highlight": [
+                      "hồ",
+                      "sơ"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "customer application review",
+                "duration_sec": 2.8851851851851853,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Hồ sơ đi",
+                "emphasis": [
+                  "sơ",
+                  "đi"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Hồ sơ đi",
+                    "highlight": [
+                      "sơ",
+                      "đi"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "customer application review",
+                "duration_sec": 2.8851851851851853,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Ví dụ hồ",
+                "emphasis": [
+                  "dụ",
+                  "hồ"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Ví dụ hồ",
+                    "highlight": [
+                      "dụ",
+                      "hồ"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "office employee discussion",
+                "duration_sec": 2.8851851851851853,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "[card_text, nhóm 2, fixed] Shot 4: card_text 'Ví dụ hồ' → 'Ý chính cần nhớ'; emphasis=['cần', 'nhớ'].",
+                "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+                "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+              ],
+              "fact_ids": [],
+              "source_count": 0,
+              "confidence": null,
+              "facts": []
+            }
+          },
+          {
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "counterpoint",
+            "new_information": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+            "id": 5,
+            "role": "body",
+            "narration": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+            "shots": [
+              {
+                "card_text": "Mặt trái thường",
+                "emphasis": [
+                  "trái",
+                  "thường"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Mặt trái thường",
+                    "highlight": [
+                      "trái",
+                      "thường"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "employee training classroom",
+                "duration_sec": 2.982716049382716,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Trái thường nằm",
+                "emphasis": [
+                  "thường",
+                  "nằm"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Trái thường nằm",
+                    "highlight": [
+                      "thường",
+                      "nằm"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "colleague teaching computer",
+                "duration_sec": 2.982716049382716,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Thường nằm ở",
+                "emphasis": [
+                  "nằm",
+                  "ở"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Thường nằm ở",
+                    "highlight": [
+                      "nằm",
+                      "ở"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "professional learning workshop",
+                "duration_sec": 2.982716049382716,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+                "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+              ],
+              "fact_ids": [],
+              "source_count": 0,
+              "confidence": null,
+              "facts": []
+            }
+          },
+          {
+            "sentences": [
+              {
+                "type": "opinion",
+                "text": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+                "fact_ids": []
+              },
+              {
+                "type": "cta",
+                "text": "Bạn muốn học kỹ năng nào để thích nghi?",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "consequence",
+            "new_information": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+            "id": 6,
+            "role": "cta",
+            "narration": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định. Bạn muốn học kỹ năng nào để thích nghi?",
+            "shots": [
+              {
+                "card_text": "Ý chính cần nhớ",
+                "emphasis": [
+                  "cần",
+                  "nhớ"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "opinion",
+                  "auto_generated": true,
+                  "template": "cta_card",
+                  "data": {
+                    "text": "Ý chính cần nhớ",
+                    "highlight": [
+                      "cần",
+                      "nhớ"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "office employee discussion",
+                "duration_sec": 2.8266666666666667,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Theo tự động",
+                "emphasis": [
+                  "tự",
+                  "động"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "opinion",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Theo tự động",
+                    "highlight": [
+                      "tự",
+                      "động"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "human resources meeting",
+                "duration_sec": 2.8266666666666667,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Tự động hóa",
+                "emphasis": [
+                  "động",
+                  "hóa"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "opinion",
+                  "auto_generated": true,
+                  "template": "cta_card",
+                  "data": {
+                    "text": "Tự động hóa",
+                    "highlight": [
+                      "động",
+                      "hóa"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "employee organizing workspace",
+                "duration_sec": 2.8266666666666667,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Động hóa đổi",
+                "emphasis": [
+                  "hóa",
+                  "đổi"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "opinion",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Động hóa đổi",
+                    "highlight": [
+                      "hóa",
+                      "đổi"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "bank teller counter",
+                "duration_sec": 2.8266666666666667,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "semantic_query": true,
+                "visual": {
+                  "auto_generated": true,
+                  "template": "source_card",
+                  "data": {
+                    "text": "",
+                    "highlight": [],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "The Guardian",
+                    "source_url": "https://www.theguardian.com/business/live/2026/oct/22/barclays-profits-jump-looming-bank-tax-french-bond-yields-hit-fresh-24-year-high-latest-live-updates",
+                    "date": "2026-10-22",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": [
+                      1
+                    ]
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "customer loan application",
+                "duration_sec": 2.8266666666666667,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+                "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+              ],
+              "fact_ids": [],
+              "source_count": 0,
+              "confidence": null,
+              "facts": []
+            }
+          }
+        ],
+        "video_type": "news",
+        "target_duration_sec": 64.42962962962963,
+        "brief_hash": null
+      },
+      "hash": "f1816cd327c27c8eca0870346e6cb183a568fa4e2c9512dfe6d8c22a17b41331",
+      "completed_at": "2026-10-24T02:37:51.211384+00:00"
+    },
+    "final": {
+      "status": "done",
+      "data": {
+        "content_mode": "explainer_v2",
+        "explainer_outline": {
+          "angle": "Công việc đổi cách tổ chức",
+          "hook": "Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+          "open_loop": "Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+          "payoff": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định. Bạn muốn học kỹ năng nào để thích nghi?",
+          "beats": [
+            {
+              "id": 1,
+              "kind": "cause",
+              "idea": "Ý 0",
+              "new_information": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm.",
+              "fact_ids": [
+                1
+              ]
+            },
+            {
+              "id": 2,
+              "kind": "mechanism",
+              "idea": "Ý 1",
+              "new_information": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+              "fact_ids": []
+            },
+            {
+              "id": 3,
+              "kind": "metaphor",
+              "idea": "Ý 2",
+              "new_information": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+              "fact_ids": []
+            },
+            {
+              "id": 4,
+              "kind": "example",
+              "idea": "Ý 3",
+              "new_information": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+              "fact_ids": []
+            },
+            {
+              "id": 5,
+              "kind": "counterpoint",
+              "idea": "Ý 4",
+              "new_information": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+              "fact_ids": []
+            },
+            {
+              "id": 6,
+              "kind": "consequence",
+              "idea": "Ý 5",
+              "new_information": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+              "fact_ids": []
+            }
+          ]
+        },
+        "script_critic": {
+          "explanation": 4,
+          "novelty": 4,
+          "hook": 4,
+          "open_loop": 4,
+          "naturalness": 4,
+          "comments": [
+            "Cảnh cơ chế cần rõ hơn"
+          ],
+          "weak_scenes": []
+        },
+        "content_timed": true,
+        "validation_events": [
+          {
+            "rule_id": "card_text",
+            "group": 2,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Shot 4: card_text 'Ví dụ hồ' → 'Ý chính cần nhớ'; emphasis=['cần', 'nhớ']."
+          },
+          {
+            "rule_id": "presentation_voice",
+            "group": 3,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+          },
+          {
+            "rule_id": "presentation_voice",
+            "group": 3,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+          },
+          {
+            "rule_id": "presentation_voice",
+            "group": 3,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 1,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 1,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 2,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 2,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 2,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 3,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 3,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 3,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 1: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 2: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 3: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+          },
+          {
+            "rule_id": "visual_background",
+            "group": 3,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "warning",
+            "message": "Shot 4: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+          }
+        ],
+        "review_notes": [
+          "[presentation_voice, nhóm 3] Cảnh 4: Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[presentation_voice, nhóm 3] Cảnh 5: Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[presentation_voice, nhóm 3] Cảnh 6: Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+          "[visual_variety, nhóm 2] Cảnh 1: text_focus → icon_card, giữ nguyên dữ liệu.",
+          "[visual_variety, nhóm 2] Cảnh 2: text_focus → icon_card, giữ nguyên dữ liệu.",
+          "[visual_variety, nhóm 2] Cảnh 3: text_focus → icon_card, giữ nguyên dữ liệu.",
+          "[visual_variety, nhóm 2] Cảnh 4: text_focus → icon_card, giữ nguyên dữ liệu.",
+          "[visual_variety, nhóm 2] Cảnh 5: text_focus → icon_card, giữ nguyên dữ liệu.",
+          "[visual_variety, nhóm 2] Cảnh 6: text_focus → cta_card, giữ nguyên dữ liệu.",
+          "[visual_card, nhóm 2] Cảnh 1, shot 3: 'Cách tổ chức công việc' → 'Sao tự động'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 2, shot 1: 'Cách tổ chức công việc' → 'Thường công việc'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 2, shot 3: 'Cách tổ chức công việc' → 'Công việc chia'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 3, shot 1: 'Ý chính cần nhớ' → 'Hình dung chuyện'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 3, shot 2: 'Ý chính cần nhớ' → 'Dung chuyện giống'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 3, shot 3: 'Ý chính cần nhớ' → 'Chuyện giống bếp'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 4, shot 1: 'Ý chính cần nhớ' → 'Ví dụ hồ'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 4, shot 2: 'Ý chính cần nhớ' → 'Dụ hồ sơ'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 4, shot 3: 'Ý chính cần nhớ' → 'Hồ sơ đi'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 4, shot 4: 'Ý chính cần nhớ' → 'Ví dụ hồ'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 5, shot 1: 'Ý chính cần nhớ' → 'Mặt trái thường'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 5, shot 2: 'Ý chính cần nhớ' → 'Trái thường nằm'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 5, shot 3: 'Ý chính cần nhớ' → 'Thường nằm ở'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 6, shot 2: 'Ý chính cần nhớ' → 'Theo tự động'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 6, shot 3: 'Ý chính cần nhớ' → 'Tự động hóa'; minh họa icon.",
+          "[visual_card, nhóm 2] Cảnh 6, shot 4: 'Ý chính cần nhớ' → 'Động hóa đổi'; minh họa icon."
+        ],
+        "requested_duration_sec": 60.0,
+        "script_style": "explain",
+        "title": "AI đổi cách chia việc như thế nào?",
+        "format": "tiktok",
+        "voice": "vi-VN-HoaiMyNeural",
+        "music": {
+          "mood": "calm",
+          "volume": 0.08
+        },
+        "scenes": [
+          {
+            "sentences": [
+              {
+                "type": "event",
+                "text": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm.",
+                "fact_ids": [
+                  1
+                ]
+              },
+              {
+                "type": "explain",
+                "text": "Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "cause",
+            "new_information": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm.",
+            "id": 1,
+            "role": "hook",
+            "narration": "Barclays thông báo kế hoạch cắt giảm 5.000 việc làm. Vì sao tự động hóa có thể làm thay đổi cách tổ chức công việc?",
+            "shots": [
+              {
+                "card_text": "5.000 việc làm",
+                "emphasis": [
+                  "việc",
+                  "làm"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "auto_generated": true,
+                  "template": "hook_card",
+                  "data": {
+                    "text": "5.000 việc làm",
+                    "highlight": [
+                      "việc",
+                      "làm"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": [
+                      1
+                    ]
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "office employee discussion",
+                "duration_sec": 3.3530864197530867,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Cách tổ chức công việc",
+                "emphasis": [
+                  "công",
+                  "việc"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 2,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Cách tổ chức công việc",
+                    "highlight": [
+                      "công",
+                      "việc"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "customer loan application",
+                "duration_sec": 3.3530864197530867,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Sao tự động",
+                "emphasis": [
+                  "tự",
+                  "động"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 2,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Sao tự động",
+                    "highlight": [
+                      "tự",
+                      "động"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "financial analyst meeting",
+                "duration_sec": 3.3530864197530867,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [
+              1
+            ],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+              ],
+              "fact_ids": [
+                1
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 1,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "The Guardian",
+                      "url": "https://www.theguardian.com/business/live/2026/oct/22/barclays-profits-jump-looming-bank-tax-french-bond-yields-hit-fresh-24-year-high-latest-live-updates",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "mechanism",
+            "new_information": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+            "id": 2,
+            "role": "body",
+            "narration": "Thường là, công việc được chia thành các khâu nhỏ. Máy xử lý phần lặp lại, còn người kiểm tra tình huống khó.",
+            "shots": [
+              {
+                "card_text": "Thường công việc",
+                "emphasis": [
+                  "công",
+                  "việc"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Thường công việc",
+                    "highlight": [
+                      "công",
+                      "việc"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "human resources meeting",
+                "duration_sec": 3.1061728395061725,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Cách tổ chức công việc",
+                "emphasis": [
+                  "công",
+                  "việc"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Cách tổ chức công việc",
+                    "highlight": [
+                      "công",
+                      "việc"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "employee organizing workspace",
+                "duration_sec": 3.1061728395061725,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Công việc chia",
+                "emphasis": [
+                  "việc",
+                  "chia"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Công việc chia",
+                    "highlight": [
+                      "việc",
+                      "chia"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "automated document processing",
+                "duration_sec": 3.1061728395061725,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+              ],
+              "fact_ids": [],
+              "source_count": 0,
+              "confidence": null,
+              "facts": []
+            }
+          },
+          {
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "metaphor",
+            "new_information": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+            "id": 3,
+            "role": "body",
+            "narration": "Bạn có thể hình dung chuyện này giống bếp làm bánh. Máy trộn nguyên liệu chưa thể thay việc chọn món và kiểm tra chất lượng.",
+            "shots": [
+              {
+                "card_text": "Hình dung chuyện",
+                "emphasis": [
+                  "dung",
+                  "chuyện"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Hình dung chuyện",
+                    "highlight": [
+                      "dung",
+                      "chuyện"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "bank teller counter",
+                "duration_sec": 3.4765432098765436,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Dung chuyện giống",
+                "emphasis": [
+                  "chuyện",
+                  "giống"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Dung chuyện giống",
+                    "highlight": [
+                      "chuyện",
+                      "giống"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "computer data processing",
+                "duration_sec": 3.4765432098765436,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Chuyện giống bếp",
+                "emphasis": [
+                  "giống",
+                  "bếp"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Chuyện giống bếp",
+                    "highlight": [
+                      "giống",
+                      "bếp"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "engineer checking system",
+                "duration_sec": 3.4765432098765436,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+              ],
+              "fact_ids": [],
+              "source_count": 0,
+              "confidence": null,
+              "facts": []
+            }
+          },
+          {
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "example",
+            "new_information": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+            "id": 4,
+            "role": "body",
+            "narration": "Ví dụ, hồ sơ đi qua phần mềm vẫn có thể cần người xem lại trường hợp ngoại lệ. Vai trò thường chuyển từ nhập liệu sang kiểm soát.",
+            "shots": [
+              {
+                "card_text": "Ví dụ hồ",
+                "emphasis": [
+                  "dụ",
+                  "hồ"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Ví dụ hồ",
+                    "highlight": [
+                      "dụ",
+                      "hồ"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "employee sorting documents",
+                "duration_sec": 2.8851851851851853,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Dụ hồ sơ",
+                "emphasis": [
+                  "hồ",
+                  "sơ"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Dụ hồ sơ",
+                    "highlight": [
+                      "hồ",
+                      "sơ"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "customer application review",
+                "duration_sec": 2.8851851851851853,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Hồ sơ đi",
+                "emphasis": [
+                  "sơ",
+                  "đi"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Hồ sơ đi",
+                    "highlight": [
+                      "sơ",
+                      "đi"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "customer application review",
+                "duration_sec": 2.8851851851851853,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Ví dụ hồ",
+                "emphasis": [
+                  "dụ",
+                  "hồ"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Ví dụ hồ",
+                    "highlight": [
+                      "dụ",
+                      "hồ"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "office employee discussion",
+                "duration_sec": 2.8851851851851853,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "[card_text, nhóm 2, fixed] Shot 4: card_text 'Ví dụ hồ' → 'Ý chính cần nhớ'; emphasis=['cần', 'nhớ'].",
+                "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+                "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+              ],
+              "fact_ids": [],
+              "source_count": 0,
+              "confidence": null,
+              "facts": []
+            }
+          },
+          {
+            "sentences": [
+              {
+                "type": "explain",
+                "text": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "counterpoint",
+            "new_information": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+            "id": 5,
+            "role": "body",
+            "narration": "Mặt trái thường nằm ở đào tạo và trách nhiệm. Nếu bàn giao vội, sai sót có thể khó phát hiện hơn.",
+            "shots": [
+              {
+                "card_text": "Mặt trái thường",
+                "emphasis": [
+                  "trái",
+                  "thường"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Mặt trái thường",
+                    "highlight": [
+                      "trái",
+                      "thường"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "employee training classroom",
+                "duration_sec": 2.982716049382716,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Trái thường nằm",
+                "emphasis": [
+                  "thường",
+                  "nằm"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "icon_card",
+                  "data": {
+                    "text": "Trái thường nằm",
+                    "highlight": [
+                      "thường",
+                      "nằm"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "colleague teaching computer",
+                "duration_sec": 2.982716049382716,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Thường nằm ở",
+                "emphasis": [
+                  "nằm",
+                  "ở"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "explain",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Thường nằm ở",
+                    "highlight": [
+                      "nằm",
+                      "ở"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "professional learning workshop",
+                "duration_sec": 2.982716049382716,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+                "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (explain); không coi là fact sự kiện."
+              ],
+              "fact_ids": [],
+              "source_count": 0,
+              "confidence": null,
+              "facts": []
+            }
+          },
+          {
+            "sentences": [
+              {
+                "type": "opinion",
+                "text": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+                "fact_ids": []
+              },
+              {
+                "type": "cta",
+                "text": "Bạn muốn học kỹ năng nào để thích nghi?",
+                "fact_ids": []
+              }
+            ],
+            "information_kind": "consequence",
+            "new_information": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định.",
+            "id": 6,
+            "role": "cta",
+            "narration": "Theo mình, tự động hóa có thể đổi cách chia việc vì phần lặp lại chuyển cho máy, còn người tập trung kiểm tra và quyết định. Bạn muốn học kỹ năng nào để thích nghi?",
+            "shots": [
+              {
+                "card_text": "Ý chính cần nhớ",
+                "emphasis": [
+                  "cần",
+                  "nhớ"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "opinion",
+                  "auto_generated": true,
+                  "template": "cta_card",
+                  "data": {
+                    "text": "Ý chính cần nhớ",
+                    "highlight": [
+                      "cần",
+                      "nhớ"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "office employee discussion",
+                "duration_sec": 2.8266666666666667,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Theo tự động",
+                "emphasis": [
+                  "tự",
+                  "động"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "opinion",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Theo tự động",
+                    "highlight": [
+                      "tự",
+                      "động"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "human resources meeting",
+                "duration_sec": 2.8266666666666667,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Tự động hóa",
+                "emphasis": [
+                  "động",
+                  "hóa"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "opinion",
+                  "auto_generated": true,
+                  "template": "cta_card",
+                  "data": {
+                    "text": "Tự động hóa",
+                    "highlight": [
+                      "động",
+                      "hóa"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "employee organizing workspace",
+                "duration_sec": 2.8266666666666667,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "card_text": "Động hóa đổi",
+                "emphasis": [
+                  "hóa",
+                  "đổi"
+                ],
+                "semantic_query": true,
+                "visual": {
+                  "sentence_index": 1,
+                  "content_type": "opinion",
+                  "auto_generated": true,
+                  "template": "text_focus",
+                  "data": {
+                    "text": "Động hóa đổi",
+                    "highlight": [
+                      "hóa",
+                      "đổi"
+                    ],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "",
+                    "source_url": "",
+                    "date": "",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": []
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "bank teller counter",
+                "duration_sec": 2.8266666666666667,
+                "effect": "zoom_in",
+                "text_overlay": null
+              },
+              {
+                "semantic_query": true,
+                "visual": {
+                  "auto_generated": true,
+                  "template": "source_card",
+                  "data": {
+                    "text": "",
+                    "highlight": [],
+                    "value": null,
+                    "number_text": "",
+                    "label": "",
+                    "unit": "",
+                    "source": "The Guardian",
+                    "source_url": "https://www.theguardian.com/business/live/2026/oct/22/barclays-profits-jump-looming-bank-tax-french-bond-yields-hit-fresh-24-year-high-latest-live-updates",
+                    "date": "2026-10-22",
+                    "title": "",
+                    "items": [],
+                    "bars": [],
+                    "fact_ids": [
+                      1
+                    ]
+                  }
+                },
+                "planning_duration": true,
+                "type": "stock_video",
+                "query": "customer loan application",
+                "duration_sec": 2.8266666666666667,
+                "effect": "zoom_in",
+                "text_overlay": null
+              }
+            ],
+            "transition_out": "fade",
+            "sfx": "none",
+            "fact_ids": [],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "[presentation_voice, nhóm 3, warning] Có 2 cụm có thể/có lẽ/dường như trong 2 cảnh; tối đa 1 mỗi 2 cảnh, giữ mềm nếu là ước đoán.",
+                "[visual_background, nhóm 3, warning] Shot 1: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 2: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 3: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện.",
+                "[visual_background, nhóm 3, warning] Shot 4: ví dụ nền, nên kiểm tra lại (opinion); không coi là fact sự kiện."
+              ],
+              "fact_ids": [],
+              "source_count": 0,
+              "confidence": null,
+              "facts": []
+            }
+          }
+        ],
+        "video_type": "news",
+        "target_duration_sec": 64.42962962962963,
+        "brief_hash": null
+      },
+      "hash": "a1e65da3624c2117cd14852675d5e273f8acd0339990b6fda3eccacc492b9d41",
+      "completed_at": "2026-10-24T02:37:51.361858+00:00"
+    }
+  },
+  "current_stage": "final",
+  "quality_version": 4
+}

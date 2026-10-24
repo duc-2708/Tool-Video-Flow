@@ -108,7 +108,10 @@ def write_credits(project: Path, manifest: AssetsManifest, diagnostics: Diagnost
     write_text_atomic(project / "credits.txt", diagnostics.redact("\n".join(lines) + "\n"))
 
 
-def persist(project: Path, resolved: ResolvedEditPlan, manifest: AssetsManifest, diagnostics: Diagnostics) -> Path:
+def persist(project: Path, resolved: ResolvedEditPlan, manifest: AssetsManifest, diagnostics: Diagnostics,*,motion_enabled=False) -> Path:
+    if motion_enabled:
+        from agents.motion_beats import resolved_beats
+        resolved_beats(resolved,manifest,project)
     manifest.resolved_plan_hash = cache_key(resolved.model_dump(mode="json"))
     write_json(project / "edit_plan.resolved.json", resolved.model_dump(mode="json"))
     write_json(project / "assets.json", manifest.model_dump(mode="json"))
@@ -251,7 +254,7 @@ def run_assets(plan_path: Path, settings: Settings, *, progress: Callable[[int, 
         manifest = AssetsManifest(source_plan_hash=fingerprint, resolved_plan_hash=cache_key(resolved.model_dump(mode="json")),
             status="complete",
             scenes=scene_assets, warnings=resolved.warnings)
-        return persist(project, resolved, manifest, diagnostics)
+        return persist(project, resolved, manifest, diagnostics,motion_enabled=settings.motion_enabled)
     except Exception as error:
         diagnostics.record_exception(error, "Assets pipeline failed")
         raise
@@ -331,7 +334,7 @@ def refresh_audio(plan_path:Path,settings:Settings,scene_id:int,*,tts=None)->Pat
             resolved.warnings.append(f"Tổng thời lượng theo audio {resolved.duration_sec:.2f}s khác yêu cầu {original.target_duration_sec:.2f}s quá 10%; giữ nguyên timing audio.")
         manifest.warnings=list(dict.fromkeys(resolved.warnings))
         manifest.status="partial" if any(not s.audio_path or s.audio_error and not s.audio_silent for s in manifest.scenes) else "complete"
-        return persist(plan_path.parent,resolved,manifest,diagnostics)
+        return persist(plan_path.parent,resolved,manifest,diagnostics,motion_enabled=settings.motion_enabled)
     except Exception as error:
         diagnostics.record_exception(error,f"TTS lỗi ở cảnh {scene_id}: chạy lại riêng audio")
         raise
@@ -359,7 +362,7 @@ def refresh_shot(plan_path: Path, settings: Settings, scene_id: int, shot_id: in
             shot.text_overlay = shot.text_overlay or scene.narration
         scene.shots = [shot if item is previous else item for item in scene.shots]
         assets_scene.shots = [replacement if item.shot_id == shot_id else item for item in assets_scene.shots]
-        return persist(plan_path.parent, resolved, manifest, diagnostics)
+        return persist(plan_path.parent, resolved, manifest, diagnostics,motion_enabled=settings.motion_enabled)
     except Exception as error:
         diagnostics.record_exception(error, f"Assets tìm lại cảnh {scene_id} shot {shot_id}")
         raise

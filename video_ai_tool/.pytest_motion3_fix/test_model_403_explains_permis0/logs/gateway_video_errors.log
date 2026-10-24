@@ -1,0 +1,8 @@
+
+[2026-10-24T02:37:19.532074+00:00] {"event": "gateway_submit", "request": {"model": "veo-3.1", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "remote_id": null}
+
+[2026-10-24T02:37:19.533945+00:00] {"event": "gateway_http_error", "http_status": 403, "remote_id": null, "request": {"model": "veo-3.1", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 4, "aspect_ratio": "9:16", "resolution": "720p"}, "response": {"error": {"message": "Model access denied [REDACTED]"}}}
+
+[2026-10-24T02:37:19.535972+00:00] Videos API POST /videos
+providers.video_gateway.GatewayVideoError: Gateway HTTP 403: Key gateway chưa có quyền dùng model veo-3.1 hoặc tài nguyên này. Model được cấu hình: veo-3.1, seedance-2.5-30s. Kiểm tra quyền model trên dashboard. Lỗi gốc: Model access denied [REDACTED]
+

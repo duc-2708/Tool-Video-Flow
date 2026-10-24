@@ -115,6 +115,7 @@ def test_data_is_inert_no_html_or_script_injection(tmp_path):
 @pytest.mark.parametrize("template",["hook_card","steps_list","compare_bars"])
 def test_render_at_deterministic_backward_seeks_and_beats(tmp_path,chromium,template):
     scene=sample_scene(tmp_path,template,duration=3.)
+    scene.shots[0].spec.visual.data.source="SOURCE_METADATA_ONLY"
     save_words(scene.audio.with_suffix(".words.json"),scene.spec.narration,3.)
     payload=scene_payload(scene,(270,480),CaptionStyle(appearance="pill"))
     with browser_page((270,480)) as page:
@@ -125,6 +126,11 @@ def test_render_at_deterministic_backward_seeks_and_beats(tmp_path,chromium,temp
         assert shots[0]==shots[2] and shots[0]!=shots[1]
         assert page.evaluate("() => document.fonts.check('20px Phudu')")
         assert page.evaluate("() => document.querySelector('#captions').getBoundingClientRect().bottom")<480*.82
+        if template=="hook_card":
+            assert "SOURCE_METADATA_ONLY" not in page.locator(".content").inner_text()
+            gap=page.evaluate("() => document.querySelector('#captions').getBoundingClientRect().top-Math.max(...[...document.querySelector('.content').children].map(el=>el.getBoundingClientRect().bottom))")
+            assert 0<=gap<=480*.025
+            assert page.evaluate("() => getComputedStyle(document.querySelector('#captions')).alignContent")=="flex-start"
         assert page.evaluate("() => window.Motion.countUp(5000,1)")==5000
         assert page.evaluate("() => window.Motion.typing('abcd',.5)")=="ab"
 
@@ -165,7 +171,7 @@ def test_motion_configuration_blank_values_use_defaults():
 def test_supported_and_static_templates_mix_without_screenshot_for_static(tmp_path,chromium):
     scene=sample_scene(tmp_path,duration=.4)
     from copy import deepcopy
-    second=deepcopy(scene.shots[0]);second.start=.2;second.duration=.2;second.spec.visual=Visual(template="text_focus")
+    second=deepcopy(scene.shots[0]);second.start=.2;second.duration=.2;second.spec.visual=Visual(template="stock")
     scene.shots[0].duration=.2;scene.shots.append(second)
     static=Mock(return_value=np.full((480,270,3),100,dtype=np.uint8))
     result=render_scene(scene,tmp_path/"cache",size=(270,480),font=find_font(ROOT_DIR),caption_style=CaptionStyle(),fps=10,static_frame=static)

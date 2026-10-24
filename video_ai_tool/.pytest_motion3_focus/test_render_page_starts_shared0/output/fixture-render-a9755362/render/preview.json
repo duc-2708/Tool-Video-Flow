@@ -1,0 +1,12 @@
+{
+  "filename": "fixture.mp4",
+  "mode": "preview",
+  "width": 540,
+  "height": 960,
+  "fps": 30,
+  "duration_sec": 12.0,
+  "render_seconds": 6.0,
+  "warnings": [
+    "Cảnh 1: fallback"
+  ]
+}

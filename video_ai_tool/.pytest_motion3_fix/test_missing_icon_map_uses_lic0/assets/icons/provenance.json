@@ -1,0 +1,17 @@
+{
+  "project": "Lucide",
+  "revision": "7faf87628a1ad6175975bc595344337ce14a7db4",
+  "source": "https://github.com/lucide-icons/lucide",
+  "files": [
+    "shield-check",
+    "lightbulb",
+    "list-checks",
+    "calendar-days",
+    "git-compare-arrows",
+    "megaphone",
+    "chart-no-axes-combined",
+    "quote",
+    "network"
+  ],
+  "license": "ISC; includes MIT notice for Feather-derived icons"
+}

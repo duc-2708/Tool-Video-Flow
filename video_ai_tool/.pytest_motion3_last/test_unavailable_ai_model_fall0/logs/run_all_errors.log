@@ -1,0 +1,10 @@
+
+[2026-10-24T02:40:40.003370+00:00] run_all step=ai_video
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 365, in run_all
+    require_allowed_model(settings, config.ai_model)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\providers\video_gateway.py", line 25, in require_allowed_model
+    raise GatewayVideoError(f"Model {model} không được phép trong GATEWAY_ALLOWED_MODELS. Model hợp lệ: {', '.join(allowed_models(settings)) or '(trống)'}. Kiểm tra quyền model của key gateway.")
+providers.video_gateway.GatewayVideoError: Model seedance-2.5 không được phép trong GATEWAY_ALLOWED_MODELS. Model hợp lệ: veo-3.1, seedance-2.5-30s. Kiểm tra quyền model của key gateway.
+

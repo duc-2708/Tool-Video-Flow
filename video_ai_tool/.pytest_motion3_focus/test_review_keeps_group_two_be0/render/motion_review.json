@@ -1,0 +1,11 @@
+{
+  "checks": [],
+  "review_notes": [
+    "motion_beats nhóm 2: không khớp từ khóa; chia nhịp theo shot."
+  ],
+  "frames": [
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_review_keeps_group_two_be0\\review_frames\\scene_7.png"
+  ],
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_motion3_focus\\test_review_keeps_group_two_be0\\review_frames\\contact_sheet.png",
+  "scope": "DOM samples after one layout repair; not semantic fact validation or exhaustive per-frame proof"
+}

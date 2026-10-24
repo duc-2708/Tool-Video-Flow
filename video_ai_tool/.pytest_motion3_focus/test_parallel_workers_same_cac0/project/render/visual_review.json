@@ -1,0 +1,7 @@
+{
+  "shots": [],
+  "warnings": [
+    "Cảnh 1, shot 1: motion_layout nhóm 3 sau tự sửa: card_empty_over_40_percent.",
+    "[visual_quality, nhóm 3] empty_cards_over_40_percent: 1; xem quality_report_scene_1.json."
+  ]
+}

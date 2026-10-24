@@ -1,0 +1,10 @@
+default: lightbulb
+keywords:
+  shield-check: ["an ninh", "bảo vệ", "lỗ hổng", "mã độc", "phòng thủ", "hack"]
+  network: ["hạ tầng", "công nghiệp", "mạng", "hệ thống", "dữ liệu"]
+  chart-no-axes-combined: ["chi phí", "tăng", "giảm", "phần trăm", "khảo sát"]
+  git-compare-arrows: ["so sánh", "thay vì", "trước", "sau"]
+  calendar-days: ["ngày", "tháng", "năm", "mốc"]
+  list-checks: ["bước", "tiêu chí", "cách", "kiểm tra"]
+  quote: ["trích dẫn", "phát biểu"]
+  megaphone: ["cảnh báo", "báo động", "hãy", "bạn nghĩ"]

@@ -1,0 +1,2 @@
+
+[2026-10-24T02:37:19.493907+00:00] {"event": "gateway_submit", "request": {"model": "seedance-2.5-30s", "prompt": "A plain metal sphere rests on a wooden table in soft warm light, static camera, cinematic.", "seconds": 30, "aspect_ratio": "9:16"}, "remote_id": null}

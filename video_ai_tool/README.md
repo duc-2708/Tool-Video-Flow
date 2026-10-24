@@ -1,11 +1,45 @@
 <!-- file: README.md -->
 # video_ai_tool
 
-## Motion graphics — giai đoạn 1 (tùy chọn)
+## Motion graphics — giai đoạn 3
 
-Renderer HTML local hỗ trợ `hook_card`, `steps_list`, `compare_bars`, nền tối và
-phụ đề cụm 2–4 từ. Không lấy hình/mascot từ video mẫu. Các mẫu khác vẫn dùng
-Pillow/MoviePy. Luật kiểm chứng và prompt nội dung Director giữ nguyên.
+Đa dạng mẫu theo dữ liệu, chip tiêu đề + icon Lucide local (giấy phép đầy đủ
+ở `assets/icons/LICENSE`), sửa thẻ chung/trùng, phụ đề không trống giữa các từ.
+Sau render có `quality_report.json` và contact sheet mỗi 2,5 giây. Luật căn cứ
+nhóm1 giữ nguyên; kiểm tra trình bày mới chỉ tự sửa/cảnh báo. Chi tiết mục7.4
+trong `../docs/PROCESS.md`.
+
+Clip AI nền mặc định tắt. Các biến tùy chọn trong `.env` (chỉnh bằng editor):
+
+```dotenv
+AI_CLIPS_PER_VIDEO=0
+AI_CLIP_MODEL=veo-3.1
+AI_CLIP_MAX_SEC=6
+AI_CLIP_BUDGET_PER_DAY=3
+```
+
+Trang Render → bật Motion → bật Clip AI làm nền → xem số/model/giây/chi phí,
+xác nhận rồi Render. Chỉ hook/cao trào đủ điều kiện, không thay thẻ số/dữ liệu.
+Tham khảo tối đa2job/clip nếu generation_failed phải thử lại; timeout/thiếu ID
+không tạo thêm job. Ngân sách đếm POST kể cả lỗi theo ngày Asia/Saigon.
+MASCOT_ENABLED=false tắt mascot; thiếu Chromium dùng Pillow. Render tắt AI
+không gọi gateway và không dùng clip nền đã có.
+
+Hồi quy offline trên project riêng, giữ nguyên audio và input nguồn:
+
+```powershell
+.\.venv\Scripts\python.exe -m pipeline.motion_review output/auto-cong-nghe-e7db24d3
+```
+
+Lệnh trên không tạo clip AI; lưu hai MP4 ở scale0.5/1.0, ảnh/báo cáo từng bản.
+
+## Motion graphics — giai đoạn 2 (tùy chọn)
+
+Renderer HTML local hỗ trợ hook/stat/steps/bars/source/text_focus và
+progress_tracker/ring_percent/line_growth/strike_replace/quote_card/timeline/versus.
+Nguồn chỉ hiện một lần ở cuối; thiếu dữ liệu dùng text_focus. Chữ thẻ 3–6 từ,
+beats căn theo words.json sau audio, phụ đề cụm3–4 từ. Luật nhóm1 giữ nguyên.
+Không lấy ảnh/mascot/âm thanh từ video mẫu; SVG hình khối và SFX toán học tự tạo.
 
 Chạy từng lệnh trong thư mục `video_ai_tool`:
 
@@ -23,11 +57,15 @@ Chỉnh bằng editor trong `.env` (không chứa khóa trong ví dụ này):
 MOTION_ENABLED=true
 MOTION_FPS=30
 MOTION_SCALE=0.5
+MOTION_WORKERS=2
+MOTION_THEME=auto
+MASCOT_ENABLED=true
 ```
 
-`MOTION_ENABLED=false` mặc định giữ nguyên renderer cũ (preview 540×960/15fps).
-Khi bật, scale 0.5 = 540×960, scale 1.0 = 1080×1920 (YouTube xoay ngang),
-FPS do MOTION_FPS quyết định cho cả preview/final; chất lượng mã hóa vẫn theo mode.
+`MOTION_ENABLED=false` mặc định giữ preview 540×960/15fps.
+Khi bật, preview scale 0.5 = 540×960, scale 1.0 = 1080×1920 (YouTube xoay ngang).
+Bản **final luôn đầy đủ RENDER_WIDTH=1080/RENDER_HEIGHT=1920**, không bị giảm vì
+MOTION_SCALE=0.5. FPS do MOTION_FPS quyết định cho cả preview/final; chất lượng mã hóa vẫn theo mode.
 Thiếu Playwright/Chromium hoặc motion lỗi → cảnh đó dùng đồ họa Pillow và ghi cảnh báo.
 Không cần cài FFmpeg riêng. Khởi động lại Streamlit sau khi đổi cấu hình.
 
@@ -36,6 +74,20 @@ Không cần cài FFmpeg riêng. Khởi động lại Streamlit sau khi đổi c
 ```
 
 Render qua UI vẫn chạy worker, hiển thị tiến độ từng cảnh/khung và ETA ước tính.
+Trang Render có công tắc Motion/Mascot, chọn theme, **Xem trước cảnh** và
+**Render lại chỉ cảnh này** (scale.5). Bật lại chỉ cảnh bỏ cache cảnh đó, không
+xóa cache hay đổi input/hash của project. Mỗi worker sở hữu browser riêng;
+MOTION_WORKERS=1–4. Khi mọi cảnh có motion cache, ghép video/audio bằng FFmpeg
+thay vì giải mã lại từng khung qua Python. Thiếu engine vẫn đi đường Pillow;
+template mới chưa có bản Pillow tương ứng dùng text_focus tĩnh.
+Theme theo style_profile.category_id khi auto, sửa `config/motion_theme.yaml`;
+font local DTPhudu, gradient mặc định, không mở stock sau thẻ. Thay mascot bằng
+`assets/mascot/{idle,point,surprised,thinking}.svg` đơn giản không script/link ngoài;
+thiếu/bị từ chối thì bỏ mascot. Mascot mặc định chỉ hook/kết, chỉ khi Motion bật.
+Pop/whoosh/click/chime do code sinh trong assets/sfx, giữ file người dùng đã có.
+Review: `render/motion_plan.json`, `motion_review.json`, `render/report.md`,
+`review_frames/scene_N.png` và `contact_sheet.png`. QC bố cục là nhóm2/3, không
+phải xác minh nội dung; timing ước lượng không chứng minh độ lệch giọng ≤0,2s.
 Cache trong `output/<project>/render/motion_cache/`; đổi dữ liệu/timing/font/engine
 thì tự vô hiệu cache. Muốn render lại khi pipeline đã done, dùng trang Render;
 không sửa hash/status trong run_state để ép resume.
@@ -48,9 +100,41 @@ Demo/benchmark 10s chỉ dùng media local, không gọi API, không sửa proje
 
 MP4, ảnh và `benchmark.json` nằm trong `output/motion_demo/`. Audio cảnh gốc được
 cắt/pad im lặng tới 10s; đây là phép thử đồ họa, không phải kịch bản mới dài 10s.
-Chi tiết timing, beats, cache và giới hạn: [quy trình](../docs/PROCESS.md#71-motion-graphics-html--giai-đoạn-1).
+Chi tiết timing, beats, cache và giới hạn: [quy trình Motion2](../docs/PROCESS.md#73-motion-graphics--giai-đoạn-2).
+
+Benchmark **đúng60s**, hai scale, không gọi API (tạo project mới, tăng/giảm tốc
+audio gốc đồng đều để đủ60s và ghi rõ trong báo cáo; không sửa production):
+
+```powershell
+.\.venv\Scripts\python.exe -m pipeline.motion_benchmark output/auto-cong-nghe-0481505b/edit_plan.resolved.json
+```
+
+Xem trước riêng cảnh, dùng cùng backend UI:
+
+```powershell
+.\.venv\Scripts\python.exe -m editor.render output/<project>/edit_plan.resolved.json --motion --mode preview --scale 0.5 --scene 2
+```
+
+Thêm `--force-scene 2` để dựng lại cảnh2. Bản final vẫn luôn full1080×1920.
 
 ## Chạy test độc lập với cấu hình máy
+
+Thẻ đồ họa dùng `shot.card_text` 3–6 từ và `emphasis` 1–2 từ; thiếu thì tự chọn
+cụm ý hoàn chỉnh, không cắt lời đọc. UI Edit Plan có cột sửa thẻ/nhấn mạnh.
+Nguồn chỉ hiện một lần ở thẻ cuối; nền thẻ dùng theme tối, không tải stock sau
+thẻ. Phụ đề 3–4 từ, nằm ngay dưới thẻ với cỡ chữ mục tiêu7.5% chiều cao.
+Hai luật mới: `card_text` nhóm2 tự sửa; `presentation_voice` nhóm3 cảnh báo.
+Mọi dữ kiện/tên/số trong thẻ vẫn được nhóm1 hiện có đối chiếu brief.
+
+Lệnh review riêng cho fixture “Bảo đảm việc làm…” (tạo project mới, không sửa
+đầu vào gốc; có gọi **Edge TTS** cho giọng mới, không gọi LLM/stock/AI clip):
+
+```powershell
+.\.venv\Scripts\python.exe -m pipeline.presentation_review output/auto-cong-nghe-d37c14e9
+```
+
+Khung kiểm tra ở `output/review_frames/`; bản cuối nằm trong project review
+mới. Không sửa status/hash run_state của project cũ để ép tiếp tục.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q --basetemp=.pytest_tmp -p no:cacheprovider
