@@ -167,6 +167,9 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
     if mode not in {"preview","final"}:
         raise ValueError("Chế độ phải là preview hoặc final.")
     settings = settings or get_settings()
+    # Draft FPS is independent of the 30fps final export contract.
+    if mode=='final' and settings.motion_enabled:
+        settings=settings.model_copy(update={'motion_fps':30})
     diagnostics = diagnostics or Diagnostics(settings.logs_dir,filename="render_errors.log")
     notify = progress or (lambda value,message: None)
     resources,frames,video = [],None,None
@@ -179,6 +182,7 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
             from editor.motion.source import ensure_source_slot
             ensure_source_slot(timeline)
         prepare_graphics(timeline,diagnostics)
+        timeline.illustrations_requested=bool(settings.motion_enabled and settings.motion_scenes_enabled)
         if scene_id is not None:
             selected=next((s for s in timeline.scenes if s.spec.id==scene_id),None)
             if selected is None: raise ValueError(f"Không có cảnh {scene_id} trong project.")
@@ -194,6 +198,9 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
             full=(settings.render_width,settings.render_height) if portrait else (settings.render_height,settings.render_width)
             scale=settings.motion_scale if settings.motion_enabled and mode=="preview" else .5 if mode=="preview" else 1.
             size=tuple(max(2,round(n*scale/2)*2) for n in full)
+            if settings.motion_enabled:
+                estimate=max(3,timeline.duration*settings.motion_fps/(14 if scale<=.5 else 8))*2/max(1,settings.motion_workers)
+                notify(.02,f'Ước tính render khoảng {estimate*.7:.0f}–{estimate*1.7:.0f} giây; phụ thuộc cảnh/cache và tải máy.')
             font = find_font(settings.root_dir)
             theme=load_theme(timeline.plan.render_style.theme,settings.root_dir)
             captions = Captions(timeline,size,font)
@@ -241,6 +248,7 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
             original_credits = confined(timeline.project,"credits.txt")
             credits = original_credits.read_text(encoding="utf-8") if original_credits.is_file() else "Chưa có credits.txt của Assets.\n"
             credits += f"\n--- Render ---\nFont: {font.name}\nNhạc nền: {music.name if music else 'Không sử dụng'}\n"
+            if settings.motion_enabled: credits+='Lucide icons: ISC/MIT notices in assets/icons/LICENSE. anime.js 3.2.2: MIT, assets/vendor/anime/LICENSE. Original geometric scenes/mascot: CC0, assets/illustrations/LICENSE and assets/mascot/LICENSE.\n'
             ai_used=sum(r.get('ai_background_count',0) for r in motion_results)
             if ai_used: credits+='\nNội dung có hình AI — nền minh họa tạo bằng Hinton gateway, không phải hình ảnh chứng cứ của sự kiện.\n'
             write_text_atomic(confined(render_dir,"credits.txt"), credits)
@@ -253,13 +261,14 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                 from editor.motion.finish import save_review
                 quality=save_review(timeline,motion_results,destination,scene_id=scene_id)
                 result.update(motion_enabled=True,motion_scenes=motion_results,motion_scale=scale,motion_workers=settings.motion_workers,
+                    illustrations_requested=timeline.illustrations_requested,
                     mascot_enabled=settings.mascot_enabled,motion_theme=settings.motion_theme,fast_motion_mux=fast_motion,
                     contact_sheet=quality["contact_sheet"],review_notes=quality["review_notes"],warnings=timeline.warnings)
             if scene_id is not None: result["scene_id"]=scene_id
             try:
                 from editor.quality import save_quality
                 qc=save_quality(timeline,motion_results,destination,scene_id=scene_id)
-                result.update(quality_report=str(timeline.project/("quality_report"+suffix+".json")),quality_summary={k:qc[k] for k in ('template_types','template_counts','warning_count','deferred_dom_samples')},contact_sheet=qc['contact_sheet'])
+                result.update(quality_report=str(timeline.project/("quality_report"+suffix+".json")),quality_summary={k:qc[k] for k in ('template_types','template_counts','warning_count','deferred_dom_samples','illustration_coverage_percent','scene_type_count')},contact_sheet=qc['contact_sheet'])
                 for key in ('repeated_cards','still_intervals_over_3_5_sec','empty_cards_over_40_percent','text_overflow','numbers_not_in_narration','caption_gaps_over_0_6_sec'):
                     if qc[key]: timeline.warnings.append(f'[visual_quality, nhóm 3] {key}: {len(qc[key])}; xem quality_report{suffix}.json.')
             except Exception as error:
@@ -302,12 +311,16 @@ def main():
     parser.add_argument("--scene",type=int)
     parser.add_argument("--force-scene",type=int)
     parser.add_argument("--motion",action="store_true")
+    parser.add_argument('--no-scenes',action='store_true',help='Chỉ dùng thẻ Motion cũ, không dùng cảnh hoạt họa')
+    parser.add_argument('--fps',type=int,choices=[24,30])
     parser.add_argument("--scale",type=float,choices=[.25,.5,1.])
     args = parser.parse_args()
     try:
         settings = get_settings()
         options={}
         if args.motion: options["motion_enabled"]=True
+        if args.no_scenes: options['motion_scenes_enabled']=False
+        if args.fps is not None: options['motion_fps']=args.fps
         if args.scale is not None: options["motion_scale"]=args.scale
         if options: settings=settings.model_copy(update=options)
     except Exception:

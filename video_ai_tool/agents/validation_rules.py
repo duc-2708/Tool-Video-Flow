@@ -122,7 +122,7 @@ def unsupported_numbers(ctx):
         if missing: issues.append(Finding(scene.id,f"Số liệu không có trong brief và chưa đánh dấu giả định: {sorted(missing)}; số hợp lệ: {sorted(allowed)}."))
     return issues
 
-ORDINARY=set("Bạn Mình Theo Nhưng Đầu Sau Riêng Còn Ở Chỗ Điểm Với Đến Nhìn Mạch Chọn Người Các Công Thành Một Hai Không Tại Số Nội Năm Hãy Đây Đó Vì Vậy Khi Nếu Cách Phần Dựng Trong Cắt Ghép Video Chào Có Thử Vấn Từ Trước Giả Ví Kết Bước Giữ Sắp Tốc Tư Làm Kiểm Bắt Cảnh Nguồn Nhịp Bản Thông Việc Về Dữ Nó Điều So Cuối Ta Chúng Xem Như Thế Trên Và Để TTS".split())
+ORDINARY=set("Bạn Mình Theo Nhưng Đầu Sau Riêng Còn Ở Chỗ Điểm Với Đến Nhìn Mạch Chọn Người Các Công Thành Một Hai Không Tại Số Nội Năm Hãy Đây Đó Vì Vậy Khi Nếu Cách Phần Dựng Trong Cắt Ghép Video Chào Có Thử Vấn Từ Trước Giả Ví Kết Bước Giữ Sắp Tốc Tư Làm Kiểm Bắt Cảnh Nguồn Nhịp Bản Thông Việc Về Dữ Nó Điều So Cuối Ta Chúng Xem Như Thế Trên Và Để TTS Khoảng Hơn Nhiều Hiện Đợt Sự Mức Dường Khả Đặc Toàn Tỷ Triệu Hàng Mỗi Bản Giữa Ngay Lúc Ngoài Dù Mặc Do Bởi Nhờ Tuy Rằng Cứ Đã Đang Sẽ Vừa Vẫn Cùng".split())
 from agents.proper_names import proper_names
 
 def names_quotes(ctx):

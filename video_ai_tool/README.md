@@ -1,6 +1,29 @@
 <!-- file: README.md -->
 # video_ai_tool
 
+## Cảnh minh họa hoạt họa (Motion giai đoạn 4)
+
+Trong trang Render, bật **Motion** và **Cảnh minh họa hoạt họa**, chọn FPS24
+và scale0.5 để xem nháp. `MOTION_SCENES_ENABLED=true` mặc định; chỉ có tác dụng
+khi `MOTION_ENABLED=true`. `MIN_CARD_HOLD_SEC=1.2` là thời gian giữ chữ trước
+chuyển cảnh. Mascot bật/tắt riêng bằng `MASCOT_ENABLED`. Không cần bật clip AI.
+
+13 cảnh SVG riêng trong `editor/motion/scenes/` dùng anime.js3.2.2 MIT nhúng
+cục bộ, không tải tài nguyên mạng khi render. Thiếu dữ liệu dùng text_focus;
+thiếu Playwright/Chromium dùng renderer Pillow. Giữ nguyên đầu vào Render.
+Biên độ miệng là RMS33ms dưới `render/amplitude/`, không phải đồng bộ âm vị.
+Số trên đồ họa phải lấy từ lời đọc/brief; không chế số để đủ loại cảnh.
+
+```powershell
+python -m editor.render output/<project>/edit_plan.resolved.json --mode preview --motion --scale 0.5 --fps 24
+```
+
+Quay lại thẻ Motion cũ: thêm `--no-scenes`. Xem `quality_report.json` và
+`review_frames/contact_sheet.png` sau render; các chỉ số DOM/lịchbeat là cảnh
+báo trình bày, không thay kiểm chứng nội dung. Chi tiết mục7.5 của PROCESS.
+
+Bản cuối luôn30fps; FPS24 chỉ cho preview.
+
 ## Motion graphics — giai đoạn 3
 
 Đa dạng mẫu theo dữ liệu, chip tiêu đề + icon Lucide local (giấy phép đầy đủ

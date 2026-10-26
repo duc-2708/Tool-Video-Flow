@@ -140,4 +140,6 @@ def select_templates(plan,brief=None):
     if len(counts)<3:
         note='[visual_variety, nhóm 3] Chưa đủ dữ liệu cho 3 loại mẫu; không tạo số/trích dẫn để bù.'
         if note not in plan.review_notes: plan.review_notes.append(note)
+    from agents.illustrations import plan_illustrations
+    plan_illustrations(plan,brief)
     return plan

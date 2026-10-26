@@ -1,0 +1,62 @@
+default: drone
+illustrations:
+  drone:
+    title: "Drone / UAV"
+    file: "assets/illustrations/drone.svg"
+    keywords: ["drone", "uav", "máy bay không người lái", "thiết bị bay", "flycam", "quadcopter", "bay thử"]
+  runway_test_site:
+    title: "Đường băng / Bãi thử"
+    file: "assets/illustrations/runway_test_site.svg"
+    keywords: ["đường băng", "bãi thử", "khu thử nghiệm", "hòa lạc", "sân bay", "runway", "test site", "thử nghiệm thực địa"]
+  lab_facility:
+    title: "Tòa nhà / Phòng lab"
+    file: "assets/illustrations/lab_facility.svg"
+    keywords: ["phòng lab", "phòng thí nghiệm", "trung tâm nghiên cứu", "cơ sở", "tòa nhà", "lab", "facility", "viện"]
+  map_pin:
+    title: "Bản đồ + Ghim nhấp nháy"
+    file: "assets/illustrations/map_pin.svg"
+    keywords: ["bản đồ", "địa điểm", "vị trí", "tọa độ", "khu vực", "map", "pin", "location", "định vị"]
+  radar_scan:
+    title: "Radar quét"
+    file: "assets/illustrations/radar_scan.svg"
+    keywords: ["radar", "quét", "dò tìm", "phát hiện", "tầm quét", "scan", "detection", "bán kính"]
+  signal_waves:
+    title: "Sóng tín hiệu lan"
+    file: "assets/illustrations/signal_waves.svg"
+    keywords: ["sóng", "tín hiệu", "truyền dẫn", "kết nối", "viễn thông", "signal", "waves", "ăng ten", "antenna"]
+  shield_protect:
+    title: "Khiên an ninh"
+    file: "assets/illustrations/shield_protect.svg"
+    keywords: ["khiên", "an ninh", "bảo vệ", "phòng thủ", "chống xâm nhập", "shield", "security", "protection"]
+  battery_charging:
+    title: "Pin sạc đầy"
+    file: "assets/illustrations/battery_charging.svg"
+    keywords: ["pin", "năng lượng", "sạc", "dung lượng", "thời lượng pin", "battery", "charge", "power"]
+  camera_lens:
+    title: "Camera ống kính"
+    file: "assets/illustrations/camera_lens.svg"
+    keywords: ["camera", "ống kính", "cảm biến quang học", "thị giác", "ghi hình", "lens", "vision", "sensor"]
+  gears_rotating:
+    title: "Bánh răng quay"
+    file: "assets/illustrations/gears_rotating.svg"
+    keywords: ["bánh răng", "cơ chế", "vận hành", "động cơ", "hệ thống", "gears", "mechanism", "operation"]
+  document_flipping:
+    title: "Tài liệu lật"
+    file: "assets/illustrations/document_flipping.svg"
+    keywords: ["tài liệu", "hồ sơ", "báo cáo", "chứng nhận", "giấy phép", "document", "report", "certification"]
+  chart_analytic:
+    title: "Biểu đồ phân tích"
+    file: "assets/illustrations/chart_analytic.svg"
+    keywords: ["biểu đồ", "phân tích", "tăng trưởng", "chỉ số", "thống kê", "chart", "analytics", "growth"]
+  server_rack:
+    title: "Máy chủ nhấp đèn"
+    file: "assets/illustrations/server_rack.svg"
+    keywords: ["máy chủ", "server", "data center", "trung tâm dữ liệu", "hạ tầng số", "cloud", "rack"]
+  human_cubes:
+    title: "Người hình khối"
+    file: "assets/illustrations/human_cubes.svg"
+    keywords: ["chuyên gia", "kỹ sư", "nhà khoa học", "người dùng", "nhân sự", "human", "engineer", "user", "team"]
+  robot_agent:
+    title: "Robot tác tử"
+    file: "assets/illustrations/robot_agent.svg"
+    keywords: ["robot", "tác tử", "ai agent", "trí tuệ nhân tạo", "tự hành", "bot", "autonomous"]

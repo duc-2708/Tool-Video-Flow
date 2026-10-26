@@ -9,6 +9,7 @@ from schemas.story import StoryOutline
 from schemas.validation import ValidationEvent
 from schemas.style import StyleProfile, StyleRenderDefaults
 from schemas.visual import Visual
+from schemas.motion_scene import MotionScenePlan
 from schemas.explainer import ScriptSentence,ContentMode,InfoKind,ExplainerOutline,ScriptCritic
 
 
@@ -30,6 +31,7 @@ class Shot(StrictModel):
     effect: Literal["none", "zoom_in", "zoom_out", "pan_left", "pan_right"]
     # on_screen_text is accepted on input; renderers keep the established name.
     text_overlay: NonEmptyText | None = Field(validation_alias=AliasChoices("text_overlay", "on_screen_text"))
+    repair_notes: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)
 
     @field_validator("query",mode="before")
     @classmethod
@@ -70,6 +72,7 @@ class ReviewNotes(StrictModel):
 
 
 class Scene(StrictModel):
+    visual_plan: MotionScenePlan | None = Field(default=None,exclude_if=lambda v:v is None)
     sentences: list[ScriptSentence] = Field(default_factory=list,exclude_if=lambda v:not v)
     information_kind: InfoKind | None = Field(default=None,exclude_if=lambda v:v is None)
     new_information: str = Field(default="",exclude_if=lambda v:not v)
@@ -93,6 +96,7 @@ class Scene(StrictModel):
     pattern_interrupt: bool = False
     # Preserve hashes of older plans that did not have this metadata field.
     review_notes: ReviewNotes | None = Field(default=None, exclude_if=lambda value: value is None)
+    repair_notes: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)
 
     @property
     def duration_sec(self) -> float:

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <circle cx="200" cy="200" r="150" fill="#0a0f1d" stroke="#334155" stroke-width="8"/>
+  <circle cx="200" cy="200" r="115" fill="#1e293b" stroke="#38bdf8" stroke-width="4"/>
+  <circle cx="200" cy="200" r="70" fill="#0284c7"/>
+  <!-- Focus Reticle -->
+  <circle cx="200" cy="200" r="40" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="16 8"/>
+  <!-- Glass Reflection -->
+  <ellipse cx="160" cy="155" rx="35" ry="18" fill="#ffffff" fill-opacity="0.25" transform="rotate(-30 160 155)"/>
+</svg>

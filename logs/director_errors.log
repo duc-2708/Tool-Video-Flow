@@ -1,0 +1,9 @@
+
+[2026-10-24T09:10:37.896642+00:00] Cảnh 1 [illustration_data, nhóm 2]: lỗi lập kế hoạch (ValueError), tự sửa cục bộ 1 lần; không gọi LLM
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\agents\illustrations.py", line 182, in plan_illustrations
+    payload=_scene_payload(scene,index,previous,used,brief)
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\tests\test_motion_v4.py", line 276, in faulty_scene_payload
+    raise ValueError("Lỗi nhân tạo cảnh 0 để kiểm tra cách ly")
+ValueError: Lỗi nhân tạo cảnh 0 để kiểm tra cách ly
+

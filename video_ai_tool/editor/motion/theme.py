@@ -26,7 +26,15 @@ def theme_names(root):
 def load_motion_theme(root,plan=None,name="auto"):
     themes=theme_names(root)
     profile=getattr(plan,"style_profile",None)
-    if name=="auto": name=getattr(profile,"category_id",None) or "studio"
+    if name=="auto":
+        v_theme = None
+        if plan and getattr(plan, "scenes", None):
+            for sc in plan.scenes:
+                vp = getattr(sc, "visual_plan", None)
+                if vp and getattr(vp, "theme", None) and getattr(vp, "theme") in themes:
+                    v_theme = getattr(vp, "theme")
+                    break
+        name=v_theme or getattr(profile,"category_id",None) or "studio"
     result={**DEFAULT,**themes.get(name,{})};result["name"]=name if name in themes else "studio"
     warnings=[]
     for key,default in DEFAULT.items():
@@ -41,10 +49,10 @@ def load_motion_theme(root,plan=None,name="auto"):
     return result
 
 
-def mascot_uris(root):
+def mascot_uris(root,states=None):
     result={}
     allowed={"svg","g","path","circle","ellipse","rect","line","polyline","polygon","title","desc"}
-    for state in ("idle","point","surprised","thinking"):
+    for state in states or ("idle","point","surprised","thinking"):
         path=Path(root)/"assets/mascot"/(state+".svg")
         try:
             raw=path.read_text(encoding="utf-8")

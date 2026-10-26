@@ -108,7 +108,9 @@ def checked_script(script,outline,brief,request,settings,provider,prompt,diagnos
     from agents.validation_rules import RuleViolation
     candidate=script
     for attempt in range(3):
-        plan=script_plan(candidate,outline,brief,request,settings)
+        from agents.illustrations import illustration_diagnostics
+        with illustration_diagnostics(diagnostics):
+            plan=script_plan(candidate,outline,brief,request,settings)
         try:
             validate_plan(plan,brief,request,check_style=False,allow_merge=False,diagnostics=diagnostics)
             return plan
@@ -182,7 +184,9 @@ def critique(plan,brief,request,settings,provider,prompt,diagnostics,payload):
                 "instruction":"Một vòng sửa chất lượng, chỉ selected_scene_ids. Toàn video 150–180 từ/60s. Hook 15–20 từ; beat nội dung khoảng 24–30 từ. Ít nhất 60% lời đọc explain/opinion mềm: cơ chế, ví dụ, ẩn dụ, phản biện, ý nghĩa. Chỉ giữ vài fact event quan trọng, không cố kể hết số liệu. Mỗi beat yếu phải thêm góc GIẢI THÍCH mới thay vì lặp số/tin. Giữ dữ kiện event có căn cứ, không thêm dữ kiện công ty. Không nhắc tên báo trong lời đọc vì đã có thẻ nguồn."},ExplainerRepairs,"critic_rewrite")
             script=script_from_plan(plan);by_id={s.scene_id:s for s in fixed.scenes if s.scene_id in weak}
             script.scenes=[by_id.get(s.scene_id,s) for s in script.scenes]
-            candidate=script_plan(script,plan.explainer_outline,brief,request,settings)
+            from agents.illustrations import illustration_diagnostics
+            with illustration_diagnostics(diagnostics):
+                candidate=script_plan(script,plan.explainer_outline,brief,request,settings)
             from agents.director import validate_plan
             validate_plan(candidate,brief,request,check_style=False,allow_merge=False,diagnostics=diagnostics)
             # Leave every accepted scene exactly unchanged.
@@ -267,7 +271,8 @@ def create_explainer_plan(brief,request,provider,settings,diagnostics,progress,*
         check_open_loop(plan,provider,prompt,diagnostics,brief)
         for sid,message in quality_notes(outline,plan): plan.review_notes.append(f"Cảnh {sid}: {message}")
         from agents.explainer_visuals import build_v2_shots
-        build_v2_shots(plan,brief)
+        from agents.illustrations import illustration_diagnostics
+        with illustration_diagnostics(diagnostics): build_v2_shots(plan,brief)
         validate_plan(plan,brief,request,check_style=False,allow_merge=False,diagnostics=diagnostics)
         state.data["quality_version"]=4
         state.save("final",plan)

@@ -26,6 +26,16 @@ class Settings(BaseModel):
     motion_workers: int = Field(default=2,ge=1,le=4)
     motion_theme: str = "auto"
     mascot_enabled: bool = True
+    motion_scenes_enabled: bool = True
+    min_card_hold_sec: float = Field(default=1.2,ge=.3,le=5)
+    script_v3_enabled: bool = False
+    max_elements_on_screen: int = Field(default=3, ge=1, le=10)
+    @field_validator('motion_scenes_enabled','min_card_hold_sec','script_v3_enabled','max_elements_on_screen',mode='before')
+    @classmethod
+    def optional_scenes(cls,value,info):
+        if value is None or isinstance(value,str) and not value.strip():
+            return {'motion_scenes_enabled':True,'min_card_hold_sec':1.2,'script_v3_enabled':False,'max_elements_on_screen':3}[info.field_name]
+        return value
     @field_validator("motion_enabled","motion_fps","motion_scale","motion_workers","motion_theme","mascot_enabled",mode="before")
     @classmethod
     def optional_motion_defaults(cls,value,info):
@@ -35,12 +45,15 @@ class Settings(BaseModel):
     openai_api_key: SecretStr = SecretStr("")
     openai_model: str = ""
     openai_director_model: str = ""
+    openai_script_model: str = ""
     openai_timeout_sec: float = Field(default=120,gt=0,le=600)
     openai_rpm_limit: int = Field(default=20,ge=1,le=1000)
     openai_max_retries: int = Field(default=3,ge=0,le=8)
     llm_provider_researcher: str = "gemini"
     llm_provider_director: str = "gemini"
     llm_provider_trend: str = "gemini"
+    llm_provider_script: str = ""
+    llm_provider_visual: str = ""
     llm_fallback_provider: str = ""
     _llm_configuration_warnings: tuple[str,...] = PrivateAttr(default=())
     gemini_api_key: SecretStr = SecretStr("")
@@ -118,13 +131,13 @@ class Settings(BaseModel):
                 data[name]=number if name=="openai_timeout_sec" else int(number)
             except (TypeError,ValueError,OverflowError):
                 data[name]=default;warnings.append(f"{name.upper()} không hợp lệ; dùng mặc định {default}.")
-        for name in ("llm_provider_researcher","llm_provider_director","llm_provider_trend","llm_fallback_provider"):
+        for name in ("llm_provider_researcher","llm_provider_director","llm_provider_trend","llm_provider_script","llm_provider_visual","llm_fallback_provider"):
             value=str(data.get(name) or "").strip().lower()
-            if not value and name!="llm_fallback_provider": value="gemini"
+            if not value and name in {"llm_provider_researcher","llm_provider_director","llm_provider_trend"}: value="gemini"
             if value not in {"gemini","openai",""}:
                 warnings.append(f"{name.upper()} chỉ chấp nhận gemini/openai; lựa chọn này đã tắt.")
             data[name]=value
-        for name in ("openai_model","openai_director_model"): data[name]=str(data.get(name) or "").strip()
+        for name in ("openai_model","openai_director_model","openai_script_model"): data[name]=str(data.get(name) or "").strip()
         if data.get("openai_api_key") is None: data["openai_api_key"]=""
         result=handler(data)
         result._llm_configuration_warnings=tuple(warnings)

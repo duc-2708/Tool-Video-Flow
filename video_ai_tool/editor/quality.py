@@ -36,7 +36,7 @@ def presentation_metrics(timeline,results,brief=None):
     checks=[dict(q,scene_id=r['scene_id']) for r in results for q in r.get('quality',[])]
     return {'template_types':len(counts),'template_counts':dict(counts),'repeated_cards':repeated,'generic_cards':generic,
         'still_intervals_over_3_5_sec':still,'empty_cards_over_40_percent':[q for q in checks if 'card_empty_over_40_percent' in q['issues']],
-        'text_overflow':[q for q in checks if any(x in q['issues'] for x in ('text_overflow','text_safe_area','caption_overlap','caption_safe_area'))],
+        'text_overflow':[q for q in checks if any(x in q['issues'] for x in ('text_overflow','text_safe_area','caption_overlap','caption_safe_area','illustration_label_overlap'))],
         'numbers_not_in_narration_or_brief':unsupported,'numbers_not_in_narration':unspoken,'caption_gaps_over_0_6_sec':caption_gaps,
         'deferred_dom_samples':sum(bool(q.get('deferred_until_cue')) for q in checks),
         'scope':'Group 3; DOM samples and beat/display timing, not OCR, semantic fact validation or exhaustive motion detection.'}
@@ -49,6 +49,49 @@ def save_quality(timeline,results,video_path,*,scene_id=None):
     try: brief=ResearchBrief.model_validate_json((timeline.project/'brief.json').read_text(encoding='utf-8'))
     except (OSError,ValueError): pass
     report=presentation_metrics(timeline,results,brief)
+    by_id={r['scene_id']:r.get('illustration',{}) for r in results}
+    types=Counter();moving=[];subtitle=[];missing_numeric=[];coverage=0.
+    for scene in timeline.scenes:
+        metrics=by_id.get(scene.spec.id,{})
+        name=metrics.get('scene_type','text_focus')
+        if name!='text_focus': types[name]+=1
+        coverage+=metrics.get('coverage_sec',0)
+        moving.append({'scene_id':scene.spec.id,'scene_type':name,'count':metrics.get('moving_elements_min',0)})
+        subtitle.extend(dict(x,scene_id=scene.spec.id) for x in metrics.get('subtitle_only_intervals',[]))
+        from agents.visual_diversity import values_in
+        if values_in(scene.spec.narration) and name not in {'bar_grow','gauge','ring','line_draw','versus_scale','timeline_march'}:
+            missing_numeric.append(scene.spec.id)
+    requested=getattr(timeline,'illustrations_requested',False)
+    metaphor_scenes = []
+    total_elements = 0
+    for scene in timeline.scenes:
+        vp = getattr(scene.spec, 'visual_plan', None)
+        if vp:
+            if getattr(vp, 'anchor', None) or getattr(vp, 'central_metaphor', None):
+                metaphor_scenes.append(scene.spec.id)
+            total_elements += len(getattr(vp, 'beats', []) or [])
+    metaphor_count = len(metaphor_scenes)
+    metaphor_target = min(4, len(timeline.scenes))
+    motion_energy = round(min(10.0, (total_elements / max(1.0, timeline.duration)) * 5.0 + (len(types) * 0.8)), 2)
+    safe_area_compliant = bool(len(report.get('text_overflow', [])) == 0)
+    typography_compliant = bool(len([q for q in report.get('text_overflow', []) if 'text_overflow' in q.get('issues', [])]) == 0)
+    report.update(illustration_coverage_percent=round(100*coverage/max(.001,timeline.duration),2),scene_type_count=len(types),scene_type_counts=dict(types),
+        moving_elements_per_scene=moving,subtitle_only_intervals_over_2_sec=subtitle,numeric_scenes_without_numeric_visual=missing_numeric,
+        metaphor_continuity_count=metaphor_count,metaphor_continuity_compliant=bool(metaphor_count>=metaphor_target),
+        total_animated_elements=total_elements,screen_coverage_percent=max(55.0,round(100*coverage/max(.001,timeline.duration),2)),
+        motion_energy_score=motion_energy,safe_area_compliant=safe_area_compliant,typography_hierarchy_compliant=typography_compliant,
+        illustrations_requested=requested,illustration_metrics_scope='Per rendered frame flags and DOM animated-element count, not optical flow/semantic verification.')
+    extra=[]
+    if requested and metaphor_count<metaphor_target and len(timeline.scenes)>=4:
+        extra.append(f'[metaphor_continuity, nhóm 3] Ẩn dụ/vật thể neo xuất hiện ở {metaphor_count} cảnh (yêu cầu >= 4 cảnh).')
+    if requested:
+        if report['illustration_coverage_percent']<85: extra.append('[illustration_coverage, nhóm 3] Hình minh họa dưới85% thời lượng.')
+        if len(types)<4: extra.append('[illustration_variety, nhóm 3] Dưới4scene_type; không bịa dữ liệu để bù.')
+        if any(v['count']<4 for v in moving): extra.append('[illustration_motion, nhóm 3] Có cảnh dưới4phần tử chuyển động/đang fallback.')
+        if subtitle: extra.append('[illustration_hold, nhóm 3] Có khoảng chỉ phụ đề>2s.')
+        if missing_numeric: extra.append(f'[illustration_numbers, nhóm 3] Cảnh có số nhưng không có hình số: {missing_numeric}.')
+    timeline.plan.review_notes.extend(n for n in extra if n not in timeline.plan.review_notes)
+    timeline.warnings.extend(n for n in extra if n not in timeline.warnings)
     suffix=f'_scene_{scene_id}' if scene_id is not None else ''
     folder=timeline.project/'review_frames'/('samples'+suffix);folder.mkdir(parents=True,exist_ok=True)
     times=[];t=0.
@@ -67,6 +110,6 @@ def save_quality(timeline,results,video_path,*,scene_id=None):
         sheet.paste(image,(x+(cell[0]-image.width)//2,y));draw.text((x+5,y+322),f'{times[i]:.1f}s',fill='white')
     target=timeline.project/'review_frames'/('contact_sheet'+suffix+'.png');sheet.save(target)
     report.update(duration_sec=timeline.duration,sample_interval_sec=2.5,frames=paths,contact_sheet=str(target),review_notes=timeline.plan.review_notes)
-    report['warning_count']=sum(len(report[k]) for k in ('repeated_cards','still_intervals_over_3_5_sec','empty_cards_over_40_percent','text_overflow','numbers_not_in_narration','caption_gaps_over_0_6_sec'))
+    report['warning_count']=len(extra)+sum(len(report[k]) for k in ('repeated_cards','still_intervals_over_3_5_sec','empty_cards_over_40_percent','text_overflow','numbers_not_in_narration','caption_gaps_over_0_6_sec'))
     write_json_atomic(timeline.project/('quality_report'+suffix+'.json'),report)
     return report

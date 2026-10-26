@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- Map Grid -->
+  <rect x="30" y="30" width="340" height="340" rx="28" fill="#0a0f1d" stroke="#1e293b" stroke-width="4"/>
+  <path d="M 60 120 Q 200 80 340 140" stroke="#334155" stroke-width="3" fill="none"/>
+  <path d="M 60 260 Q 180 290 340 220" stroke="#334155" stroke-width="3" fill="none"/>
+  <!-- Beacon Rings -->
+  <circle id="beacon-1" cx="200" cy="270" r="30" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.6"/>
+  <circle id="beacon-2" cx="200" cy="270" r="60" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.3"/>
+  <!-- Pin Icon -->
+  <path d="M 200 90 C 150 90 140 160 200 270 C 260 160 250 90 200 90 Z" fill="#ef4444" stroke="#ffffff" stroke-width="4"/>
+  <circle cx="200" cy="140" r="20" fill="#ffffff"/>
+</svg>

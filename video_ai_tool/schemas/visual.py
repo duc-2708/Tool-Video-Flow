@@ -32,6 +32,7 @@ class VisualData(StrictModel):
     items: list[str] = Field(default_factory=list)
     bars: list[VisualBar] = Field(default_factory=list)
     fact_ids: list[int] = Field(default_factory=list)
+    repair_notes: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)
 
 
 class Visual(StrictModel):
@@ -43,3 +44,4 @@ class Visual(StrictModel):
     template: Literal["hook_card", "stat_card", "steps_list", "compare_bars", "source_card", "text_focus", "stock",
         "progress_tracker", "ring_percent", "line_growth", "strike_replace", "quote_card", "timeline", "versus", "icon_card", "cta_card"] = "stock"
     data: VisualData = Field(default_factory=VisualData)
+    repair_notes: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)
