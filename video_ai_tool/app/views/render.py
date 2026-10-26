@@ -21,6 +21,9 @@ def show_result(result,project,diagnostics):
     if result.get('quality_summary'):
         qc=result['quality_summary']
         st.caption(f"Kiểm tra hình ảnh: {qc['template_types']} loại mẫu · {qc['warning_count']} cảnh báo · {qc['deferred_dom_samples']} mẫu DOM chưa hiện đủ.")
+        if 'illustration_coverage_percent' in qc:
+            st.caption(f"Minh họa: {qc['illustration_coverage_percent']:.1f}% thời lượng · {qc['scene_type_count']} loại cảnh hoạt họa.")
+            if qc['illustration_coverage_percent']<85 and result.get('illustrations_requested'): st.warning('Hình minh họa dưới85%; xem quality_report.json để biết cảnh thiếu dữ liệu hoặc đang fallback.')
         with st.expander('Báo cáo chất lượng hình ảnh'):
             try:
                 report=read_json(confined(project,Path(result['quality_report']).name))
@@ -58,9 +61,11 @@ def render(settings,project,topic,debug,diagnostics):
     from editor.motion.theme import theme_names
     motion=st.toggle("Bật Motion",value=settings.motion_enabled,disabled=bool(active))
     mascot=st.toggle("Bật mascot hình khối riêng",value=settings.mascot_enabled,disabled=bool(active))
+    scenes_on=st.toggle('Bật cảnh minh họa hoạt họa',value=settings.motion_scenes_enabled,disabled=bool(active) or not motion)
+    fps=st.selectbox('FPS Motion bản nháp',[24,30],index=0 if settings.motion_fps==24 else 1,disabled=bool(active))
     themes=["auto",*theme_names(settings.root_dir)]
     theme=st.selectbox("Theme Motion",themes,index=themes.index(settings.motion_theme) if settings.motion_theme in themes else 0,disabled=bool(active))
-    settings=settings.model_copy(update={"motion_enabled":motion,"mascot_enabled":mascot,"motion_theme":theme})
+    settings=settings.model_copy(update={"motion_enabled":motion,"mascot_enabled":mascot,"motion_theme":theme,'motion_scenes_enabled':scenes_on,'motion_fps':fps})
     ai_on=st.toggle('Clip AI làm nền (có phí)',value=bool(settings.ai_clips_per_video),disabled=bool(active) or not motion)
     ai_count=0;ai_confirmed=False
     if ai_on and motion:

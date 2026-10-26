@@ -139,3 +139,9 @@ def remove_repeated_attribution(plan,brief):
             scene.narration=re.sub(r"^Theo\s+"+re.escape(name)+r",\s*","",scene.narration,flags=re.I)
         if scene.narration: scene.narration=scene.narration[0].upper()+scene.narration[1:]
     return plan
+
+
+def create_visual_plan_v3(*args, **kwargs):
+    from agents.visual_planner_v3 import create_visual_plan_v3 as _impl
+    return _impl(*args, **kwargs)
+

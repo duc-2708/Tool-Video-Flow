@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- Gear 1 -->
+  <g id="gear-1" transform="translate(150, 160)">
+    <circle cx="0" cy="0" r="80" fill="#1e293b" stroke="#38bdf8" stroke-width="5"/>
+    <circle cx="0" cy="0" r="30" fill="#0f172a" stroke="#38bdf8" stroke-width="4"/>
+    <rect x="-10" y="-95" width="20" height="20" fill="#38bdf8" rx="4"/>
+    <rect x="-10" y="75" width="20" height="20" fill="#38bdf8" rx="4"/>
+    <rect x="-95" y="-10" width="20" height="20" fill="#38bdf8" rx="4"/>
+    <rect x="75" y="-10" width="20" height="20" fill="#38bdf8" rx="4"/>
+  </g>
+  <!-- Gear 2 -->
+  <g id="gear-2" transform="translate(265, 255)">
+    <circle cx="0" cy="0" r="60" fill="#1e293b" stroke="#facc15" stroke-width="4"/>
+    <circle cx="0" cy="0" r="22" fill="#0f172a" stroke="#facc15" stroke-width="3"/>
+    <rect x="-8" y="-72" width="16" height="16" fill="#facc15" rx="3"/>
+    <rect x="-8" y="56" width="16" height="16" fill="#facc15" rx="3"/>
+    <rect x="-72" y="-8" width="16" height="16" fill="#facc15" rx="3"/>
+    <rect x="56" y="-8" width="16" height="16" fill="#facc15" rx="3"/>
+  </g>
+</svg>

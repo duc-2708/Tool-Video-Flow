@@ -1,0 +1,81 @@
+/* Motion Engine 4b CSS Styling */
+
+.master-scene-container {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background: #080c17;
+  font-family: inherit;
+}
+
+.layer-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.layer-svg-root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  z-index: 2;
+  overflow: visible;
+}
+
+.layer-captions {
+  position: absolute;
+  left: 60px;
+  right: 60px;
+  bottom: 80px;
+  height: 140px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.caption-text {
+  font-size: 52px;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.85);
+  letter-spacing: 0.5px;
+}
+
+.layer-fx-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.6);
+}
+
+/* Card Styling */
+.glass-card {
+  filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.5));
+}
+
+.bar-top-winner {
+  filter: drop-shadow(0 0 18px var(--accent));
+}
+
+/* Typography Rules */
+.stat-odometer-text {
+  letter-spacing: -1px;
+}
+
+.stat-label {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}

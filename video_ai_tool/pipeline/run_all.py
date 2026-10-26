@@ -360,7 +360,40 @@ def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event
                         files = [project/"edit_plan.json"]
                     elif step == "assets":
                         run_assets(project/"edit_plan.json",settings,progress=lambda done,total,message:emit(step,message,done/max(1,total)))
+                        if getattr(settings, "script_v3_enabled", False):
+                            emit(step, "Lập kế hoạch hình ảnh hoạt họa Visual Planner v3...")
+                            from agents.visual_planner_v3 import create_visual_plan_v3
+                            from utils.atomic_io import read_json_atomic, write_json_atomic
+                            plan_data = read_json_atomic(project / "edit_plan.json")
+                            brief_file = project / "brief.json"
+                            brief_obj = ResearchBrief.model_validate(read_json_atomic(brief_file)) if brief_file.is_file() else None
+                            current_plan = EditPlan.model_validate(plan_data)
+                            words_map = {}
+                            for sc in current_plan.scenes:
+                                words_file = project / "audio" / f"scene_{sc.id}.words.json"
+                                if words_file.is_file():
+                                    words_map[sc.id] = read_words(words_file)
+                            current_plan = create_visual_plan_v3(
+                                current_plan,
+                                words_by_scene=words_map,
+                                brief=brief_obj,
+                                settings=settings,
+                                diagnostics=diagnostics,
+                                state_path=project / "director_state.visual_v3.json",
+                            )
+                            write_json_atomic(project / "edit_plan.json", current_plan.model_dump(mode="json"))
+                            if (project / "edit_plan.resolved.json").is_file():
+                                try:
+                                    resolved_data = read_json_atomic(project / "edit_plan.resolved.json")
+                                    for r_sc, p_sc in zip(resolved_data.get("scenes", []), current_plan.scenes):
+                                        if p_sc.visual_plan:
+                                            r_sc["visual_plan"] = p_sc.visual_plan.model_dump(mode="json")
+                                    write_json_atomic(project / "edit_plan.resolved.json", resolved_data)
+                                except Exception:
+                                    pass
                         files,warnings = asset_files(project,project/"edit_plan.json")
+                        if (project / "director_state.visual_v3.json").is_file():
+                            files.append(project / "director_state.visual_v3.json")
                     elif step == "ai_video":
                         require_allowed_model(settings, config.ai_model)
                         VideoRequest(model=config.ai_model,seconds=config.ai_seconds,prompt="Preflight",format=config.video_format)

@@ -80,6 +80,27 @@ def build_audio(timeline,assets_dir,resources,*,motion=False):
             from editor.templates.core import element_times
             kind="whoosh" if visual.template=="source_card" else "pop"
             events.extend((shot.start+t,kind) for t in element_times(visual.template,visual.data.model_dump(mode="json"),shot.duration))
+        v_plan = getattr(scene.spec, "visual_plan", None)
+        if motion and v_plan:
+            last = -10.0
+            plan_beats = getattr(v_plan, "beats", []) or []
+            for beat in sorted(plan_beats, key=lambda b: b.at_sec if b.at_sec is not None else 0):
+                if beat.at_sec is None: continue
+                when = scene.start + beat.at_sec
+                if when - last < 0.28: continue
+                act = str(beat.action).lower()
+                if any(k in act for k in ("whoosh", "entrance", "fly_in", "slide_up", "zoom")):
+                    kind = "whoosh"
+                elif any(k in act for k in ("stamp", "strike", "snap", "clash")):
+                    kind = "snap"
+                elif any(k in act for k in ("chime", "complete", "check", "success", "ring")):
+                    kind = "chime"
+                elif any(k in act for k in ("click", "switch", "tick", "type")):
+                    kind = "click"
+                else:
+                    kind = "pop"
+                events.append((when, kind))
+                last = when
     for time,kind in sorted(set(events)):
         files = [p for p in sfx_files if p.stem == kind]
         if files:

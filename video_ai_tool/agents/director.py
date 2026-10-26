@@ -339,6 +339,14 @@ def create_edit_plan(brief: ResearchBrief, request: DirectorRequest, provider: L
         request=request.model_copy(update={"style_profile":sanitize_profile(request.style_profile)})
     if not brief.facts:
         raise DirectorError("Brief chưa có fact để viết kịch bản. Bổ sung hoặc nghiên cứu lại nguồn; không dùng tín hiệu xã hội làm fact.")
+    if getattr(settings, "script_v3_enabled", False):
+        try:
+            from agents.script_writer import create_script_v3_plan
+            script_provider = provider_for_step(settings, "script", diagnostics=diagnostics) if getattr(settings, "llm_provider_script", "") else provider
+            return create_script_v3_plan(brief, request, script_provider, settings, diagnostics, progress, draft_path=draft_path)
+        except Exception as err:
+            diagnostics.record_exception(err, "Script Writer v3 gặp lỗi; chuyển về Director mặc định")
+            progress("Script Writer v3 gặp lỗi; tự động chuyển về quy trình Director hiện có…")
     if request.content_mode=="explainer_v2":
         from agents.explainer_director import create_explainer_plan
         return create_explainer_plan(brief,request,provider,settings,diagnostics,progress,draft_path=draft_path)

@@ -266,7 +266,7 @@ ROOT/
 
 | Module/file quan trọng | Vai trò và lưu ý |
 |---|---|
-| `config/settings.py`, `.env.example` | 63 biến ứng dụng, validate kiểu/phạm vi, precedence, không tự export env; tùy chọn OpenAI/LLM mềm, mục 9 |
+| `config/settings.py`, `.env.example` | 70 biến ứng dụng (không tính root_dir), validate kiểu/phạm vi, precedence, không tự export env; tùy chọn OpenAI/LLM mềm, mục 9 |
 | `providers/llm/base.py`, `gemini_client.py`, `openai_client.py`, `router.py` | Client JSON đã parse/text, lỗi chuẩn, Responses SDK, chọn theo bước và một failover; facade tương thích agent JSON text |
 | `config/trends.py`, `trends.yaml`, `schemas/trends.py` | Công tắc/ngân sách/TTL/nguồn; metadata TrendItem/Topic tách khỏi facts |
 | `pipeline/trend_scout.py`, `trend_scout_jobs.py`, `app/views/trend_scout.py` | Gom/chấm đề xuất, CLI/worker/UI và handoff Research |
@@ -283,6 +283,8 @@ ROOT/
 | `agents/proper_names.py`, `visual_planner.py`, `visual_policy.py` | Bộ dò tên chung, chọn thẻ, đối chiếu đồ họa và lựa chọn trung tính/giữ nguyên |
 | `agents/presentation.py`, `editor/layout.py`, `pipeline/presentation_review.py` | Cụm card_text/emphasis, cảnh báo giọng, bố cục chung và dựng bản review riêng từ project được cung cấp |
 | `agents/visual_diversity.py`, `utils/caption_timing.py`, `editor/quality.py` | Motion3: thẻ riêng/không trùng, chọn mẫu theo dữ liệu, cảnh báo số, display caption và QC/contact sheet 2.5s |
+| `agents/illustrations.py`, `schemas/motion_scene.py`, `editor/motion/scenes/` | Motion4: chọn visual_plan, 13cảnh vector lớn, renderAt tuyệt đối, local anime MIT, dữ liệu không đủ fallback text_focus |
+| `editor/motion/amplitude.py`, `assets/mascot/`, `assets/illustrations/`, `assets/vendor/anime/` | RMS33ms dưới render/, mascot tự vẽ có miệng/tay, giấy phép originalCC0 và vendorMIT |
 | `editor/motion/icons.py`, `config/icons.yaml`, `assets/icons/` | Chip/icon Lucide local ghim commit, giấy phép ISC+MIT notice, thiếu map dùng lightbulb |
 | `pipeline/controlled_ai.py`, `ai_budget.py`, `motion_review.py` | Clip AI nền opt-in, tái dùng job/slot receipt, ngân sách POST/ngày và hồi quy project không thay audio |
 | `agents/video_prompt_writer.py`, `pipeline/video_prompts.py` | Prompt ngắn an toàn; chỉnh prompt không tự tạo clip trả phí |
@@ -339,6 +341,8 @@ Tên lạ không thuộc Settings không trở thành cấu hình ứng dụng; 
 | `RENDER_HEIGHT` | `1920` | Chiều cao bản cuối dọc, 240–3840; preview thu nhỏ riêng, final không chịu MOTION_SCALE. |
 | `MOTION_ENABLED` | `false` | Bật HTML motion trong Render; tắt giữ renderer cũ, thiếu engine/lỗi cảnh dùng Pillow. |
 | `MOTION_WORKERS` | `2` | 1–4 worker cảnh, mỗi thread sở hữu Playwright/browser/FFmpeg riêng; không chia page giữa thread. |
+| `MOTION_SCENES_ENABLED` | `true` | Bật bộ cảnh minh họa SVG khi MOTION_ENABLED bật; false quay về thẻ Motion hiện có. Trống dùng mặc định. |
+| `MIN_CARD_HOLD_SEC` | `1.2` | 0.3–5s, giữ chữ trước wipe/chuyển cảnh, terminal hoàn tất phần gõ trước đoạn giữ; trống dùng mặc định. |
 | `MOTION_THEME` | `auto` | auto dùng style_profile.category_id → palette config/motion_theme.yaml, không có thì studio; UI có thể chọn riêng. |
 | `MASCOT_ENABLED` | `true` | SVG hình khối riêng chỉ hook/kết khi Motion bật; thiếu/bị từ chối SVG thì bỏ qua, không gọi API. |
 | `MOTION_FPS` | `30` | 1–60 fps khi motion bật, áp dụng cả preview/final. |
@@ -1074,7 +1078,7 @@ Tool tạo project mới, giữ toàn bộ lời đọc, resample rồi atempo/c
 lỗi đếm sample24k theo44.1k trong lượt thử đầu, dừng lượt đó, thêm test PCM; lượt
 bị hủy không tính kết quả. Kết quả đo nghiệm thu và pytest cuối ở mục11.5/13.4.
 
-### 7.4 Motion graphics — giai đoạn 3 (đang kiểm chứng)
+### 7.4 Motion graphics — giai đoạn 3
 
 Nhóm1 giữ nguyên. `agents/visual_diversity.py` bổ sung luật trình bày local:
 visual_card (2: bỏ thẻ chung ngoài kết, không trùng hai thẻ trước), visual_number
@@ -1124,9 +1128,231 @@ MOTION tắt thì không tạo clip nền. Clip đã có chỉ Render khi AI đ�
 
 Project đối chiếu đã tìm được: auto-cong-nghe-e7db24d3, tiêu đề “Báo động đỏ
 Black October và kỷ nguyên AI hack hạ tầng”, audio57.192s. Fixture thật ở
-tests/fixtures/black_october có hash nguồn. Kết quả pytest/render/clip thật:
-**ĐANG KIỂM CHỨNG**, chưa nhận mock là API thành công. Bản review sẽ tạo project
-mới giữ nguyên audio/brief/manifest/input gốc; không sửa status/hash để ép chạy.
+tests/fixtures/black_october có hash nguồn. Bản review riêng
+`motion-v3-bao-dong-do-black-october-va-ky-nguyen-ai-hack-ha-tang-9368fa03`:
+49file nguồn giữ nguyên SHA, audio57.192s không đổi tốc độ. Scale0.5 render
+113.384s/tổng125.412s/RAM905.5MB; scale1.0 render198.156s/tổng236.888s/RAM1398.8MB.
+MP4 motion_scale_0_5.mp4 và motion_scale_1_0.mp4 trong render/; benchmarkJSON,
+QC và contact_sheet_scale_*.png có lưu. Đây là snapshotMotion3 trước bộ cảnh
+Motion4; **còn20cảnh báo DOM** về tràn/vùng trống, không nhận là mọi bố cục sạch.
+
+Một job thật đã được người dùng cho phép: veo-3.1 yêu cầu4s, thành công không
+retry; gateway trả media8s, chi phí header/receipt chuỗi`0`. **Chưa xác minh
+hóa đơn**, không nhận là miễn phí. Tham khảo code2500đ/job, tối đa5000đ córetry.
+Raw/job/SHA giữ nguyên; loader nền chỉ dùng min(giây cho phép, thời lượng shot,
+media). Hook preview riêng6.384s dùng nền3.192s, render13.598s/tổng14.196s,
+ai_backgrounds_used=1, có cảnh báo gateway trả8s; không gửi thêm job.
+`render/ai_trial.json`, ai_backgrounds.json, ai_hook_render.json lưu bằng chứng.
+Không gọi LLM/TTS/stock mới trong các bản review. Fullsuite cuối ghi ở11.5.
+
+### 7.5 Motion graphics — giai đoạn 4: cảnh minh họa
+
+`schemas/motion_scene.py` thêm Scene.visual_plan tùy chọn: scene_type,
+data (VisualData có kiểu), beats, camera và mascot_state. Không có trường này
+thì serialization cũ giữ nguyên. `agents/illustrations.py` được gọi từ bộ chọn
+đồ họa chung của Director; chọn theo nội dung, tránh trùng cảnh liền trước,
+ưu tiên loại chưa dùng khi dữ liệu đủ. Mục tiêu4loại chỉ là cảnh báo nhóm3.
+Không đổi bất kỳ luật nhóm1 nào. Không thêm một lượt LLM trả phí ở Render.
+
+Renderer **không tin snapshot visual_plan.data độc lập**: dựng lại từ
+visual.data đã qua chính sách căn cứ, card_text/lời đọc và số được phép của
+fact tham chiếu. Không dùng số tháng/ngày làm KPI; ví dụ project6285dfe3 phải
+minh họa50% tự đánh giá, không phải tháng8. Thiếu dữ liệu cho loại đã chọn
+thì dùng text_focus, không tự bịa giá trị, bước hay kết quả kiểm chứng.
+Nhãn chọn cụm danh từ hoàn chỉnh trong lời đọc, tối đa6từ; từ điển hữu hạn,
+chưa phải bộ hiểu nghĩa tiếng Việt toàn diện (U15).
+visual_plan sai kiểu/enum/camera/data cũng được normalize nhóm2 về text_focus,
+ghi repair_notes, không biến trường minh họa phụ thành lỗi nhóm1 của kịch bản.
+`MotionScenePlan`, `Visual`, `VisualData`, `Scene`, `Shot` đều khai báo `repair_notes: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)`.
+`normalize_motion_payload` chuẩn hóa đệ quy cả danh sách các phần tử BaseModel (như beats, bars), bóc khóa lạ nội bộ (nhóm 2) và khóa lạ từ LLM (ghi cảnh báo nhóm 3 `[illustration_extra, nhóm 3]`, không dừng).
+Cô lập lỗi từng cảnh trong `plan_illustrations`: bắt lỗi, tự sửa 1 lần (loại bỏ camera/beats lỗi, điền mặc định an toàn cho text_focus), nếu vẫn lỗi thì rơi về template text_focus cho cảnh đó, ghi lý do vào review_notes và `logs/director_errors.log` (không in giá trị khóa). Chỉ dừng bước Kịch bản khi không dựng nổi bất kỳ cảnh nào.
+
+| scene_type | Dữ liệu cần có / cách dựng |
+|---|---|
+| versus_scale | ≥2items hoặc2bars; hai bên+VS+cán cân; chỉ nghiêng theo giá trị khi có đủ2số hợp lệ |
+| bar_grow, gauge | value hữu hạn, label/unit/source; tăng dần tới đúng số đã có, không mặc định100 |
+| ring | value0–100 và unit%; vòng đếm theo cue số |
+| line_draw | ≥2bars có label/value; đường vẽ dần, điểm+nhãn, không suy ra chuỗi thời gian chưa có |
+| flow_chain | ≥3items; ô và mũi tên/hạt dữ liệu; chỉ mô tả các ý đã có, không phát minh bước |
+| magnifier_check | ≥2items; tài liệu+kính lúp; ✓/✗ chỉ khi nhãn có tín hiệu xác nhận/phản bác, còn lại dấu chấm |
+| funnel_filter | ≥3items, các đầu vào/ý cuối; không tự thêm số lượng lọc |
+| checklist | ≥2items; tích là tiến độ hiện mục, không phải chứng nhận tính đúng của thông tin |
+| terminal_type | ≥2items, gõ nhãn ngắn; không tự sinh mã hoặc số liệu mới |
+| timeline_march | ≥2items có mốc ngày/tháng/năm; trục trượt ngang, không chế ngày còn thiếu |
+| stack_cards, network_nodes | ≥2/3items; thẻ xếp hoặc nút liên kết, làm nổi ý chính |
+
+Mỗi loại có scene.html/js/css trong `editor/motion/scenes/<type>/`, dùng chung
+engine.js và scenes.css. anime.js3.2.2 ghim commit239158e83c7ca1e1d27ab5e556a18b58832b4c2f,
+MIT ở assets/vendor/anime/LICENSE; chỉ dùng hàm easing, không chạy timeline
+theo đồng hồ thực. Toàn bộ vị trí là hàm của renderAt(t), có test hash gọi lùi
+rồi trở lại cùng t. Hình SVG/hạt/cấu trúc tự vẽ, CC0 ở assets/illustrations/LICENSE.
+Vùng minh họa cao56% khung, ba lớp nền/giữa/trước, camera4–8% và wipe/fade
+cuối cảnh; subtitle nằm dưới vùng hình. Thiếu library/cảnh/browser quay về
+đường thẻ hoặc Pillow, không mất video.
+
+Mascot original có thân/tay/miệng, idle/point/shrug/surprised/think, alias
+thinking giữ tương thích. `editor/motion/amplitude.py` giải mã audio local
+bằng FFmpeg đi kèm, RMS mỗi33ms, cache SHA dưới render/amplitude/, sidecar
+scene_N.amplitude.json và render/amplitude.json; không sửa audio/. Miệng
+mở theo mức RMS, **không nhận là lip-sync âm vị**. MASCOT_ENABLED=false bỏ hình.
+
+Beats theo words.json tái dùng agents/motion_beats.py sau Assets; nếu không
+khớp dùng lịch phân bố/ước lượng hiện có. Cảnh có camera/hạt chạy liên tục,
+không lấy riêng khoảng cách beats làm bằng chứng đứng hình tuyệt đối.
+Caption phrase2–4từ, ưu tiên ranh giới câu/cụm, ghép đuôi1từ; word mode giữ
+tương thích. MIN_CARD_HOLD_SEC giữ chữ trước chuyển cảnh; terminal kết thúc
+gõ trước thời gian giữ. Cảnh quá ngắn không thể bảo đảm thời gian giữ dài hơn
+chính cảnh, không kéo audio để giả đáp ứng.
+
+Rule local: illustration_binding (2 đồng bộ snapshot), illustration_data
+(2 fallback khi thiếu), illustration_variety (2 chọn/3 cảnh báo dưới4loại),
+illustration_coverage/motion/hold/numbers (3 hậu kiểm). quality_report.json
+thêm illustration_coverage_percent (mục tiêu85), scene_type_counts,
+moving_elements_per_scene (ít nhất4), subtitle_only_intervals_over_2_sec,
+numeric_scenes_without_numeric_visual. Là cờ từng khung/DOM/phân tích số,
+không phải optical flow hay OCR/kiểm chứng ngữ nghĩa; không chặn Render.
+
+Cache hash bao gồm bundle tất cả HTML/CSS/JS/library, payload/amp/camera/font,
+giữ worker cảnh độc lập và khóa cache. FPS24/30 chọn trên UI hoặc --fps;
+--no-scenes quay lại Motion2/3. FPS này cho preview; final luôn30fps.
+UI có công tắc minh họa, mascot, theme và
+preview/force riêng cảnh. ETA trước render là khoảng ước tính theo FPS/scale/
+worker, không phải SLA. Bản nghiệm thu dùng project gốc auto-cong-nghe-6285dfe3
+“Báo cáo AI tự tăng năm mươi phần trăm có thật không?”, tạo bản review riêng
+`motion-v4-bao-cao-ai-tu-tang-nam-muoi-phan-tram-co-that-khong-a8b19d74`.
+47file đầu vào nguồn giữ SHA nguyên, audio55.728s không đổi tốc độ, không gọi
+API. MP4 motion_scale_0_5.mp4:540×960/24fps, 7.899.633byte; 5cảnh đều cache
+miss trong lượt cuối, render54.809s/tổng59.121s gồmQC, RAM cây tiến trình
+đỉnh xấp xỉ1273.8MB. Không ngoại suy cho máy/video khác.
+
+Đã xem contact_sheet.png (23PNG, mỗi2.5s), sửa vòng số/nguồn chạm nhau và
+stack che chữ; test bounds nhãn bổ sung. QC cuối0cảnh báo bố cục, 5loại
+(ring/flow_chain/stack_cards/versus_scale/magnifier_check), coverage cờ lớp
+minh họa100%, 6–13phần tử DOM chuyển động/cảnh, không interval chỉ phụ đề>2s.
+Đây **không** phải chứng minh mọi khung đều đọc tốt/đúng nghĩa: xem U15;
+cảnh báo nội dung nền cũ vẫn giữ trong review_notes. Tệp benchmark/QC/ảnh,
+DELIVERY.md và test_results.json nằm trong project review. Fullsuite989đạt,
+66deprecation/587.60s; hồi quy Motion4 cuối28đạt,5deprecation/8.69s (hai test
+bổ sung sau fullcollect: QC thiếu report và hợp đồng final30fps). Không cộng
+hai số test thành số test duy nhất; nhánh API thật tách ở7.4.
+
+### 7.6 Script Writer v3 + Visual Planner
+
+Quy trình nâng cấp tạo kịch bản chuyên sâu và hoạt họa phong phú theo phong cách 3 video mẫu công nghệ:
+1. **Kiến trúc luồng**: Researcher -> ScriptWriter (Prompt A) -> Kiểm tra & Tự sửa -> Assets (TTS + words.json) -> VisualPlanner (Prompt B) -> Render Motion.
+2. **Cờ an toàn & Tương thích**:
+   - `SCRIPT_V3_ENABLED` (mặc định `false`): khi tắt, toàn bộ hệ thống chạy Director / Explainer v2 hiện tại không đổi. Khi bật, ScriptWriter v3 là nơi duy nhất quyết định kịch bản; nếu xảy ra lỗi nghiêm trọng ngoài dự kiến, tự động ghi log `logs/director_errors.log` (có redact) và rơi về Director hiện tại.
+   - `LLM_PROVIDER_SCRIPT`, `OPENAI_SCRIPT_MODEL`, `LLM_PROVIDER_VISUAL`, `MAX_ELEMENTS_ON_SCREEN`: cấu hình tùy chọn có giá trị mặc định hợp lệ.
+3. **Quy tắc kiểm tra & Tự sửa của ScriptWriter (Prompt A)**:
+   - Hook: phải thuộc 1 trong 3 kiểu (con số có căn cứ, hiểu lầm phổ biến, tuyên bố ngược trực giác); câu đầu <= 14 từ; tự động loại bỏ câu mở đầu khuôn mẫu ("Hôm nay mình sẽ nói về...") và chuyển câu hỏi chung chung thành câu khẳng định trực tiếp (nhóm 2 tự sửa).
+   - Ẩn dụ chủ đạo (`central_metaphor`): bắt buộc có; tự động suy ra từ kiến thức nền hoặc câu so sánh nếu LLM để trống (nhóm 2).
+   - Tương tác cảnh kết: cảnh CTA phải có câu hỏi `?` tương tác; tự động bổ sung nếu thiếu (nhóm 2).
+   - Giới hạn từ đệm ("có thể / có lẽ / dường như"): tối đa 1 lần mỗi 2 cảnh; vượt quá sinh cảnh báo nhóm 3 và tự động rút bớt từ đệm thừa (nhóm 2).
+   - Câu cụt / thẻ cụt: tự động làm sạch liên từ lơ lửng cuối câu (nhóm 2).
+   - Căn cứ sự kiện (`type=event`): nhóm 1 kiểm tra nghiêm ngặt; mở rộng tập từ ORDINARY để không báo nhầm chữ hoa đầu câu là tên riêng ngoài brief.
+4. **Visual Planner (Prompt B) & Element Registry**:
+   - `prompts/visual_planner.md`: Nguồn sự thật cho kế hoạch hình ảnh hoạt họa dọc 9:16. Biến `{ELEMENT_CATALOG}` được sinh tự động từ `ElementRegistry` để prompt không bao giờ gọi type chưa được cài đặt.
+   - 6 phần tử ưu tiên đợt 1 trong Registry (`editor/motion/registry.py`): `container_fill` (đổ đầy dung tích/giới hạn %), `bar_compare` (cột so sánh số liệu), `stat_number` (đếm lên hoặc gạch thay số), `flow_chain` (chuỗi quy trình nối bước), `steps_ladder` (thang bậc các tầng), `gauge_ring` (đồng hồ đo/tiến độ %). Phần tử lạ tự động fallback về type gần nhất hoặc `text_focus` kèm cảnh báo nhóm 2.
+   - Khớp mốc thời gian `at_phrase`: chuẩn hóa bỏ dấu câu, chữ hoa, dấu tiếng Việt để so khớp mờ với `words.json` của từng cảnh; nếu không khớp, tự động chia nhịp đều và ghi cảnh báo nhóm 2.
+   - Căn cứ số liệu & bằng chứng: phần tử có số liệu/nguồn bắt buộc có `evidence` trích nguyên văn kịch bản/brief. Nếu thiếu bằng chứng, tự động chuyển sang đồ họa định tính (`no_numbers=true`) và bóc số liệu (nhóm 2 tự sửa).
+   - Kiểm tra ngữ nghĩa chú thích: `strike` chỉ dùng cho điều cũ/sai (tự sửa sang `check` nếu dùng trên nội dung khẳng định); `check` chỉ dùng cho điều xác nhận (tự sửa sang `cross` nếu dùng trên điều lỗi/hỏng).
+   - Đa dạng layout & mật độ: cảnh hook tối đa 2 phần tử lớn; các cảnh khác tối đa 4 phần tử; tự động đổi layout nếu 2 cảnh liền kề trùng nhau (nhóm 2).
+   - Cô lập lỗi theo từng cảnh: nếu một cảnh gặp lỗi khi map `MotionScenePlan`, tự động rơi về `text_focus` cho cảnh đó và ghi `logs/director_errors.log`; chỉ dừng pipeline khi không dựng nổi bất kỳ cảnh nào.
+5. **Chủ đề giao diện (Themes) & Tính liên tục của ẩn dụ/vật thể neo (Anchor)**:
+   - 3 chủ đề thiết kế trực quan:
+     + `neon_dark`: Nền tối gradient với lưới điểm phát sáng (cyan/magenta/amber), kính mờ glassmorphism, văn bản neon glow, tối ưu hóa cho nội dung công nghệ/code/AI.
+     + `paper_brand`: Nền giấy sáng tự nhiên (`#f8fafc`), thẻ bo tròn với bóng mềm mại, màu nhấn thương hiệu teal (`#00695c`) và tím (`#673ab7`), phù hợp cho hướng dẫn và quy trình.
+     + `whiteboard_sketch`: Nền giấy ô vuông millimeter/kẻ caro phác thảo, nét vẽ vẽ tay, dấu mộc tròn đỏ (`#c62828`), bút chì và ghi chú, thích hợp cho phân tích khái niệm và so sánh giải pháp.
+     + Mọi biến thể màu sắc đáp ứng tiêu chuẩn độ tương phản WCAG AA >= 4.5:1.
+   - Định kiểu CSS được tổ chức tập trung tại `editor/motion/themes/themes.css` và nạp vào khung render qua `pipeline/render_motion.py`.
+   - Tính liên tục ẩn dụ chủ đạo (`central_metaphor`) & vật thể neo (`anchor`):
+     + Truyền dẫn `anchor`, `central_metaphor`, và trạng thái theo cảnh `metaphor_state` qua toàn bộ `MotionScenePlan`.
+     + Runtime HTML/CSS (`editor/motion/runtime.js`, `editor/motion/base.css`) hiển thị huy hiệu neo `anchor-badge` ở góc màn hình phản ánh trực tiếp trạng thái tiến triển của ẩn dụ.
+   - Hoàn thiện toàn bộ registry phần tử hoạt họa (`editor/motion/registry.py`):
+     + Đăng ký đầy đủ 17 loại phần tử hoạt họa: `container_fill`, `bar_compare`, `stat_number`, `flow_chain`, `steps_ladder`, `gauge_ring`, `versus_split`, `mock_ui_window`, `checklist`, `terminal_typing`, `line_chart_draw`, `hub_spoke`, `magnifier_check`, `progress_tracker`, `chat_bubble_poll`, `source_badge`, `icon_tile`, `funnel`, `timeline`, `prompt_card`, `search_bar_typing`, `code_card`.
+     + Đăng ký 10 loại chú thích (annotations): `strike`, `check`, `cross`, `underline`, `circle_highlight`, `stamp`, `question`, `arrow`, `tag`, `pencil`.
+   - Bổ sung chỉ số chất lượng hoạt họa trong báo cáo QC (`editor/quality.py`):
+     + `metaphor_continuity_count`: Đếm số cảnh xuất hiện ẩn dụ/vật thể neo xuyên suốt kịch bản (mục tiêu >= 4 cảnh, cảnh báo nhóm 3 nếu thiếu tính liên tục).
+     + `screen_coverage_percent`: Tỷ lệ bao phủ màn hình của đồ họa hoạt họa (mục tiêu >= 55%).
+     + `total_animated_elements`: Tổng số phần tử chuyển động thực tế trong toàn bộ video.
+   - Thử nghiệm trên project công nghệ thực tế (`output/sample-v3-tech-run`):
+     + Kịch bản 5 cảnh với chủ đề `neon_dark`, ẩn dụ "Áp lực hệ thống" và vật thể neo "cột áp suất".
+     + Render tỷ lệ `scale=0.5`, 30fps không dùng clip AI (`ai_clips_per_video=0`).
+     + Xuất thành công video MP4, ảnh bảng mẫu liên tục `contact_sheet.png` và báo cáo chất lượng `quality_report.json` đạt chuẩn `metaphor_continuity_compliant: true` (5/5 cảnh).
+
+
+### 7.7 Motion Design System (Giai đoạn 4b — Bước 1)
+
+Nâng cấp chuyển động đồ họa phong phú, đa tầng lớp (Multi-layer Motion Graphics) thay cho chuyển động đơn sơ cũ, đảm bảo tính xác định tuyệt đối (deterministic time-based renderAt):
+1. **Động cơ chuyển động (`editor/motion/engine/`)**:
+   - `prng.js`: Bộ sinh số ngẫu nhiên giả lập Mulberry32 với seed xác định theo scene index, loại bỏ hoàn toàn tính bất định ngẫu nhiên trong render.
+   - `easing.js`: Đầy đủ nguyên lý hoạt hình cơ bản (anticipation, overshoot, squash & stretch, spring physics, follow-through, continuous arcs) cùng bộ preset chuẩn hóa cho xuất hiện (entrance), nhấn mạnh (emphasis) và kết thúc (exit).
+   - `path.js`: Tính toán đường cong Bezier bậc 2 & bậc 3, `motionAlongPath` với góc nghiêng động (dynamic banking angle), vẽ đường nối mềm mại giữa các nút mạng.
+   - `particles.js`: Hệ thống hạt nền bokeh xác định, mô phỏng bọt khí chất lỏng cho `container_fill`, hiệu ứng tia lửa/pháo giấy (sparks/confetti), rung lắc màn hình (screen shake), và cuộn số cơ học (odometer number rolling).
+   - `camera.js`: Parallax 3 lớp độ sâu (nền 0.3x, nội dung 1.0x, tiền cảnh 1.25x), góc nghiêng camera hữu cơ xoay nhẹ ±0.8°, phóng to/thu nhỏ (push-in/pull-out) và lia ngang mượt mà.
+   - `layout.js`: Quản lý vùng an toàn nghiêm ngặt (top 8% cho section chip, bottom 22% cho phụ đề/tiến trình, content safe area 70% từ Y=153.6 đến 1497.6px; phần tử chính phủ >=60% ngang và >=35% dọc); chuẩn hóa typography (chữ chính >=38px, nhãn phụ >=32px ở khung 1080x1920); thuật toán tự động phát hiện va chạm bounding box và tự sửa bố cục 1 lượt (1-pass collision repair).
+   - `recipes.js`: 6 công thức hoạt họa cốt lõi với >=3 biến thể mỗi loại (`stat_number`, `bar_compare`, `flow_chain`, `hub_spoke`, `container_fill`, `checklist`) + nâng cấp `mock_ui_window` (hàng cố định, wrap/ellipsis không đè chữ) và `magnifier_check` (đường lướt có chủ đích lướt mượt đến đúng hàng mục tiêu, phóng to tròng kính và đóng dấu xác thực) + 3 loại chú thích (`strike`, `stamp`, `underline`).
+   - `timeline.js`: `MasterTimeline` quản lý 6 lớp kết xuất đồng thời (background, svg content, annotations, captions, fx), đảm bảo luôn có tối thiểu 3 lớp chuyển động cùng lúc theo hàm thời gian tuyệt đối `t`.
+   - `engine.css` & `__init__.py`: Đóng gói toàn bộ CSS và JS động cơ vào `bundle_engine()` với mã băm SHA256 bảo đảm tính toàn vẹn khi nhúng vào khung HTML render.
+2. **Hợp đồng dữ liệu & Khắc phục Pydantic Strict Schema**:
+   - Khai báo model chặt chẽ `SceneAnnotation(StrictModel)` với `extra='forbid'` trong `schemas/motion_scene.py` thay cho dict tự do, bảo đảm OpenAI API response_format duy trì chế độ `json_schema` nghiêm ngặt và không bị rơi về `json_object`.
+   - Tích hợp trường `annotations: list[SceneAnnotation]` vào `MotionScenePlan` và truyền trực tiếp từ `VisualScene` qua `map_visual_scene_to_motion_scene_plan`.
+3. **Phòng thử hiệu ứng & Công cụ xuất mẫu (Gallery)**:
+   - `tools/motion_gallery.py`: Công cụ CLI độc lập kết xuất 14 clip mẫu đại diện cho 14 biến thể hiệu ứng ở tỷ lệ `scale=0.5`, 24fps vào thư mục `output/motion_gallery/` và ghép ảnh tổng hợp `output/motion_gallery/contact_sheet.png`. Toàn bộ 14 clip được kết xuất thành công trong 142.54s.
+   - Streamlit View: Bổ sung trang "Phòng thử hiệu ứng" (`app/views/motion_gallery.py`) trên thanh điều hướng Streamlit App (`app/streamlit_app.py`) giúp trực tiếp xem trước ảnh contact sheet, phát từng clip và theo dõi thông số kỹ thuật.
+4. **Kiểm thử hồi quy**:
+   - `tests/test_motion_engine.py`: 12 test mới kiểm tra tính phát lại xác định tuyệt đối (`hash1 == hash3`), toàn bộ 14 recipes không lỗi runtime, progressive reveal và layout collision repair.
+   - Chạy đồng thời toàn bộ 61 bài test (`test_motion_engine.py`, `test_motion_v4.py`, `test_visual_planner_v3.py`, `test_script_writer_v3.py`) đều passed 100%.
+
+
+
+5. **Hoàn thiện Toàn bộ Catalog Phần tử (Bước 2 — C. Recipes + Transitions + Particles & Lighting)**:
+   - Cài đặt đầy đủ 10 công thức chuyển động mới (mỗi loại >= 3 biến thể xoay vòng theo seed):
+     + `versus_split`: màn hình chia đôi va chạm VS badge dập nảy rung màn hình (slam clash), cán cân cơ học nghiêng theo giá trị thực (scale tilt), và thanh đo năng lượng đối đầu (power duel).
+     + `line_chart_draw`: đường cong Bezier vẽ dần kèm chấm sáng dẫn đầu và diện tích tô gradient (glow peak), biểu đồ đường bậc thang (step ladder), và 2 đường giao cắt kích hoạt vòng xung sáng (crossover ring).
+     + `terminal_typing` / `code_card`: cửa sổ macOS gõ từng ký tự với con trỏ nhấp nháy và tô màu cú pháp (syntax highlighting), bộ soạn thảo có số dòng và thanh tìm kiếm từ khóa, và console hacker với thanh tiến trình và dấu SUCCESS.
+     + `timeline`: trục ngang trượt dần mọc chồi các mốc sự kiện (sprout nodes), trục dọc ziczac xen kẽ, và dạng thẻ hội tụ theo chiều sâu phối cảnh 3D (depth perspective).
+     + `funnel`: phễu lọc 3-4 tầng giọt dữ liệu rơi dần, phễu ngang thu hẹp tỷ lệ chuyển đổi, và bộ lọc bậc thang xếp tầng.
+     + `progress_tracker`: thanh tiến trình phân đoạn phát sáng đèn xanh, đồng hồ đo tiến độ vòng cung (radial arc dial), và thang bậc đánh dấu mốc kiểm tra.
+     + `source_badge`: huy hiệu khiên bảo vệ có dấu XÁC MINH, thẻ trích dẫn báo chí trang trọng, và thanh pill tối giản có đèn tín hiệu trực tiếp.
+     + `icon_tile`: lưới kính mờ 2x2/3-cột nảy stagger viền phát sáng, icon trung tâm cỡ lớn xoay góc 3D tỏa sóng năng lượng, và các cột so sánh biểu tượng.
+     + `chat_bubble_poll`: bong bóng chat hội thoại 2 bên có hiệu ứng gõ 3 chấm trước khi hiện lời thoại, thẻ bình chọn khảo sát thanh dâng cao, và thẻ bình luận mạng xã hội có lượt thích đếm nhảy số.
+     + `gauge_ring`: vòng tròn quét 270 độ vạch chia độ sáng dần và số % đếm lên, đồng hồ đo tốc độ có kim quay overshoot, và 2 vòng tròn đồng tâm.
+   - Hoàn thiện trọn bộ 10 loại chú thích (annotations): `strike` (gạch chéo đỏ), `stamp` (con dấu xoay nảy), `underline` (gạch chân nét vẽ tay), `question` (dấu hỏi chấm lắc lư), `check` (nét vẽ V xanh có sao lấp lánh), `cross` (nét vẽ X đỏ 2 vạch), `arrow` (mũi tên Bezier chỉ mục tiêu), `circle_highlight` (vòng tròn vẽ tay quanh đối tượng), `tag` (nhãn x5/HOT bật nảy), và `pencil` (bút chì vẽ mực thật theo thời gian).
+   - Hiệu ứng hạt & ánh sáng nâng cao: `renderLightSweep` (vệt sáng quét chéo qua thẻ kính mờ tại các beat hit), `renderPulseGlow` (viền sáng nhịp thở sinh học), và `renderGlitchCut` (chuyển cảnh sọc ngang RGB offset).
+   - Chuyển cảnh camera: `zoom_through` (camera đâm xuyên tâm mở cảnh sau), `wipe_light` (quét sáng trượt khung).
+   - Mở rộng `tools/motion_gallery.py`: kết xuất thành công trọn bộ 25 clip mẫu hiệu ứng và cập nhật ảnh tổng hợp `output/motion_gallery/contact_sheet.png` trong 225.26s.
+   - Kiểm thử tự động: mở rộng `tests/test_motion_engine.py` lên 24 tests, toàn bộ 73 tests liên quan đều passed 100%.
+
+6. **Mascot có khớp cử động & 15 Minh họa Vector động gốc (Bước 3 — D. Mascot + Dynamic Illustrations)**:
+   - Mascot đa khớp cử động (`editor/motion/engine/mascot.js`):
+     + Khớp nối phân cấp SVG (đầu, thân, mắt, miệng, hai tay) vận hành hoàn toàn theo thời gian tuyệt đối $t$ và seed PRNG.
+     + Chuyển động sinh học tự nhiên: nhịp thở tuần hoàn ($0.8\text{Hz}$), chớp mắt ngẫu nhiên xác định (chu kỳ 3-4s, nhắm trong 0.12s), nghiêng đầu nhẹ theo trạng thái cảm xúc.
+     + Trỏ tay định hướng (`pointing`): cánh tay xoay và duỗi hướng chính xác về tọa độ mục tiêu `pointing_target: [x, y]`, ngón tay trỏ điểm nhấn.
+     + Khớp khẩu hình (`lip-sync`): miệng co giãn chiều cao theo biên độ âm thanh thực tế (`amplitude.json`), mỉm cười nhẹ khi kết thúc hoặc idle.
+     + Kích thước chuẩn hóa $\ge 18\%$ chiều rộng khung hình (240px trên 1080x1920); thuật toán `calculateMascotPlacement` tự động bố trí mascot tại góc an toàn (dưới phải hoặc dưới trái), tránh hoàn toàn việc che khuất nội dung đồ họa chính; hỗ trợ bật/tắt linh hoạt qua cờ `MASCOT_ENABLED`.
+   - 15 Minh họa Vector động gốc (`assets/illustrations/*.svg` & `editor/motion/engine/illustrations.js`):
+     + Trọn bộ 15 tệp vector SVG tự vẽ theo giấy phép CC0: `drone`, `runway_test_site`, `lab_facility`, `map_pin`, `radar_scan`, `signal_waves`, `shield_protect`, `battery_charging`, `camera_lens`, `gears_rotating`, `document_flipping`, `chart_analytic`, `server_rack`, `human_cubes`, `robot_agent`.
+     + Cấu hình từ khóa song ngữ Anh/Việt trong `config/illustrations.yaml`, kèm API nạp và khớp tự động `match_illustration_for_topic` trong `editor/motion/registry.py`.
+     + Động cơ `animateIllustration` kích hoạt hoạt họa vi mô: cánh quạt UAV quay, sóng tín hiệu lan tỏa, radar quét 360 độ, bánh răng ăn khớp, pin tích điện dần, tia quét camera, ghim nhấp nháy.
+   - Tích hợp Visual Planner v3 (`agents/visual_planner_v3.py`):
+     + Tự động liên kết chủ đề kịch bản với hình ảnh minh họa chủ đạo làm phần tử mỏ neo (`anchor_element`), đảm bảo tính nhất quán của ẩn dụ xuyên suốt các cảnh video.
+   - Kiểm thử hồi quy: `tests/test_motion_engine.py` bổ sung kiểm thử tích hợp `test_illustrations_and_mascot_engine`, toàn bộ 25/25 bài test passed 100%.
+
+7. **Âm thanh đồng bộ, Tích hợp Visual Planner & Cổng chất lượng Motion (Bước 4 — E + G + H + Kết xuất kiểm chứng)**:
+   - SFX đồng bộ (`editor/motion/sfx.py` & `editor/audio_mix.py`):
+     + Bổ sung tổng hợp toán học âm thanh `snap` (xung lực dập nảy va chạm 0.08s) cùng `click`, `pop`, `whoosh`, `chime` chuẩn CC0 1.0.
+     + Bộ trộn âm thanh `editor/audio_mix.py` tự động quét các nhịp `beats` của `MotionScenePlan` để kích hoạt hiệu ứng âm thanh khớp từng mili-giây: `whoosh` khi phần tử bay vào/entrance, `snap` khi đóng dấu stamp/strike va chạm, `chime` khi hoàn tất/check/thành công, `pop` khi xuất hiện phần tử nội dung mới.
+   - Hợp đồng Visual Planner & Bảo toàn mã băm (`schemas/motion_scene.py`, `schemas/visual_v3.py`):
+     + Bổ sung các trường tùy chọn `motion_recipe`, `variant_index`, `transition` trên `MotionScenePlan` và `VisualScene` với cơ chế `exclude_if=lambda v: v is None` bảo đảm tính tương thích ngược và bảo toàn tuyệt đối mã băm `resolved_plan_hash` của các kế hoạch kịch bản đã sinh.
+   - Cổng chất lượng Quality Gate (`editor/quality.py`):
+     + Đo lường tự động: `motion_energy_score` (điểm số năng lượng hoạt họa dựa trên tổng phần tử chuyển động và nhịp độ video), `typography_hierarchy_compliant` (đáp ứng phân cấp cỡ chữ tiêu đề >=38px, nhãn phụ >=32px), `safe_area_compliant` (kiểm tra vùng an toàn tránh tràn viền/phụ đề).
+   - Kết xuất kiểm chứng thực tế dự án `auto-cong-nghe-1a3adcd5` ("Bãi thử UAV Hòa Lạc có gì mà khiến giới công nghệ tò mò?"):
+     + Kết xuất thành công toàn bộ 6 cảnh ở `scale 0.5` (540x960, 30fps) trong 155.6s từ lệnh `python -m editor.render ... --motion --scale 0.5 --final`.
+     + Video hoàn thiện lưu tại `output/auto-cong-nghe-1a3adcd5/render/bai-thu-uav-hoa-lac-co-gi-ma-khien-gioi-cong-nghe-to-mo_tiktok_final.mp4` (49.32s, codec H.264/AAC stereo).
+     + Tạo ảnh contact sheet chi tiết tại `output/auto-cong-nghe-1a3adcd5/review_frames/contact_sheet.png` (521KB) và lưu báo cáo chất lượng `quality_report.json` với các chỉ số: 6 loại scene đa dạng (`network_nodes`, `flow_chain`, `stack_cards`, `terminal_type`, `magnifier_check`, `checklist`), độ bao phủ hoạt họa 100%, 22 phần tử hoạt họa, điểm năng lượng chuyển động 7.03, không có khoảng đứng hình >3.5s, typography phân cấp đạt chuẩn.
+   - Kiểm thử toàn diện: toàn bộ 74/74 bài test liên quan (`test_motion_engine`, `test_visual_planner_v3`, `test_motion_v4`, `test_script_writer_v3`) đều passed 100%.
+
 
 ## 8. Assets, TTS, stock và AI clip
 
@@ -1556,7 +1782,17 @@ file env sang file tạm, chặn dotenv đọc .env thật. Test nào cần conf
 file/biến giả. Tests không gọi API thật; có test FFmpeg/MP3/MP4/Pillow local và
 Streamlit AppTest. Không chạy hai suite dùng cùng --basetemp song song.
 
-Kết quả toàn bộ suite Motion2 cuối **2026-10-24: 935 passed, 0 failed,
+Kết quả mới Motion3/4 **2026-10-24: 989 passed, 0 failed, 66deprecation,
+587.60s**, chạy đúng command ở trên. Sau fullcollect bổ sung2test, chạy lại
+toàn bộ test_motion_v4.py: **28 passed, 5deprecation, 8.69s**; gồm đủ13cảnh,
+deterministic, bounds/overlap, fallback/number binding, RMS/cache, giữMP4 khi
+QC thiếu và final30fps. Test mock không nhận là API thật thành công. Đã parse
+cú pháp18file Python liên quan, git diff --check không có lỗi whitespace.
+Các đoạn gõ dở ngoài hàm QC/cuối test isolation được lưu chẩn đoán rồi bỏ,
+không đổi assertion/test cấu hình hiện có. Lượt collect vướng SyntaxError
+không được tính là chạy suite thành công.
+
+Mốc toàn bộ suite Motion2 trước đó **2026-10-24: 935 passed, 0 failed,
 45 cảnh báo deprecation trong335.58s**. Kiểm riêng QC chữ chưa tới cue,
 fixture lỗi và ngữ cảnh preview riêng cảnh: **3 passed/28.54s**. Hai test mới
 thêm sau lúc suite collect, không nhận là đã nằm trong số935. Preview cảnh nội
@@ -1660,6 +1896,9 @@ và raw nếu chưa kiểm tra dữ liệu riêng tư/bí mật.
 | NoAudioReceived cảnh 2, báo thiếu shot | TTS không có audio; lỗi gốc bị lỗi hậu bước che | Chunk/retry/voice fallback/silence rõ ràng, sửa riêng audio | providers/tts_edge.py, pipeline/assets.py, tests/test_tts_resilience.py |
 | “Cambridge Analytica Vụ” không có trong brief | Nối cuối/đầu nhiều field thành tên giả | Kiểm từng field, order từ narration, lớp nền warning; Render neutral fallback | visual_planner.py, visual_policy.py, tests/test_visual_policy.py |
 | “Trải”/“Nhiều” tên riêng câu nền | Detector coi từ đầu câu viết hoa là entity + sai nhóm | Common whitelist/boundaries/token, câu nền nhóm3, event local repair một lần; 2ccb3f80 revalidated | proper_names.py, explainer_guard.py, validation_rules.py, tests/test_proper_names.py |
+| Thẻ xếp che chữ, nhãn vòng chạm dòng nguồn | Hàng stack cao hơn bước xếp; đo độ dài tổng các dòng làm co chữ sai | Giãn hàng/fit từng dòng, tách khoảng nguồn, hậu kiểm bounding box nhãn; test không đè chữ và renderAt hash | editor/motion/scenes/engine.js, runtime.js, tests/test_motion_v4.py |
+| Render xong nhưng tool review KeyError quality_report | QC nhóm3 có thể lỗi, tool lại giả định luôn có report | Giữ MP4, quality_pending=true, không gắn report cũ vào lượt mới; sửa SyntaxError/NameError từ đoạn gõ dở ngoài hàm nếu có | pipeline/motion_review.py, editor/quality.py |
+| 1 validation error for MotionScenePlan repair_notes Extra inputs are not permitted | Code gắn repair_notes vào model StrictModel chưa khai báo hoặc normalizer lồng danh sách BaseModel chưa bóc khóa | Khai báo repair_notes trên MotionScenePlan, Visual, VisualData, Scene, Shot; sửa normalizer bóc khóa lạ danh sách lồng nhau; cô lập lỗi theo cảnh fallback text_focus, ghi director_errors.log/review_notes; chỉ dừng khi hỏng toàn bộ cảnh | schemas/motion_scene.py, schemas/visual.py, schemas/edit_plan.py, agents/illustrations.py, tests/test_motion_v4.py |
 
 Không khẳng định gateway_failed do prompt hay 400 do một tham số duy nhất khi
 log không chứng minh. “Đã khắc phục” ở bảng là hành vi code/test tương ứng;
@@ -1691,14 +1930,22 @@ không bảo đảm dịch vụ ngoài sẽ luôn thành công.
 - [x] Review trình bày: card_text/emphasis riêng, rule2/3, hook ngắn có căn cứ,
   thẻ nguồn cuối duy nhất, theme-only b-roll card, caption sát thẻ/cỡ lớn và
   final1080×1920 riêng preview scale; hồi quy job-guarantee giữ input gốc.
-- [ ] Motion3: đa dạng/icon/CTA, sửa thẻ/số/caption, clip nền có consent/quota/receipt,
-  QC2.5s; đang chạy pytest và chờ bằng chứng render/clip thật (mục7.4).
+- [x] Motion3: đa dạng/icon/CTA, sửa thẻ/số/caption, clip nền có consent/quota/receipt,
+  QC2.5s; render2scale/1clip thật có bằng chứng và giới hạn hóa đơn/DOM (mục7.4).
+- [x] Motion4: đủ13scene vector, camera/parallax/wipe, mascotRMS, QCcoverage,
+  normalize dữ liệu minh họa nhóm2, fallback tĩnh; full989+hồi quy28 và bản review55.728s (mục7.5).
 - [x] UI 11 trang, tác vụ dài qua worker, project list, một nút/duyệt/resume/hủy hợp tác.
 - [x] Windows atomic I/O/locks/snapshot, test cách ly cấu hình thật.
 - [x] Đã lưu tài liệu quy trình gốc, registry cấu hình/luật và quy tắc cập nhật bắt buộc.
 
 “Đã có” không đồng nghĩa mọi nhánh đã được chạy API thật hôm nay hoặc không
 còn giới hạn heuristic. Xem bảng chưa xác nhận bên dưới trước khi giới thiệu sản phẩm.
+
+- [x] Motion Design System (Giai đoạn 4b — Bước 1): Động cơ chuyển động editor/motion/engine/ (PRNG, easing, path, camera 3 lớp, layout safe-area & collision repair, 6 recipes đa biến thể, 3 loại chú thích, MasterTimeline đa lớp), tools/motion_gallery.py và tab Streamlit "Phòng thử hiệu ứng", SceneAnnotation strict schema.
+
+- [x] Motion Design System (Giai đoạn 4b — Bước 2): Hoàn thiện Full Catalog (C) với đủ 16 recipes (>=3 biến thể), 10 loại chú thích, ánh sáng quét/glitch/pulse glow, chuyển cảnh zoom_through/wipe_light, 25 clip motion_gallery (225.26s) + contact_sheet.png.
+- [x] Motion Design System (Giai đoạn 4b — Bước 3): Mascot có khớp cử động & 15 Minh họa Vector động gốc (D): mascot.js (đầu, thân, tay trỏ tọa độ, chớp mắt, khẩu hình RMS, tránh đè nội dung), 15 vector SVG gốc CC0 trong assets/illustrations/, config/illustrations.yaml và topic matching liên kết mỏ neo Visual Planner; 25/25 test engine passed.
+- [x] Motion Design System (Giai đoạn 4b — Bước 4): Âm thanh đồng bộ (E), Tích hợp Visual Planner (G), Quality Gate (H) và kết xuất kiểm chứng dự án UAV Hòa Lạc auto-cong-nghe-1a3adcd5 (scale 0.5, 49.32s, 155.6s render, 6 scene types, contact_sheet.png, quality_report.json, 74/74 test passed).
 
 ### 13.2 Đang làm/chờ làm, không tự mở rộng phạm vi
 
@@ -1737,6 +1984,7 @@ còn giới hạn heuristic. Xem bảng chưa xác nhận bên dưới trước 
 | U12 | Độ chính xác đồng bộ từ và tốc độ/RAM motion toàn video dài/máy khác | providers/tts_edge.py, utils/word_timing.py, pipeline/render_motion.py; review job-guarantee đã gọi Edge thật cho 6 cảnh, không có cảnh im lặng: 4 sidecar word_boundary, 2 boundary_projected. Chưa đo sai số bằng nghe/đối chiếu từng từ; không nhận projected là timing chính xác. Benchmark10s và final52s không đại diện final90–180s. |
 | U13 | Chất lượng lời kể/card_text do LLM thật với prompt mới; Việt hóa mọi thuật ngữ và nhận diện nội dung stock bằng thị giác | agents/presentation.py, prompts/explainer_v2.txt, director_humanize.txt; project review sửa biên tập dựa trên brief có sẵn, không gọi LLM trả phí. Từ điển Việt hóa chỉ các cụm được khai báo, giữ tên riêng; theme-only tránh stock lạc đề chứ không dùng detector ảnh. |
 | U14 | QC Motion2 không phải OCR/computer vision toàn video, độ cuốn hút chưa có người chấm; timing audio projected/time-scaled chưa xác minh≤.2s | editor/motion/runtime.js, finish.py, agents/motion_beats.py; DOM samples/lịchbeats/framehash có test, cần xem contact_sheet/video và nghe đối chiếu. Lỗi còn lại nhóm3 giữ trong motion_review.json, không đổi luật1. Benchmark60s dùng audio atempo riêng, không ngoại suy production dài. |
+| U15 | Chất lượng ngữ nghĩa nhãn/loại cảnh và độ cuốn hút thực tế; lip-sync âm vị; tốc độ/geometry Motion4 bản1080 và90–180s | agents/illustrations.py chọn heuristic/cụm từ hữu hạn; amplitude.py chỉRMS. Coverage là cờ lớp SVG từng khung, count là phần tử DOM chịu camera/animation, không opticalflow. Bỏ phép ink-area của thẻ chữ đối với SVG (occupied=null), dùng vùng hình/bounds/overlap, cần người xem. Chưa gọi Director/Researcher mới để chấm chất lượng scene_plan do model thật. Bản Motion4 được yêu cầu đo ởscale0.5, không ngoại suy số đo Motion3scale1.0 cho Motion4. |
 
 ### 13.4 Bằng chứng hồi quy local đang có
 
@@ -1764,6 +2012,7 @@ còn giới hạn heuristic. Xem bảng chưa xác nhận bên dưới trước 
   đối chiếu H.264/yuv420p + AAC stereo trên MP4 cuối bằng FFmpeg.
   Hash MP4 cuối lưu trong `presentation_review.json`; đây là một lượt
   local, không phải cam kết thời gian cho mọi máy/dự án.
+- Phục hồi kịch bản `output/auto-cong-nghe-bd958c5e/edit_plan.json`: từ checkpoint `director_state.explainer_v2.json` (outline sẵn có), tạo thành công 6 cảnh (đủ 6 loại visual_plan: `bar_grow`, `flow_chain`, `ring`, `gauge`, `stack_cards`, `network_nodes`), thời lượng kế hoạch 67.5s / yêu cầu 60s, không dừng pipeline và không phát sinh lỗi validation.
 - Motion2 cuối: `output/motion-v2-di-san-cua-bioware-sau-khi-khep-lai-17f09ede/`,
   từ project gần nhất `auto-cong-nghe-0481505b` (yêu cầu60s, audio gốc70.704s).
   Benchmark giữ toàn bộ lời đọc, atempo~1.1784 sau resample về44.1k để đủ60s;
@@ -1826,6 +2075,15 @@ còn giới hạn heuristic. Xem bảng chưa xác nhận bên dưới trước 
 
 | Ngày | Thay đổi | File | Lý do |
 |---|---|---|---|
+| 2026-10-25 | Giai đoạn 4b Bước 4: Âm thanh đồng bộ (E) + Tích hợp Visual Planner (G) + Cổng chất lượng Quality Gate (H) + Kết xuất kiểm chứng dự án UAV Hòa Lạc: bổ sung âm thanh snap và bộ trộn SFX theo beats trong editor/audio_mix.py; trường tùy chọn motion_recipe/variant_index trên schema với exclude_if bảo toàn hash; đo lường motion_energy_score, typography_hierarchy_compliant trong quality.py; kết xuất thành công toàn bộ 6 cảnh video project auto-cong-nghe-1a3adcd5 (scale 0.5, 49.32s, 155.6s) xuất MP4, contact_sheet.png và quality_report.json; 74/74 test passed | APP/editor/motion/sfx.py, editor/audio_mix.py, schemas/motion_scene.py, schemas/visual_v3.py, editor/quality.py, pipeline/render_motion.py, output/auto-cong-nghe-1a3adcd5/; ROOT/docs/PROCESS.md | Hoàn thành toàn diện Phase 4b Motion Design System, bảo đảm hoạt họa sống động, âm thanh chính xác và nghiệm thu video đối chiếu |
+| 2026-10-25 | Giai đoạn 4b Bước 3: Mascot Khớp Cử Động & 15 Minh Họa Vector Động Gốc (D): mascot.js (đa khớp đầu/thân/tay, trỏ tọa độ pointing_target, chớp mắt chu kỳ, thở sinh học, khẩu hình amplitude, tự động tính vị trí an toàn tránh đè nội dung); 15 SVG gốc CC0 trong assets/illustrations/ kèm config/illustrations.yaml và topic matcher; tích hợp anchor mỏ neo Visual Planner v3; bổ sung test_illustrations_and_mascot_engine, toàn bộ 25/25 test passed | APP/editor/motion/engine/{mascot,illustrations}.js, runtime.js, config/illustrations.yaml, assets/illustrations/*.svg, editor/motion/registry.py, agents/visual_planner_v3.py, tests/test_motion_engine.py; ROOT/docs/PROCESS.md | Hoàn thành bước (3) Phase 4b nâng cấp mascot sống động và minh họa vector chủ đạo có ngữ nghĩa |
+| 2026-10-25 | Giai đoạn 4b Bước 2: Full Catalog Phần tử (C) + Transitions + Particles/Lighting: cài đặt đủ 10 recipes mới >=3 biến thể (versus_split, line_chart_draw, terminal_typing, timeline, funnel, progress_tracker, source_badge, icon_tile, chat_bubble_poll, gauge_ring); đủ 10 loại chú thích (strike, stamp, underline, question, check, cross, arrow, circle_highlight, tag, pencil); hạt & ánh sáng (renderLightSweep, renderPulseGlow, renderGlitchCut); chuyển cảnh zoom_through/wipe_light; mở rộng tools/motion_gallery.py kết xuất 25 clip (225.26s) + contact_sheet.png; 73/73 test passed | APP/editor/motion/engine/{recipes,particles,timeline,camera}.js, editor/motion/scenes/engine.js, schemas/motion_scene.py, tools/motion_gallery.py, tests/test_motion_engine.py; ROOT/docs/PROCESS.md | Hoàn thành bước (2) Phase 4b mở rộng đầy đủ danh mục đồ họa, chú thích và hiệu ứng chuyển cảnh |
+| 2026-10-25 | Giai đoạn 4b Bước 1: Motion Design System nền tảng + Động cơ chuyển động (A+B+F): tạo editor/motion/engine/{prng,easing,path,particles,camera,layout,recipes,timeline}.js + engine.css + bundle_engine; 6 recipes cốt lõi (stat_number, bar_compare, flow_chain, hub_spoke, container_fill, checklist) >=3 biến thể + sửa mock_ui_window và magnifier_check lướt có chủ đích; 3 chú thích strike/stamp/underline; layout safe area và auto collision repair 1-pass; SceneAnnotation strict schema; tools/motion_gallery.py xuất 14 clip mẫu (142.54s) + contact_sheet.png; tab Streamlit "Phòng thử hiệu ứng"; 61/61 test passed | APP/editor/motion/engine/, editor/motion/scenes/engine.js, schemas/motion_scene.py, pipeline/render_motion.py, tools/motion_gallery.py, app/views/motion_gallery.py, app/streamlit_app.py, tests/test_motion_engine.py, tests/test_motion_v4.py; ROOT/docs/PROCESS.md | Hoàn thành bước (1) Phase 4b nâng cấp hoạt họa sống động, xác định tuyệt đối theo thời gian và an toàn layout |
+| 2026-10-24 | Bước (c) Visual Planner UI Themes, Metaphor/Anchor Continuity, Full Registry Elements & Quality Report: 3 chủ đề neon_dark, paper_brand, whiteboard_sketch đạt chuẩn WCAG AA; CSS themes và anchor-badge runtime; mở rộng toàn bộ 17 phần tử và 10 loại chú thích trong ElementRegistry; báo cáo QC quality.py kiểm soát metaphor_continuity (>=4 cảnh), screen_coverage (>=55%) và total_animated_elements; chạy mẫu dự án công nghệ scale=0.5 xuất MP4, contact_sheet.png và quality_report.json; 20/20 test v3 passed | APP/editor/motion/registry.py, editor/motion/theme.py, editor/motion/themes/themes.css, config/motion_theme.yaml, schemas/motion_scene.py, agents/visual_planner_v3.py, pipeline/render_motion.py, editor/motion/runtime.js, editor/motion/base.css, editor/quality.py, tests/test_visual_planner_v3.py; ROOT/docs/PROCESS.md | Hoàn thiện toàn diện quy trình Director v3 + Visual Planner, bảo đảm tính liên tục của ẩn dụ trực quan và chất lượng đồ họa |
+| 2026-10-24 | Bước (b) Visual Planner v3 + Element Registry 6 phần tử đầu: nạp Prompt B nguồn sự thật, thay catalog động từ registry, schema VisualPlanResponse + normalizer tiền kiểm, bộ kiểm tra/tự sửa (registry fallback, grounding số/evidence -> no_numbers, sửa nghĩa strike/check, mật độ hook <=2, đa dạng layout), khớp mờ at_phrase với words.json; map MotionScenePlan cô lập lỗi theo cảnh fallback text_focus; 9/9 test visual_planner mới passed | APP/editor/motion/registry.py, schemas/visual_v3.py, agents/visual_planner_v3.py, agents/visual_planner.py, pipeline/run_all.py, prompts/visual_planner.md, tests/test_visual_planner_v3.py; ROOT/docs/PROCESS.md | Nâng cấp Director bước (b) kế hoạch hoạt họa phong phú có registry và căn cứ theo nhịp giọng đọc |
+| 2026-10-24 | Bước (a) Script Writer v3: nạp Prompt A nguồn sự thật, chuẩn hóa schema ScriptV3Response, bộ kiểm tra/tự sửa (hook 3 kiểu, central_metaphor, CTA tương tác, giới hạn có thể, câu cụt, tránh bắt nhầm chữ đầu câu viết hoa ở câu event), fallback an toàn về Director cũ khi lỗi; cấu hình SCRIPT_V3_ENABLED, LLM_PROVIDER_SCRIPT, OPENAI_SCRIPT_MODEL, LLM_PROVIDER_VISUAL, MAX_ELEMENTS_ON_SCREEN | APP/schemas/script_v3.py, agents/script_writer.py, agents/director.py, agents/validation_rules.py, config/settings.py, providers/llm/router.py, .env.example, tests/test_script_writer_v3.py; ROOT/docs/PROCESS.md | Nâng cấp Director bước (a) kịch bản cuốn hút và tự sửa theo chuẩn |
+| 2026-10-24 | Sửa lỗi MotionScenePlan repair_notes extra_forbidden: khai báo repair_notes trên MotionScenePlan, Visual, VisualData, Scene, Shot; sửa normalizer bóc khóa lạ danh sách lồng nhau; cô lập lỗi theo cảnh fallback text_focus và ghi director_errors.log/review_notes; phục hồi thành công bước Kịch bản project auto-cong-nghe-bd958c5e (6 cảnh, 6 loại visual plan) | APP/schemas/motion_scene.py, schemas/visual.py, schemas/edit_plan.py, agents/illustrations.py, tests/test_motion_v4.py, output/auto-cong-nghe-bd958c5e/edit_plan.json; ROOT/docs/PROCESS.md | Đảm bảo tính bền vững cho bước Kịch bản, giữ extra=forbid nhưng chuẩn hóa bóc khóa lạ nhóm 3, không để lỗi đồ họa phụ làm dừng kịch bản |
+| 2026-10-24 | Chốt Motion4:13cảnh vector/animeMIT, visual_plan có binding/fallback nhóm2, camera3lớp/wipe, mascotRMS33ms, FPS24nháp/30final, QCoverlap/coverage; full989/66warnings/587.60s, post28/5warnings/8.69s; render55.728s scale0.5 trong54.809s+tổng59.121s | APP/agents/illustrations.py, schemas/motion_scene.py, editor/motion/scenes/, amplitude.py, runtime.js, pipeline/render_motion.py, motion_batch.py, motion_review.py, controlled_ai.py, editor/quality.py, render.py, config/settings.py, app/views/render.py, tests/test_motion_v4.py, fixtures/ai_self_report/, assets/vendor/anime/, illustrations/, mascot/, README.md, .env.example; ROOT/docs/PROCESS.md | Đổi thẻ nhỏ sang minh họa lớn có căn cứ; giữ47input/nhóm1, không gọi API mới; ảnh/QC/giới hạn ở7.5/U15 |
 | 2026-10-24 | Motion3 triển khai: thẻ riêng/selector/chip Lucide/caption display, AI nền opt-in và budget/slot receipt, QC2.5s; đang nghiệm thu suite/render/API | APP/agents/visual_diversity.py, editor/quality.py, editor/motion/icons.py, config/icons.yaml, assets/icons/, pipeline/controlled_ai.py, ai_budget.py, motion_review.py và các tích hợp; tests/test_motion_v3.py; ROOT/docs/PROCESS.md | Giữ nhóm1/input gốc, kiểm tra mới2/3; không nhận mock hoặc giá tham khảo là API/hóa đơn thật |
 | 2026-10-24 | Chốt Motion2: hiển thị thật theo cue trong.16s, số chữ Việt/count từng mục, sửa beat cũ; QC sau cue không nhầm chữ ẩn; preview riêng cảnh giữ ngữ cảnh mascot/progress; benchmark60s cuối17f09ede và hash MP4 bất biến sau hậu kiểm; full935 passed/45 warnings/335.58s, postQC/preview3 passed/28.54s | APP/agents/motion_beats.py, editor/motion/runtime.js, pipeline/render_motion.py, pipeline/motion_batch.py, editor/audio_mix.py, tests/test_motion_v2.py; ROOT/docs/PROCESS.md; output/...17f09ede/benchmark.json, DELIVERY.md | Kiểm bằng DOM/ảnh thay vì chỉ timestampJSON, giữ tất cả nhóm1; số đo/giới hạn cuối ở13.4 |
 | 2026-10-23 | Motion2: mở rộng13 template, source cuối, beats theo words, palette/SVG/SFX original, thread2 cảnh/cache/FFmpeg mux, QA và preview/force cảnh; benchmark60s hai scale trong project riêng | APP/agents/motion_beats.py; config/settings.py, motion_theme.yaml; schemas/visual.py; editor/motion/{theme,sfx,source,finish}.py, base.css, runtime.js; editor/render.py, audio_mix.py, jobs.py; pipeline/assets.py, render_motion.py, motion_batch.py, motion_benchmark.py; app/views/render.py; assets/mascot/, sfx/; tests/test_motion_v2.py, test_motion.py, test_render_ui.py, test_timeline.py; .env.example, README, ROOT/docs/PROCESS.md | Hoàn thiện phần trình bày/chịu lỗi và hiệu năng, giữ checker/nhóm1, không gọi API và không sửa input Render gốc; full928 passed/45 warnings/582.82s, post2 passed/24.80s; benchmark/file bàn giao ở13.4 |

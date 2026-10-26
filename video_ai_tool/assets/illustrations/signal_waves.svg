@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- Antenna Tower -->
+  <polygon points="180,350 220,350 205,160 195,160" fill="#334155" stroke="#475569" stroke-width="3"/>
+  <line x1="170" y1="260" x2="230" y2="260" stroke="#475569" stroke-width="4"/>
+  <line x1="180" y1="210" x2="220" y2="210" stroke="#475569" stroke-width="4"/>
+  <circle cx="200" cy="150" r="14" fill="#38bdf8"/>
+  <!-- Concentric Broadcast Waves -->
+  <path d="M 160 120 A 55 55 0 0 1 240 120" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M 130 90 A 95 95 0 0 1 270 90" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M 100 60 A 135 135 0 0 1 300 60" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+</svg>

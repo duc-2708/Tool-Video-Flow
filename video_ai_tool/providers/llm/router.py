@@ -8,9 +8,11 @@ from utils.diagnostics import Diagnostics
 
 def model_for(settings,provider,step):
     if provider=="gemini":
-        return (settings.gemini_director_model.strip() if step=="director" else "") or settings.gemini_model.strip()
+        return (settings.gemini_director_model.strip() if step in {"director","script","visual"} else "") or settings.gemini_model.strip()
     if provider=="openai":
-        return (settings.openai_director_model.strip() if step=="director" else "") or settings.openai_model.strip()
+        if step=="script" and getattr(settings,"openai_script_model",""):
+            return settings.openai_script_model.strip()
+        return (settings.openai_director_model.strip() if step in {"director","script","visual"} else "") or settings.openai_model.strip()
     return ""
 
 
@@ -20,7 +22,7 @@ def unavailable_reason(settings,provider,step):
     names=[]
     if not getattr(settings,provider+"_api_key").get_secret_value().strip(): names.append(provider.upper()+"_API_KEY")
     if not model_for(settings,provider,step):
-        names.append(provider.upper()+"_DIRECTOR_MODEL hoặc "+provider.upper()+"_MODEL" if step=="director" else provider.upper()+"_MODEL")
+        names.append(provider.upper()+"_DIRECTOR_MODEL hoặc "+provider.upper()+"_MODEL" if step in {"director","script","visual"} else provider.upper()+"_MODEL")
     if names: return f"Provider {provider} đã tắt: thiếu "+", ".join(names)+"."
     if provider=="openai" and importlib.util.find_spec("openai") is None:
         return "Provider openai đã tắt: thiếu SDK openai; cài requirements.txt."
@@ -28,22 +30,23 @@ def unavailable_reason(settings,provider,step):
 
 
 def route_ready(settings,step):
-    primary=getattr(settings,"llm_provider_"+step)
+    primary=getattr(settings,"llm_provider_"+step,"") or settings.llm_provider_director if step in {"script","visual"} else getattr(settings,"llm_provider_"+step)
     fallback=settings.llm_fallback_provider
     return not unavailable_reason(settings,primary,step) or fallback in {"gemini","openai"} and fallback!=primary and not unavailable_reason(settings,fallback,step)
 
 
 def require_route(settings,step):
     if not route_ready(settings,step):
-        raise ConfigurationError(unavailable_reason(settings,getattr(settings,"llm_provider_"+step),step)+" Kiểm tra cấu hình LLM và LLM_FALLBACK_PROVIDER.")
+        primary=getattr(settings,"llm_provider_"+step,"") or settings.llm_provider_director if step in {"script","visual"} else getattr(settings,"llm_provider_"+step)
+        raise ConfigurationError(unavailable_reason(settings,primary,step)+" Kiểm tra cấu hình LLM và LLM_FALLBACK_PROVIDER.")
 
 
 class Router(LLMClient):
     def __init__(self,settings,step,*,diagnostics=None,clients=None):
-        if step not in {"researcher","director","trend"}:
+        if step not in {"researcher","director","trend","script","visual"}:
             raise ConfigurationError("Router chỉ dành cho text Researcher/Director/Trend; Style Learner chỉ dùng Gemini.")
         self.settings,self.step=settings,step
-        self.primary=getattr(settings,"llm_provider_"+step)
+        self.primary=(getattr(settings,"llm_provider_"+step,"") or settings.llm_provider_director) if step in {"script","visual"} else getattr(settings,"llm_provider_"+step)
         self.fallback=settings.llm_fallback_provider
         self.diagnostics=diagnostics or Diagnostics(settings.logs_dir,filename="llm_errors.log",secrets=[
             settings.openai_api_key.get_secret_value(),settings.gemini_api_key.get_secret_value()])

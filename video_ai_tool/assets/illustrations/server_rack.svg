@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <rect x="80" y="50" width="240" height="300" rx="18" fill="#0a0f1d" stroke="#38bdf8" stroke-width="4"/>
+  <!-- 3 Server Units -->
+  <rect x="100" y="80" width="200" height="65" rx="10" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+  <circle cx="125" cy="112" r="7" fill="#22c55e"/>
+  <circle cx="150" cy="112" r="7" fill="#38bdf8"/>
+  <line x1="180" y1="112" x2="275" y2="112" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+
+  <rect x="100" y="165" width="200" height="65" rx="10" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+  <circle cx="125" cy="197" r="7" fill="#22c55e"/>
+  <circle cx="150" cy="197" r="7" fill="#facc15"/>
+  <line x1="180" y1="197" x2="275" y2="197" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+
+  <rect x="100" y="250" width="200" height="65" rx="10" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+  <circle cx="125" cy="282" r="7" fill="#22c55e"/>
+  <circle cx="150" cy="282" r="7" fill="#22c55e"/>
+  <line x1="180" y1="282" x2="275" y2="282" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+</svg>

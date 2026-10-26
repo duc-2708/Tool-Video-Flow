@@ -104,10 +104,33 @@ def backgrounds_for_scene(scene,project):
         if not shot or not shot.spec.visual or shot.spec.visual.template in DATA_TEMPLATES: continue
         frames=[];fps=8
         with VideoFileClip(str(clip_path),audio=False) as video:
-            for i in range(max(1,int(min(30,video.duration)*fps))):
+            # Some gateways return eight seconds for a four-second request.
+            # Preserve the original receipt/media; use only the approved span.
+            approved=float(entry.get('seconds',entry.get('request',{}).get('seconds',4)))
+            usable=min(30,video.duration,approved,shot.duration)
+            for i in range(max(1,int(usable*fps))):
                 frame=Image.fromarray(video.get_frame(i/fps));frame.thumbnail((270,480))
                 frame=ImageEnhance.Brightness(frame.filter(ImageFilter.GaussianBlur(9))).enhance(.5)
                 stream=io.BytesIO();frame.save(stream,format='JPEG',quality=60)
                 frames.append('data:image/jpeg;base64,'+base64.b64encode(stream.getvalue()).decode('ascii'))
-        result.append({'start':shot.start-scene.start,'duration':shot.duration,'frames':frames,'fps':fps})
+        result.append({'start':shot.start-scene.start,'duration':usable,'frames':frames,'fps':fps,
+            'requested_seconds':approved,'provider_duration_sec':video.duration})
     return result
+
+
+def main():
+    import argparse,json
+    from config.settings import get_settings
+    from schemas.assets import ResolvedEditPlan
+    from utils.console import configure_console
+    configure_console();parser=argparse.ArgumentParser(description='Clip AI nền có kiểm soát; không POST khi thiếu --yes.')
+    parser.add_argument('project',type=Path);parser.add_argument('--count',type=int,default=1);parser.add_argument('--yes',action='store_true')
+    args=parser.parse_args();settings=get_settings();plan=ResolvedEditPlan.model_validate_json((args.project/'edit_plan.resolved.json').read_text(encoding='utf-8'))
+    info=estimate(plan,settings,args.count);print(json.dumps(info,ensure_ascii=False),flush=True)
+    if not args.yes: return
+    result=create_backgrounds(args.project,settings,confirmed=True,count=args.count,progress=lambda value,message:print(message,flush=True))
+    write_json_atomic(args.project/'render/ai_trial.json',result)
+    print(json.dumps({'clips':len(result['clips']),'warnings':result['warnings'],'report':str(args.project/'render/ai_trial.json')},ensure_ascii=False),flush=True)
+
+
+if __name__=='__main__': main()

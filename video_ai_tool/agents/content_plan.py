@@ -40,7 +40,8 @@ def finalize_content_plan(plan,brief,*,ai_clip_limit=0,diagnostics=None):
     plan.ai_clip_limit=ai_clip_limit
     if getattr(plan,"content_mode",None)=="explainer_v2":
         from agents.explainer_visuals import build_v2_shots
-        build_v2_shots(plan,brief)
+        from agents.illustrations import illustration_diagnostics
+        with illustration_diagnostics(diagnostics): build_v2_shots(plan,brief)
         if plan.duration_sec<(plan.requested_duration_sec or plan.duration_sec)*.8:
             note="Dữ liệu sự kiện và kiến thức nền chưa đủ: giảm thời lượng thực tế; tăng nguồn hoặc chọn chủ đề khác."
             if note not in plan.review_notes: plan.review_notes.append(note)
@@ -69,7 +70,8 @@ def finalize_content_plan(plan,brief,*,ai_clip_limit=0,diagnostics=None):
                 plan.review_notes.append(f"Cảnh {scene.id}, shot {index}: clip AI tắt, dùng stock_video theo query của shot.")
     plan.review_notes=list(dict.fromkeys(plan.review_notes))
     from agents.visual_planner import assign_visuals
-    assign_visuals(plan,brief)
+    from agents.illustrations import illustration_diagnostics
+    with illustration_diagnostics(diagnostics): assign_visuals(plan,brief)
     return plan
 
 

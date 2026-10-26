@@ -5,6 +5,7 @@ import hashlib
 import io
 import json
 import math
+import re
 from pathlib import Path
 import subprocess
 from tempfile import TemporaryFile
@@ -55,6 +56,45 @@ def scene_payload(scene,size,caption_style,options=None):
             "beats":[b.model_dump(mode="json") for b in s.spec.visual.beats] if s.spec.visual else []
         } for s in scene.shots]}
     payload.update(options or {})
+    spec=getattr(scene.spec,'visual_plan',None)
+    payload['visual_plan']=None
+    if spec:
+        payload['anchor'] = {
+            'anchor_element': getattr(spec, 'anchor', None),
+            'metaphor_name': getattr(spec, 'central_metaphor', None),
+            'state': getattr(spec, 'metaphor_state', None),
+        }
+    if spec and payload.get('illustrations_enabled',False):
+        from agents.illustrations import scene_data,enough
+        from agents.visual_diversity import values_in
+        rebound=scene_data(scene.spec)
+        allowed=set(payload.get('allowed_numbers',[]))|values_in(scene.spec.narration)
+        for shot in scene.shots:
+            v=shot.spec.visual
+            if not v or v.template in {'stock','source_card'}: continue
+            date_value=bool(v.data.number_text and re.search(r'(?:ngày|tháng)\s+'+re.escape(v.data.number_text.strip())+r'\b',scene.spec.narration,re.I))
+            if rebound.value is None and v.data.value is not None and not date_value and values_in(str(v.data.value))<=allowed:
+                rebound.value=v.data.value;rebound.unit=v.data.unit;rebound.number_text=v.data.number_text;rebound.label=v.data.label or v.data.text
+            if len(v.data.bars)>=2 and all(values_in(str(b.value))<=allowed for b in v.data.bars): rebound.bars=v.data.bars[:]
+        if rebound.value is None:
+            from agents.illustrations import spoken_stat
+            if found:=spoken_stat(scene.spec.narration,payload.get('allowed_numbers',[])):
+                rebound.value,rebound.unit,rebound.number_text=found
+                rebound.label=next((x for x in rebound.items if re.search(r'năng suất|tỷ lệ|doanh thu|chi phí|quy mô',x,re.I)),rebound.items[0] if rebound.items else rebound.text)
+                rebound.source=next(iter(payload.get('source_labels',[])),rebound.source)
+        if enough(spec.scene_type,rebound):
+            resolved=spec.model_copy(update={'data':rebound})
+            from agents.motion_beats import shot_beats
+            from schemas.visual import Visual
+            dummy=scene.shots[0].spec.model_copy(deep=True)
+            dummy.visual=Visual(template='steps_list',data=rebound);dummy.card_text=rebound.text
+            if getattr(spec, 'beats', None):
+                beats=[b.model_dump(mode='json') for b in spec.beats]
+            else:
+                beats,_=shot_beats(dummy,words,0.,scene.duration,purpose=scene.spec.role)
+            annots = getattr(spec, 'annotations', [])
+            payload['visual_plan']={**resolved.model_dump(mode='json'),'beats':beats,'annotations':annots}
+        else: payload['illustration_fallback']='Dữ liệu cảnh thiếu: dùng text_focus, không bịa phần còn thiếu.'
     from utils.caption_timing import display_words
     payload['caption_words']=[{'text':text,'start':start,'end':end} for text,start,end in
         display_words([(w['text'],w['start'],w['end']) for w in words],scene.duration)]
@@ -65,9 +105,11 @@ def scene_payload(scene,size,caption_style,options=None):
     for shot in payload['shots']:
         shot['icon_name'],shot['icon_uri']=icon_for(root,str(shot['data'].get('text',''))+' '+scene.spec.narration)
     from agents.presentation import card_phrase,vietnamese_terms
-    notes=[]
+    notes=list(getattr(spec,'repair_notes',[]))
     for shot,spec in zip(payload["shots"],scene.shots):
         data=shot["data"];name=shot["template"]
+        if payload.get('illustration_fallback') and name not in {'source_card','stock'}:
+            shot['template']='text_focus';name='text_focus';data['value']=None;data['bars']=[]
         if name not in {"stock","source_card"}:
             data["text"]=card_phrase(getattr(spec.spec,"card_text",None) or data.get("text") or data.get("label"),scene.spec.narration)
             data["highlight"]=getattr(spec.spec,"emphasis",[]) or data.get("highlight",[])
@@ -89,6 +131,8 @@ def scene_payload(scene,size,caption_style,options=None):
             if not 3<=len(raw.split())<=6: shot["template"]="text_focus";notes.append("motion_data nhóm 2: quote không phải cụm 3–6 từ; dùng thẻ ý chính, không dựng trích dẫn giả.")
             else: data["text"]=raw
     payload["repair_notes"]=notes
+    from utils.caption_timing import phrase_groups
+    payload['caption_groups']=[[{'text':s,'start':a,'end':b} for s,a,b in group] for group in phrase_groups([(w['text'],w['start'],w['end']) for w in payload['caption_words']])]
     return payload
 
 
@@ -101,7 +145,17 @@ def html_document(payload,font):
     css+=f'#stage{{background-image:url("{bg}");background-size:100% 100%}}.orb{{background-image:url("{orb}");background-size:100% 100%}}.bar-fill{{background:var(--accent)}}'
     data=json.dumps(payload,ensure_ascii=True).replace("<","\\u003c").replace(">","\\u003e").replace("&","\\u0026")
     js=(MOTION_DIR/"runtime.js").read_text(encoding="utf-8")
-    return '<!doctype html><meta charset="utf-8"><style>'+css+'</style><div id="stage"></div><script>window.MOTION_DATA='+data+';</script><script>'+js+'</script>'
+    from editor.motion.scenes import bundle
+    scene_css,scene_js,_=bundle()
+    themes_css = (MOTION_DIR/"themes/themes.css").read_text(encoding="utf-8") if (MOTION_DIR/"themes/themes.css").is_file() else ""
+    try:
+        from editor.motion.engine import bundle_engine
+        engine_css, engine_js, _ = bundle_engine()
+    except Exception:
+        engine_css, engine_js = "", ""
+    css+='\n'+scene_css+'\n'+themes_css+'\n'+engine_css;js=engine_js+'\n'+scene_js+'\n'+js
+    t_name = str(theme.get('name', 'studio'))
+    return f'<!doctype html><meta charset="utf-8"><style>{css}</style><div id="stage" class="theme-{t_name}"></div><script>window.MOTION_DATA={data};</script><script>{js}</script>'
 
 
 @contextmanager
@@ -154,7 +208,12 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
         MOTION_DIR.parents[1]/"editor/captions.py",MOTION_DIR.parents[1]/"editor/graphics.py",
         MOTION_DIR.parents[1]/"agents/presentation.py",MOTION_DIR/"theme.py",
         MOTION_DIR.parents[1]/"agents/motion_beats.py",Path(font)]
-    identity={"payload":payload,"fps":fps,"sources":sources,"extra":extra_identity,
+    from editor.motion.scenes import bundle
+    from editor.motion.engine import bundle_engine
+    _,_,scene_digest=bundle()
+    _,_,engine_digest=bundle_engine()
+    identity={"payload":payload,"fps":fps,"sources":sources,"extra":extra_identity,'scene_engine':scene_digest,
+        'engine_motion':engine_digest,
         "engine":hashlib.sha256(b"".join(p.read_bytes() for p in dependencies)).hexdigest()}
     key=cache_key(identity);folder=Path(cache_dir);destination=folder/(key+".mp4");meta=folder/(key+".json")
     started=time.perf_counter();notify=progress or (lambda value,message:None)
@@ -169,7 +228,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                     notify(1.,f"Motion cảnh {scene.spec.id}: dùng cache")
                     return dict(record,path=str(destination),cache_hit=True,render_seconds=0.)
             temporary=folder/(uuid4().hex+".tmp.mp4")
-            count=max(1,math.ceil(scene.duration*fps));last=0.
+            count=max(1,math.ceil(scene.duration*fps));last=0.;illustrated_frames=0;moving_counts=[];subtitle_start=None;subtitle_only=[]
             with browser_page(size) as page, TemporaryFile() as errors:
                 capture(page,payload,font)
                 process=subprocess.Popen([get_ffmpeg_exe(),"-hide_banner","-loglevel","error","-y",
@@ -181,7 +240,13 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                         t=min(i/fps,scene.duration-1e-6)
                         shot=next((s for s in payload["shots"] if s["start"]<=t<s["start"]+s["duration"]),payload["shots"][-1])
                         if shot["template"] in SUPPORTED:
-                            page.evaluate("t => window.renderAt(t)",t)
+                            state=page.evaluate("t => window.renderAt(t)",t) or {}
+                            if state.get('illustrated'):
+                                illustrated_frames+=1;moving_counts.append(state.get('moving_elements',0))
+                            if state.get('subtitle_only') and subtitle_start is None: subtitle_start=t
+                            if not state.get('subtitle_only') and subtitle_start is not None:
+                                if t-subtitle_start>2: subtitle_only.append({'start':subtitle_start,'end':t})
+                                subtitle_start=None
                             frame=page.screenshot(type="jpeg",quality=92,animations="disabled",caret="hide",timeout=15000)
                         elif static_frame:
                             buf=io.BytesIO();Image.fromarray(static_frame(t)).save(buf,format="JPEG",quality=92);frame=buf.getvalue()
@@ -214,9 +279,11 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                 review_path=folder/(key+".review.png")
                 page.screenshot(path=str(review_path),type="png")
             replace_file_retry(temporary,destination)
+            if subtitle_start is not None and scene.duration-subtitle_start>2: subtitle_only.append({'start':subtitle_start,'end':scene.duration})
             result={"path":str(destination),"cache_hit":False,"scene_id":scene.spec.id,"width":size[0],"height":size[1],
                 "fps":fps,"duration_sec":scene.duration,"render_seconds":round(time.perf_counter()-started,3),
                 "size_bytes":destination.stat().st_size,"sha256":hashlib.sha256(destination.read_bytes()).hexdigest(),"timing_source":payload["timing_source"],
+                'illustration':{'scene_type':(payload.get('visual_plan') or {}).get('scene_type','text_focus'),'coverage_sec':min(scene.duration,illustrated_frames/fps),'moving_elements_min':min(moving_counts,default=0),'subtitle_only_intervals':subtitle_only},
                 "quality":quality,"repair_notes":payload["repair_notes"]+["motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."],"review_frame":str(review_path)}
             write_json_atomic(meta,result)
             return result

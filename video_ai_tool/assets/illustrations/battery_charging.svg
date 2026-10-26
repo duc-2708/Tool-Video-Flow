@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- Battery Casing -->
+  <rect x="100" y="100" width="200" height="240" rx="28" fill="#0f172a" stroke="#334155" stroke-width="6"/>
+  <rect x="160" y="65" width="80" height="35" rx="10" fill="#334155"/>
+  <!-- Energy Fill -->
+  <rect id="battery-fill" x="115" y="160" width="170" height="165" rx="18" fill="#22c55e"/>
+  <!-- Lightning Bolt -->
+  <polygon points="215,130 175,220 205,220 185,290 235,200 205,200" fill="#ffffff"/>
+</svg>

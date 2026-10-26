@@ -4,3 +4,6 @@ themes:
   cong-nghe: {top: '#111932', bottom: '#080b18', card: '#18213e', foreground: '#f4f7ff', accent: '#66dfff', secondary: '#c49aff'}
   tin-tuc: {top: '#102039', bottom: '#080e1b', card: '#192e48', foreground: '#ffffff', accent: '#ffd052', secondary: '#75b9f4'}
   kinh-doanh: {top: '#102a2c', bottom: '#091417', card: '#173338', foreground: '#ffffff', accent: '#8be3be', secondary: '#ffd983'}
+  neon_dark: {top: '#0a0e1c', bottom: '#05070f', card: '#12192e', foreground: '#f4f7ff', accent: '#00f0ff', secondary: '#ff007f'}
+  paper_brand: {top: '#f8f6f0', bottom: '#ede8dd', card: '#ffffff', foreground: '#1d2129', accent: '#5e35b1', secondary: '#00695c'}
+  whiteboard_sketch: {top: '#f9f9fa', bottom: '#ededf0', card: '#ffffff', foreground: '#1a1a1a', accent: '#c62828', secondary: '#1565c0'}
