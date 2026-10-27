@@ -1,0 +1,283 @@
+version: 1
+seed: 42
+total_cases: 46
+historical_cases:
+- id: trai_sentence_start
+  category: entity
+  text: Trải nghiệm mới giúp người dùng hiểu rõ hơn về hệ thống AI.
+  expect_entity_detected: false
+  description: Từ Trải đầu câu không được xem là thực thể/tên riêng
+- id: nhieu_sentence_start
+  category: entity
+  text: Nhiều người dùng muốn tìm hiểu thêm về bản cập nhật.
+  expect_entity_detected: false
+  description: Từ Nhiều đầu câu không được xem là thực thể/tên riêng
+- id: cambridge_order_variation
+  category: entity_match
+  candidate: Cambridge Analytica Vụ
+  target: Vụ Cambridge Analytica
+  expect_match: true
+  description: Đảo thứ tự từ Vụ và tên riêng vẫn khớp thực thể cốt lõi
+- id: number_percent_compatible
+  category: number_match
+  candidate: '51.8'
+  target: 51.8%
+  expect_match: true
+  description: 51.8 và 51.8% khớp nhau theo giá trị và đơn vị tương thích
+- id: magnitude_ty_billion
+  category: number_match
+  candidate: 25 tỷ
+  target: 25 billion
+  expect_match: true
+  description: 25 tỷ khớp 25 billion sau quy đổi hệ số
+- id: magnitude_ty_numeric
+  category: number_match
+  candidate: 25 tỷ
+  target: '25000000000'
+  expect_match: true
+  description: 25 tỷ khớp 25000000000
+- id: spoken_vietnamese_24
+  category: number_match
+  candidate: hai mươi bốn
+  target: '24'
+  expect_match: true
+  description: Đọc số bằng chữ tiếng Việt hai mươi bốn khớp 24
+- id: date_token_month_year
+  category: date_token
+  text: tháng 1 năm 2026 tại Việt Nam
+  forbidden_number: '12026'
+  expected_numbers:
+  - '1'
+  - '2026'
+  description: Token ngày tháng 1 năm 2026 không bị dính thành 12026
+- id: leaked_channel_caught
+  category: source_leak
+  text: Theo ghi nhận của Tin tức 24h, sự việc diễn ra vào hôm qua.
+  channel_name: Tin tức 24h
+  allowed_sources:
+  - The Guardian
+  - VnExpress
+  expect_leaked: true
+  description: Tên kênh rò rỉ Tin tức 24h vẫn phải bị bắt đúng
+- id: cta_with_assertion
+  category: cta_classification
+  text: Luật sở hữu trí tuệ chính thức có hiệu lực từ tháng 4 năm 2026 tại Việt Nam.
+  expect_assertion: true
+  description: CTA chứa khẳng định sự kiện phải được nhận diện là assertion
+- id: visual_number_without_spoken
+  category: visual_grounding_repair
+  visual_number: '51.8'
+  fact_number: 51.8%
+  expect_repair_to: 51.8%
+  description: Số 51.8 trong đồ họa tự sửa thành 51.8% khớp fact
+random_cases:
+- id: random_thousand_sep_1
+  category: number_match
+  candidate: '664.000'
+  target: 664,000
+  expect_match: true
+  description: 'Phân cách nghìn: 664.000 vs 664,000'
+- id: random_magnitude_2
+  category: number_match
+  candidate: 15k
+  target: '15000'
+  expect_match: true
+  description: 'Quy đổi hệ số: 15k vs 15000'
+- id: random_spoken_vi_3
+  category: number_match
+  candidate: một trăm
+  target: '100'
+  expect_match: true
+  description: 'Đọc số tiếng Việt: một trăm -> 100'
+- id: random_tolerance_4
+  category: number_match
+  candidate: '381'
+  target: '382.90'
+  expect_match: true
+  description: 'Dung sai trong 1%: 381 vs 382.90'
+- id: random_comma_dot_5
+  category: number_match
+  candidate: 25,2$
+  target: 25.2 USD
+  expect_match: true
+  description: 'Thử nghiệm dấu phẩy/chấm ngẫu nhiên: 25,2$ vs 25.2 USD'
+- id: random_thousand_sep_6
+  category: number_match
+  candidate: '764.000'
+  target: 764,000
+  expect_match: true
+  description: 'Phân cách nghìn: 764.000 vs 764,000'
+- id: random_magnitude_7
+  category: number_match
+  candidate: 14B
+  target: '14000000000'
+  expect_match: true
+  description: 'Quy đổi hệ số: 14B vs 14000000000'
+- id: random_spoken_vi_8
+  category: number_match
+  candidate: một trăm
+  target: '100'
+  expect_match: true
+  description: 'Đọc số tiếng Việt: một trăm -> 100'
+- id: random_tolerance_9
+  category: number_match
+  candidate: '658'
+  target: '661.29'
+  expect_match: true
+  description: 'Dung sai trong 1%: 658 vs 661.29'
+- id: random_comma_dot_10
+  category: number_match
+  candidate: 9,6M
+  target: 9.6 triệu
+  expect_match: true
+  description: 'Thử nghiệm dấu phẩy/chấm ngẫu nhiên: 9,6M vs 9.6 triệu'
+- id: random_thousand_sep_11
+  category: number_match
+  candidate: '42.000'
+  target: 42,000
+  expect_match: true
+  description: 'Phân cách nghìn: 42.000 vs 42,000'
+- id: random_magnitude_12
+  category: number_match
+  candidate: 4k
+  target: '4000'
+  expect_match: true
+  description: 'Quy đổi hệ số: 4k vs 4000'
+- id: random_spoken_vi_13
+  category: number_match
+  candidate: mười
+  target: '10'
+  expect_match: true
+  description: 'Đọc số tiếng Việt: mười -> 10'
+- id: random_tolerance_14
+  category: number_match
+  candidate: '338'
+  target: '339.69'
+  expect_match: true
+  description: 'Dung sai trong 1%: 338 vs 339.69'
+- id: random_comma_dot_15
+  category: number_match
+  candidate: 51,0%
+  target: 51.0 %
+  expect_match: true
+  description: 'Thử nghiệm dấu phẩy/chấm ngẫu nhiên: 51,0% vs 51.0 %'
+- id: random_thousand_sep_16
+  category: number_match
+  candidate: '584.000'
+  target: 584,000
+  expect_match: true
+  description: 'Phân cách nghìn: 584.000 vs 584,000'
+- id: random_magnitude_17
+  category: number_match
+  candidate: 26B
+  target: '26000000000'
+  expect_match: true
+  description: 'Quy đổi hệ số: 26B vs 26000000000'
+- id: random_spoken_vi_18
+  category: number_match
+  candidate: một trăm
+  target: '100'
+  expect_match: true
+  description: 'Đọc số tiếng Việt: một trăm -> 100'
+- id: random_tolerance_19
+  category: number_match
+  candidate: '818'
+  target: '822.09'
+  expect_match: true
+  description: 'Dung sai trong 1%: 818 vs 822.09'
+- id: random_comma_dot_20
+  category: number_match
+  candidate: 54,9$
+  target: 54.9 đô la
+  expect_match: true
+  description: 'Thử nghiệm dấu phẩy/chấm ngẫu nhiên: 54,9$ vs 54.9 đô la'
+- id: random_thousand_sep_21
+  category: number_match
+  candidate: '469.000'
+  target: 469,000
+  expect_match: true
+  description: 'Phân cách nghìn: 469.000 vs 469,000'
+- id: random_magnitude_22
+  category: number_match
+  candidate: 76M
+  target: '76000000'
+  expect_match: true
+  description: 'Quy đổi hệ số: 76M vs 76000000'
+- id: random_spoken_vi_23
+  category: number_match
+  candidate: năm
+  target: '5'
+  expect_match: true
+  description: 'Đọc số tiếng Việt: năm -> 5'
+- id: random_tolerance_24
+  category: number_match
+  candidate: '877'
+  target: '881.38'
+  expect_match: true
+  description: 'Dung sai trong 1%: 877 vs 881.38'
+- id: random_comma_dot_25
+  category: number_match
+  candidate: 80,7đ
+  target: 80.7 đồng
+  expect_match: true
+  description: 'Thử nghiệm dấu phẩy/chấm ngẫu nhiên: 80,7đ vs 80.7 đồng'
+- id: random_thousand_sep_26
+  category: number_match
+  candidate: '442.000'
+  target: 442,000
+  expect_match: true
+  description: 'Phân cách nghìn: 442.000 vs 442,000'
+- id: random_magnitude_27
+  category: number_match
+  candidate: 44M
+  target: '44000000'
+  expect_match: true
+  description: 'Quy đổi hệ số: 44M vs 44000000'
+- id: random_spoken_vi_28
+  category: number_match
+  candidate: mười
+  target: '10'
+  expect_match: true
+  description: 'Đọc số tiếng Việt: mười -> 10'
+- id: random_tolerance_29
+  category: number_match
+  candidate: '320'
+  target: '321.60'
+  expect_match: true
+  description: 'Dung sai trong 1%: 320 vs 321.60'
+- id: random_comma_dot_30
+  category: number_match
+  candidate: 95,7k
+  target: 95.7 ngàn
+  expect_match: true
+  description: 'Thử nghiệm dấu phẩy/chấm ngẫu nhiên: 95,7k vs 95.7 ngàn'
+- id: random_thousand_sep_31
+  category: number_match
+  candidate: '114.000'
+  target: 114,000
+  expect_match: true
+  description: 'Phân cách nghìn: 114.000 vs 114,000'
+- id: random_magnitude_32
+  category: number_match
+  candidate: 12M
+  target: '12000000'
+  expect_match: true
+  description: 'Quy đổi hệ số: 12M vs 12000000'
+- id: random_spoken_vi_33
+  category: number_match
+  candidate: năm
+  target: '5'
+  expect_match: true
+  description: 'Đọc số tiếng Việt: năm -> 5'
+- id: random_tolerance_34
+  category: number_match
+  candidate: '467'
+  target: '469.33'
+  expect_match: true
+  description: 'Dung sai trong 1%: 467 vs 469.33'
+- id: random_comma_dot_35
+  category: number_match
+  candidate: 84,8B
+  target: 84.8 billion
+  expect_match: true
+  description: 'Thử nghiệm dấu phẩy/chấm ngẫu nhiên: 84,8B vs 84.8 billion'

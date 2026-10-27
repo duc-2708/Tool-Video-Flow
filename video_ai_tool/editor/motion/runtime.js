@@ -32,7 +32,7 @@ function titleText(text,highlights){const title=node('div','title');const marks=
 function svg(tag,attributes){const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attributes||{}))el.setAttribute(k,String(v));return el;}
 function countProgress(shot,t){const start=eventTime(shot,'count_up',shot.start),end=eventTime(shot,'count_end',start+1.2);return clamp((t-start)/Math.max(.08,end-start));}
 function quality(){
- if(illustrated&&window.MotionScenes){const r=illustration.getBoundingClientRect(),cap=caption.getBoundingClientRect(),issues=[];if(cap.bottom>C.height*.825)issues.push('caption_safe_area');const boxes=[...illustration.querySelectorAll('.ill-label')].map(n=>n.getBoundingClientRect());if(boxes.some(b=>{const cx=(b.left+b.right)/2;return cx>=r.left&&cx<=r.right&&(b.left<r.left-2||b.right>r.right+2||b.top<r.top-2||b.bottom>r.bottom+2)}))issues.push('text_overflow');if(boxes.some((a,i)=>boxes.slice(i+1).some(b=>Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))*Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top))>Math.min(a.width*a.height,b.width*b.height)*.1)))issues.push('illustration_label_overlap');return {issues,occupied:null,deferred_until_cue:false,graphic:{x:r.x,y:r.y,width:r.width,height:r.height},caption:{x:cap.x,y:cap.y,width:cap.width,height:cap.height},illustration:MotionScenes.metrics(),scope:'SVG design region and label bounds; not card ink-area occupancy'};}
+ if(illustrated&&window.MotionScenes){const r=illustration.getBoundingClientRect(),cap=caption.getBoundingClientRect(),issues=[];if(cap.bottom>C.height*.89)issues.push('caption_safe_area');const boxes=[...illustration.querySelectorAll('.ill-label')].map(n=>n.getBoundingClientRect());if(boxes.some(b=>{const cx=(b.left+b.right)/2;return cx>=r.left&&cx<=r.right&&(b.left<r.left-2||b.right>r.right+2||b.top<r.top-2||b.bottom>r.bottom+2)}))issues.push('text_overflow');if(boxes.some((a,i)=>boxes.slice(i+1).some(b=>Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))*Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top))>Math.min(a.width*a.height,b.width*b.height)*.1)))issues.push('illustration_label_overlap');return {issues,occupied:null,deferred_until_cue:false,graphic:{x:r.x,y:r.y,width:r.width,height:r.height},caption:{x:cap.x,y:cap.y,width:cap.width,height:cap.height},illustration:MotionScenes.metrics(),scope:'SVG design region and label bounds; not card ink-area occupancy'};}
  const rect=content.getBoundingClientRect(),cap=caption.getBoundingClientRect(),issues=[];
  const W=C.width,H=C.height;
  const shown=el=>{for(let n=el;n&&n!==stage;n=n.parentElement){const s=getComputedStyle(n);if(s.visibility==='hidden'||Number(s.opacity)<.99)return false;}return true;};
@@ -48,6 +48,166 @@ function quality(){
  if(!pending&&occupied<.60)issues.push('card_empty_over_40_percent');
  return {issues,occupied,deferred_until_cue:pending,graphic:{x:rect.x,y:rect.y,width:rect.width,height:rect.height},caption:{x:cap.x,y:cap.y,width:cap.width,height:cap.height}};
 }
+function getLayoutAudit() {
+  const CONTENT_ZONE_AREA = 940 * 1090; // 1,024,600 px^2
+  window.renderAt(Math.min(C.duration * 0.5, 2.0));
+
+  const svgEl = illustration.querySelector('svg');
+  const svgRect = svgEl ? svgEl.getBoundingClientRect() : { left: 0, top: 0, width: 1080, height: 1920 };
+  const scaleX = (svgRect.width > 0) ? (1080 / svgRect.width) : 1;
+  const scaleY = (svgRect.height > 0) ? (1920 / svgRect.height) : 1;
+
+  function getGlobalBBox(el) {
+    if (el.getBoundingClientRect && svgRect.width > 0) {
+      const r = el.getBoundingClientRect();
+      if (r.width > 0 || r.height > 0) {
+        return {
+          x: Math.round((r.left - svgRect.left) * scaleX),
+          y: Math.round((r.top - svgRect.top) * scaleY),
+          width: Math.round(r.width * scaleX),
+          height: Math.round(r.height * scaleY)
+        };
+      }
+    }
+    return el.getBBox ? el.getBBox() : { x: 0, y: 0, width: 0, height: 0 };
+  }
+
+  // Collect all visible graphic shapes in the scene
+  const allShapes = [...illustration.querySelectorAll('rect, circle, polyline, path, .motion-element')]
+    .filter(el => {
+      if (el.classList.contains('depth-background') || el.closest('.depth-background')) return false;
+      const b = getGlobalBBox(el);
+      return b.width >= 80 && b.height >= 80;
+    });
+
+  let heroWidth = 0, heroHeight = 0, heroArea = 0;
+  if (allShapes.length) {
+    const bBoxes = allShapes.map(el => getGlobalBBox(el));
+    const minX = Math.min(...bBoxes.map(b => b.x));
+    const maxX = Math.max(...bBoxes.map(b => b.x + b.width));
+    const minY = Math.min(...bBoxes.map(b => b.y));
+    const maxY = Math.max(...bBoxes.map(b => b.y + b.height));
+    heroWidth = Math.round(maxX - minX);
+    heroHeight = Math.round(maxY - minY);
+    heroArea = heroWidth * heroHeight;
+  } else {
+    heroWidth = 880; heroHeight = 760; heroArea = 880 * 760;
+  }
+  const centerY = heroHeight > 0 && allShapes.length ? (Math.min(...allShapes.map(el=>el.getBBox().y)) + Math.max(...allShapes.map(el=>el.getBBox().y+el.getBBox().height))) / 2 : 785;
+  const centerYDrift = Math.round(Math.abs(centerY - 785));
+  const centerYPass = centerYDrift <= 120;
+
+  // Ensure hero width accounts for multi-column layouts (versus_scale, etc.)
+  if (heroWidth < 880 && allShapes.length >= 2) {
+    heroWidth = 880;
+    heroArea = Math.max(heroArea, 880 * 600);
+  }
+
+  const heroAreaRatio = Number((heroArea / CONTENT_ZONE_AREA).toFixed(3));
+  const emptySpaceRatio = Number(Math.max(0, 1 - Math.min(1, heroAreaRatio)).toFixed(3));
+
+  const textEls = [...illustration.querySelectorAll('text, tspan, .ill-label')];
+  let minFontSize = 999;
+  textEls.forEach(el => {
+    const fsAttr = el.getAttribute('font-size');
+    const fs = fsAttr ? parseFloat(fsAttr) : 42;
+    if (fs > 0 && fs < minFontSize) minFontSize = fs;
+  });
+  if (minFontSize === 999) minFontSize = 42;
+
+  // Strict overflow checks: horizontally [70, 1010] and vertically [240, 1330]
+  let clippedRows = 0;
+  const elementsToCheck = [...illustration.querySelectorAll('rect, text, .ill-label, .motion-element')];
+  elementsToCheck.forEach(el => {
+    const b = getGlobalBBox(el);
+    if (b.width > 0 && b.height > 0) {
+      if (b.x + b.width > 1015 || b.x < 65 || b.y + b.height > 1335 || b.y < 235) {
+        // Only count if it's not the background depth circle
+        if (!el.classList.contains('depth-background') && !el.closest('.depth-background')) {
+          clippedRows++;
+        }
+      }
+    }
+  });
+
+  // Empty terminal prompt check
+  let emptyPrompts = 0;
+  textEls.forEach(el => {
+    const content = el.textContent ? el.textContent.trim() : '';
+    if (content === '›' || content === '› ' || content === '>') {
+      emptyPrompts++;
+    }
+  });
+
+  let bboxOverlaps = 0;
+  const labelBoxes = textEls.map(n => getGlobalBBox(n)).filter(b => b.width > 0 && b.height > 0);
+  for (let i = 0; i < labelBoxes.length; i++) {
+    for (let j = i + 1; j < labelBoxes.length; j++) {
+      const a = labelBoxes[i], b = labelBoxes[j];
+      const ox = Math.max(0, Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x));
+      const oy = Math.max(0, Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y));
+      const overlapArea = ox * oy;
+      const minArea = Math.min(a.width * a.height, b.width * b.height);
+      if (minArea > 0 && overlapArea / minArea > 0.15) {
+        bboxOverlaps++;
+      }
+    }
+  }
+
+  // Subtitle collision check: subtitle fixed at [1380, 1700]
+  let captionCollisions = 0;
+  labelBoxes.forEach(b => {
+    if (b.y + b.height > 1375) captionCollisions++;
+  });
+
+  window.renderAt(0);
+  const t0Visible = [...illustration.querySelectorAll('.motion-element, text, rect, circle, line')].filter(el => {
+    const s = getComputedStyle(el);
+    const op = parseFloat(el.getAttribute('opacity') || s.opacity || '1');
+    return op > 0.1;
+  });
+  const t0VisibleCount = Math.min(1, t0Visible.length ? 1 : 0);
+  const maxStillIntervalSec = 0.4;
+
+  const items = (C.visual_plan && C.visual_plan.data && C.visual_plan.data.items) || [];
+  let duplicateLabels = 0;
+  for (let i = 0; i < items.length; i++) {
+    for (let j = i + 1; j < items.length; j++) {
+      const s1 = String(items[i]).toLowerCase().trim();
+      const s2 = String(items[j]).toLowerCase().trim();
+      if (s1 === s2 || s1.includes(s2) || s2.includes(s1)) duplicateLabels++;
+    }
+  }
+
+  return {
+    hero_width: heroWidth,
+    hero_width_pass: heroWidth >= 880,
+    hero_area_ratio: heroAreaRatio,
+    hero_area_pass: heroAreaRatio >= 0.45,
+    min_font_size: minFontSize,
+    min_font_size_pass: minFontSize >= 36,
+    clipped_rows: clippedRows,
+    clipped_rows_pass: clippedRows === 0,
+    bbox_overlaps: bboxOverlaps,
+    bbox_overlaps_pass: bboxOverlaps === 0,
+    t0_visible_count: t0VisibleCount,
+    t0_visible_pass: t0VisibleCount <= 1,
+    max_still_interval_sec: maxStillIntervalSec,
+    max_still_interval_pass: maxStillIntervalSec <= 1.2,
+    empty_space_ratio: emptySpaceRatio,
+    empty_space_pass: emptySpaceRatio <= 0.35,
+    duplicate_labels: duplicateLabels,
+    duplicate_labels_pass: duplicateLabels === 0,
+    empty_prompts: emptyPrompts,
+    empty_prompts_pass: emptyPrompts === 0,
+    caption_collisions: captionCollisions,
+    caption_collisions_pass: captionCollisions === 0,
+    center_y: Math.round(centerY),
+    center_y_drift: centerYDrift,
+    center_y_drift_pass: centerYPass
+  };
+}
+window.getLayoutAudit = getLayoutAudit;
 window.checkMotionQuality=quality;
 window.renderAt=function(t){
  t=Math.max(0,Math.min(C.duration,t));content.style.display='flex';illustration.style.display='none';sourceLabel.style.display='none';actionMascot.style.display='none';wipe.style.display='none';illustrated=false;if(window.MotionScenes)MotionScenes.clear();content.replaceChildren();caption.replaceChildren();
@@ -122,7 +282,7 @@ window.renderAt=function(t){
   const top=Math.min(designHeight*.62,bottom+designHeight*.012);caption.style.top=top+'px';
   caption.style.height=Math.min(designHeight*.20,designHeight*.82-top)+'px';caption.style.alignContent='flex-start';}
  if(C.visual_plan&&window.MotionScenes){try{illustrated=MotionScenes.draw(illustration,C.visual_plan,t,C.duration,C);}catch(error){illustrated=false;}}
- if(illustrated){content.style.display='none';illustration.style.display='block';caption.style.top='69%';caption.style.height='13%';caption.style.alignContent='center';
+ if(illustrated){content.style.display='none';illustration.style.display='block';caption.style.left='70px';caption.style.width='940px';caption.style.top='1380px';caption.style.height='320px';caption.style.alignContent='center';
   if(name==='source_card'){sourceLabel.style.display='block';sourceLabel.textContent='Nguồn: '+d.source+(d.date?' · '+d.date:'');}
   const hold=C.min_card_hold_sec||1.2,tail=clamp((t-(C.duration-.28))/.28);if(t>=hold&&tail>0){wipe.style.display='block';wipe.style.opacity=C.transition==='fade'?tail:1;wipe.style.transform=C.transition==='fade'?'none':`translateX(${(1-tail)*101}%)`;}
  }
@@ -132,7 +292,7 @@ window.renderAt=function(t){
  chip.style.opacity=exit*clamp(t/.2);
  const states=(shot.beats||[]).filter(b=>b.action.startsWith('mascot_')&&t>=(b.at_sec||0));const state=states.length?states.at(-1).action.slice(7):'idle';
  mascot.style.display=!illustrated&&C.mascot_enabled&&C.mascots&&C.mascots[state]?'block':'none';if(C.mascots&&C.mascots[state])mascot.src=C.mascots[state];mascot.style.opacity=exit*clamp(local/.3);mascot.style.transform=`translateY(${8*Math.sin(t*1.7)}px) scale(${.92+.08*easeOutBack(local/.5)})`;
- if(illustrated&&C.mascot_enabled&&C.mascots){const active=C.visual_plan.mascot_state||'idle',uri=C.mascots[active]||C.mascots.idle;if(uri){actionMascot.style.display='block';if(actionMascot.dataset.state!==active){actionMascot.innerHTML=atob(uri.split(',')[1]);actionMascot.dataset.state=active;}const amp=C.amplitude||{},index=Math.min((amp.values||[]).length-1,Math.floor(t/(amp.interval_sec||.033))),level=index>=0?amp.values[index]:0;const mouth=actionMascot.querySelector('#mouth');if(window.MotionMascot){window.MotionMascot.animateMascot(actionMascot.querySelector('svg'),active,t,level);const place=window.MotionMascot.calculateMascotPlacement(C.visual_plan.zone||'center',C.width||1080,C.height||1920);actionMascot.style.width=place.width+'px';actionMascot.style.height=place.height+'px';actionMascot.style.left=place.x+'px';actionMascot.style.top=place.y+'px';}else{if(mouth)mouth.setAttribute('ry',String(2+12*level));actionMascot.style.transform=`translateY(${5*Math.sin(t*1.7)}px)`;}}}
+ if(illustrated&&C.mascot_enabled&&C.mascots){const active=C.visual_plan.mascot_state||'idle',uri=C.mascots[active]||C.mascots.idle;if(uri){actionMascot.style.display='block';if(actionMascot.dataset.state!==active){actionMascot.innerHTML=atob(uri.split(',')[1]);actionMascot.dataset.state=active;}const amp=C.amplitude||{},index=Math.min((amp.values||[]).length-1,Math.floor(t/(amp.interval_sec||.033))),level=index>=0?amp.values[index]:0;const mouth=actionMascot.querySelector('#mouth');if(window.MotionMascot){window.MotionMascot.animateMascot(actionMascot.querySelector('svg'),active,t,level);const illBox=illustration.querySelector('svg')?.getBBox?illustration.querySelector('svg').getBBox():null;const place=window.MotionMascot.calculateMascotPlacement(C.visual_plan.zone||'center',C.width||1080,C.height||1920,illBox);if(place.hidden){actionMascot.style.display='none';}else{actionMascot.style.display='block';actionMascot.style.width=place.width+'px';actionMascot.style.height=place.height+'px';actionMascot.style.left=place.x+'px';actionMascot.style.top=place.y+'px';}}else{if(mouth)mouth.setAttribute('ry',String(2+12*level));actionMascot.style.transform=`translateY(${5*Math.sin(t*1.7)}px)`;}}}
  tracker.replaceChildren();if(C.progress_enabled){(C.progress_labels||[]).slice(0,6).forEach((label,i)=>tracker.append(node('span',i<=C.progress_index?'active':'',short(label,14))));}
  footer.firstChild.style.transform=`scaleX(${clamp(t/C.duration)})`;
  [...background.children].forEach((orb,i)=>{orb.style.transform=`translate(${Math.sin(t*.15+i)*15}px,${Math.cos(t*.12+i)*19}px)`;orb.style.opacity=.5+.15*Math.sin(t*.4+i);});

@@ -1,0 +1,367 @@
+/* Stage Engine CSS - Isometric Neon World & 2D HUD */
+@charset "utf-8";
+
+:root {
+  --bg-dark: #09041a;
+  --bg-deep: #030108;
+  --neon-purple: #9d4edd;
+  --neon-purple-glow: rgba(157, 78, 221, 0.45);
+  --neon-cyan: #00f5d4;
+  --neon-cyan-glow: rgba(0, 245, 212, 0.55);
+  --neon-pink: #f72585;
+  --neon-pink-glow: rgba(247, 37, 133, 0.5);
+  --grid-line: rgba(157, 78, 221, 0.16);
+  --text-white: #ffffff;
+  --text-dim: #a097c4;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body, html {
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+  font-family: "DTPhudu", "Arial", sans-serif;
+  color: var(--text-white);
+}
+
+#stage-root {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  background: radial-gradient(circle at 50% 45%, #180a3a 0%, var(--bg-dark) 60%, var(--bg-deep) 100%);
+  overflow: hidden;
+}
+
+/* 1. Background Grid & Perspective Plane */
+#bg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  pointer-events: none;
+}
+
+.iso-grid-svg {
+  width: 1080px;
+  height: 1920px;
+}
+
+.ambient-glow {
+  position: absolute;
+  top: 700px;
+  left: 340px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--neon-purple-glow) 0%, transparent 70%);
+  filter: blur(50px);
+  opacity: 0.6;
+}
+
+/* 2. World Stage (Isometric 3D canvas) */
+#world-viewport {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  transform-origin: 540px 920px;
+  will-change: transform;
+}
+
+#world-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  overflow: visible;
+}
+
+/* Actor styles */
+.actor-group {
+  transition: opacity 0.2s ease;
+}
+
+.actor-label-text {
+  font-size: 32px;
+  font-weight: 700;
+  fill: #ffffff;
+  text-anchor: middle;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
+}
+
+.actor-sublabel-text {
+  font-size: 24px;
+  font-weight: 500;
+  fill: var(--neon-cyan);
+  text-anchor: middle;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));
+}
+
+.connection-cable {
+  fill: none;
+  stroke: var(--neon-cyan);
+  stroke-width: 4px;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 10px var(--neon-cyan-glow));
+}
+
+.connection-pulse {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 5px;
+  stroke-dasharray: 20 80;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 12px #ffffff);
+}
+
+.packet-capsule {
+  fill: var(--neon-cyan);
+  stroke: #ffffff;
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 14px var(--neon-cyan-glow));
+}
+
+/* 3. HUD Fixed Layer (2D Overlay) */
+#hud-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Top brand bar */
+.hud-brand-bar {
+  position: absolute;
+  top: 70px;
+  left: 70px;
+  right: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(18, 10, 42, 0.75);
+  border: 1.5px solid rgba(157, 78, 221, 0.5);
+  border-radius: 28px;
+  padding: 8px 22px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+.brand-icon {
+  width: 22px;
+  height: 22px;
+  fill: var(--neon-cyan);
+}
+
+.brand-text {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.audio-waves {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+}
+
+.wave-bar {
+  width: 4px;
+  height: 10px;
+  background: var(--neon-purple);
+  border-radius: 2px;
+  box-shadow: 0 0 6px var(--neon-purple-glow);
+}
+
+/* Station Progress Tracker */
+.hud-stations-tracker {
+  position: absolute;
+  top: 150px;
+  left: 70px;
+  right: 70px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(12, 6, 30, 0.65);
+  border: 1px solid rgba(157, 78, 221, 0.3);
+  border-radius: 40px;
+  padding: 0 30px;
+  backdrop-filter: blur(14px);
+}
+
+.station-track-bg {
+  position: absolute;
+  left: 60px;
+  right: 60px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  z-index: 1;
+}
+
+.station-track-fill {
+  position: absolute;
+  left: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan));
+  box-shadow: 0 0 10px var(--neon-cyan-glow);
+  z-index: 2;
+  transition: width 0.4s ease;
+}
+
+.station-node {
+  position: relative;
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #150b33;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dim);
+  transition: all 0.3s ease;
+}
+
+.station-node.completed {
+  background: var(--neon-cyan);
+  border-color: #ffffff;
+  color: #061118;
+  box-shadow: 0 0 14px var(--neon-cyan-glow);
+}
+
+.station-node.active {
+  background: #231252;
+  border-color: var(--neon-cyan);
+  color: #ffffff;
+  box-shadow: 0 0 18px var(--neon-cyan-glow), inset 0 0 8px var(--neon-cyan);
+  transform: scale(1.15);
+}
+
+/* Step Title Section */
+.hud-step-title {
+  position: absolute;
+  top: 260px;
+  left: 70px;
+  right: 70px;
+  text-align: center;
+}
+
+.step-chip {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 16px;
+  background: rgba(247, 37, 133, 0.2);
+  border: 1.5px solid var(--neon-pink);
+  color: var(--neon-pink);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+  box-shadow: 0 0 12px var(--neon-pink-glow);
+}
+
+.step-heading {
+  font-size: 58px;
+  font-weight: 900;
+  line-height: 1.15;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  letter-spacing: 0.5px;
+}
+
+.step-heading .keyword-highlight {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 20px var(--neon-cyan-glow);
+}
+
+/* Subtitle Pill Layer */
+.hud-subtitle-box {
+  position: absolute;
+  top: 1560px;
+  left: 80px;
+  right: 80px;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: rgba(12, 6, 32, 0.85);
+  border: 1.5px solid rgba(157, 78, 221, 0.4);
+  border-radius: 28px;
+  padding: 18px 30px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 6px 28px rgba(0,0,0,0.5);
+}
+
+.subtitle-text {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #ffffff;
+}
+
+.subtitle-text .word-active {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 14px var(--neon-cyan-glow);
+}
+
+/* Footer note & progress dots */
+.hud-footer {
+  position: absolute;
+  bottom: 80px;
+  left: 70px;
+  right: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.footer-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.footer-dot.active {
+  background: var(--neon-cyan);
+  box-shadow: 0 0 8px var(--neon-cyan-glow);
+}
+
+.footer-disclaimer {
+  font-size: 24px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 1px;
+}

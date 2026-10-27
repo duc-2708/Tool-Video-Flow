@@ -217,6 +217,73 @@ def check_and_repair_script(
                         st.type = "explain"
                         script.repair_notes.append(f"[grounding, nhóm 2] Cảnh {sc.scene_id} câu {st_idx+1}: fact_id {invalid_ids} không tồn tại; chuyển nhãn sang explain.")
 
+    # 7. CTA event claim validation and self-repair (Group 2 self-repair)
+    from agents.explainer_guard import is_cta_event_claim, split_assertion_and_cta, find_matching_facts_for_cta, unknown_names
+    from agents.director_numbers import normalized_numbers
+
+    for sc in script.scenes:
+        new_sentences: list[ScriptV3Sentence] = []
+        scene_modified = False
+        for st_idx, st in enumerate(sc.sentences):
+            if st.type != "cta":
+                new_sentences.append(st)
+                continue
+
+            if not is_cta_event_claim(st.text, brief):
+                new_sentences.append(st)
+                continue
+
+            assert_part, cta_part = split_assertion_and_cta(st.text)
+            clean_assert = assert_part.rstrip(".!?, ").strip()
+            if clean_assert and not clean_assert.endswith((".", "!", "?")):
+                clean_assert += "."
+
+            # 1(a) Match fact in brief
+            matched_facts = find_matching_facts_for_cta(assert_part or st.text, brief)
+            if matched_facts:
+                ev_sent = ScriptV3Sentence(text=clean_assert, type="event", fact_ids=matched_facts)
+                new_sentences.append(ev_sent)
+                scene_modified = True
+                msg = f"[cta_repair, nhóm 2] Cảnh {sc.scene_id} câu {st_idx+1}: CTA chứa khẳng định sự kiện khớp fact #{matched_facts}; tách/chuyển nhãn sang event."
+                script.repair_notes.append(msg)
+                sc.repair_notes.append(msg)
+                if cta_part:
+                    new_sentences.append(ScriptV3Sentence(text=cta_part, type="cta", fact_ids=[]))
+                elif sc == script.scenes[-1] or sc.purpose == "cta":
+                    new_sentences.append(ScriptV3Sentence(text="Bạn nghĩ sao về điều này? Hãy để lại ý kiến dưới phần bình luận nhé.", type="cta", fact_ids=[]))
+                continue
+
+            # 1(b) General explanation or opinion
+            is_opinion = bool(re.search(r"\b(?:nghĩ|tin|quan điểm|đánh giá|theo mình|cho rằng|cảm thấy|dường như|rõ ràng)\b", assert_part, re.I))
+            unknown = unknown_names(assert_part, brief)
+            actual_nums = normalized_numbers(assert_part, ignore_current_year=False)
+
+            if (is_opinion or not actual_nums) and not unknown:
+                new_type = "opinion" if is_opinion else "explain"
+                exp_sent = ScriptV3Sentence(text=clean_assert, type=new_type, fact_ids=[])
+                new_sentences.append(exp_sent)
+                scene_modified = True
+                msg = f"[cta_repair, nhóm 2] Cảnh {sc.scene_id} câu {st_idx+1}: CTA là nhận định/giải thích chung; chuyển nhãn sang '{new_type}'."
+                script.repair_notes.append(msg)
+                sc.repair_notes.append(msg)
+                if cta_part:
+                    new_sentences.append(ScriptV3Sentence(text=cta_part, type="cta", fact_ids=[]))
+                elif sc == script.scenes[-1] or sc.purpose == "cta":
+                    new_sentences.append(ScriptV3Sentence(text="Bạn nghĩ sao về điều này? Hãy để lại ý kiến dưới phần bình luận nhé.", type="cta", fact_ids=[]))
+                continue
+
+            # 1(c) Ungrounded assertion -> cut assertion, keep pure CTA question
+            cta_final = cta_part if cta_part else "Bạn nghĩ sao về chuyện này? Hãy để lại ý kiến dưới phần bình luận nhé."
+            cta_sent = ScriptV3Sentence(text=cta_final, type="cta", fact_ids=[])
+            new_sentences.append(cta_sent)
+            scene_modified = True
+            msg = f"[cta_repair, nhóm 2] Cảnh {sc.scene_id} câu {st_idx+1}: Cắt bỏ khẳng định không có căn cứ trong CTA, giữ lại câu hỏi tương tác."
+            script.repair_notes.append(msg)
+            sc.repair_notes.append(msg)
+
+        if scene_modified and new_sentences:
+            sc.sentences = new_sentences
+
     return script
 
 

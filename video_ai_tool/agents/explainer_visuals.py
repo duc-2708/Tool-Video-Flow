@@ -67,9 +67,12 @@ def build_v2_shots(plan,brief):
             data=VisualData(text=card,highlight=emphasis or card.split()[-2:],fact_ids=sentence.fact_ids[:])
             name="hook_card" if scene is plan.scenes[0] and index==0 else "text_focus"
             kind=sentence.type
-            if kind=="event" and sentence.fact_ids and (number:=number_detail(sentence.text)) and name!="hook_card":
-                name="stat_card";data.value,data.number_text,data.unit=number;data.label=card
-                data.source=brief.facts[sentence.fact_ids[0]-1].source_name
+            if (number:=number_detail(sentence.text)):
+                if name=="hook_card":
+                    data.value,data.number_text,data.unit=number
+                elif kind=="event" and sentence.fact_ids:
+                    name="stat_card";data.value,data.number_text,data.unit=number;data.label=card
+                    data.source=brief.facts[sentence.fact_ids[0]-1].source_name
             elif len(scene.sentences)>=2 and scene.information_kind in {"mechanism","cause"} and index%2:
                 name="steps_list";data.items=[card_phrase("",s.text) for s in scene.sentences[:4]]
                 # Do not mix a grounded event into a background card's free text.

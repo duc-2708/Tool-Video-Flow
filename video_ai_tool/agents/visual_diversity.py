@@ -2,7 +2,7 @@
 import re
 from collections import Counter
 from agents.director_numbers import normalized_numbers
-from agents.presentation import card_phrase,shot_context,valid_card
+from agents.presentation import card_phrase,shot_context,valid_card,TRAILING_CUTOFF,LEADING_CUTOFF,clean_semantic_label,labels_are_duplicate
 
 GENERIC=re.compile(r"^(?:ý chính cần nhớ|tổng kết|tóm lại|nội dung chính|điểm cần nhớ|thông tin quan trọng)[.! ]*$",re.I)
 STOP=set('là và của cho với từ trong trên những các một này đó thì mà có thể cũng được đang đã như khi để bởi vì nhưng về sẽ bạn mình chúng ta đây'.split())
@@ -16,26 +16,38 @@ def concept_card(context,used=()):
     # Citation labels are provenance, never a concept card or a capitalized
     # entity manufactured by the keyword fallback.
     context=re.sub(r'\bTheo\s+[^,!?;\n]+,\s*','',context,flags=re.I)
-    used={s.casefold() for s in used}
+    used_set={s.casefold() for s in used}
     candidates=[]
     for phrase in CONCEPTS:
         m=re.search(r'(?<!\w)'+re.escape(phrase)+r'(?!\w)',context,re.I)
         if m:
-            label=m[0] if len(m[0].split())>=3 else ' '.join(('Bảo vệ' if phrase in {'danh tính','phòng thủ'} else 'Vấn đề',m[0]))
+            label=m[0] if len(m[0].split())>=3 else ' '.join(('Bảo vệ' if phrase in {'danh tính','phòng thủ'} else ('Phân tích' if phrase in {'điểm yếu','lỗ hổng phần mềm'} else 'Vấn đề'),m[0]))
             candidates.append(label)
     candidates.extend(c.strip(' ,:') for c in re.split(r'[.!?;:—]',context) if valid_card(c))
-    phrase=card_phrase('',context,used=used)
+    phrase=card_phrase('',context,used=used_set)
     if not GENERIC.fullmatch(phrase): candidates.append(phrase)
-    result=next((s for s in candidates if valid_card(s) and s.casefold() not in used),None)
-    if result: return result[:1].upper()+result[1:],False
-    # Select content keywords, never an unfinished N-word opening of narration.
-    tokens=list(dict.fromkeys(w.strip(',.!?;:()“”') for w in context.split()
-        if w.casefold().strip(',.!?;:()“”') not in STOP and any(c.isalpha() for c in w)))
-    for index in range(max(1,len(tokens)-2)):
-        label=' '.join(tokens[index:index+3])
-        if len(label.split())<3: label='Minh họa '+label
-        if valid_card(label) and label.casefold() not in used: return label[:1].upper()+label[1:],True
+
+    # First check clean semantic candidates
+    for c in candidates:
+        cleaned = clean_semantic_label(c)
+        if cleaned and valid_card(cleaned) and cleaned.casefold() not in used_set and not any(labels_are_duplicate(cleaned, u) for u in used_set):
+            return cleaned[:1].upper()+cleaned[1:], False
+
+    # Extract clean clauses (3-6 words) from context rather than arbitrary sliding windows
+    clauses = re.split(r'[.!?;:—–,\(\)“”\"\[\]]|\b(?:và|hoặc|nhưng|mà|để|như|khi|sau khi|trong khi|thay vì|bởi vì)\b', context, flags=re.I)
+    for cl in clauses:
+        cl_clean = clean_semantic_label(cl)
+        if cl_clean and valid_card(cl_clean) and cl_clean.casefold() not in used_set and not any(labels_are_duplicate(cl_clean, u) for u in used_set):
+            return cl_clean[:1].upper()+cl_clean[1:], True
+        words = cl.strip().split()
+        if len(words) >= 3:
+            for n_words in (4, 3):
+                for idx in range(min(len(words) - n_words + 1, 3)):
+                    sub = clean_semantic_label(' '.join(words[idx:idx+n_words]))
+                    if sub and valid_card(sub) and sub.casefold() not in used_set and not any(labels_are_duplicate(sub, u) for u in used_set):
+                        return sub[:1].upper()+sub[1:], True
     return 'Minh họa ý tưởng',True
+
 
 
 def repair_cards(plan,diagnostics=None,brief=None):

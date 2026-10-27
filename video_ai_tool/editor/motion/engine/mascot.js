@@ -5,35 +5,56 @@
 
 const { clamp, easeOutCubic, overshoot } = window.MotionEasing;
 
-function calculateMascotPlacement(specZone = 'center', width = 1080, height = 1920) {
-  // Mascot size: 240x288 px (22.2% of width >= 18%)
-  const mascotW = 240;
-  const mascotH = 288;
+function calculateMascotPlacement(specZone = 'center', width = 1080, height = 1920, contentBounds = null) {
+  const mascotW = 160;
+  const mascotH = 190;
+  
+  // Safe zone for mascot: strictly y <= 1330, and y >= 240
+  // Default placement in top safe corner y in [240, 500]
+  let x = 75;
+  let y = 250;
+  let hidden = false;
 
-  // Safe area: content is in [154, 1498], captions start at 1498.
-  // We place mascot near bottom of content zone, safely away from captions.
-  let x = width - mascotW - 40; // Default bottom-right
-  let y = 1200;
-
-  if (specZone === 'left') {
-    // Primary content is on left -> Mascot goes to right
-    x = width - mascotW - 50;
-    y = 1220;
-  } else if (specZone === 'right') {
-    // Primary content is on right -> Mascot goes to left
-    x = 50;
-    y = 1220;
-  } else if (specZone === 'top') {
-    // Content is at top -> Mascot goes to bottom-right
-    x = width - mascotW - 50;
-    y = 1220;
-  } else if (specZone === 'bottom') {
-    // Content is at bottom -> Mascot hovers mid-right
-    x = width - mascotW - 40;
-    y = 680;
+  if (contentBounds) {
+    // If content fills both horizontally (width >= 720) and vertically (y <= 450 and y + h >= 1150)
+    // Then no safe corner exists without overlapping -> hide mascot
+    if (contentBounds.width >= 720 && contentBounds.y <= 450 && (contentBounds.y + contentBounds.height) >= 1150) {
+      hidden = true;
+    } else if (contentBounds.y > 480) {
+      // Content starts low -> top corner is completely free!
+      x = 80;
+      y = 250;
+    } else if (contentBounds.x > 320) {
+      // Left side is free
+      x = 75;
+      y = 550;
+    } else if (contentBounds.x + contentBounds.width < 760) {
+      // Right side is free
+      x = width - mascotW - 75;
+      y = 550;
+    } else {
+      // Try top right corner if top left is occupied
+      x = width - mascotW - 75;
+      y = 250;
+      if (contentBounds.x + contentBounds.width > x && contentBounds.y < y + mascotH) {
+        hidden = true; // Still overlapping
+      }
+    }
+  } else {
+    // Default top-left corner
+    x = 75;
+    y = 250;
   }
 
-  return { x, y, width: mascotW, height: mascotH };
+  // Double check bounds: never exceed y + mascotH > 1330 or y < 240
+  if (y + mascotH > 1330) {
+    y = 1330 - mascotH;
+  }
+  if (y < 240) {
+    y = 240;
+  }
+
+  return { x, y, width: mascotW, height: mascotH, hidden };
 }
 
 function animateMascot(svgElement, state = 'idle', t = 0, amplitudeLevel = 0, targetCoords = null) {

@@ -90,7 +90,7 @@
   "video_type": "news",
   "video_count": 0,
   "confidence_label": "mặc định",
-  "source_signature": "36fca0350856b879f96862d4a8fae898b90398a06d62838320a97a3d2684ec1a",
+  "source_signature": "4e4e055fcdd895622311863bc5cb7eb78310d764e82c9b33805e0cf5a8a0f470",
   "locked_fields": [],
   "scene_pacing": [
     {
@@ -230,6 +230,7 @@
   "scene_patterns": [],
   "shots_per_10_sec": 3.3333333333333335,
   "warnings": [
+    "cong-nghe/cong_nghe_5.mp4: chưa có phân tích còn hiệu lực (FileNotFoundError).",
     "chưa có video mẫu cho danh mục này"
   ]
 }

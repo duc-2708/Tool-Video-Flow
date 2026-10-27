@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "<string>", line 4, in <module>
+    import scratch.inspect_layout
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\scratch\inspect_layout.py", line 5, in <module>
+    from pipeline.render_motion import html_document, payload_for_scene, DEFAULT_FONT
+ImportError: cannot import name 'payload_for_scene' from 'pipeline.render_motion' (C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\render_motion.py)

@@ -117,10 +117,19 @@ def unsupported_numbers(ctx):
         parts=re.split(r"(?<=[!?;])\s+|(?<=[.])\s+(?=[A-ZÀ-Ỹ])",content)
         asserted=" ".join(p for p in parts if not re.match(r"\s*(?:giả sử|giả định|ví dụ minh họa)\b",p,re.I))
         actual=normalized_numbers(asserted,ignore_current_year=False)
-        missing=actual-allowed
+        from validation.grounding import numbers_match, get_grounding_mode, repair_grounding
+        missing=[a for a in actual if not any(numbers_match(a, al) for al in allowed)]
         if ctx.diagnostics: ctx.diagnostics.record(f"đối tượng=cảnh {scene.id}, luật=grounding_numbers, số={sorted(actual)}, tập số brief={sorted(allowed)}")
-        if missing: issues.append(Finding(scene.id,f"Số liệu không có trong brief và chưa đánh dấu giả định: {sorted(missing)}; số hợp lệ: {sorted(allowed)}."))
+        if missing:
+            issues.append(Finding(scene.id,f"Số liệu không có trong brief và chưa đánh dấu giả định: {sorted(missing)}; số hợp lệ: {sorted(allowed)}."))
     return issues
+
+def fix_grounding_numbers(ctx):
+    if not ctx.plan: return ""
+    from validation.grounding import repair_grounding
+    fixes = repair_grounding(ctx.plan, ctx.brief)
+    return "; ".join(fixes) if fixes else "Đã tự sửa số liệu theo căn cứ fact."
+
 
 ORDINARY=set("Bạn Mình Theo Nhưng Đầu Sau Riêng Còn Ở Chỗ Điểm Với Đến Nhìn Mạch Chọn Người Các Công Thành Một Hai Không Tại Số Nội Năm Hãy Đây Đó Vì Vậy Khi Nếu Cách Phần Dựng Trong Cắt Ghép Video Chào Có Thử Vấn Từ Trước Giả Ví Kết Bước Giữ Sắp Tốc Tư Làm Kiểm Bắt Cảnh Nguồn Nhịp Bản Thông Việc Về Dữ Nó Điều So Cuối Ta Chúng Xem Như Thế Trên Và Để TTS Khoảng Hơn Nhiều Hiện Đợt Sự Mức Dường Khả Đặc Toàn Tỷ Triệu Hàng Mỗi Bản Giữa Ngay Lúc Ngoài Dù Mặc Do Bởi Nhờ Tuy Rằng Cứ Đã Đang Sẽ Vừa Vẫn Cùng".split())
 from agents.proper_names import proper_names
@@ -151,7 +160,10 @@ def names_quotes(ctx):
                 words=name.split()
                 if all(w in ORDINARY for w in words): continue
                 if textkey(name) not in allowed and not all(w in ORDINARY or textkey(w) in allowed.split() for w in words):
-                    issues.append(Finding(scene.id,f"Tên riêng không có trong brief: {name}."))
+                    from validation.grounding import entity_matches, extract_entities, get_grounding_mode
+                    brief_entities = extract_entities(base, sentence_boundary=False)
+                    if not any(entity_matches(name, be.raw) for be in brief_entities):
+                        issues.append(Finding(scene.id,f"Tên riêng không có trong brief: {name}."))
     return issues
 
 FORBIDDEN=r"chưa\s+(?:được\s+)?(?:kiểm\s+chứng|xác\s+minh)|cần\s+xác\s+minh"
@@ -418,6 +430,13 @@ def visual_grounding(ctx):
     from agents.visual_planner import visual_issues
     return [Finding(scene,message) for scene,message in visual_issues(ctx.plan,ctx.brief)]
 
+def fix_visual_grounding(ctx):
+    if not ctx.plan: return ""
+    from validation.grounding import repair_grounding
+    fixes = repair_grounding(ctx.plan, ctx.brief)
+    return "; ".join(fixes) if fixes else "Đã tự sửa đồ họa sang bản định tính trung tính theo căn cứ brief."
+
+
 
 def visual_background(ctx):
     if not ctx.plan: return []
@@ -444,9 +463,11 @@ def explainer_sentences(ctx):
 
 
 def fix_explainer_names(ctx):
-    from agents.explainer_guard import repair_event_names
+    from agents.explainer_guard import repair_event_names, repair_cta_sentences
     repaired=repair_event_names(ctx.plan,ctx.brief)
-    if repaired:
+    cta_repaired=repair_cta_sentences(ctx.plan,ctx.brief)
+    all_repaired=[*repaired, *cta_repaired]
+    if all_repaired:
         # Keep automatically generated graphics in sync with the repaired sentence.
         for scene in ctx.plan.scenes:
             for shot in scene.shots:
@@ -460,7 +481,7 @@ def fix_explainer_names(ctx):
                 visual.template="text_focus"
                 visual.data=VisualData(text=excerpt(sentence.text,18),fact_ids=sentence.fact_ids[:])
                 shot.text_overlay=None
-    return "; ".join(f"Cảnh {sid}: {message}" for sid,message in repaired)
+    return "; ".join(f"Cảnh {sid}: {message}" for sid,message in all_repaired)
 
 
 def explainer_background_names(ctx):
@@ -493,14 +514,14 @@ RULES=(
     Rule("sentence_grounding",1,"Nhãn câu khớp lời đọc; event có fact, nền không giả làm sự kiện",explainer_sentences,fix_explainer_names),
     Rule("sentence_background_names",3,"Tên riêng trong ví dụ nền chỉ cảnh báo",explainer_background_names),
     Rule("visual_structure",2,"Giữ nhãn đồ họa đúng thứ tự lời đọc",visual_structure,fix_visual_structure),
-    Rule("visual_grounding",1,"Số liệu, tên, ngày, URL trong đồ họa có căn cứ brief",visual_grounding),
+    Rule("visual_grounding",1,"Số liệu, tên, ngày, URL trong đồ họa có căn cứ brief",visual_grounding,fix_visual_grounding),
     Rule("visual_background",3,"Ví dụ nền trong đồ họa cần kiểm tra, không chặn",visual_background),
     Rule("schema_basic",1,"JSON/schema cơ bản không sửa được",structure_notes),
     Rule("outline_structure",2,"Đồng bộ dàn ý/blueprint",outline_shape,fix_outline_shape),
     Rule("open_loop",2,"Gán fact payoff liên quan hoặc bỏ câu hỏi",open_loop,fix_open_loop),
     Rule("fact_ids",1,"ID fact hợp lệ; cảnh nội dung có căn cứ",fact_ids),
     Rule("forbidden_editorial",1,"Cụm kiểm chứng bị cấm còn sót sau xóa",forbidden,clean_forbidden),
-    Rule("grounding_numbers",1,"Số liệu trong lời đọc/overlay có trong brief hoặc giả định rõ",unsupported_numbers),
+    Rule("grounding_numbers",1,"Số liệu trong lời đọc/overlay có trong brief hoặc giả định rõ",unsupported_numbers,fix_grounding_numbers),
     Rule("grounding_names_quotes",1,"Tên riêng/trích dẫn có căn cứ",names_quotes),
     Rule("grounding_claims",1,"Khẳng định/nhân quả được audit đối chiếu fact",audit_claims),
     Rule("originality",1,"Không sao chép lời đọc video mẫu",originality),
@@ -544,6 +565,22 @@ def run_rules(obj,brief,request=None,*,phase="plan",blueprint=None,diagnostics=N
             if rule.id!="sentence_grounding" or result:
                 for item in findings: emit(ctx,rule,policy[rule.id],Finding(item.scene_id,result or "Đã tự sửa bằng code."),"fixed")
             findings=remaining
+        from validation.grounding import get_grounding_mode, repair_grounding
+        grounding_mode = get_grounding_mode()
+        grounding_auto_repair_rules = {"visual_grounding", "grounding_numbers"}
+        if findings and rule.id in grounding_auto_repair_rules:
+            if grounding_mode == "fix":
+                if ctx.plan:
+                    repair_grounding(ctx.plan, ctx.brief)
+                findings = rule.check(ctx)
+                if findings:
+                    for item in findings:
+                        emit(ctx, rule, 3, Finding(item.scene_id, f"[grounding, tự sửa] {item.message}"), "warning")
+                    continue
+            elif grounding_mode == "warn":
+                for item in findings:
+                    emit(ctx, rule, 3, item, "warning")
+                continue
         for item in findings:
             event=emit(ctx,rule,policy[rule.id],item,"error" if policy[rule.id]==1 else "warning")
             if policy[rule.id]==1: hard.append(event)

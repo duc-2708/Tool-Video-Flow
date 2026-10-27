@@ -44,7 +44,13 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
             report_error(error, diagnostics, project)
     brief_data = read_json(project/"brief.json")
     if existing:
-        for warning in existing.review_notes:
+        auto_repairs = [w for w in existing.review_notes if "tự sửa" in w.lower()]
+        other_warnings = [w for w in existing.review_notes if "tự sửa" not in w.lower()]
+        if auto_repairs:
+            with st.expander("Các chỗ đã tự sửa", expanded=True):
+                for note in auto_repairs:
+                    st.info(diagnostics.redact(note))
+        for warning in other_warnings:
             st.warning(diagnostics.redact(warning))
     if len(brief_data.get("facts",[]))<8:
         st.warning("dữ liệu mỏng")

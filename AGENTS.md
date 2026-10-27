@@ -7,6 +7,7 @@
 - Chưa cập nhật tài liệu = chưa xong; không chỉ thêm changelog mà để nội dung cũ mâu thuẫn.
 - Không in, log, commit khóa API/token hoặc nội dung `.env`; dùng redaction và dữ liệu giả trong test.
 - Không thêm/đổi luật chặn nếu chưa có rule_id và nhóm rõ ràng: 1 chặn, 2 tự sửa, 3 cảnh báo.
+- Mọi luật validation mới phải có (a) nhóm 1/2/3, (b) đường tự sửa, (c) ca hồi quy trong grounding_cases.yaml; không thêm luật chặn mới thiếu đường tự sửa; mọi luật căn cứ phải dùng validation/grounding.py.
 - Tách event có căn cứ khỏi explain/opinion/cta; không dùng luật chất lượng để chặn ngoài nhóm đã công bố.
 - Mọi sửa lỗi phải có test hồi quy; dùng mock API, giữ fixture thật khi có, không bịa dữ liệu đã mất.
 - Chạy pytest trước khi báo xong: từ `video_ai_tool/`, dùng `.\.venv\Scripts\python.exe -m pytest -q --basetemp=.pytest_tmp -p no:cacheprovider`.

@@ -18,6 +18,15 @@ def show_result(result,project,diagnostics):
         st.warning("File MP4 chưa có hoặc đã được di chuyển.")
         return
     st.caption(f"{result['duration_sec']:.2f} giây · {result['width']} × {result['height']} · {result['fps']} fps · {path.stat().st_size/1024**2:.2f} MB · Dựng trong {result['render_seconds']:.1f} giây")
+    if result.get('audit_failed') or (project / 'layout_report.json').is_file():
+        try:
+            lr_path = project / 'layout_report.json'
+            if lr_path.is_file():
+                lr_data = read_json(lr_path)
+                if not lr_data.get('overall_all_passed', True):
+                    st.error('🚨 CẢNH BÁO ĐỎ: Phát hiện lỗi kiểm định bố cục hoạt họa (layout_report.json) sau 2 lượt tự sửa! Hãy kiểm tra tràn lề hoặc đè phụ đề.')
+        except Exception:
+            pass
     if result.get('quality_summary'):
         qc=result['quality_summary']
         st.caption(f"Kiểm tra hình ảnh: {qc['template_types']} loại mẫu · {qc['warning_count']} cảnh báo · {qc['deferred_dom_samples']} mẫu DOM chưa hiện đủ.")

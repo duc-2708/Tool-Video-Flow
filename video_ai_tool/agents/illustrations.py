@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from schemas.motion_scene import MotionScenePlan,SceneCamera,normalize_motion_payload
 from schemas.visual import VisualData,VisualBeat
-from agents.visual_diversity import concept_card,numeric_mismatches,GENERIC
+from agents.visual_diversity import concept_card,numeric_mismatches,GENERIC,clean_semantic_label,labels_are_duplicate
 from agents.director_numbers import normalized_numbers
 
 _diagnostics=ContextVar('illustration_diagnostics',default=None)
@@ -68,28 +68,43 @@ def enough(name,data):
 def scene_data(scene,brief=None):
     visuals=[s for s in scene.shots if s.visual and s.visual.template not in {'stock','source_card','quote_card'}]
     data=VisualData(text=concept_card(scene.narration)[0],fact_ids=scene.fact_ids[:])
-    items=concept_labels(scene.narration)
+    items=[]
+    for phrase in concept_labels(scene.narration):
+        cleaned=clean_semantic_label(phrase)
+        if cleaned and not any(labels_are_duplicate(cleaned,x) for x in items):
+            items.append(cleaned)
     for shot in visuals:
         v=shot.visual
         for label in [shot.card_text or v.data.text,*v.data.items]:
             if label and not GENERIC.fullmatch(label.strip()) and not re.search(r'\b(?:nội|xu|dễ|thêm|phương)$|^(?:liệu|dường|lẽ)\b',label,re.I):
-                label=concept_card(label)[0] if not 2<=len(label.split())<=6 else label
-                if label.casefold() not in {x.casefold() for x in items}: items.append(label)
+                cleaned=clean_semantic_label(label)
+                if not cleaned: cleaned=concept_card(label,items)[0]
+                cleaned=clean_semantic_label(cleaned)
+                if cleaned and not any(labels_are_duplicate(cleaned,x) for x in items):
+                    items.append(cleaned)
         date_value=bool(v.data.number_text and re.search(r'(?:ngày|tháng)\s+'+re.escape(v.data.number_text.strip())+r'\b',scene.narration,re.I))
         if data.value is None and v.data.value is not None and not date_value and not numeric_mismatches(scene,shot,brief):
             data.value=v.data.value;data.unit=v.data.unit;data.number_text=v.data.number_text;data.label=v.data.label or shot.card_text or v.data.text
         if len(v.data.bars)>=2 and not numeric_mismatches(scene,shot,brief): data.bars=[b.model_copy(deep=True) for b in v.data.bars[:4]]
         if not data.source and v.data.source: data.source=v.data.source;data.source_url=v.data.source_url
-    # Multiple already spoken concepts may be illustrated, but never append
-    # imaginary quantities, a fake process step, or a fake pass/fail decision.
+    # Extract complete semantic clauses from narration without arbitrary word-slicing
     if len(items)<3:
-        clauses=re.split(r'[.!?;:,]|\b(?:nhưng|trong khi|thay vì|bởi vì)\b',scene.narration,flags=re.I)
+        clauses=re.split(r'[.!?;:]|\b(?:nhưng|trong khi|thay vì|bởi vì)\b',scene.narration,flags=re.I)
         for clause in clauses:
-            if len(clause.split())<3: continue
-            label,_=concept_card(clause,items)
-            if label not in items and not GENERIC.fullmatch(label): items.append(label)
-            if len(items)>=5: break
-    data.items=items[:5]
+            subclauses=re.split(r'[,–—]',clause)
+            for sc in subclauses:
+                words=sc.strip().split()
+                if 2<=len(words)<=5:
+                    cleaned=clean_semantic_label(sc)
+                    if cleaned and not any(labels_are_duplicate(cleaned,x) for x in items):
+                        items.append(cleaned)
+                elif len(words)>5:
+                    label,_=concept_card(sc,items)
+                    cleaned=clean_semantic_label(label)
+                    if cleaned and not any(labels_are_duplicate(cleaned,x) for x in items):
+                        items.append(cleaned)
+            if len(items)>=4: break
+    data.items=items[:4]
     if data.value is None and brief:
         facts=[brief.facts[i-1] for i in scene.fact_ids if 1<=i<=len(brief.facts)]
         allowed=normalized_numbers(' '.join((f.fact_vi or f.claim)+' '+f.claim+' '+(f.evidence_quote or '') for f in facts),ignore_current_year=False)

@@ -1,0 +1,205 @@
+{
+  "theme": {
+    "name": "neon_purple",
+    "primary": "#9d4edd",
+    "secondary": "#00f5d4",
+    "accent": "#f72585",
+    "bg": "#09041a",
+    "grid": "rgba(157, 78, 221, 0.22)",
+    "text": "#ffffff",
+    "glow": "rgba(0, 245, 212, 0.5)"
+  },
+  "hud": {
+    "brand": "TECH EXPLAINER",
+    "steps": [
+      "Thuê VPS + SSH",
+      "Cài Docker",
+      "Đưa code Git",
+      "Chạy App",
+      "DNS & HTTPS"
+    ],
+    "active_step": 0,
+    "completed_steps": [],
+    "tracker_style": "stations",
+    "footer_note": "hình mô phỏng"
+  },
+  "actors": [
+    {
+      "id": "laptop_client",
+      "type": "laptop",
+      "pos": [-220, 40, 0],
+      "state": "closed",
+      "label": "Máy lập trình",
+      "sublabel": "Local Dev (ví dụ)"
+    },
+    {
+      "id": "vps_server",
+      "type": "vps_server",
+      "pos": [220, -40, 0],
+      "state": "off",
+      "label": "Máy chủ VPS",
+      "sublabel": "Ubuntu 24.04 (ví dụ)"
+    },
+    {
+      "id": "ssh_cable",
+      "type": "connection_path",
+      "pos": [0, 0, 0],
+      "state": "active",
+      "label": "Đường truyền SSH",
+      "params": {
+        "from_actor": "laptop_client",
+        "from_port": "net_out",
+        "to_actor": "vps_server",
+        "to_port": "net_in",
+        "color": "#00f5d4"
+      }
+    },
+    {
+      "id": "ssh_key_packet",
+      "type": "data_packet",
+      "pos": [-220, 40, 20],
+      "state": "idle",
+      "label": "Gói SSH Key",
+      "sublabel": "id_ed25519"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "step_1_vps_ssh",
+      "step_index": 0,
+      "title": "BƯỚC 1: THUÊ VPS & KẾT NỐI SSH",
+      "duration_sec": 6.5,
+      "narration": "Trước hết bạn mở máy và kết nối vào máy chủ VPS thông qua giao thức SSH an toàn.",
+      "camera": {
+        "x": 540,
+        "y": 920,
+        "zoom": 1.0,
+        "tilt": 0
+      },
+      "actions": [
+        {
+          "at_sec": 0.2,
+          "verb": "enter",
+          "target": "laptop_client",
+          "params": {"transition": "drop"}
+        },
+        {
+          "at_sec": 0.6,
+          "verb": "enter",
+          "target": "vps_server",
+          "params": {"transition": "drop"}
+        },
+        {
+          "at_sec": 1.0,
+          "verb": "open",
+          "target": "laptop_client",
+          "duration": 0.8
+        },
+        {
+          "at_sec": 1.8,
+          "verb": "connect",
+          "target": "ssh_cable",
+          "duration": 0.6
+        },
+        {
+          "at_sec": 2.4,
+          "verb": "type",
+          "target": "laptop_client",
+          "params": {"text": "ssh root@103.142.x.x"},
+          "duration": 1.4
+        },
+        {
+          "at_sec": 3.8,
+          "verb": "send_packet",
+          "target": "ssh_key_packet",
+          "params": {
+            "path_id": "ssh_cable",
+            "from_actor": "laptop_client",
+            "to_actor": "vps_server"
+          },
+          "duration": 1.2
+        },
+        {
+          "at_sec": 5.0,
+          "verb": "set_state",
+          "target": "vps_server",
+          "params": {"state": "on"}
+        },
+        {
+          "at_sec": 5.2,
+          "verb": "highlight",
+          "target": "vps_server",
+          "params": {"color": "#00f5d4"}
+        },
+        {
+          "at_sec": 5.8,
+          "verb": "check",
+          "target": "step_1",
+          "params": {"station_index": 0}
+        }
+      ]
+    },
+    {
+      "scene_id": "step_2_install_docker",
+      "step_index": 1,
+      "title": "BƯỚC 2: CÀI ĐẶT DOCKER CONTAINER",
+      "duration_sec": 6.5,
+      "narration": "Tiếp theo ta chạy lệnh cài Docker một chạm, chuẩn bị sẵn môi trường đóng gói ứng dụng.",
+      "camera": {
+        "x": 620,
+        "y": 880,
+        "zoom": 1.15,
+        "tilt": -2.0
+      },
+      "actions": [
+        {
+          "at_sec": 0.3,
+          "verb": "type",
+          "target": "laptop_client",
+          "params": {"text": "curl -fsSL https://get.docker.com | sh"},
+          "duration": 1.6
+        },
+        {
+          "at_sec": 1.9,
+          "verb": "send_packet",
+          "target": "ssh_key_packet",
+          "params": {
+            "path_id": "ssh_cable",
+            "from_actor": "laptop_client",
+            "to_actor": "vps_server",
+            "label": "Docker Engine"
+          },
+          "duration": 1.0
+        },
+        {
+          "at_sec": 2.9,
+          "verb": "set_state",
+          "target": "vps_server",
+          "params": {"state": "busy"}
+        },
+        {
+          "at_sec": 4.5,
+          "verb": "set_state",
+          "target": "vps_server",
+          "params": {"state": "on", "container_stacked": true}
+        },
+        {
+          "at_sec": 5.2,
+          "verb": "highlight",
+          "target": "vps_server",
+          "params": {"color": "#9d4edd"}
+        },
+        {
+          "at_sec": 5.8,
+          "verb": "check",
+          "target": "step_2",
+          "params": {"station_index": 1}
+        }
+      ]
+    }
+  ],
+  "recap": {
+    "morph_tracker_to": "road",
+    "recap_duration": 4.0
+  }
+}
