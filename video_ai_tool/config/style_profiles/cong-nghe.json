@@ -245,7 +245,7 @@
   "video_type": null,
   "video_count": 3,
   "confidence_label": "ổn",
-  "source_signature": "e0ba5c1e3b41ecbbd86e7ff873acee594635d278cccb82df5140f9640bdad46d",
+  "source_signature": "d1acee3a7642eb67f1bd7e79052729d9846ca30170f0cea0c5a93b5f22ca7f61",
   "locked_fields": [],
   "scene_pacing": [
     {
@@ -564,6 +564,7 @@
     "transcript_outline[5]: cắt end_sec 112s → 89.12s theo phạm vi video.",
     "captions.color: đen → #000000.",
     "captions.highlight_color: xanh → #0000FF.",
-    "captions.stroke_color: trắng → #FFFFFF."
+    "captions.stroke_color: trắng → #FFFFFF.",
+    "cong-nghe/cong_nghe_5.mp4: chưa có phân tích còn hiệu lực (FileNotFoundError)."
   ]
 }

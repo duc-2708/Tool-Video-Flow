@@ -24,6 +24,7 @@ def isolate_configuration(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Pa
             monkeypatch.delenv(name, raising=False)
     # Chặn thư viện bên thứ ba tự load_dotenv; dotenv_values(file tạm) vẫn hoạt động.
     monkeypatch.setenv("PYTHON_DOTENV_DISABLED", "1")
+    monkeypatch.setenv("GROUNDING_MODE", "block")  # Chế độ block giữ hành vi cũ để kiểm tra hồi quy
     empty = tmp_path / "isolated.env"
     empty.write_text("", encoding="utf-8")
     monkeypatch.setattr(configuration, "DEFAULT_ENV_FILE", empty)

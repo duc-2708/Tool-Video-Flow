@@ -32,7 +32,9 @@ def title_numbers(plan,brief,*,now=None):
     # Only a calendar reference authorizes the current month, not a price.
     remainder=re.sub(rf"\btháng\s+0?{now.month}\b"," ",remainder,flags=re.I)
     actual=numbers(remainder)
-    return {"actual":actual,"allowed":allowed,"invalid":(actual-allowed)|invalid_ordinals,
+    from validation.grounding import numbers_match
+    invalid_nums = {a for a in actual if not any(numbers_match(a, al) for al in allowed)}
+    return {"actual":actual,"allowed":allowed,"invalid":invalid_nums|invalid_ordinals,
         "ordinal_counts":ordinal_used,"item_count":item_count,"month":now.month}
 
 

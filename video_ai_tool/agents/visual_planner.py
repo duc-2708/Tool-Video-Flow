@@ -20,6 +20,15 @@ def number_detail(text):
         # Counting shows base value (5 nghìn -> 5.000); percentage keeps its unit.
         unit="%" if token.endswith("%") else ""
         return value,raw,unit
+    try:
+        from validation.grounding import extract_numbers
+        extracted = extract_numbers(text)
+        for num in extracted:
+            val = float(num.value)
+            if val.is_integer() and 1900 <= val <= 2100: continue
+            return val, num.raw, (num.unit or "")
+    except Exception:
+        pass
     return None
 
 
@@ -103,8 +112,32 @@ def visual_issues(plan,brief):
             values.extend((b.value,b.unit) for b in data.bars)
             for value,unit in values:
                 actual |= normalized_numbers(f"{value:.8f}".rstrip("0").rstrip(".")+unit,ignore_current_year=False)
-            missing=actual-allowed
-            if missing: issues.append((scene.id,f"Shot {index}: số liệu mẫu không có trong fact tham chiếu: {sorted(missing)}; hợp lệ: {sorted(allowed)}."))
+            from validation.grounding import numbers_match, normalize_number, entity_matches, extract_entities, get_grounding_mode, repair_visual_grounding
+
+            truly_missing = []
+            for act_str in actual:
+                matched_allow = next((allow_str for allow_str in allowed if numbers_match(act_str, allow_str)), None)
+                if matched_allow:
+                    if data.value is not None:
+                        act_norm = normalize_number(act_str)
+                        all_norm = normalize_number(matched_allow)
+                        if act_norm and all_norm and all_norm.unit and data.unit != all_norm.unit:
+                            old_u = data.unit or ""
+                            data.unit = all_norm.unit
+                            note = f"[grounding, tự sửa] Cảnh {scene.id}, shot {index}: '{data.value}{old_u}' -> '{data.value}{data.unit}'"
+                            if getattr(plan, "review_notes", None) is not None and note not in plan.review_notes:
+                                plan.review_notes.append(note)
+                    continue
+                truly_missing.append(act_str)
+
+            if truly_missing:
+                mode = get_grounding_mode()
+                if mode != "block":
+                    repaired, note = repair_visual_grounding(scene, shot, brief)
+                    if repaired and note and getattr(plan, "review_notes", None) is not None and note not in plan.review_notes:
+                        plan.review_notes.append(note)
+                else:
+                    issues.append((scene.id,f"Shot {index}: số liệu mẫu không có trong fact tham chiếu: {sorted(truly_missing)}; hợp lệ: {sorted(allowed)}."))
             names={f.source_name for f in facts}|{urlsplit(str(f.source_url)).netloc for f in facts}
             if data.source and any(s.strip() not in names for s in data.source.split(" · ")):
                 issues.append((scene.id,f"Shot {index}: nguồn mẫu không có trong brief: {data.source}."))
@@ -114,13 +147,23 @@ def visual_issues(plan,brief):
                 issues.append((scene.id,f"Shot {index}: ngày nguồn mẫu không có trong brief."))
             # Every descriptive item must be an excerpt/rephrasing of referenced text.
             from agents.validation_rules import textkey,proper_names,ORDINARY
+            brief_entities = extract_entities(base + " " + brief.topic, sentence_boundary=False)
             # Never join field boundaries into invented entities ("Analytica Vụ").
             for text in (data.text,data.label,data.title,*data.items,*[b.label for b in data.bars]):
                 for match in proper_names(text):
                     name=match[0]
                     name=re.sub(r"^(?:Vụ(?: kiện)?|Công ty|Ngân hàng|Sản phẩm)\s+","",name)
                     if all(w in ORDINARY for w in name.split()): continue
-                    if textkey(name) not in textkey(base+" "+brief.topic):
+                    if textkey(name) in textkey(base+" "+brief.topic):
+                        continue
+                    if any(entity_matches(name, be.raw) for be in brief_entities):
+                        continue
+                    mode = get_grounding_mode()
+                    if mode != "block":
+                        repaired, note = repair_visual_grounding(scene, shot, brief)
+                        if repaired and note and getattr(plan, "review_notes", None) is not None and note not in plan.review_notes:
+                            plan.review_notes.append(note)
+                    else:
                         issues.append((scene.id,f"Shot {index}: tên riêng mẫu không có trong brief: {name}."))
                 for quote in re.findall(r'[“"]([^”"]{3,200})[”"]',text):
                     if textkey(quote) not in textkey(base):

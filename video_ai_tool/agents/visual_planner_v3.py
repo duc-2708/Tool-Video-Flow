@@ -193,11 +193,25 @@ def validate_and_repair_visual_plan(
 
         # 2. Scene Density: Hook <= 2 elements, others <= 4 elements
         is_hook = sc_idx == 0 or v_scene.purpose == "hook"
-        if is_hook and len(v_scene.elements) > 2:
-            msg = f"[scene_density, nhóm 2] Cảnh hook {sc_id} có {len(v_scene.elements)} phần tử (>2); giữ 2 phần tử lớn."
-            notes.append(msg)
-            v_scene.repair_notes.append(msg)
-            v_scene.elements = v_scene.elements[:2]
+        if is_hook:
+            if len(v_scene.elements) > 2:
+                msg = f"[scene_density, nhóm 2] Cảnh hook {sc_id} có {len(v_scene.elements)} phần tử (>2); giữ 2 phần tử lớn."
+                notes.append(msg)
+                v_scene.repair_notes.append(msg)
+                v_scene.elements = v_scene.elements[:2]
+            # Cảnh hook: tối thiểu 1 phần tử lớn (>=880px rộng hoặc số >=160px), không dùng danh sách 1 hàng nhỏ
+            primary_elem = v_scene.elements[0] if v_scene.elements else None
+            if primary_elem:
+                c = primary_elem.content or {}
+                items = c.get("items") or []
+                if primary_elem.type in {"checklist", "steps_list", "steps_ladder", "timeline"} and len(items) <= 1:
+                    if c.get("value") is not None or c.get("number_text"):
+                        primary_elem.type = "stat_number"
+                    else:
+                        primary_elem.type = "stack_cards"
+                    msg = f"[hook_hero, nhóm 2] Cảnh hook {sc_id}: chuyển danh sách 1 hàng sang phần tử lớn '{primary_elem.type}'."
+                    notes.append(msg)
+                    v_scene.repair_notes.append(msg)
         elif len(v_scene.elements) > 4:
             msg = f"[scene_density, nhóm 2] Cảnh {sc_id} có {len(v_scene.elements)} phần tử (>4); rút gọn còn 4."
             notes.append(msg)
@@ -354,7 +368,16 @@ def map_visual_scene_to_motion_scene_plan(
                 if isinstance(b, dict) and math.isfinite(float(b.get("value", 0.0)))
             ]
         if "items" in c and isinstance(c["items"], list):
-            data.items = [str(it) for it in c["items"] if str(it).strip()]
+            from agents.presentation import clean_semantic_label, labels_are_duplicate
+            cleaned_items = []
+            for it in c["items"]:
+                s_it = str(it).strip()
+                if not s_it:
+                    continue
+                cl = clean_semantic_label(s_it) or s_it
+                if not any(labels_are_duplicate(cl, exist) for exist in cleaned_items):
+                    cleaned_items.append(cl)
+            data.items = cleaned_items
 
     # Assemble beats
     beats: list[VisualBeat] = []

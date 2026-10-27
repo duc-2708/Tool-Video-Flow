@@ -1,7 +1,66 @@
 """Local editorial presentation repairs; no relaxation of factual validators."""
 import re
 
-TRAILING=("cho","có thể","có","và","của","với","để","từ","trong","là","nhưng","hoặc","mà","bị","được","các","những")
+TRAILING_CUTOFF = {
+    'của', 'trong', 'trên', 'dưới', 'và', 'với', 'là', 'mà', 'để', 'cho', 'về',
+    'các', 'những', 'một', 'cái', 'con', 'chiếc', 'bà', 'ông', 'đã', 'đang', 'sẽ',
+    'lại', 'cũng', 'rất', 'hơn', 'nhất', 'ra', 'vào', 'lên', 'xuống', 'đột', 'cá',
+    'vai', 'dàn', 'bối', 'sự', 'vụ', 'điều', 'việc', 'vì', 'do', 'bởi', 'hay',
+    'hoặc', 'nếu', 'khi', 'tuy', 'dẫu', 'dở', 'bị', 'được', 'đóng', 'đặt', 'này',
+    'kia', 'đó', 'đây', 'tới', 'ở', 'gặp', 'gọi', 'như', 'theo', 'hành', 'tạo', 'làm',
+    'khiến', 'giúp', 'sau', 'bày', 'tỏ', 'lên', 'xuống', 'qua', 'lại', 'thường', 'có',
+    'tài', 'đến', 'đi', 'có thể'
+}
+
+LEADING_CUTOFF = {
+    'cố', 'việc', 'động', 'giống', 'điều', 'ngột', 'trò', 'nhạc', 'nhân', 'viên',
+    'này', 'kia', 'đó', 'đây', 'thì', 'mà', 'là', 'và', 'của', 'với', 'để', 'cho',
+    'về', 'bà', 'ông', 'bị', 'được', 'ra', 'vào', 'lại', 'cũng', 'hơn', 'nhất',
+    'như', 'bởi', 'do', 'vì', 'đóng', 'đặt', 'tạo', 'làm', 'những', 'các', 'một',
+    'khiến', 'giúp', 'sau', 'sau khi', 'trong khi', 'bởi vì', 'thay vì', 'bày', 'tỏ', 'đã'
+}
+
+TRAILING = tuple(TRAILING_CUTOFF)
+
+def clean_semantic_label(label: str) -> str:
+    """Trim punctuation and eliminate truncated or dangling boundary words."""
+    if not label: return ""
+    text = " ".join(label.split()).strip(" .,:;!?…()“”\"'")
+    words = text.split()
+    while words and words[0].lower() in LEADING_CUTOFF:
+        words.pop(0)
+    while words and words[-1].lower() in TRAILING_CUTOFF:
+        words.pop(-1)
+    if not (2 <= len(words) <= 5):
+        return ""
+    result = " ".join(words)
+    return result[:1].upper() + result[1:]
+
+def labels_are_duplicate(l1: str, l2: str) -> bool:
+    """Check if two labels are duplicate via substring, word overlap, or core unaccented concept match."""
+    s1, s2 = l1.lower().strip(), l2.lower().strip()
+    if not s1 or not s2: return False
+    if s1 == s2 or s1 in s2 or s2 in s1:
+        return True
+    w1, w2 = set(s1.split()), set(s2.split())
+    if not w1 or not w2:
+        return False
+    jaccard = len(w1 & w2) / len(w1 | w2)
+    if jaccard >= 0.30:
+        return True
+    try:
+        from validation.grounding import normalize_entity
+        e1 = normalize_entity(s1)
+        e2 = normalize_entity(s2)
+        stopwords = {'van', 'de', 'tim', 'ra', 'viec', 'su', 'co', 'cac', 'nhung', 'mot', 'la', 'va', 'cua'}
+        c1 = set(e1.core) - stopwords
+        c2 = set(e2.core) - stopwords
+        if len(c1 & c2) >= 2 or (c1 and c2 and (c1 == c2 or c1.issubset(c2) or c2.issubset(c1))):
+            return True
+    except Exception:
+        pass
+    return False
+
 MODAL=re.compile(r"\b(?:có thể|có lẽ|dường như)\b",re.I)
 INTERNAL=re.compile(r"nguồn dữ kiện sự kiện|event facts|fact[_ ]ids?|sentence[_ ]index|review[_ ]notes|knowledge[_ ]notes",re.I)
 TRANSLATIONS={"job guarantee":"bảo đảm việc làm","safety net":"lưới an sinh","reskilling":"đào tạo lại kỹ năng",
@@ -16,8 +75,12 @@ def vietnamese_terms(text):
 
 def valid_card(text):
     text=" ".join(text.split()).strip(" .,:;!?…")
-    return 3<=len(text.split())<=6 and not INTERNAL.search(text) and not re.search(
-        r"(?:^|\s)(?:"+"|".join(re.escape(s) for s in TRAILING)+r")$",text,re.I)
+    words = text.split()
+    if not (3 <= len(words) <= 6) or INTERNAL.search(text):
+        return False
+    if words[0].lower() in LEADING_CUTOFF or words[-1].lower() in TRAILING_CUTOFF:
+        return False
+    return not re.search(r"(?:^|\s)(?:" + "|".join(re.escape(s) for s in TRAILING_CUTOFF) + r")$", text, re.I)
 
 
 def card_phrase(text,context="",*,used=None):

@@ -111,5 +111,10 @@ def save_quality(timeline,results,video_path,*,scene_id=None):
     target=timeline.project/'review_frames'/('contact_sheet'+suffix+'.png');sheet.save(target)
     report.update(duration_sec=timeline.duration,sample_interval_sec=2.5,frames=paths,contact_sheet=str(target),review_notes=timeline.plan.review_notes)
     report['warning_count']=len(extra)+sum(len(report[k]) for k in ('repeated_cards','still_intervals_over_3_5_sec','empty_cards_over_40_percent','text_overflow','numbers_not_in_narration','caption_gaps_over_0_6_sec'))
+    try:
+        from tools.audit_video import audit_project
+        report['layout_audit'] = audit_project(timeline.project)
+    except Exception:
+        pass
     write_json_atomic(timeline.project/('quality_report'+suffix+'.json'),report)
     return report

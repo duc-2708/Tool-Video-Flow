@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Stage Engine</title>
+  <style>
+    /* Inlined or loaded stage.css */
+    __STAGE_CSS__
+  </style>
+</head>
+<body>
+  <div id="stage-root">
+    <!-- 1. Background Perspective Grid & Lighting -->
+    <div id="bg-layer">
+      <svg class="iso-grid-svg" viewBox="0 0 1080 1920">
+        <defs>
+          <radialGradient id="grid-glow" cx="50%" cy="48%" r="50%">
+            <stop offset="0%" stop-color="#9d4edd" stop-opacity="0.3" />
+            <stop offset="60%" stop-color="#09041a" stop-opacity="0.1" />
+            <stop offset="100%" stop-color="#030108" stop-opacity="0" />
+          </radialGradient>
+          <filter id="neon-glow-filter" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <!-- Radial center glow -->
+        <rect x="0" y="0" width="1080" height="1920" fill="url(#grid-glow)" />
+        <g id="grid-lines-group" stroke="rgba(157, 78, 221, 0.16)" stroke-width="1.5"></g>
+        <g id="grid-dust-group"></g>
+      </svg>
+      <div class="ambient-glow"></div>
+    </div>
+
+    <!-- 2. World Stage (Isometric 3D canvas with Camera transform) -->
+    <div id="world-viewport">
+      <svg id="world-svg" viewBox="0 0 1080 1920">
+        <g id="camera-transform">
+          <!-- Shadow plane -->
+          <g id="shadows-layer"></g>
+          <!-- Connection cables layer -->
+          <g id="connections-layer"></g>
+          <!-- Data packets layer -->
+          <g id="packets-layer"></g>
+          <!-- Actors layer -->
+          <g id="actors-layer"></g>
+          <!-- Overlay highlights / stamps layer -->
+          <g id="effects-layer"></g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- 3. Fixed 2D HUD Layer -->
+    <div id="hud-layer">
+      <!-- Top Brand Bar -->
+      <div class="hud-brand-bar">
+        <div class="brand-badge">
+          <svg class="brand-icon" viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          <span class="brand-text" id="hud-brand-title">TECH EXPLAINER</span>
+        </div>
+        <div class="audio-waves" id="hud-audio-waves">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </div>
+
+      <!-- Station Progress Tracker -->
+      <div class="hud-stations-tracker" id="hud-tracker">
+        <div class="station-track-bg"></div>
+        <div class="station-track-fill" id="tracker-fill-bar" style="width: 0%;"></div>
+        <div id="tracker-nodes-container" style="display: contents;"></div>
+      </div>
+
+      <!-- Step Title Heading -->
+      <div class="hud-step-title" id="hud-step-header">
+        <div class="step-chip" id="hud-step-chip">BƯỚC 1</div>
+        <div class="step-heading" id="hud-step-title-text">BƯỚC 1: THUÊ VPS & KẾT NỐI SSH</div>
+      </div>
+
+      <!-- Subtitle Pill -->
+      <div class="hud-subtitle-box" id="hud-subtitle-box">
+        <div class="subtitle-text" id="hud-subtitle-text">...</div>
+      </div>
+
+      <!-- Footer disclaimer & dots -->
+      <div class="hud-footer">
+        <div class="footer-dots" id="hud-footer-dots">
+          <div class="footer-dot active"></div>
+          <div class="footer-dot"></div>
+          <div class="footer-dot"></div>
+          <div class="footer-dot"></div>
+          <div class="footer-dot"></div>
+        </div>
+        <div class="footer-disclaimer" id="hud-footer-note">hình mô phỏng</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Injected STAGE_SCRIPT and stage.js runtime */
+    window.STAGE_SCRIPT = __STAGE_SCRIPT__;
+    __STAGE_JS__
+  </script>
+</body>
+</html>
