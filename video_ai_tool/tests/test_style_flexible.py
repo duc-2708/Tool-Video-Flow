@@ -162,3 +162,72 @@ def test_minimal_observations_still_build_category_profile(style_settings):
     analyze_one(style_settings,"tin-tuc/minimal.mp4",from_raw=True)
     profile=rebuild_category(style_settings,"tin-tuc")
     assert profile.video_count==1 and profile.scene_pacing and profile.scene_patterns[0].shot_count is None
+
+
+def test_motion_analysis_and_style_refinements():
+    # 1. suggested_type accepts tutorial, explainer, review, news, story
+    for stype in ("tutorial", "explainer", "review", "news", "story"):
+        analysis = StyleAnalysis(scenes=[{"start_sec": 0, "end_sec": 10, "purpose": "hook"}], suggested_type=stype)
+        assert analysis.suggested_type == stype
+
+    # 2. words_per_sec and unit
+    analysis = StyleAnalysis(
+        scenes=[{"start_sec": 0, "end_sec": 10, "purpose": "hook", "words_per_sec": 3.2, "words_per_sec_unit": "từ/giây"}],
+        narration_style={"words_per_sec": 3.5, "words_per_sec_unit": "âm tiết/giây"}
+    )
+    assert analysis.scenes[0].words_per_sec == 3.2
+    assert analysis.scenes[0].words_per_sec_unit == "từ/giây"
+    assert analysis.narration_style.words_per_sec == 3.5
+    assert analysis.narration_style.words_per_sec_unit == "âm tiết/giây"
+
+    # 3. captions.appearance: only "pill" if really pill, otherwise "classic"
+    a_pill = StyleAnalysis(scenes=[{"start_sec": 0, "end_sec": 10, "purpose": "hook"}], captions={"appearance": "pill"})
+    assert a_pill.captions.appearance == "pill"
+    a_classic = StyleAnalysis(scenes=[{"start_sec": 0, "end_sec": 10, "purpose": "hook"}], captions={"appearance": "none"})
+    assert a_classic.captions.appearance == "classic"
+    a_plain = StyleAnalysis(scenes=[{"start_sec": 0, "end_sec": 10, "purpose": "hook"}], captions={"appearance": "classic"})
+    assert a_plain.captions.appearance == "classic"
+
+    # 4. motion_analysis full block
+    m_data = {
+        "world_type": "continuous_stage",
+        "real_cuts_count": 0,
+        "actors": [
+            {"name": "laptop", "first_sec": 0.2, "last_sec": 6.5, "persistent_across_scenes": True, "states_seen": ["open", "typing"], "motions": ["enter", "type"]}
+        ],
+        "connectors": [
+            {"from": "laptop", "to": "vps", "carries": "gói file", "start_sec": 1.8, "end_sec": 5.0}
+        ],
+        "hud": {
+            "top_bar": "TECH EXPLAINER",
+            "step_tracker": {"stations": 5, "labels": ["B1", "B2"], "marker_motion": "fill", "morphs_into": "road lúc giây 37.5"},
+            "footer_note": "hình mô phỏng",
+            "progress_dots": True
+        },
+        "text_layers": [
+            {"role": "title", "position": "top", "size_rel": 0.08, "color": "#ffffff", "keyword_highlight": "SSH", "enter_anim": "fade"}
+        ],
+        "transitions_between_scenes": [
+            {"at_sec": 6.5, "type": "none", "detail": "camera pan"}
+        ],
+        "camera": [
+            {"at_sec": 0, "move": "zoom_in", "amount_rel": 0.05}
+        ],
+        "bookends": "laptop mở đầu và recap kết",
+        "motion_events_per_10s": 4.5,
+        "longest_static_sec": 0.4,
+        "sfx_confidence": "heard"
+    }
+    analysis = StyleAnalysis(scenes=[{"start_sec": 0, "end_sec": 10, "purpose": "hook"}], motion_analysis=m_data)
+    ma = analysis.motion_analysis
+    assert ma.world_type == "continuous_stage"
+    assert ma.real_cuts_count == 0
+    assert len(ma.actors) == 1 and ma.actors[0].name == "laptop"
+    assert len(ma.connectors) == 1 and ma.connectors[0].from_actor == "laptop" and ma.connectors[0].to_actor == "vps"
+    assert ma.hud.step_tracker.stations == 5
+    assert ma.hud.footer_note == "hình mô phỏng"
+    assert len(ma.text_layers) == 1 and ma.text_layers[0].role == "title"
+    assert len(ma.camera) == 1 and ma.camera[0].move == "zoom_in"
+    assert ma.sfx_confidence == "heard"
+    assert ma.longest_static_sec == 0.4
+    assert ma.motion_events_per_10s == 4.5

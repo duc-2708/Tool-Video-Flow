@@ -1,0 +1,40 @@
+{
+  "name": "conveyor_belt",
+  "category": "process_flow",
+  "meaning": "Dùng khi trình bày dây chuyền tự động hóa, quy trình sản xuất hàng loạt hoặc xử lý liên tục",
+  "metaphor": "Băng chuyền nhà máy thông minh luân chuyển sản phẩm",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Băng chuyền cơ khí với các trục con lăn xuất hiện"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.4,
+      "description": "Các kiện hàng trôi tuần tự, qua cánh tay scanner kiểm định tự động"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.4,
+      "end_sec": 4.0,
+      "description": "Kiện hàng đạt chuẩn được đóng dấu PASS xanh ngọc và xuất xưởng"
+    }
+  ],
+  "idle_motion": "Trục con lăn quay tuần hoàn đều đặn, vệt laser quét nhịp nhàng",
+  "default_bbox": [
+    100,
+    480,
+    880,
+    600
+  ],
+  "status": "active",
+  "params_schema": {
+    "steps": "list",
+    "output_label": "str",
+    "label": "str"
+  }
+}

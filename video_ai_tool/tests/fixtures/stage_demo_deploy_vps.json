@@ -61,6 +61,46 @@
       "state": "idle",
       "label": "Gói SSH Key",
       "sublabel": "id_ed25519"
+    },
+    {
+      "id": "cloud_platform",
+      "type": "cloud",
+      "pos": [0, -180, 20],
+      "state": "idle",
+      "label": "Nền tảng Git",
+      "sublabel": "GitHub Repo (ví dụ)"
+    },
+    {
+      "id": "docker_box",
+      "type": "docker_container",
+      "pos": [220, -40, 180],
+      "state": "stacked",
+      "label": "Docker Container",
+      "sublabel": "App Service (ví dụ)"
+    },
+    {
+      "id": "browser_client",
+      "type": "browser_window",
+      "pos": [-180, 140, 0],
+      "state": "idle",
+      "label": "Trình duyệt Web",
+      "sublabel": "Client https (ví dụ)"
+    },
+    {
+      "id": "ssl_shield",
+      "type": "lock_shield",
+      "pos": [0, 80, 20],
+      "state": "locked",
+      "label": "Chứng chỉ SSL",
+      "sublabel": "HTTPS An toàn (ví dụ)"
+    },
+    {
+      "id": "error_note",
+      "type": "note_board",
+      "pos": [140, 120, 0],
+      "state": "warning",
+      "label": "Kẹt? Dán lỗi",
+      "sublabel": "Mở cổng UFW 80 (ví dụ)"
     }
   ],
   "scenes": [
@@ -72,7 +112,7 @@
       "narration": "Trước hết bạn mở máy và kết nối vào máy chủ VPS thông qua giao thức SSH an toàn.",
       "camera": {
         "x": 540,
-        "y": 920,
+        "y": 785,
         "zoom": 1.0,
         "tilt": 0
       },
@@ -146,10 +186,10 @@
       "duration_sec": 6.5,
       "narration": "Tiếp theo ta chạy lệnh cài Docker một chạm, chuẩn bị sẵn môi trường đóng gói ứng dụng.",
       "camera": {
-        "x": 620,
-        "y": 880,
-        "zoom": 1.15,
-        "tilt": -2.0
+        "x": 540,
+        "y": 785,
+        "zoom": 1.05,
+        "tilt": 0
       },
       "actions": [
         {
@@ -196,10 +236,244 @@
           "params": {"station_index": 1}
         }
       ]
+    },
+    {
+      "scene_id": "step_3_git_push",
+      "step_index": 2,
+      "title": "BƯỚC 3: ĐƯA CODE LÊN QUA GIT",
+      "duration_sec": 6.5,
+      "narration": "Ta đẩy toàn bộ mã nguồn ứng dụng lên kho lưu trữ và đồng bộ an toàn về máy chủ VPS.",
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.05,
+        "tilt": 0
+      },
+      "actions": [
+        {
+          "at_sec": 0.2,
+          "verb": "enter",
+          "target": "cloud_platform",
+          "params": {"transition": "pop"}
+        },
+        {
+          "at_sec": 1.0,
+          "verb": "type",
+          "target": "laptop_client",
+          "params": {"text": "git push origin main"},
+          "duration": 1.5
+        },
+        {
+          "at_sec": 2.6,
+          "verb": "send_packet",
+          "target": "ssh_key_packet",
+          "params": {
+            "from_actor": "laptop_client",
+            "to_actor": "cloud_platform",
+            "label": "Commit App"
+          },
+          "duration": 1.1
+        },
+        {
+          "at_sec": 3.8,
+          "verb": "set_state",
+          "target": "cloud_platform",
+          "params": {"state": "sync"}
+        },
+        {
+          "at_sec": 4.5,
+          "verb": "send_packet",
+          "target": "ssh_key_packet",
+          "params": {
+            "from_actor": "cloud_platform",
+            "to_actor": "vps_server",
+            "label": "Git Clone"
+          },
+          "duration": 1.1
+        },
+        {
+          "at_sec": 5.8,
+          "verb": "check",
+          "target": "step_3",
+          "params": {"station_index": 2}
+        }
+      ]
+    },
+    {
+      "scene_id": "step_4_run_app",
+      "step_index": 3,
+      "title": "BƯỚC 4: KHỞI CHẠY CONTAINER ỨNG DỤNG",
+      "duration_sec": 6.5,
+      "narration": "Chạy lệnh docker compose up để container khởi động và lắng nghe cổng dịch vụ.",
+      "camera": {
+        "x": 580,
+        "y": 770,
+        "zoom": 1.1,
+        "tilt": 1.0
+      },
+      "actions": [
+        {
+          "at_sec": 0.2,
+          "verb": "enter",
+          "target": "docker_box",
+          "params": {"transition": "drop"}
+        },
+        {
+          "at_sec": 1.2,
+          "verb": "type",
+          "target": "laptop_client",
+          "params": {"text": "docker compose up -d"},
+          "duration": 1.4
+        },
+        {
+          "at_sec": 2.8,
+          "verb": "set_state",
+          "target": "docker_box",
+          "params": {"state": "running", "is_running": true}
+        },
+        {
+          "at_sec": 3.8,
+          "verb": "highlight",
+          "target": "docker_box",
+          "params": {"color": "#00f5d4"}
+        },
+        {
+          "at_sec": 5.8,
+          "verb": "check",
+          "target": "step_4",
+          "params": {"station_index": 3}
+        }
+      ]
+    },
+    {
+      "scene_id": "scene_error_fix",
+      "step_index": 3,
+      "title": "KẸT? DÁN THÔNG BÁO LỖI & MỞ CỔNG",
+      "duration_sec": 5.0,
+      "narration": "Nếu gặp lỗi 502 hoặc không truy cập được, hãy dán thông báo lỗi và kiểm tra mở cổng tường lửa.",
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.0,
+        "tilt": 0
+      },
+      "actions": [
+        {
+          "at_sec": 0.2,
+          "verb": "glitch",
+          "target": "world",
+          "duration": 0.6
+        },
+        {
+          "at_sec": 0.7,
+          "verb": "blur_dissolve",
+          "target": "world",
+          "duration": 0.5
+        },
+        {
+          "at_sec": 1.0,
+          "verb": "stamp",
+          "target": "world",
+          "params": {"text": "ERROR 502"}
+        },
+        {
+          "at_sec": 1.6,
+          "verb": "enter",
+          "target": "error_note",
+          "params": {"transition": "pop"}
+        },
+        {
+          "at_sec": 2.2,
+          "verb": "type",
+          "target": "laptop_client",
+          "params": {"text": "ufw allow 80/tcp"},
+          "duration": 1.2
+        },
+        {
+          "at_sec": 3.6,
+          "verb": "stamp",
+          "target": "world",
+          "params": {"text": "RESOLVED"}
+        }
+      ]
+    },
+    {
+      "scene_id": "step_5_dns_https",
+      "step_index": 4,
+      "title": "BƯỚC 5: TRỎ TÊN MIỀN & BẬT HTTPS",
+      "duration_sec": 6.5,
+      "narration": "Cuối cùng, trỏ bản ghi A tên miền về IP của VPS và kích hoạt chứng chỉ SSL miễn phí.",
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.05,
+        "tilt": 0
+      },
+      "actions": [
+        {
+          "at_sec": 0.2,
+          "verb": "exit",
+          "target": "error_note",
+          "duration": 0.4
+        },
+        {
+          "at_sec": 0.5,
+          "verb": "enter",
+          "target": "browser_client",
+          "params": {"transition": "pop"}
+        },
+        {
+          "at_sec": 1.2,
+          "verb": "enter",
+          "target": "ssl_shield",
+          "params": {"transition": "drop"}
+        },
+        {
+          "at_sec": 2.2,
+          "verb": "type",
+          "target": "laptop_client",
+          "params": {"text": "certbot --nginx -d app.vn"},
+          "duration": 1.4
+        },
+        {
+          "at_sec": 3.8,
+          "verb": "highlight",
+          "target": "ssl_shield",
+          "params": {"color": "#00f5d4"}
+        },
+        {
+          "at_sec": 5.8,
+          "verb": "check",
+          "target": "step_5",
+          "params": {"station_index": 4}
+        }
+      ]
+    },
+    {
+      "scene_id": "recap_road",
+      "step_index": 4,
+      "title": "TỔNG KẾT: 5 TRẠM BIẾN HÌNH CON ĐƯỜNG 3D",
+      "duration_sec": 6.0,
+      "narration": "Chỉ với 5 trạm tiến độ, ứng dụng của bạn đã chính thức vận hành mượt mà trên môi trường Internet.",
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.0,
+        "tilt": 0
+      },
+      "actions": [
+        {
+          "at_sec": 0.2,
+          "verb": "morph_to",
+          "target": "road",
+          "params": {"target_form": "road"},
+          "duration": 5.0
+        }
+      ]
     }
   ],
   "recap": {
     "morph_tracker_to": "road",
-    "recap_duration": 4.0
+    "recap_duration": 6.0
   }
 }

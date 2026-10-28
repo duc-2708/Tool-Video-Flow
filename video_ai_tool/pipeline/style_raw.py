@@ -121,7 +121,9 @@ class RawResponse:
 
 
 def reuse_raw(store,*,offline=False,force=False):
-    """Existing paid raw always wins; even force/relearn never overwrites it."""
+    """Bản thô đã trả phí ưu tiên dùng lại; nhưng khi force=True (và not offline), bỏ qua để gọi lại Gemini."""
+    if force and not offline:
+        return None
     if not store.path.exists():
         if offline:
             raise ValueError("Chưa có bản thô cho video này; --from-raw không gọi Gemini.")

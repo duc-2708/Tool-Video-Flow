@@ -1,0 +1,40 @@
+{
+  "name": "lock_unlock",
+  "category": "risk_prob",
+  "meaning": "Dùng khi nói về bảo mật thông tin, giải mã rào cản, phá vỡ hạn chế hoặc mở khóa cơ hội mới",
+  "metaphor": "Ổ khóa bảo mật công nghệ cao bật mở then chốt",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Ổ khóa kiên cố màu đỏ khóa chặt với biểu tượng bảo mật xuất hiện"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.1,
+      "description": "Khóa mã số tự động xoay khớp mã hoặc chìa khóa số cắm vào xoay 90°"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.1,
+      "end_sec": 4.0,
+      "description": "Còng khóa bật nảy lên 'tách' (spring snap), toàn thân chuyển màu xanh neon mở lối"
+    }
+  ],
+  "idle_motion": "Còng khóa đung đưa nhẹ, vòng hào quang bảo vệ lan tỏa",
+  "default_bbox": [
+    180,
+    440,
+    720,
+    680
+  ],
+  "status": "active",
+  "params_schema": {
+    "status": "str",
+    "key_type": "str",
+    "label": "str"
+  }
+}

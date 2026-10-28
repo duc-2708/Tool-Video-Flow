@@ -24,6 +24,13 @@ def bundle_engine():
     hasher = hashlib.sha256()
 
     for name in ENGINE_JS_FILES:
+        if name == "timeline.js":
+            vocab_path = FOLDER.parent / "recipes" / "vocabulary.js"
+            if vocab_path.is_file():
+                content = vocab_path.read_text(encoding="utf-8")
+                js_parts.append(content)
+                hasher.update(vocab_path.read_bytes())
+
         path = FOLDER / name
         if path.is_file():
             content = path.read_text(encoding="utf-8")

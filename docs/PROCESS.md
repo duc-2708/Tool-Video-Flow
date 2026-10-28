@@ -77,6 +77,10 @@ vẫn có nhánh sinh EditPlan/audit cũ. Không xóa nhánh cũ bằng suy đo�
 
 | Bước | Input | Output và artifact trong project | Code và API/model |
 |---|---|---|---|
+| 2026-10-28 | Giai đoạn 7 - Bước (d): Dựng lại 3 project chuẩn đối sánh với Thư viện 28 công thức chuyển động + Lập lịch không lặp: (1) Dựng lại hoàn chỉnh 3 project thực tế: 'luat-cam-chatbot-ai-tao-su-than-mat-cam-xuc' (5 cảnh), 'viet-nam-dat-giai-thuong-so-toan-cau' (6 cảnh) và 'co-hoi-ty-usd-tu-thiet-bi-bay' (6 cảnh); (2) 100% tuân thủ 2 luật lập lịch: 0 cảnh liên tiếp nào cùng họ (0% consecutive repetition) và mỗi video đạt >= 4 họ chuyển động đa dạng (compare_vs, risk_prob, number_stat, fill_level); (3) Tự động ánh xạ kịch bản và số liệu sang các recipe hoạt họa ẩn dụ sống động (lock_unlock, slot_counter, balance_scale, shield_hit, battery_fill, bar_race, traffic_light, before_after_wipe); (4) Tạo 3 bảng so sánh contact sheet trực quan Trước (khuôn lặp phẳng) / Sau (motion vocabulary đa dạng) tại review_frames/contact_sheet_comparison.png và lưu artifact; (5) Bộ kiểm thử hồi quy 71/71 passed 100%. | APP/tools/rerender_3projects.py, editor/motion/scheduler.py, editor/motion/scenes/engine.js; output/{auto-cong-nghe-64e6b569, auto-cong-nghe-efa8eac5, auto-cong-nghe-e0a81f1e}/review_frames/; ROOT/docs/PROCESS.md | Hoàn thành toàn diện Bước (d) Giai đoạn 7: dựng lại 3 project đối sánh, xác nhận trực quan qua contact sheet trước/sau |
+| 2026-10-28 | Giai đoạn 7 - Bước (c): 8 Recipe Khái niệm + UI giả lập, Lập lịch không lặp, Metaphor Planner, Clean Theme & Top-Headline: (1) Bổ sung 8 schema RecipeMetadata và RecipeStage trong editor/motion/recipes/recipe_meta.py, sinh đủ 28 descriptor JSON trong descriptors/ (8 Phase A + 12 Phase B + 8 Phase C); (2) Cài đặt trọn vẹn 8 recipe SVG/CSS xác định theo t trong editor/motion/recipes/vocabulary.js: orbit_system (hệ quỹ đạo elip nghiêng 3D + 3 vệ tinh quay xung + xung sóng + hạt năng lượng tia nối), layered_onion (củ hành đồng tâm nhiều lớp quay bóc tách hé lộ nhân sáng), stack_pile (các phiến thẻ 3D xếp chồng nảy nhẹ damped bounce + viền sáng phiến trên cùng), puzzle_snap (2 mảnh ghép khớp mộng cơ học trượt vào bừng sáng viền nối), chat_thread (hội thoại tin nhắn bóng bay + 3 chấm typing + bot phản hồi), mock_card_swipe (thẻ lướt ngang chốt dừng + đóng mộc APPROVED xanh ngọc), form_fill_submit (biểu mẫu nhập liệu 3 hàng gõ phím + nút submit nhấn lún chuyển Hoàn tất), terminal_command_run (cửa sổ lệnh 3D gõ deploy + thanh tiến trình 0->100% + SUCCESS xanh ngọc); (3) Đăng ký đủ 28 recipes vào REGISTRY (editor/motion/registry.py) với semantic fallback; (4) Xây dựng editor/motion/scheduler.py phân loại 7 họ chuyển động (MotionFamily: number_stat, fill_level, compare_vs, process_flow, risk_prob, concept_relation, mock_ui), cấm 2 cảnh liên tiếp trùng họ, đảm bảo video >=5 cảnh có >=4 họ khác nhau, thuật toán suggest_metaphor_recipe tự động nhận diện từ khóa ngữ nghĩa; (5) Bổ sung theme clean_white và paper_brand đạt chuẩn tương phản WCAG AA >=4.5:1 (#0369a1 5.93:1, #047857 5.48:1 trên nền trắng) và hỗ trợ top_headline (y in [250, 360], 48-56px, không đè phụ đề); (6) Mở rộng tools/recipe_gallery.py kết xuất 8 clip MP4 4s (79.0s) và contact_sheet_c.png tại output/recipe_gallery/; (7) Toàn bộ 7/7 test vocabulary và 100% test suite passed. | APP/editor/motion/recipes/{recipe_meta.py, vocabulary.js, __init__.py, descriptors/*.json}, editor/motion/scheduler.py, editor/motion/theme.py, editor/motion/registry.py, tools/recipe_gallery.py, tests/test_recipe_vocabulary.py; ROOT/docs/PROCESS.md | Hoàn thành toàn diện Bước (c) Giai đoạn 7 với đầy đủ 28 recipe, lập lịch chống lặp, theme sáng và top headline |
+| 2026-10-28 | Giai đoạn 7 - Bước (b): 12 Recipe So sánh + Rủi ro + Quy trình: (1) Bổ sung 12 schema RecipeMetadata và RecipeStage trong editor/motion/recipes/recipe_meta.py, tự động trích xuất đủ 20 descriptor JSON (8 Phase A + 12 Phase B) trong descriptors/; (2) Cài đặt trọn bộ 12 recipe hoạt họa SVG/CSS xác định theo t trong editor/motion/recipes/vocabulary.js: balance_scale (cán cân 3D nghiêng về bên thắng), tug_of_war (kéo co giằng co dây thừng + cờ đỏ bứt phá), vs_flip_cards (thẻ bài lật xoay 180° đối đầu), before_after_wipe (thanh trượt laser quét chia tách trước/sau), conveyor_belt (băng chuyền 6 con lăn + scanner + mộc PASS), domino_chain (domino đổ liên hoàn kích hoạt đích), funnel_filter (phễu lọc 3 tầng chắt lọc giọt tinh hoa), pipeline_pipes (đường ống zic-zac + van xoay + xung năng lượng), dice_roll (xúc xắc 3D lăn nảy chốt mặt may mắn), lock_unlock (còng khóa bật nảy 25° spring snap + xanh an toàn), shield_hit (khiên lục giác đỡ đạn phản hồi sóng xung kích), traffic_light (cột đèn chuyển đỏ->vàng->xanh chiếu chùm tia sáng); tất cả đều có >= 3 giai đoạn (enter, action, impact), nhãn <= 3 từ đủ nghĩa (sanitizeSemanticLabel), chữ >= 36px, vùng an toàn [70, 1010] x [240, 1330]; (3) Đăng ký 12 recipe vào REGISTRY (editor/motion/registry.py) với fallback tương thích (versus_split, flow_chain, stat_number); (4) Mở rộng tools/recipe_gallery.py hỗ trợ cờ --phase b, kết xuất thành công 12 clip MP4 4s (88.9s) và contact_sheet_b.png tại output/recipe_gallery/; (5) Cập nhật bộ test unit tests/test_recipe_vocabulary.py kiểm tra trọn vẹn 20 recipes; 14/14 test suite passed 100%. | APP/editor/motion/recipes/{recipe_meta.py, vocabulary.js, __init__.py, descriptors/*.json}, editor/motion/registry.py, tools/recipe_gallery.py, tests/test_recipe_vocabulary.py; ROOT/docs/PROCESS.md | Hoàn thành toàn diện Bước (b) Giai đoạn 7 cài đặt 12 recipe hoạt họa So sánh, Quy trình và Rủi ro sống động |
+| 2026-10-28 | Giai đoạn 7 - Bước (a): Khung Motion Vocabulary + 8 Recipe số liệu & đổ đầy: (1) Xây dựng schema RecipeMetadata và RecipeStage trong editor/motion/recipes/recipe_meta.py, tự động trích xuất 8 descriptor JSON trong editor/motion/recipes/descriptors/; (2) Cài đặt trọn bộ 8 recipe hoạt họa SVG/CSS xác định thuần túy theo t trong editor/motion/recipes/vocabulary.js: slot_counter (máy quay số 3 cuộn lăn tít + LED chase), strike_replace (vệt chém đỏ ✗ -> số mới ✓), gauge_needle (đồng hồ áp suất bán nguyệt 270° + kim rung cơ học + đèn báo), odometer (trục số cơ khí lăn bánh răng), bar_race (cuộc đua nước rút bứt phá dẫn đầu + cờ sao cán đích), thermometer (cột nhiệt kế sôi + sóng nhiệt + bọt khí), battery_fill (thỏi pin nạp 4 nấc + sét đánh + xung điện quang), glass_fill (dòng nước rót + mực nước dâng + phao dập dềnh); tất cả đều có >= 3 giai đoạn (enter, action, impact), nhãn <= 3 từ đủ nghĩa (sanitizeSemanticLabel), chữ >= 36px, bố cục an toàn tuyệt đối [70, 1010] x [240, 1330]; (3) Tích hợp vocabulary.js vào editor/motion/engine/__init__.py, timeline.js và đăng ký 8 phần tử vào REGISTRY (editor/motion/registry.py) với đường fallback chuẩn; (4) Xây dựng tools/recipe_gallery.py kết xuất thành công 8 clip MP4 4s (53.1s) và contact_sheet.png tại output/recipe_gallery/; (5) Bổ sung bộ test unit tests/test_recipe_vocabulary.py (4/4 passed), 48/48 test suite passed 100%. | APP/editor/motion/recipes/{recipe_meta.py, vocabulary.js, __init__.py, descriptors/*.json}, editor/motion/engine/{__init__.py, timeline.js}, editor/motion/registry.py, tools/recipe_gallery.py, tests/test_recipe_vocabulary.py; ROOT/docs/PROCESS.md | Hoàn thành toàn diện Bước (a) Giai đoạn 7 xây dựng khung công thức chuyển động và 8 recipe số liệu & đổ đầy sống động |
 | Trend Scout tùy chọn | Danh mục, region, cấu hình/cache/ngân sách, lịch sử 14 ngày | TrendItem → chủ đề/góc kể; `trend_scout_latest.json` ở output; auto lưu `trend_scout.json` trong project | `pipeline/trend_scout.py`, `providers/trends/`; ScrapeCreators metadata, nguồn miễn phí, Gemini gom batch |
 | Khám phá | Danh mục, region, 1/3/7 ngày, số gợi ý, lịch sử | Gợi ý một sự kiện, angle/query gợi ý; `topic_candidates.json` trong auto-category, `topic_discovery.json` khi handoff | `sources/topic_discovery.py`, `pipeline/discover.py`; RSS/feedparser, DDGS news, Gemini Researcher, YouTube tùy chọn |
 | Research | Topic, web_limit, source_languages, discovery_hint, content_mode | `sources.json`: bài và chẩn đoán; `brief.json`: facts, quotes, truy vấn, cảnh báo, insight; v2 có research_questions/knowledge_notes | `agents/researcher.py`, `sources/web_search.py`; DDGS + trafilatura; LLM_PROVIDER_RESEARCHER → Gemini/OpenAI, mục 9; YouTube Data API chỉ cho trends |
@@ -1352,6 +1356,95 @@ Nâng cấp chuyển động đồ họa phong phú, đa tầng lớp (Multi-lay
      + Video hoàn thiện lưu tại `output/auto-cong-nghe-1a3adcd5/render/bai-thu-uav-hoa-lac-co-gi-ma-khien-gioi-cong-nghe-to-mo_tiktok_final.mp4` (49.32s, codec H.264/AAC stereo).
      + Tạo ảnh contact sheet chi tiết tại `output/auto-cong-nghe-1a3adcd5/review_frames/contact_sheet.png` (521KB) và lưu báo cáo chất lượng `quality_report.json` với các chỉ số: 6 loại scene đa dạng (`network_nodes`, `flow_chain`, `stack_cards`, `terminal_type`, `magnifier_check`, `checklist`), độ bao phủ hoạt họa 100%, 22 phần tử hoạt họa, điểm năng lượng chuyển động 7.03, không có khoảng đứng hình >3.5s, typography phân cấp đạt chuẩn.
    - Kiểm thử toàn diện: toàn bộ 74/74 bài test liên quan (`test_motion_engine`, `test_visual_planner_v3`, `test_motion_v4`, `test_script_writer_v3`) đều passed 100%.
+
+
+
+### 7.8 Thư viện "Công thức chuyển động" (Motion Vocabulary) - Giai đoạn 7
+
+Nhằm chấm dứt tình trạng điền chữ vào 5-6 khuôn lặp (ring/list/hub/terminal/bar), Giai đoạn 7 xây dựng thư viện công thức chuyển động phong phú (Motion Vocabulary) tự vẽ SVG/CSS, tuân thủ nguyên tắc "Hình là chủ thể, chữ chỉ là chú thích", diễn giải trọn vẹn ngữ nghĩa kịch bản bằng chuyển động thuần túy.
+
+1. **Khung công thức chuyển động (`editor/motion/recipes/`)**:
+   - `recipe_meta.py`: Định nghĩa schema cấu trúc `RecipeMetadata` và `RecipeStage` cho mỗi recipe gồm: ý nghĩa dùng khi nào, ẩn dụ hình ảnh chủ đạo (metaphor), giới hạn nhãn `<= 3 từ` ngữ nghĩa hoàn chỉnh (`sanitizeSemanticLabel`), ít nhất 3 giai đoạn chuyển động (`enter`, `action`, `impact`), chuyển động nhịp thở idle, vùng bao mặc định `default_bbox` nằm trọn trong Content Zone an toàn `[70, 1010] x [240, 1330]`, schema tham số và tự động trích xuất các descriptor JSON trong `editor/motion/recipes/descriptors/`.
+   - `__init__.py`: Cung cấp hàm `bundle_vocabulary()` trả về mã JS thuần và sha256 digest, tự động gắn vào pipeline kết xuất motion.
+
+2. **Bước (a): 8 Recipe số liệu & đổ đầy (`editor/motion/recipes/vocabulary.js`)**:
+   - `slot_counter`: Máy quay số 3-4 cuộn lăn tít motion blur, từng cột số dừng giật nấc cơ học so le `t=1.4-2.2s`, rung haptic và viền đèn LED nhấp nháy chạy vòng quanh khung máy.
+   - `strike_replace`: Thẻ số cũ xám mờ xuất hiện, vệt chém đỏ quét chéo dứt khoát kèm dấu ✗ nảy lên (`t=0.7-1.8s`), số mới khổng lồ (font-size >= 140px) bừng sáng trồi lên từ phía sau kèm dấu ✓ xanh ngọc.
+   - `gauge_needle`: Mặt đồng hồ đo áp suất cơ khí bán nguyệt 270° chia 3 dải màu xanh-vàng-đỏ, kim quay từ 0 vọt tới đích (`t=0.7-2.3s`), dao động nảy tắt dần ở đỉnh và đèn cảnh báo nhấp nháy.
+   - `odometer`: Trục số công-tơ-mét xe hơi cơ khí, các trống số hình trụ 3D lăn liên động bánh răng từ hàng đơn vị đến hàng nghìn, chốt khớp cơ học và vệt sáng phản chiếu quét ngang mặt kính (`t=2.4s`).
+   - `bar_race`: Cuộc đua nước rút giữa các thanh tốc độ trên các làn đua ngang, thanh chủ đạo bứt phá ngoạn mục vượt qua đối thủ (`t=1.8s`), cán đích qua vạch ca-rô tung cờ vinh danh / ngôi sao vàng.
+   - `thermometer`: Cột nhiệt kế thủy tinh trong suốt, cột thủy ngân đỏ rực dâng trào mạnh mẽ từ bầu cầu lên đỉnh (`t=0.6-2.2s`), chạm ngưỡng sôi tỏa các vòng sóng nhiệt đỏ cam và sủi bọt lăn tăn.
+   - `battery_fill`: Thỏi pin kim loại 3D bo góc với cực dương nhô ra, tia sét năng lượng đánh vào nạp tuần tự 4 khối pin (25%, 50%, 75%, 100%), đầy 100% phát sóng xung điện quang toàn thân pin.
+   - `glass_fill`: Ly thủy tinh đón dòng nước rót từ trên xuống (`t=0.6-2.4s`), mực nước ngọc bích dâng cao sóng sánh, phao nổi dập dềnh trên mặt nước và bọt khí li ti nổi dần lên.
+
+3. **Tích hợp Motion Engine & Fallback An Toàn**:
+   - Tích hợp tự động vào `editor/motion/engine/timeline.js`: ưu tiên dispatch qua `window.MotionVocabulary[sceneType]` trước khi xét fallback.
+   - Đăng ký đầy đủ 8 recipe vào `REGISTRY` (`editor/motion/registry.py`) với các kiểu fallback an toàn: `slot_counter` -> `stat_number`, `strike_replace` -> `stat_number`, `gauge_needle` -> `gauge_ring`, `odometer` -> `stat_number`, `bar_race` -> `bar_compare`, `thermometer` -> `stat_number`, `battery_fill` -> `container_fill`, `glass_fill` -> `container_fill`.
+
+
+3. **Bước (b): 12 Recipe So sánh, Quy trình & Rủi ro (`editor/motion/recipes/vocabulary.js`)**:
+   - *So sánh & đối lập*:
+     + `balance_scale`: Cán cân công lý 3D nghiêng về bên nặng ký hơn, dao động tắt dần quanh góc nghiêng 18°, đĩa thắng bừng sáng neon.
+     + `tug_of_war`: Trận kéo co giằng co thế trận gay gắt, dây thừng vặn xoắn rung giật qua lại, dải cờ đỏ bứt phá vượt vạch chiến thắng.
+     + `vs_flip_cards`: Hai thẻ bài 3D lật xoay 180° theo trục đứng hé lộ thông số đối đầu, thẻ vượt trội bung viền neon, thẻ thua tối xám.
+     + `before_after_wipe`: Thanh trượt laser thẳng đứng quét ngang màn hình từ trái qua phải, chia tách thế giới Cũ xám xịt và Mới rực rỡ.
+   - *Quy trình & luồng*:
+     + `conveyor_belt`: Băng chuyền công nghiệp với 6 con lăn quay đều, kiện hàng chạy qua cánh tay scanner quét laser và đóng mộc PASS xanh ngọc.
+     + `domino_chain`: Chuỗi quân cờ domino 3D đổ rạp liên hoàn theo phản ứng dây chuyền, kích hoạt nổ bung mục tiêu đột phá ở đích.
+     + `funnel_filter`: Chiếc phễu lọc thủy tinh 3 tầng sàng lọc vô số hạt dữ liệu thô thành một giọt tinh thể vàng giá trị ở đáy.
+     + `pipeline_pipes`: Mạng lưới đường ống 3D zic-zac có van khóa tự động xoay mở, luồng xung năng lượng phóng qua và đồng hồ báo MAX.
+   - *Rủi ro & xác suất*:
+     + `dice_roll`: Viên xúc xắc 3D xoay lộn nhào từ trên cao rơi xuống nảy tưng bừng rồi chốt cứng mặt số may mắn, phát hào quang vàng chói.
+     + `lock_unlock`: Ổ khóa bảo mật công nghệ cao cắm chìa xoay khớp, còng khóa bật nảy lên 25° (spring snap), toàn thân khóa chuyển xanh ngọc.
+     + `shield_hit`: Tấm khiên lục giác phòng thủ đỡ các tia đạn đỏ bắn phá, tạo sóng xung kích phản hồi và đẩy lùi đòn đánh toàn diện.
+     + `traffic_light`: Trụ đèn tín hiệu 3D chuyển tuần tự Đỏ (dừng) -> Vàng (chờ) -> Xanh (bừng sáng), chiếu chùm ánh sáng tăng tốc lao vút.
+
+4. **Công cụ Gallery & Bảng tổng hợp Contact Sheet**:
+   - `tools/recipe_gallery.py`: Kết xuất tự động trọn bộ 8 clip MP4 (4.0s @ 24fps) tại `output/recipe_gallery/*.mp4` và tạo bảng ảnh contact sheet `contact_sheet.png` (dạng lưới 4x2, kích thước 1440x1560) hiển thị đầy đủ thông số kỹ thuật, chuỗi giai đoạn và kiểm định chất lượng (PASS 100%).
+
+4. **Bước (c): 8 Recipe Khái niệm / Quan hệ & Giao diện giả lập (`editor/motion/recipes/vocabulary.js`)**:
+   - *Khái niệm & quan hệ*:
+     + `orbit_system**: Hệ thống quỹ đạo elip nghiêng 3D, nút trung tâm tỏa sóng xung kích, 3 vệ tinh quay xung quanh với vận tốc góc khác nhau, các gói năng lượng chạy dọc tia nối.
+     + `layered_onion**: Củ hành đồng tâm nhiều lớp 3D quay mở so le (tách vỏ bóc tách từ ngoài vào trong), hé lộ lõi ngọc sáng rực ở tâm.
+     + `stack_pile**: Các phiến thẻ 3D xếp chồng tầng tầng lớp lớp rơi từ trên xuống nảy nhẹ (damped bounce), phiến trên cùng sáng viền neon.
+     + `puzzle_snap**: Hai mảnh ghép puzzle 3D khớp mộng trượt từ 2 bên vào khít nhau, khóa ngàm cơ học và bừng sáng viền khớp nối.
+   - *Giao diện giả lập (Mock UI)*:
+     + `chat_thread**: Luồng hội thoại tin nhắn bong bóng giả lập, tin nhắn người gửi bay vào, bong bóng typing 3 chấm nhấp nháy, tin nhắn chatbot bừng sáng phản hồi.
+     + `mock_card_swipe**: Thẻ thông tin 3D vuốt lướt ngang qua màn hình, chốt dừng mượt mà và đóng con dấu "APPROVED" xanh lục / hiệu ứng quét phê duyệt.
+     + `form_fill_submit**: Biểu mẫu nhập liệu 3 hàng tuần tự gõ văn bản, nút submit nhấn lún cơ học (button press) và chuyển trạng thái "HOÀN TẤT" thành công.
+     + `terminal_command_run**: Cửa sổ dòng lệnh lập trình 3D, con trỏ gõ lệnh `$ deploy --prod`, thanh tiến trình chạy 0->100% và log "SUCCESS" xanh ngọc.
+
+5. **Bộ lập lịch chống lặp & Metaphor Planner (`editor/motion/scheduler.py`)**:
+   - Định nghĩa 7 họ chuyển động (`MotionFamily`): `NUMBER_STAT`, `FILL_LEVEL`, `COMPARE_VS`, `PROCESS_FLOW`, `RISK_PROB`, `CONCEPT_RELATION`, `MOCK_UI`.
+   - Quy tắc cấm lặp liên tiếp: Hai cảnh kề nhau không bao giờ được chung họ chuyển động.
+   - Quy tắc đa dạng toàn video: Video có >= 5 cảnh bắt buộc phải xuất hiện ít nhất 4 họ khác nhau. Pass 2 của thuật toán tự động nhận diện và hoán đổi các cảnh thuộc họ trùng lặp sang các họ còn thiếu.
+   - Nhận diện ẩn dụ từ kịch bản (`suggest_metaphor_recipe`): Phân tích văn bản dẫn chuyện để chọn recipe phản ánh đúng ẩn dụ (ví dụ 'cán cân' -> `balance_scale`, 'khiên bảo vệ' -> `shield_hit`, 'domino' -> `domino_chain`, 'tin nhắn/chatbot' -> `chat_thread`).
+
+6. **Theme sáng chuẩn WCAG AA & Phụ đề Top-Headline**:
+   - Bổ sung theme `clean_white` và `paper_brand**: Card nền trắng `#ffffff`, màu điểm nhấn xanh đậm `#0369a1` (tương phản 5.93:1) và xanh lá đậm `#047857` (tương phản 5.48:1), hoàn toàn vượt ngưỡng WCAG AA (>= 4.5:1), không gây cảnh báo.
+   - Hỗ trợ `#top-headline**: Vị trí cố định vùng trên `y in [250, 360]`, font-size `48-56px`, độc lập với khung đồ họa chính và không đè lên phụ đề lời đọc ở dưới đáy.
+
+7. **Công cụ Gallery & Bảng tổng hợp Contact Sheet**:
+   - `tools/recipe_gallery.py**: Kết xuất tự động trọn bộ các clip MP4 (4.0s @ 24fps) tại `output/recipe_gallery/*.mp4` và tạo bảng ảnh contact sheet (`contact_sheet.png` cho Phase A, `contact_sheet_b.png` cho Phase B, `contact_sheet_c.png` cho Phase C) hiển thị đầy đủ thông số kỹ thuật, chuỗi giai đoạn và kiểm định chất lượng (PASS 100%).
+
+9. **Bước (d): Kết quả dựng lại 3 Project đối sánh & So sánh Contact Sheet**:
+   - Áp dụng thành công thư viện 28 công thức chuyển động và bộ lập lịch chống lặp trên 3 project thực tế:
+     + **Project 1 (`luat-cam-chatbot-ai-tao-su-than-mat-cam-xuc`)**:
+       * *Trước*: 5 cảnh dùng khuôn phẳng lặp lại (`ring`, `flow_chain`, `stack_cards`, `network_nodes`, `bar_grow`).
+       * *Sau*: 5 cảnh được lập lịch thành 4 họ khác nhau: Cảnh 1 `lock_unlock` (risk_prob, 13.3s), Cảnh 2 `slot_counter` (number_stat, 8.4s), Cảnh 3 `balance_scale` (compare_vs, 9.1s), Cảnh 4 `shield_hit` (risk_prob, 8.8s), Cảnh 5 `battery_fill` (fill_level, 9.2s). Hoán đổi tự động cảnh 3 và cảnh 5 để tránh lặp họ liên tiếp và đạt chỉ tiêu 4 họ.
+       * *Bảng so sánh*: `output/auto-cong-nghe-64e6b569/review_frames/contact_sheet_comparison.png` (2060x1500).
+     + **Project 2 (`viet-nam-dat-giai-thuong-so-toan-cau`)**:
+       * *Trước*: 6 cảnh khuôn phẳng lặp lại (`bar_grow`, `flow_chain`, `stack_cards`, `network_nodes`, `terminal_type`, `magnifier_check`).
+       * *Sau*: 6 cảnh thuộc 4 họ chuyển động: Cảnh 1 `bar_race` (number_stat, 9.1s), Cảnh 2 `traffic_light` (risk_prob, 10.3s), Cảnh 3 `before_after_wipe` (compare_vs, 10.2s), Cảnh 4 `slot_counter` (number_stat, 9.8s), Cảnh 5 `balance_scale` (compare_vs, 9.9s), Cảnh 6 `battery_fill` (fill_level, 9.4s).
+       * *Bảng so sánh*: `output/auto-cong-nghe-efa8eac5/review_frames/contact_sheet_comparison.png` (2240x1500).
+     + **Project 3 (`co-hoi-ty-usd-tu-thiet-bi-bay`)**:
+       * *Trước*: 6 cảnh khuôn phẳng lặp lại (`bar_grow`, `flow_chain`, `stat_number`, `stack_cards`, `network_nodes`, `terminal_type`).
+       * *Sau*: 6 cảnh thuộc 4 họ chuyển động: Cảnh 1 `lock_unlock` (risk_prob, 6.1s), Cảnh 2 `slot_counter` (number_stat, 5.8s), Cảnh 3 `lock_unlock` (risk_prob, 11.2s), Cảnh 4 `slot_counter` (number_stat, 6.9s), Cảnh 5 `balance_scale` (compare_vs, 5.1s), Cảnh 6 `battery_fill` (fill_level, 9.3s).
+       * *Bảng so sánh*: `output/auto-cong-nghe-e0a81f1e/review_frames/contact_sheet_comparison.png` (2240x1155).
+   - Đã sao lưu 3 artifact ảnh so sánh Trước / Sau vào thư mục hội thoại (`contact_sheet_comparison_chatbot.png`, `contact_sheet_comparison_giai_thuong.png`, `contact_sheet_comparison_thiet_bi_bay.png`).
+
+8. **Bộ kiểm thử tự động**:
+   - `tests/test_recipe_vocabulary.py`: Kiểm tra toàn diện metadata, safe zone, 3 giai đoạn chuyển động, đăng ký registry, cơ chế fallback, tính toàn vẹn của bundle JS và khả năng sinh HTML nhúng.
 
 
 ## 8. Assets, TTS, stock và AI clip

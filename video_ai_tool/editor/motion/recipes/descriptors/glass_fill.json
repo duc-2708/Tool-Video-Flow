@@ -1,0 +1,40 @@
+{
+  "name": "glass_fill",
+  "category": "fill_level",
+  "meaning": "Dùng khi diễn tả 'đổ đầy ly nước', dung lượng đã đầy, giới hạn chịu đựng hoặc mức độ đạt mục tiêu",
+  "metaphor": "Ly nước thủy tinh đón dòng nước rót từ trên xuống",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Chiếc ly thủy tinh trong suốt xuất hiện với mặt bàn vững chãi"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.4,
+      "description": "Dòng nước xanh biếc rót từ trên xuống, mực nước dâng cao sóng sánh có bọt khí"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.4,
+      "end_sec": 4.0,
+      "description": "Nước đầy đúng vạch mục tiêu, vật nổi (phao/icon) nhấp nhô trên mặt nước"
+    }
+  ],
+  "idle_motion": "Mặt nước gợn sóng hình sin nhẹ nhàng, bọt khí nổi lững lờ",
+  "default_bbox": [
+    200,
+    400,
+    680,
+    760
+  ],
+  "status": "active",
+  "params_schema": {
+    "fill_percentage": "float",
+    "floating_icon": "str",
+    "label": "str"
+  }
+}

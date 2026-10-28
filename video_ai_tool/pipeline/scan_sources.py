@@ -258,7 +258,7 @@ def learn_selected(settings, category, rows, *, confirmed=False, provider=None, 
                     raw_identity={"file_hash":"youtube:"+vid,"notes_hash":cache_key(""),"model":settings.require_style_model(),"prompt_hash":cache_key(prompt),"version":2}
                     store=RawResponse(raw_path(settings,category,hashlib.sha256(url.encode("utf-8")).hexdigest()),raw_identity,diagnostics,
                         duration_limit=min(row["duration_sec"],settings.style_max_video_sec))
-                    analysis=reuse_raw(store,force=bool(row.get("force")))
+                    analysis=reuse_raw(store,force=False)
                     if analysis is not None:
                         progress("Đã parse lại bản thô YouTube, không gọi Gemini.")
                     else:

@@ -1,0 +1,40 @@
+{
+  "name": "domino_chain",
+  "category": "process_flow",
+  "meaning": "Dùng khi giải thích phản ứng dây chuyền, một nguyên nhân dẫn đến hàng loạt hệ quả liên tiếp",
+  "metaphor": "Chuỗi quân cờ domino đổ liên hoàn kỳ thú",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Hàng quân cờ domino 3D xếp thẳng hàng vững chãi"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.3,
+      "description": "Quân đầu tiên bị kích hoạt ngã xuống, kéo theo chuỗi domino đổ rạp tuần tự"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.3,
+      "end_sec": 4.0,
+      "description": "Quân cờ cuối cùng va đập làm bật mở đích đến / kết quả khổng lồ"
+    }
+  ],
+  "idle_motion": "Hạt năng lượng tỏa ra từ điểm va chạm cuối cùng",
+  "default_bbox": [
+    120,
+    480,
+    840,
+    600
+  ],
+  "status": "active",
+  "params_schema": {
+    "steps": "list",
+    "final_impact": "str",
+    "label": "str"
+  }
+}

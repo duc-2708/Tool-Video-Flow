@@ -1,5 +1,8 @@
 # 1 = chặn/retry riêng cảnh; 2 = tự sửa code; 3 = chỉ cảnh báo.
 rules:
+  vietnamese_accent:
+    group: 1
+    description: Kịch bản và đồ họa phải có dấu tiếng Việt đầy đủ
   card_text: {group: 2}
   presentation_voice: {group: 3}
   sentence_background_names:

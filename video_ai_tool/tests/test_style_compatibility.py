@@ -94,22 +94,39 @@ def test_media_wire_schema_is_flat_while_local_pydantic_is_flexible(model):
     assert model.model_validate({"scenes":[{"start_sec":"0","end_sec":"3","purpose":"hook","transition_to_next":None}]}).scenes
 
 
-@pytest.mark.parametrize("force",[False,True])
-def test_existing_raw_valid_or_truncated_never_generates_and_keeps_bytes(style_settings,monkeypatch,force):
+def test_existing_raw_valid_or_truncated_never_generates_and_keeps_bytes(style_settings,monkeypatch):
     file=style_settings.root_dir/"assets/reference_videos/a.mp4"
     store=RawResponse(raw_path(style_settings,None,digest_file(file)),{},style_diagnostics(style_settings))
     store.save(observed().model_dump_json())
     original=store.path.read_bytes()
     constructor=Mock(side_effect=AssertionError("No Gemini for existing raw"))
     monkeypatch.setattr("pipeline.style_learner.VideoStyleProvider",constructor)
-    assert analyze_one(style_settings,"a.mp4",force=force)["status"]=="cached"
+    assert analyze_one(style_settings,"a.mp4",force=False)["status"]=="cached"
     assert store.path.read_bytes()==original
     store.save('{"scenes": [',{"finish_reasons":["MAX_TOKENS"]})
     original=store.path.read_bytes()
-    with pytest.raises(StyleRawError): analyze_one(style_settings,"a.mp4",force=True)
+    cache_dir = style_settings.root_dir / "assets/reference_videos/analysis/.cache"
+    for c in cache_dir.glob("*.json"): c.unlink()
+    with pytest.raises(StyleRawError): analyze_one(style_settings,"a.mp4",force=False)
     assert estimate_batch(style_settings,["a.mp4"])["estimated_input_tokens"]==0
     assert store.path.read_bytes()==original
     constructor.assert_not_called()
+
+
+def test_force_relearn_bypasses_raw_and_calls_provider(style_settings,monkeypatch):
+    file=style_settings.root_dir/"assets/reference_videos/a.mp4"
+    store=RawResponse(raw_path(style_settings,None,digest_file(file)),{},style_diagnostics(style_settings))
+    store.save(observed().model_dump_json())
+    provider_mock=Mock()
+    provider_mock.analyze.return_value=observed()
+    provider_mock.use_existing_raw=True
+    provider_mock.raw_store=None
+    constructor=Mock(return_value=provider_mock)
+    monkeypatch.setattr("pipeline.style_learner.VideoStyleProvider",constructor)
+    result=analyze_one(style_settings,"a.mp4",force=True)
+    assert result["status"]=="done"
+    constructor.assert_called_once()
+    provider_mock.analyze.assert_called_once()
 
 
 def test_long_video_is_skipped_with_warning_and_no_upload(style_settings,monkeypatch):

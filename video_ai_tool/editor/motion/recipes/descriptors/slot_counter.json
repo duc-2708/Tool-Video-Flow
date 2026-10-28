@@ -1,0 +1,41 @@
+{
+  "name": "slot_counter",
+  "category": "number_stat",
+  "meaning": "Dùng khi công bố số liệu đột phá, tỷ lệ tăng trưởng ấn tượng hoặc kết quả ngẫu nhiên may mắn",
+  "metaphor": "Trục quay số máy đánh bạc (slot machine reel)",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Hộp máy kim loại 3D trồi lên, đèn viền bật sáng"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.2,
+      "description": "Các cuộn số quay tít với vệt mờ motion blur từ 000 tăng vọt"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.2,
+      "end_sec": 4.0,
+      "description": "Từng cột số dừng lại 'cạch-cạch-cạch', rung nhẹ và bừng sáng neon"
+    }
+  ],
+  "idle_motion": "Đèn LED viền nhấp nháy chạy vòng quanh khung máy",
+  "default_bbox": [
+    140,
+    480,
+    800,
+    560
+  ],
+  "status": "active",
+  "params_schema": {
+    "value": "float",
+    "unit": "str",
+    "label": "str",
+    "digits": "int"
+  }
+}

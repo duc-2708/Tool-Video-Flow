@@ -1,0 +1,40 @@
+{
+  "name": "chat_thread",
+  "category": "mock_ui",
+  "meaning": "Dùng khi mô tả tương tác người dùng, phản hồi chatbot AI, tin nhắn thông báo hoặc tranh luận",
+  "metaphor": "Giao diện tin nhắn thông minh hội thoại real-time",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Khung ứng dụng chat bo tròn xuất hiện với bong bóng câu hỏi"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.3,
+      "description": "Ba chấm nhảy biểu thị 'đang trả lời' rồi bong bóng kết quả bung ra"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.3,
+      "end_sec": 4.0,
+      "description": "Dấu tick đôi xanh dương hiện ra, tin nhắn câu trả lời bừng sáng"
+    }
+  ],
+  "idle_motion": "Con trỏ gõ phím nhấp nháy tuần hoàn ở thanh nhập liệu",
+  "default_bbox": [
+    120,
+    440,
+    840,
+    680
+  ],
+  "status": "active",
+  "params_schema": {
+    "user_msg": "str",
+    "bot_reply": "str",
+    "label": "str"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "terminal_command_run",
+  "category": "mock_ui",
+  "meaning": "Dùng khi thực thi câu lệnh kỹ thuật, triển khai hệ thống (deploy) hoặc chạy thuật toán",
+  "metaphor": "Cửa sổ dòng lệnh Terminal công nghệ cao thực thi thần tốc",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Cửa sổ Terminal đen bóng với 3 nút điều khiển xuất hiện"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.2,
+      "description": "Dòng lệnh được gõ nhanh sau dấu nhắc $, thanh loading chạy đầy 100%"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.2,
+      "end_sec": 4.0,
+      "description": "Dòng thông báo '✓ SUCCESS: DEPLOYED' bừng sáng xanh neon rực rỡ"
+    }
+  ],
+  "idle_motion": "Con trỏ hình khối nhấp nháy tuần hoàn sau dòng output",
+  "default_bbox": [
+    120,
+    460,
+    840,
+    640
+  ],
+  "status": "active",
+  "params_schema": {
+    "command": "str",
+    "output": "str",
+    "label": "str"
+  }
+}

@@ -43,15 +43,20 @@ const SAFE_AREA = {
 };
 
 // Smart text line wrapping
+// Smart text line wrapping
 function wrapText(text, maxCharsPerLine = 18, maxLines = 4) {
   if (!text) return [];
-  // Take first clause and limit to at most 6 words per element (Rule 4)
-  const firstSentence = String(text).trim().split(/[.!?\n]/)[0].trim();
-  const words = firstSentence.split(/\s+/).filter(Boolean).slice(0, 6);
+  // Preserve domain names (e.g. vietnam.vn) and brand names with punctuation (e.g. Yahoo! Finance)
+  // Split only on true sentence boundaries with whitespace: (?<=[.!?])\s+|\n
+  const rawStr = String(text).trim();
+  const sentences = rawStr.split(/(?<=[.!?])\s+|\n/);
+  const firstSentence = sentences[0] ? sentences[0].trim() : rawStr;
+  const words = firstSentence.split(/\s+/).filter(Boolean);
+  const wordsSlice = words.length > 8 ? words.slice(0, 8) : words;
   const lines = [];
   let currentLine = '';
 
-  for (const word of words) {
+  for (const word of wordsSlice) {
     if (!currentLine) {
       currentLine = word;
     } else if ((currentLine + ' ' + word).length <= maxCharsPerLine) {
@@ -115,9 +120,54 @@ function repairCollisions(boxes) {
   return repaired;
 }
 
+const TRAILING_CUTOFF_JS = new Set([
+  'của', 'trong', 'trên', 'dưới', 'và', 'với', 'là', 'mà', 'để', 'cho', 'về',
+  'các', 'những', 'một', 'cái', 'con', 'chiếc', 'bà', 'ông', 'đã', 'đang', 'sẽ',
+  'lại', 'cũng', 'rất', 'hơn', 'nhất', 'ra', 'vào', 'lên', 'xuống', 'đột', 'cá',
+  'vai', 'dàn', 'bối', 'sự', 'vụ', 'điều', 'việc', 'vì', 'do', 'bởi', 'hay',
+  'hoặc', 'nếu', 'khi', 'tuy', 'dẫu', 'dở', 'bị', 'được', 'đóng', 'đặt', 'này',
+  'kia', 'đó', 'đây', 'tới', 'ở', 'gặp', 'gọi', 'như', 'theo', 'hành', 'tạo', 'làm',
+  'khiến', 'giúp', 'sau', 'bày', 'tỏ', 'lên', 'xuống', 'qua', 'lại', 'thường', 'có',
+  'tài', 'đến', 'đi', 'giống', 'ý', 'thì', 'rằng', 'vậy', 'thế', 'nào',
+  'sao', 'gì', 'ai', 'đâu', 'nữa', 'chăng'
+]);
+
+const LEADING_CUTOFF_JS = new Set([
+  'cố', 'việc', 'động', 'giống', 'điều', 'ngột', 'trò', 'nhạc', 'nhân', 'viên',
+  'này', 'kia', 'đó', 'đây', 'thì', 'mà', 'là', 'và', 'của', 'với', 'để', 'cho',
+  'về', 'bà', 'ông', 'bị', 'được', 'ra', 'vào', 'lại', 'cũng', 'hơn', 'nhất',
+  'như', 'bởi', 'do', 'vì', 'đóng', 'đặt', 'tạo', 'làm', 'những', 'các', 'một',
+  'khiến', 'giúp', 'sau', 'sau khi', 'trong khi', 'bởi vì', 'thay vì', 'bày', 'tỏ', 'đã', 'ý'
+]);
+
+function sanitizeSemanticLabel(label, maxWords = 4) {
+  if (!label) return '';
+  const str = String(label).trim().replace(/[.,:;!?…()“”"']/g, '');
+  if (str.toLowerCase() === 'minh họa ý') return 'Minh họa ý tưởng';
+  if (str.toLowerCase() === 'ý tưởng minh họa') return 'Ý tưởng minh họa';
+
+  let words = str.split(/\s+/).filter(Boolean);
+  while (words.length > 0 && LEADING_CUTOFF_JS.has(words[0].toLowerCase())) {
+    words.shift();
+  }
+  while (words.length > 0 && TRAILING_CUTOFF_JS.has(words[words.length - 1].toLowerCase())) {
+    words.pop();
+  }
+  if (words.length > maxWords) {
+    words = words.slice(0, maxWords);
+    while (words.length > 0 && TRAILING_CUTOFF_JS.has(words[words.length - 1].toLowerCase())) {
+      words.pop();
+    }
+  }
+  if (words.length === 0) return '';
+  const res = words.join(' ');
+  return res.charAt(0).toUpperCase() + res.slice(1);
+}
+
 window.MotionLayout = {
   SAFE_AREA,
   wrapText,
+  sanitizeSemanticLabel,
   checkRectOverlap,
   repairCollisions
 };

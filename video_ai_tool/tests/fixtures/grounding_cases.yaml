@@ -1,6 +1,6 @@
 version: 1
 seed: 42
-total_cases: 46
+total_cases: 51
 historical_cases:
 - id: trai_sentence_start
   category: entity
@@ -70,6 +70,32 @@ historical_cases:
   fact_number: 51.8%
   expect_repair_to: 51.8%
   description: Số 51.8 trong đồ họa tự sửa thành 51.8% khớp fact
+- id: accent_valid_tuong_tu
+  category: vietnamese_accent
+  text: Tương tự như việc kiểm tra từng viên gạch xây nhà, mỗi phát kiến đều cần qua
+    bộ lọc thẩm định khắt khe.
+  expect_unaccented: false
+  description: Cụm tương tự như việc có dấu đầy đủ
+- id: accent_valid_mo_hinh
+  category: vietnamese_accent
+  text: Mô hình gợi ý hướng đi còn bước kiểm chứng vẫn thuộc về con người.
+  expect_unaccented: false
+  description: Cụm mô hình gợi ý có dấu đầy đủ
+- id: accent_valid_tham_dinh
+  category: vietnamese_accent
+  text: Thẩm định khác biệt giữa mô hình tự động và chuyên gia.
+  expect_unaccented: false
+  description: Cụm thẩm định khác có dấu đầy đủ
+- id: accent_invalid_may_moc
+  category: vietnamese_accent
+  text: May moc co the xu ly luong du lieu khong lo de tim ra quy luyet an giau.
+  expect_unaccented: true
+  description: Câu không dấu bị phát hiện
+- id: accent_invalid_trieu_thuc
+  category: vietnamese_accent
+  text: Trieu thuc co ban giup phan tich cac mo hinh trong tuong lai.
+  expect_unaccented: true
+  description: Cụm trieu thuc co ban không dấu bị phát hiện
 random_cases:
 - id: random_thousand_sep_1
   category: number_match

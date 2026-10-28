@@ -7,7 +7,8 @@ function group(parent,attrs={}){const n=el('g',attrs);parent.append(n);return n;
 function shape(parent,tag,attrs){const n=el(tag,attrs);parent.append(n);return n;}
 function label(parent,text,x,y,size=52,width=650,colour){
  const words=String(text||'').split(/\s+/).filter(Boolean);
- const clampedWords = words.length > 3 ? words.slice(0, 3) : words;
+ // Preserve phrases up to 4 words (e.g. 'Kinh tế tầm thấp') without arbitrary truncation
+ const clampedWords = words.length <= 4 ? words : words.slice(0, 3);
  const lines=[];
  for(let i=0;i<clampedWords.length;i+=2)lines.push(clampedWords.slice(i,i+2).join(' '));
  const finalSize = Math.max(36, size);
@@ -18,7 +19,21 @@ function label(parent,text,x,y,size=52,width=650,colour){
 }
 function box(parent,x,y,w,h,text,p,t){const g=group(parent,{class:'motion-element',transform:`translate(0 ${14*Math.sin(t*.55+x)}) scale(1)`});shape(g,'rect',{x,y,width:w,height:h,rx:30,fill:'#162a43',stroke:p>.5?'var(--accent)':'#6687aa88','stroke-width':4});const lines=Math.max(1,Math.ceil(Math.min(6,String(text).split(/\s+/).length)/2)),fs=Math.max(36,Math.min(54,w*.18,h/(lines*1.3)));label(g,text,x+w/2,y+h/2-(lines-1)*fs*.575+fs*.3,fs,w*.9);return g;}
 function dot(parent,x,y,r,t){return shape(parent,'circle',{class:'motion-element',cx:x+10*Math.sin(t),cy:y+10*Math.cos(t*.8),r:r*(1+.06*Math.sin(t*2)),fill:'var(--accent)',opacity:.7});}
-const fmt=(value,progress=1)=>{const precision=Number.isInteger(value)?0:Math.min(6,(String(value).split('.')[1]||'').length);return (value*ease(progress)).toLocaleString('vi-VN',{minimumFractionDigits:0,maximumFractionDigits:precision});};
+const fmt=(value,progress=1)=>{
+ const num = Number(value || 0);
+ if (Math.abs(num) >= 1e9) {
+  const red = (num / 1e9) * ease(progress);
+  const prec = Number.isInteger(red) ? 0 : 2;
+  return red.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: prec }) + ' tỷ';
+ }
+ if (Math.abs(num) >= 1e6) {
+  const red = (num / 1e6) * ease(progress);
+  const prec = Number.isInteger(red) ? 0 : 2;
+  return red.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: prec }) + ' triệu';
+ }
+ const precision=Number.isInteger(num)?0:Math.min(2,(String(num).split('.')[1]||'').length);
+ return (num*ease(progress)).toLocaleString('vi-VN',{minimumFractionDigits:0,maximumFractionDigits:precision});
+};
 const paints={};
 paints.versus_scale=c=>{const {mid:m,front:f,d,t,p}=c;const sides=d.bars?.length>=2?d.bars.slice(0,2):(d.items||[]).slice(0,2).map(label=>({label}));
  sides.forEach((b,i)=>{box(m,70+i*480,260,410,560,b.label,ease(p*3-i*.25),t);if(Number.isFinite(b.value))label(f,fmt(b.value,p*2)+(b.unit||''),275+i*480,720,80,360,'var(--accent)');});
@@ -88,7 +103,9 @@ function draw(host,spec,t,duration,C){
  const beats=spec.beats||[],at=(action,otherwise)=>beats.find(b=>b.action===action)?.at_sec??otherwise,start=at('count_up',0),finish=at('count_end',start+1.2);
  const context={svg,back,mid,front,d:spec.data,t,p,type:stype,duration,hold:C.min_card_hold_sec||1.2,numberProgress:clamp((t-start)/Math.max(.1,finish-start)),row:i=>ease((t-at('reveal_item_'+i,.15+i*.7))/.35)};
 
- if (window.MotionRecipes) {
+ if (window.MotionVocabulary && typeof window.MotionVocabulary[stype] === 'function') {
+   window.MotionVocabulary[stype](null, mid, spec.data, t, duration);
+ } else if (window.MotionRecipes) {
    if (stype === 'stat_number' || stype === 'stat_card') {
      window.MotionRecipes.renderStatNumber(null, mid, spec.data, t, duration, 0);
    } else if (stype === 'bar_compare' || stype === 'bar_grow' || stype === 'compare_bars') {

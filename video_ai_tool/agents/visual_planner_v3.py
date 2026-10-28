@@ -204,11 +204,13 @@ def validate_and_repair_visual_plan(
             if primary_elem:
                 c = primary_elem.content or {}
                 items = c.get("items") or []
-                if primary_elem.type in {"checklist", "steps_list", "steps_ladder", "timeline"} and len(items) <= 1:
+                if primary_elem.type in {"checklist", "steps_list", "steps_ladder", "timeline", "terminal_type", "magnifier_check", "list"} and len(items) <= 1:
                     if c.get("value") is not None or c.get("number_text"):
                         primary_elem.type = "stat_number"
                     else:
                         primary_elem.type = "stack_cards"
+                        if len(items) <= 1:
+                            c["items"] = [items[0] if items else "Thông tin mở đầu", "Chi tiết cơ chế", "Tác động thực tế"]
                     msg = f"[hook_hero, nhóm 2] Cảnh hook {sc_id}: chuyển danh sách 1 hàng sang phần tử lớn '{primary_elem.type}'."
                     notes.append(msg)
                     v_scene.repair_notes.append(msg)
@@ -219,7 +221,15 @@ def validate_and_repair_visual_plan(
             v_scene.elements = v_scene.elements[:4]
 
         # 3. Elements Registry Validation & Number Grounding
+        from utils.vietnamese_accent import restore_known_accents
         for e_idx, el in enumerate(v_scene.elements):
+            # Restore Vietnamese accents on content fields
+            if el.content:
+                for k in ("title", "text", "label", "unit"):
+                    if el.content.get(k) and isinstance(el.content[k], str):
+                        el.content[k] = restore_known_accents(el.content[k])
+                if el.content.get("items") and isinstance(el.content["items"], list):
+                    el.content["items"] = [restore_known_accents(str(itm)) for itm in el.content["items"]]
             # Registry check
             if not registry.is_registered(el.type):
                 fallback = registry.find_fallback(el.type)
@@ -248,6 +258,27 @@ def validate_and_repair_visual_plan(
                     msg = f"[number_grounding, nhóm 2] Cảnh {sc_id} phần tử {el.id}: không có bằng chứng (evidence) trong kịch bản; chuyển sang định tính (no_numbers=true)."
                     notes.append(msg)
                     v_scene.repair_notes.append(msg)
+
+            # gauge_ring policy: CHỈ dùng cho phần trăm / tỉ lệ 0-100. Số tiền/số lượng -> tự đổi sang stat_number hoặc bar_compare
+            if el.type in {"gauge_ring", "gauge", "ring"}:
+                unit_str = str(content.get("unit") or content.get("unit_display") or "").strip()
+                val_num = content.get("value")
+                ev_str = str(el.evidence or "")
+                is_pct = (unit_str == "%" or ("%" in ev_str and isinstance(val_num, (int, float)) and 0 <= val_num <= 100))
+                if not is_pct:
+                    old_type = el.type
+                    new_type = "bar_compare" if content.get("bars") else "stat_number"
+                    el.type = new_type
+                    msg = f"[gauge_ring_policy, nhóm 2] Cảnh {sc_id} phần tử {el.id}: {old_type} chỉ dùng cho phần trăm (0-100); số liệu đơn vị '{unit_str or 'số'}' được tự động chuyển sang {new_type}."
+                    notes.append(msg)
+                    v_scene.repair_notes.append(msg)
+
+            # Không bao giờ thêm "%" nếu evidence không chứa "%"
+            if content.get("unit") == "%" and "%" not in (el.evidence or "") and "phần trăm" not in (el.evidence or "").lower():
+                content["unit"] = ""
+                msg = f"[unit_accuracy, nhóm 2] Cảnh {sc_id} phần tử {el.id}: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm."
+                notes.append(msg)
+                v_scene.repair_notes.append(msg)
 
             # Timing matching for element enter
             at_sec, matched = match_at_phrase_to_seconds(

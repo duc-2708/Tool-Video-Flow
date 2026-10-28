@@ -1,0 +1,40 @@
+{
+  "name": "form_fill_submit",
+  "category": "mock_ui",
+  "meaning": "Dùng khi minh họa quy trình đăng ký, xử lý hồ sơ tự động hoặc nhập liệu tốc độ cao",
+  "metaphor": "Biểu mẫu trực tuyến tự động điền và bấm nút gửi",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Cửa sổ form biểu mẫu với các trường nhập liệu xuất hiện"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.2,
+      "description": "Dòng chữ tự động điền vào các ô kèm con trỏ gõ nhanh, thanh tiến độ đạt 100%"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.2,
+      "end_sec": 4.0,
+      "description": "Nút 'SUBMIT' bị bấm nảy xuống, huy hiệu SUCCESS xanh ngọc bật mở"
+    }
+  ],
+  "idle_motion": "Huy hiệu thành công co giãn nhịp thở nhẹ nhàng",
+  "default_bbox": [
+    120,
+    440,
+    840,
+    680
+  ],
+  "status": "active",
+  "params_schema": {
+    "fields": "list",
+    "status": "str",
+    "label": "str"
+  }
+}

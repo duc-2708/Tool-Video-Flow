@@ -501,6 +501,62 @@ def fix_card_text(ctx):
     return "; ".join(m for _,m in normalize_cards(ctx.plan,ctx.brief,diagnostics=ctx.diagnostics))
 
 
+def check_vietnamese_accent(ctx):
+    if not ctx.plan: return []
+    from utils.vietnamese_accent import is_unaccented_vietnamese
+    findings = []
+    for sc in ctx.plan.scenes:
+        sid = getattr(sc, "id", None) or getattr(sc, "scene_id", None)
+        if sc.narration:
+            bad, reason = is_unaccented_vietnamese(sc.narration)
+            if bad: findings.append(Finding(sid, f"Lời đọc mất dấu tiếng Việt: {reason}"))
+        for s in getattr(sc, "sentences", []):
+            if getattr(s, "text", ""):
+                bad, reason = is_unaccented_vietnamese(s.text)
+                if bad: findings.append(Finding(sid, f"Câu mất dấu tiếng Việt: {reason}"))
+        for sh in getattr(sc, "shots", []):
+            if getattr(sh, "card_text", ""):
+                bad, reason = is_unaccented_vietnamese(sh.card_text)
+                if bad: findings.append(Finding(sid, f"Thẻ mất dấu tiếng Việt: {reason}"))
+    return findings
+
+
+def fix_vietnamese_accent(ctx):
+    if not ctx.plan: return ""
+    from utils.vietnamese_accent import restore_known_accents
+    repaired = []
+    for sc in ctx.plan.scenes:
+        sid = getattr(sc, "id", None) or getattr(sc, "scene_id", None)
+        if sc.narration:
+            fixed = restore_known_accents(sc.narration)
+            if fixed != sc.narration:
+                sc.narration = fixed
+                repaired.append(f"Cảnh {sid}: sửa dấu lời đọc")
+        for s in getattr(sc, "sentences", []):
+            if getattr(s, "text", ""):
+                fixed = restore_known_accents(s.text)
+                if fixed != s.text:
+                    s.text = fixed
+                    repaired.append(f"Cảnh {sid}: sửa dấu câu")
+        for sh in getattr(sc, "shots", []):
+            if getattr(sh, "card_text", ""):
+                fixed = restore_known_accents(sh.card_text)
+                if fixed != sh.card_text:
+                    sh.card_text = fixed
+                    repaired.append(f"Cảnh {sid}: sửa dấu thẻ")
+            if getattr(sh, "visual", None) and getattr(sh.visual, "data", None):
+                d = sh.visual.data
+                if getattr(d, "text", None): d.text = restore_known_accents(d.text)
+                if getattr(d, "label", None): d.label = restore_known_accents(d.label)
+                if getattr(d, "items", None): d.items = [restore_known_accents(x) for x in d.items]
+        if getattr(sc, "visual_plan", None) and getattr(sc.visual_plan, "data", None):
+            d = sc.visual_plan.data
+            if getattr(d, "text", None): d.text = restore_known_accents(d.text)
+            if getattr(d, "label", None): d.label = restore_known_accents(d.label)
+            if getattr(d, "items", None): d.items = [restore_known_accents(x) for x in d.items]
+    return "; ".join(dict.fromkeys(repaired))
+
+
 def presentation_voice(ctx):
     if not ctx.plan: return []
     from agents.presentation import quality_findings
@@ -509,6 +565,7 @@ def presentation_voice(ctx):
 
 # Single source of rule IDs, default groups, checks and local repair functions.
 RULES=(
+    Rule("vietnamese_accent",1,"Kịch bản và đồ họa phải có dấu tiếng Việt đầy đủ",check_vietnamese_accent,fix_vietnamese_accent),
     Rule("card_text",2,"Thẻ 3–6 từ, emphasis 1–2 từ; không cắt lời đọc",card_text_shape,fix_card_text),
     Rule("presentation_voice",3,"Hạn chế rào đón lặp và hook câu hỏi chung",presentation_voice),
     Rule("sentence_grounding",1,"Nhãn câu khớp lời đọc; event có fact, nền không giả làm sự kiện",explainer_sentences,fix_explainer_names),

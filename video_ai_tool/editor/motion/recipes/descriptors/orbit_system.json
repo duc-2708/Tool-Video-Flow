@@ -1,0 +1,40 @@
+{
+  "name": "orbit_system",
+  "category": "concept_relation",
+  "meaning": "Dùng khi mô tả hệ sinh thái xoay quanh một hạt nhân trung tâm, mạng lưới vệ tinh hoặc cấu trúc phân tán",
+  "metaphor": "Hệ mặt trời thu nhỏ với các vệ tinh quay quanh quỹ đạo elip",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Hạt nhân trung tâm phát sáng và 3 vòng quỹ đạo elip nghiêng mở rộng"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.4,
+      "description": "Các vệ tinh quay đều trên quỹ đạo, phát tia năng lượng kết nối về tâm"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.4,
+      "end_sec": 4.0,
+      "description": "Xung beacon quét tỏa tròn từ tâm, toàn hệ thống đồng bộ bừng sáng"
+    }
+  ],
+  "idle_motion": "Các vệ tinh trôi mượt mà trên quỹ đạo elip, tia nối co giãn nhẹ",
+  "default_bbox": [
+    120,
+    420,
+    840,
+    720
+  ],
+  "status": "active",
+  "params_schema": {
+    "center_node": "str",
+    "satellites": "list",
+    "label": "str"
+  }
+}

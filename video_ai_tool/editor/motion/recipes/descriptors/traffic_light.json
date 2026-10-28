@@ -1,0 +1,40 @@
+{
+  "name": "traffic_light",
+  "category": "risk_prob",
+  "meaning": "Dùng khi thể hiện tín hiệu đèn xanh/đỏ cho thị trường, cảnh báo dừng lại hay cho phép tăng tốc",
+  "metaphor": "Cột đèn giao thông chuyển trạng thái dứt khoát",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Cột đèn tín hiệu công nghệ cao xuất hiện với đèn đỏ cảnh báo sáng rực"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.2,
+      "description": "Đèn đỏ tắt, đèn vàng chớp chuyển tiếp rồi đèn xanh bừng sáng rực rỡ"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.2,
+      "end_sec": 4.0,
+      "description": "Đèn xanh phát chùm sáng thông suốt, biểu tượng bứt phá lao vút về phía trước"
+    }
+  ],
+  "idle_motion": "Chùm tia sáng xanh quét dải sáng nhẹ nhàng về phía camera",
+  "default_bbox": [
+    200,
+    420,
+    680,
+    720
+  ],
+  "status": "active",
+  "params_schema": {
+    "active_signal": "str",
+    "action_text": "str",
+    "label": "str"
+  }
+}

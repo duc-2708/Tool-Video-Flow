@@ -1,0 +1,41 @@
+{
+  "name": "thermometer",
+  "category": "number_stat",
+  "meaning": "Dùng khi diễn tả độ nóng của thị trường, căng thẳng leo thang, biến đổi khí hậu hoặc chỉ số tăng nhiệt",
+  "metaphor": "Cột nhiệt kế thủy ngân dâng trào nhiệt lượng",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Ống thủy tinh bóng bẩy cùng bầu nhiệt kế xuất hiện"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.2,
+      "description": "Cột dung dịch đỏ rực dâng trào mạnh mẽ qua các vạch chia độ"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.2,
+      "end_sec": 4.0,
+      "description": "Cột chạm đỉnh sôi, tỏa sóng nhiệt đỏ rực xung quanh kèm bong bóng nảy"
+    }
+  ],
+  "idle_motion": "Bọt nhiệt sôi lăn tăn trong bầu dung dịch",
+  "default_bbox": [
+    220,
+    360,
+    640,
+    820
+  ],
+  "status": "active",
+  "params_schema": {
+    "temperature": "float",
+    "max_temp": "float",
+    "unit": "str",
+    "label": "str"
+  }
+}

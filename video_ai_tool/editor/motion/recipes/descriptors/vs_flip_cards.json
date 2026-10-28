@@ -1,0 +1,41 @@
+{
+  "name": "vs_flip_cards",
+  "category": "compare_vs",
+  "meaning": "Dùng khi so sánh đối chiếu hai phương án, lật mở mặt trái/mặt phải hoặc ưu nhược điểm",
+  "metaphor": "Hai thẻ bài 3D lật xoay đối đầu trực diện",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Hai thẻ bài 3D xuất hiện úp mặt đối xứng qua huy hiệu VS"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.3,
+      "description": "Hai thẻ đồng loạt lật xoay 180° theo trục đứng hé lộ thông số cốt lõi"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.3,
+      "end_sec": 4.0,
+      "description": "Thẻ vượt trội bung viền neon sáng rực, thẻ đối thủ xám mờ lùi sau"
+    }
+  ],
+  "idle_motion": "Hai thẻ bồng bềnh 3D ngược pha nhau nhẹ nhàng",
+  "default_bbox": [
+    100,
+    460,
+    880,
+    640
+  ],
+  "status": "active",
+  "params_schema": {
+    "card_a": "dict",
+    "card_b": "dict",
+    "winner": "str",
+    "label": "str"
+  }
+}

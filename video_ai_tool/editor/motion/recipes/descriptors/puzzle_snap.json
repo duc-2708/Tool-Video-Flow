@@ -1,0 +1,40 @@
+{
+  "name": "puzzle_snap",
+  "category": "concept_relation",
+  "meaning": "Dùng khi các yếu tố tìm thấy mảnh ghép còn thiếu, hợp tác hoàn hảo hoặc hoàn thành bức tranh tổng thể",
+  "metaphor": "Mảnh ghép jigsaw trượt vào khớp nối 'khấc' hoàn hảo",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Bức tranh ghép có một vị trí khuyết trung tâm xuất hiện"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.1,
+      "description": "Mảnh ghép chìa khóa vàng từ ngoài biên trượt vào xoay đúng góc"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.1,
+      "end_sec": 4.0,
+      "description": "Khớp nối đóng sập 'khấc' hoàn mỹ, toàn bộ bức tranh bừng sáng neon"
+    }
+  ],
+  "idle_motion": "Đường viền các khớp nối phát quang xung ánh sáng chạy vòng",
+  "default_bbox": [
+    140,
+    440,
+    800,
+    660
+  ],
+  "status": "active",
+  "params_schema": {
+    "key_piece": "str",
+    "solution_text": "str",
+    "label": "str"
+  }
+}

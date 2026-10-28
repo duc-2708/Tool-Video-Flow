@@ -76,6 +76,12 @@ def test_historical_grounding_case(case):
         fact_norm = normalize_number(fact_num)
         assert fact_norm.canonical_str() == case["expect_repair_to"]
 
+    elif category == "vietnamese_accent":
+        from utils.vietnamese_accent import is_unaccented_vietnamese
+        text = case["text"]
+        is_bad, _ = is_unaccented_vietnamese(text)
+        assert is_bad == case["expect_unaccented"]
+
 
 @pytest.mark.parametrize("case", RANDOM_CASES, ids=lambda c: c["id"])
 def test_random_grounding_case(case):

@@ -1,0 +1,41 @@
+{
+  "name": "tug_of_war",
+  "category": "compare_vs",
+  "meaning": "Dùng khi mô tả cuộc cạnh tranh thị phần gay gắt, giằng co thế trận giữa hai thế lực lớn",
+  "metaphor": "Trận kéo co căng thẳng giằng co vạch cờ",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Hai đội và sợi dây thừng căng ngang xuất hiện với cờ đỏ ở giữa"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.4,
+      "description": "Hai bên giằng co qua lại, một bên bất ngờ bứt phá giật mạnh dây"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.4,
+      "end_sec": 4.0,
+      "description": "Cờ đỏ vượt qua vạch chiến thắng, biểu tượng chiến thắng bừng sáng"
+    }
+  ],
+  "idle_motion": "Sợi dây rung nhẹ nhịp thở, phe thắng nhấp nhô ăn mừng",
+  "default_bbox": [
+    100,
+    500,
+    880,
+    560
+  ],
+  "status": "active",
+  "params_schema": {
+    "team_a": "str",
+    "team_b": "str",
+    "winner": "str",
+    "label": "str"
+  }
+}

@@ -55,11 +55,16 @@ class ActionDef(BaseModel):
 class CameraDef(BaseModel):
     model_config = ConfigDict(extra="ignore")
     x: float = 540.0
-    y: float = 960.0
+    y: float = 785.0
     zoom: float = 1.0
     tilt: float = 0.0
     duration: float = 0.8
     easing: str = "easeInOutQuad"
+
+    def clamp_zoom(self) -> "CameraDef":
+        if self.zoom > 1.25:
+            self.zoom = 1.25
+        return self
 
 
 class SceneDef(BaseModel):

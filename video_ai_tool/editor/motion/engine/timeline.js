@@ -104,7 +104,27 @@ class MasterTimeline {
     const d = spec.data || {};
     const variantIdx = (spec.variant_index ?? 0) % 3;
 
-    if (sceneType === 'stat_number' || sceneType === 'numeric') {
+    let depthHandled = false;
+    const depthEnabled = Boolean(window.DEPTH_3D_ENABLED || spec.depth_3d || (window.MOTION_DATA && window.MOTION_DATA.depth_3d));
+    let depthHost = this.stage.querySelector('.depth-host-container');
+    if (depthHost) {
+      depthHost.replaceChildren();
+    }
+    if (depthEnabled && window.renderDepth3D) {
+      if (!depthHost) {
+        depthHost = document.createElement('div');
+        depthHost.className = 'depth-host-container';
+        depthHost.style.cssText = 'position:absolute;top:0;left:0;width:1080px;height:1920px;pointer-events:none;z-index:6;';
+        this.stage.insertBefore(depthHost, this.captionsEl);
+      }
+      depthHandled = window.renderDepth3D(sceneType, depthHost, { data: d }, t, { width: 1080, height: 1920, duration, variant_index: variantIdx });
+    }
+
+    if (depthHandled) {
+      // 3D Engine handled this scene, 2D recipe skipped
+    } else if (window.MotionVocabulary && typeof window.MotionVocabulary[sceneType] === 'function') {
+      window.MotionVocabulary[sceneType](this.bgCtx, this.gContent, d, t, duration);
+    } else if (sceneType === 'stat_number' || sceneType === 'numeric') {
       window.MotionRecipes.renderStatNumber(this.bgCtx, this.gContent, d, t, duration, variantIdx);
     } else if (sceneType === 'bar_compare' || sceneType === 'bar_grow' || sceneType === 'compare_bars') {
       window.MotionRecipes.renderBarCompare(this.bgCtx, this.gContent, d, t, duration, variantIdx);

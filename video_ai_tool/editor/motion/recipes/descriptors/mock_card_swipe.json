@@ -1,0 +1,40 @@
+{
+  "name": "mock_card_swipe",
+  "category": "mock_ui",
+  "meaning": "Dùng khi đưa ra quyết định chọn lựa nhanh, phê duyệt cơ hội hoặc loại bỏ giải pháp không phù hợp",
+  "metaphor": "Thao tác quẹt thẻ sang phải chấp thuận",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Thẻ hồ sơ / giải pháp 3D nằm ở trung tâm màn hình"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.2,
+      "description": "Thẻ nghiêng góc và bị quẹt lướt sang phải với gia tốc mượt mà"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.2,
+      "end_sec": 4.0,
+      "description": "Con dấu 'APPROVED' màu xanh ngọc đóng sập xuống, thẻ sau trồi lên"
+    }
+  ],
+  "idle_motion": "Thẻ mới đung đưa góc 3D đón chờ hành động tiếp theo",
+  "default_bbox": [
+    140,
+    460,
+    800,
+    640
+  ],
+  "status": "active",
+  "params_schema": {
+    "decision": "str",
+    "card_title": "str",
+    "label": "str"
+  }
+}
