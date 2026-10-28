@@ -1,0 +1,40 @@
+{
+  "name": "pipeline_pipes",
+  "category": "process_flow",
+  "meaning": "Dùng khi mô tả đường ống dữ liệu, luồng vận chuyển tài nguyên hoặc hạ tầng kết nối liên thông",
+  "metaphor": "Hệ thống đường ống dẫn công nghiệp phát sáng năng lượng",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Mạng lưới đường ống 3D zic-zac cùng các van khóa xuất hiện"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.3,
+      "description": "Các van tự động mở, luồng năng lượng xanh neon phóng vù vù qua các co nối"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.3,
+      "end_sec": 4.0,
+      "description": "Toàn bộ mạng lưới thông suốt, đồng hồ áp suất tại đích báo trạng thái tối ưu"
+    }
+  ],
+  "idle_motion": "Dòng xung năng lượng chạy liên tục trong thân ống trong suốt",
+  "default_bbox": [
+    120,
+    460,
+    840,
+    640
+  ],
+  "status": "active",
+  "params_schema": {
+    "nodes": "list",
+    "throughput": "str",
+    "label": "str"
+  }
+}

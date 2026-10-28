@@ -1,0 +1,40 @@
+{
+  "name": "shield_hit",
+  "category": "risk_prob",
+  "meaning": "Dùng khi nhấn mạnh khả năng chống chịu rủi ro, bảo vệ tài sản, phòng thủ an ninh mạng vững vàng",
+  "metaphor": "Tấm khiên năng lượng đẩy lùi mọi đòn tấn công hiểm hóc",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Tấm khiên năng lượng lục giác viền phát quang xuất hiện bảo vệ trung tâm"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.2,
+      "description": "Các tia đạn/sét hiểm hóc bắn tới va chạm cực mạnh vào mặt khiên"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.2,
+      "end_sec": 4.0,
+      "description": "Mặt khiên phát sóng xung kích phản hồi đẩy lùi đòn đánh, khiên nguyên vẹn tỏa sáng"
+    }
+  ],
+  "idle_motion": "Màng lưới lục giác trên thân khiên sáng nhấp nháy tuần hoàn",
+  "default_bbox": [
+    160,
+    440,
+    760,
+    680
+  ],
+  "status": "active",
+  "params_schema": {
+    "threat_name": "str",
+    "defense_score": "str",
+    "label": "str"
+  }
+}

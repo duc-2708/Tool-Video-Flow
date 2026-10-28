@@ -7,3 +7,4 @@ themes:
   neon_dark: {top: '#0a0e1c', bottom: '#05070f', card: '#12192e', foreground: '#f4f7ff', accent: '#00f0ff', secondary: '#ff007f'}
   paper_brand: {top: '#f8f6f0', bottom: '#ede8dd', card: '#ffffff', foreground: '#1d2129', accent: '#5e35b1', secondary: '#00695c'}
   whiteboard_sketch: {top: '#f9f9fa', bottom: '#ededf0', card: '#ffffff', foreground: '#1a1a1a', accent: '#c62828', secondary: '#1565c0'}
+  clean_white: {top: '#f8fafc', bottom: '#f1f5f9', card: '#ffffff', foreground: '#0f172a', accent: '#0369a1', secondary: '#047857'}

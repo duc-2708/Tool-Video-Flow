@@ -1,0 +1,41 @@
+{
+  "name": "funnel_filter",
+  "category": "process_flow",
+  "meaning": "Dùng khi mô tả quá trình chọn lọc, phễu chuyển đổi khách hàng hoặc sàng lọc dữ liệu tinh hoa",
+  "metaphor": "Chiếc phễu lọc đa tầng chắt lọc tinh hoa",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Chiếc phễu thủy tinh 3 tầng trong suốt xuất hiện"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.4,
+      "description": "Nhiều hạt dữ liệu thô rơi vào miệng phễu, lọc qua từng màng lọc thu hẹp dần"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.4,
+      "end_sec": 4.0,
+      "description": "Giọt tinh hoa rơi xuống đáy bừng sáng giá trị vàng cốt lõi"
+    }
+  ],
+  "idle_motion": "Màng lọc phát xung năng lượng tuần hoàn, giọt tinh chất phát sáng",
+  "default_bbox": [
+    160,
+    420,
+    760,
+    720
+  ],
+  "status": "active",
+  "params_schema": {
+    "input_count": "int",
+    "output_count": "int",
+    "stages": "list",
+    "label": "str"
+  }
+}

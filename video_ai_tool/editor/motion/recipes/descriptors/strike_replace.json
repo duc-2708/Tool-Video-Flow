@@ -1,0 +1,41 @@
+{
+  "name": "strike_replace",
+  "category": "number_stat",
+  "meaning": "Dùng khi bác bỏ số liệu cũ, phủ định định mức lạc hậu hoặc đưa ra mức giá/con số mới vượt trội",
+  "metaphor": "Gạch bỏ sai lầm và vinh danh chân lý",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.7,
+      "description": "Thẻ số cũ màu xám mờ xuất hiện ở vị trí trung tâm"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.7,
+      "end_sec": 1.8,
+      "description": "Vết gạch chéo đỏ quét xoẹt qua kèm dấu ✗ nảy lên, số cũ tụt lùi"
+    },
+    {
+      "name": "impact",
+      "start_sec": 1.8,
+      "end_sec": 4.0,
+      "description": "Con số mới khổng lồ bừng sáng trồi lên từ phía sau, hào quang vàng rực"
+    }
+  ],
+  "idle_motion": "Số mới bồng bềnh nhẹ, viền hào quang co giãn",
+  "default_bbox": [
+    120,
+    460,
+    840,
+    600
+  ],
+  "status": "active",
+  "params_schema": {
+    "old_value": "float",
+    "new_value": "float",
+    "unit": "str",
+    "label": "str"
+  }
+}

@@ -37,15 +37,42 @@ def call(provider,prompt,payload,schema,stage):
             payload["style_profile"]={k:profile[k][:5] if isinstance(profile.get(k),list) else profile[k] for k in ("connective_phrases","narration_rules","shot_seconds") if k in profile}
     instructions={
         "outline":"Tạo dàn ý 5–7 beat cho 60s. Mỗi beat có một ý mới về cơ chế/nguyên nhân/ví dụ/ẩn dụ/phản biện. Không biến mỗi fact thành một beat kể tin.",
-        "written":"Viết kịch bản theo dàn ý. 60s chỉ 150–180 từ TOÀN BỘ; ít nhất 60% từ là explain/opinion mềm. Chỉ dùng vài fact sự kiện quan trọng, không cố nêu hết số liệu/nguồn. Hook <=20 từ. Beat khác 24–30 từ.",
-        "humanized":"Viết lại kịch bản cho giọng kể tự nhiên, giữ nhãn và căn cứ. RÚT GỌN còn 150–180 từ cho 60s, không viết thêm để dài. Phần giảng giải chiếm ít nhất 60% từ, không đọc lại dãy tin. Không nhắc tên báo vì có thẻ nguồn.",
+        "written":"Viết kịch bản theo dàn ý. BẮT BUỘC viết tiếng Việt CÓ DẤU ĐẦY ĐỦ, đúng chính tả, không viết không dấu. 60s chỉ 150–180 từ TOÀN BỘ; ít nhất 60% từ là explain/opinion mềm. Chỉ dùng vài fact sự kiện quan trọng, không cố nêu hết số liệu/nguồn. Hook <=20 từ. Beat khác 24–30 từ.",
+        "humanized":"Viết lại kịch bản cho giọng kể tự nhiên, BẮT BUỘC viết CÓ DẤU ĐẦY ĐỦ, giữ nhãn và căn cứ. RÚT GỌN còn 150–180 từ cho 60s, không viết thêm để dài. Phần giảng giải chiếm ít nhất 60% từ, không đọc lại dãy tin. Không nhắc tên báo vì có thẻ nguồn.",
         "script_critic":"Chấm 1–5 nghiêm khắc, KHÔNG mặc định 5. Nếu beat chỉ nêu fact mà không giải thích tại sao/như thế nào thì explanation <=2; ghi weak_scenes. Chỉ dựa vào lời đọc thực tế. Đừng nhầm metadata kind/new_information với nội dung giảng giải thật.",
-        "critic_rewrite":"Trả ExplainerRepairs CHỈ các selected_scene_ids. BẮT BUỘC SỬA LẠI lời đọc các cảnh này, không chép bản cũ. Tuân thủ code_notes về giới hạn từ và kể tin. Hook 15–20 từ; beat khác 24–30 từ, tối đa 180 từ TOÀN VIDEO 60s. Giữ vài sự kiện quan trọng, bỏ số phụ; ít nhất 60% lời là cơ chế/ẩn dụ/ví dụ/phản biện có độ mềm. Không nhắc nguồn trong lời đọc vì có thẻ. Có thể đổi câu event ít quan trọng thành explain thật sự nhưng không đổi nhãn câu event cũ để lách fact.",
+        "critic_rewrite":"Trả ExplainerRepairs CHỈ các selected_scene_ids. BẮT BUỘC viết CÓ DẤU ĐẦY ĐỦ và SỬA LẠI lời đọc các cảnh này, không chép bản cũ. Tuân thủ code_notes về giới hạn từ và kể tin. Hook 15–20 từ; beat khác 24–30 từ, tối đa 180 từ TOÀN VIDEO 60s. Giữ vài sự kiện quan trọng, bỏ số phụ; ít nhất 60% lời là cơ chế/ẩn dụ/ví dụ/phản biện có độ mềm. Không nhắc nguồn trong lời đọc vì có thẻ. Có thể đổi câu event ít quan trọng thành explain thật sự nhưng không đổi nhãn câu event cũ để lách fact.",
         "open_loop_review":"Chỉ đánh giá ngữ nghĩa question và ending. answered chỉ true nếu kết thật sự giải đáp, không coi việc lặp số/lặp câu hỏi là trả lời. Nếu không, gợi ý câu hỏi khác thực sự được ending trả lời hoặc để rỗng. Không tạo thông tin mới.",
         "replacement_loop_review":"Kiểm tra ngữ nghĩa lần cuối: ending có trả lời question không? Không thì answered=false; không viết lại kịch bản.",
         "factual_repair":"Chỉ sửa cảnh lỗi trong selected_scene_ids. Đối chiếu errors và facts, không thay cảnh đạt, không thêm số/tên/phát ngôn ngoài fact.",
         "manual_rewrite":"Chỉ viết lại selected_scene_ids theo giọng style, giữ nhãn câu và facts. Không sửa cảnh khác."}
-    return schema.model_validate_json(provider.generate_json(prompt+"\nSTAGE: "+stage+"\n"+instructions.get(stage,"")+"\nINPUT_DATA_JSON:\n"+json.dumps(payload,ensure_ascii=False),schema))
+    from utils.vietnamese_accent import is_unaccented_vietnamese, restore_known_accents
+    full_prompt = prompt+"\nSTAGE: "+stage+"\n"+instructions.get(stage,"")+"\nINPUT_DATA_JSON:\n"+json.dumps(payload,ensure_ascii=False)
+    raw = provider.generate_json(full_prompt, schema)
+    result = schema.model_validate_json(raw)
+    
+    # Validation & 1-shot repair for Vietnamese accents
+    if stage in {"written", "humanized", "critic_rewrite", "factual_repair", "manual_rewrite"}:
+        unaccented_issues = []
+        for scene in getattr(result, "scenes", []):
+            for s in getattr(scene, "sentences", []):
+                bad, reason = is_unaccented_vietnamese(getattr(s, "text", ""))
+                if bad: unaccented_issues.append((getattr(scene, "scene_id", 0), reason))
+        if unaccented_issues:
+            retry_note = f"\nLỖI NGHIÊM TRỌNG: Lần sinh trước bị mất dấu tiếng Việt ({unaccented_issues[0][1]}). BẮT BUỘC viết tiếng Việt CÓ DẤU ĐẦY ĐỦ (unicode UTF-8 NFC chuẩn), đúng chính tả ngữ pháp tiếng Việt, tuyệt đối không viết không dấu."
+            try:
+                raw = provider.generate_json(full_prompt + retry_note, schema)
+                result = schema.model_validate_json(raw)
+            except Exception:
+                pass
+            for scene in getattr(result, "scenes", []):
+                for s in getattr(scene, "sentences", []):
+                    if hasattr(s, "text") and s.text: s.text = restore_known_accents(s.text)
+                for c in getattr(scene, "shot_cards", []):
+                    if isinstance(c, dict) and "card_text" in c:
+                        c["card_text"] = restore_known_accents(c["card_text"])
+                    elif hasattr(c, "card_text") and c.card_text:
+                        c.card_text = restore_known_accents(c.card_text)
+    return result
 
 
 def script_plan(script,outline,brief,request,settings):

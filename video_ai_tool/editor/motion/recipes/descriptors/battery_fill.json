@@ -1,0 +1,40 @@
+{
+  "name": "battery_fill",
+  "category": "number_stat",
+  "meaning": "Dùng khi nói về tích lũy năng lượng, dung lượng pin, tiến độ hoàn thành hoặc khả năng chịu tải",
+  "metaphor": "Thỏi pin năng lượng sạc điện thần tốc",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Thỏi pin 3D viền kính với cực dương nhô ra xuất hiện ở trạng thái cạn"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.3,
+      "description": "Tia sét năng lượng đánh vào, từng khối năng lượng xanh neon nạp đầy 25%, 50%, 75%, 100%"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.3,
+      "end_sec": 4.0,
+      "description": "Pin đầy 100%, phát xung điện quang tỏa sáng toàn thân pin"
+    }
+  ],
+  "idle_motion": "Tia sét nhỏ phóng điện tuần hoàn giữa hai cực",
+  "default_bbox": [
+    180,
+    460,
+    720,
+    600
+  ],
+  "status": "active",
+  "params_schema": {
+    "percentage": "float",
+    "label": "str",
+    "status": "str"
+  }
+}

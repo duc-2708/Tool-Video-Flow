@@ -1,0 +1,42 @@
+{
+  "name": "gauge_needle",
+  "category": "number_stat",
+  "meaning": "Dùng khi đo lường mức độ rủi ro, áp lực, hiệu suất hoặc đo lường chỉ số trên ngưỡng an toàn/nguy hiểm",
+  "metaphor": "Đồng hồ đo áp suất kim quay công nghiệp",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.7,
+      "description": "Mặt đồng hồ bán nguyệt 3 màu (xanh-vàng-đỏ) mở rộng"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.7,
+      "end_sec": 2.3,
+      "description": "Kim đo cơ học quay vọt từ 0 vượt qua dải an toàn hướng đến vùng đỏ"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.3,
+      "end_sec": 4.0,
+      "description": "Kim dao động nảy nhẹ ở đỉnh, còi/đèn cảnh báo phát sáng nhịp nhàng"
+    }
+  ],
+  "idle_motion": "Kim đo rung nhẹ như có xung áp suất thật",
+  "default_bbox": [
+    160,
+    440,
+    760,
+    680
+  ],
+  "status": "active",
+  "params_schema": {
+    "value": "float",
+    "max_val": "float",
+    "unit": "str",
+    "label": "str",
+    "warning_threshold": "float"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "dice_roll",
+  "category": "risk_prob",
+  "meaning": "Dùng khi đề cập đến yếu tố may rủi, xác suất thống kê, canh bạc thị trường hoặc quyết định mạo hiểm",
+  "metaphor": "Viên xúc xắc 3D lăn lông lốc trong không gian",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.5,
+      "description": "Viên xúc xắc 3D xoay tít bay lơ lửng giữa không gian"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.5,
+      "end_sec": 2.2,
+      "description": "Xúc xắc rơi xuống bàn nảy tưng bừng, các mặt điểm xoay chuyển kịch tính"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.2,
+      "end_sec": 4.0,
+      "description": "Dừng lại dứt khoát ở mặt điểm chiến thắng, phát xung hào quang vàng chói"
+    }
+  ],
+  "idle_motion": "Viên xúc xắc bồng bềnh nhẹ trên đệm không khí, bóng đổ co giãn",
+  "default_bbox": [
+    160,
+    460,
+    760,
+    640
+  ],
+  "status": "active",
+  "params_schema": {
+    "result_number": "int",
+    "probability": "str",
+    "label": "str"
+  }
+}

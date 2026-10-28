@@ -91,10 +91,10 @@ def test_hash_cache_avoids_second_upload_and_invalidates_notes(style_settings):
     analyze_one(style_settings,"a.mp4",provider=provider)
     assert provider.analyze.call_count==1
     analyze_one(style_settings,"a.mp4",provider=provider,force=True)
-    assert provider.analyze.call_count==1  # Existing raw is immutable, including relearn.
+    assert provider.analyze.call_count==2  # Force calls provider to relearn.
     (saved.parent.parent/"a.mp4").write_bytes(b"changed video")
     analyze_one(style_settings,"a.mp4",provider=provider)
-    assert provider.analyze.call_count==2
+    assert provider.analyze.call_count==3
 
 
 def test_rename_uses_same_hash_cache(style_settings):

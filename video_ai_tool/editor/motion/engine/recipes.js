@@ -29,7 +29,22 @@ const shape = (parent, tag, attrs = {}) => {
 // Formats number cleanly in Vietnamese locale
 const formatNum = (val) => {
   const num = Number(val || 0);
+  if (Math.abs(num) >= 1e9) {
+    const reduced = num / 1e9;
+    const formatted = Number.isInteger(reduced) ? reduced.toLocaleString('vi-VN') : reduced.toLocaleString('vi-VN', { maximumFractionDigits: 2 });
+    return formatted + ' tỷ';
+  }
+  if (Math.abs(num) >= 1e6) {
+    const reduced = num / 1e6;
+    const formatted = Number.isInteger(reduced) ? reduced.toLocaleString('vi-VN') : reduced.toLocaleString('vi-VN', { maximumFractionDigits: 2 });
+    return formatted + ' triệu';
+  }
   return Number.isInteger(num) ? num.toLocaleString('vi-VN') : num.toLocaleString('vi-VN', { maximumFractionDigits: 2 });
+};
+
+const formatRawViNum = (val, maxDecimals = 2) => {
+  const num = Number(val || 0);
+  return Number.isInteger(num) ? num.toLocaleString('vi-VN') : num.toLocaleString('vi-VN', { maximumFractionDigits: maxDecimals });
 };
 
 // =========================================================================
@@ -206,7 +221,7 @@ function renderBarCompare(ctx, svg, d, t, duration, variantIdx = 0) {
     bars = d.bars.slice(0, 4);
   } else if (d.value !== null && d.value !== undefined) {
     const mainVal = Number(d.value);
-    const unit = d.unit || '$';
+    const unit = d.unit || (d.number_text && d.number_text.includes('$') ? '$' : '');
     const mainLbl = d.label || d.text || 'Chi phí';
     bars = [
       { label: 'Ước tính', value: Math.round(mainVal * 0.45), unit },
@@ -271,8 +286,12 @@ function renderBarCompare(ctx, svg, d, t, duration, variantIdx = 0) {
     // Number on top: số chính >= 120px, các cột khác >= 48px
     if (p > 0.25) {
       const valNum = Number(b.value) * easeOutCubic(p);
-      const valText = formatNum(Math.round(valNum)) + (b.unit || '');
-      const numFontSize = isTop ? 120 : 48;
+      const bUnit = b.unit ? (b.unit.startsWith('$') || b.unit.startsWith('%') ? b.unit : ' ' + b.unit) : '';
+      const valText = formatNum(Math.round(valNum)) + bUnit;
+      let numFontSize = isTop ? 120 : 48;
+      while (numFontSize * 0.58 * valText.length > (barWidth * 1.5) && numFontSize > 36) {
+        numFontSize -= 4;
+      }
       const numY = isTop ? (by - 24) : (by - 16);
       svg.append(el('text', {
         x: bx + barWidth / 2, y: numY,
@@ -527,10 +546,11 @@ function renderContainerFill(ctx, svg, d, t, duration, variantIdx = 0) {
 // 6. CHECKLIST (3 Variants)
 // =========================================================================
 function renderChecklist(ctx, svg, d, t, duration, variantIdx = 0) {
+  const sanitize = window.MotionLayout?.sanitizeSemanticLabel || (s => s);
   const cleanItem = itm => {
     if (!itm) return '';
     const firstSentence = String(itm).split(/[.!?\n]/)[0].trim();
-    return firstSentence.split(/\s+/).filter(Boolean).slice(0, 6).join(' ');
+    return sanitize(firstSentence.split(/\s+/).filter(Boolean).slice(0, 6).join(' '));
   };
   const rawItems = (d.items && d.items.length >= 1) ? d.items.map(cleanItem).filter(Boolean) : [
     'Kiểm định dữ liệu gốc', 'Đo đạc thực nghiệm độc lập', 'Đối chiếu thông số công bố'
@@ -561,7 +581,7 @@ function renderChecklist(ctx, svg, d, t, duration, variantIdx = 0) {
   shape(svg, 'rect', {
     x, y: y + 40, width: w, height: 30, fill: '#142540'
   });
-  const headerTitle = d.title || d.label || 'Danh sách kiểm định';
+  const headerTitle = sanitize(d.title || d.label || 'Danh sách kiểm định');
   svg.append(el('text', {
     x: cx, y: y + 48, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold', fill: '#94a3b8'
@@ -581,7 +601,7 @@ function renderChecklist(ctx, svg, d, t, duration, variantIdx = 0) {
 
     const gRow = group(svg, {
       transform: `translate(${cx}, ${ry + rowH / 2 + levitate}) scale(${overshoot(p, 1.4)}) translate(-${cx}, -${ry + rowH / 2 + levitate})`,
-      opacity: isCurrent ? 1.0 : (isChecked ? 0.75 : clamp(p * 2)),
+      opacity: isCurrent ? 1.0 : (isChecked ? 0.8 : clamp(p * 2)),
       class: 'motion-element'
     });
 
@@ -598,11 +618,16 @@ function renderChecklist(ctx, svg, d, t, duration, variantIdx = 0) {
       stroke: isChecked ? 'var(--accent)' : '#64748b', 'stroke-width': 3
     });
 
+    // CHỈ vẽ ✓ khi quét tới hàng đó (t >= rowStartT + 0.5); vẽ nét stroke-dashoffset
     if (isChecked) {
+      const checkP = clamp((t - (rowStartT + 0.5)) / 0.35);
+      const easeCheckP = easeOutCubic(checkP);
       shape(gRow, 'path', {
         d: `M ${x + 76} ${ry + rowH / 2} L ${x + 86} ${ry + rowH / 2 + 11} L ${x + 106} ${ry + rowH / 2 - 9}`,
         stroke: '#0c1829', 'stroke-width': 6, fill: 'none',
-        'stroke-linecap': 'round', 'stroke-linejoin': 'round'
+        'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+        pathLength: 1, 'stroke-dasharray': 1,
+        'stroke-dashoffset': 1 - easeCheckP
       });
       const checkFlash = clamp((t - (rowStartT + 0.5)) / 0.4);
       if (checkFlash < 1) {
@@ -614,7 +639,7 @@ function renderChecklist(ctx, svg, d, t, duration, variantIdx = 0) {
       }
     }
 
-    // Text label (font-size 40px, max 18 chars per line to prevent right overflow)
+    // Text label: font-size 40px, max 18 chars per line
     const lines = wrapText(item, 18, 2);
     lines.forEach((line, lineIdx) => {
       const textY = ry + (rowH / 2) - (lines.length - 1) * 20 + lineIdx * 40 + 12;
@@ -717,7 +742,8 @@ function renderMockUIWindow(ctx, svg, d, t, duration) {
 }
 
 function renderMagnifierCheck(ctx, svg, d, t, duration, context) {
-  const items = (d.items && d.items.length >= 2) ? d.items.slice(0, 4) : [
+  const sanitize = window.MotionLayout?.sanitizeSemanticLabel || (s => s);
+  const items = (d.items && d.items.length >= 2) ? d.items.slice(0, 4).map(sanitize) : [
     'Dữ liệu công bố', 'Đối chiếu thực nghiệm', 'Kết quả độc lập'
   ];
   const cx = 540;
@@ -726,7 +752,6 @@ function renderMagnifierCheck(ctx, svg, d, t, duration, context) {
   const rowCount = Math.max(1, items.length);
   const rowH = 115;
   const rowGap = 16;
-  // Dynamic height wrapping rows + 30px padding, centered at cy = 785
   const cardH = Math.min(840, 105 + rowCount * (rowH + rowGap) + 30);
   const x = cx - w / 2;
   const y = Math.round(cy - cardH / 2);
@@ -754,10 +779,11 @@ function renderMagnifierCheck(ctx, svg, d, t, duration, context) {
   gDoc.append(el('text', {
     x: cx, y: y + 48, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold', fill: '#94a3b8'
-  }, d.title || d.label || 'Tài liệu kiểm chứng'));
+  }, sanitize(d.title || d.label || 'Tài liệu kiểm chứng')));
 
   const startRowY = y + 90;
   const targetRowIdx = Math.min(items.length - 1, 1);
+  const scanArrivalT = 1.0;
 
   items.forEach((item, i) => {
     const ry = startRowY + i * (rowH + rowGap);
@@ -783,19 +809,47 @@ function renderMagnifierCheck(ctx, svg, d, t, duration, context) {
       gDoc.append(textEl);
     });
 
+    // CHỈ vẽ ✓ (vẽ nét) khi kính lúp đã quét tới hàng đó; hàng chưa quét KHÔNG có ✓ (opacity = 0)
+    const rowScanT = scanArrivalT + i * 0.4;
+    const hasScannedThisRow = (t >= rowScanT);
     const mark = /\b(sai|không|giả)\b/i.test(item) ? '✗' : '✓';
-    const rowOp = (context && typeof context.row === 'function') ? context.row(i) : clamp((t - (0.15 + i * 0.7)) / 0.35);
-    const verdict = el('text', {
-      x: x + w - 95, y: ry + rowH / 2 + 12,
-      'text-anchor': 'middle', 'font-size': '44', 'font-weight': 'bold',
-      fill: mark === '✓' ? '#22c55e' : '#ef4444',
-      class: 'verdict ill-label',
-      opacity: String(rowOp >= 0.5 ? 1 : 0)
-    }, mark);
-    if (context && context.front) {
-      context.front.append(verdict);
+    const chkX = x + w - 95;
+    const chkY = ry + rowH / 2;
+    const strokeColor = (mark === '✓') ? '#22c55e' : '#ef4444';
+
+    if (hasScannedThisRow) {
+      const checkP = clamp((t - rowScanT) / 0.45);
+      const easeCheckP = easeOutCubic(checkP);
+
+      if (mark === '✓') {
+        shape(gDoc, 'path', {
+          d: `M ${chkX - 16} ${chkY} L ${chkX - 4} ${chkY + 12} L ${chkX + 16} ${chkY - 12}`,
+          stroke: strokeColor, 'stroke-width': 6, fill: 'none',
+          'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+          pathLength: 1, 'stroke-dasharray': 1,
+          'stroke-dashoffset': 1 - easeCheckP,
+          opacity: 1,
+          class: 'verdict motion-element'
+        });
+      } else {
+        shape(gDoc, 'path', {
+          d: `M ${chkX - 12} ${chkY - 12} L ${chkX + 12} ${chkY + 12} M ${chkX + 12} ${chkY - 12} L ${chkX - 12} ${chkY + 12}`,
+          stroke: strokeColor, 'stroke-width': 6, fill: 'none',
+          'stroke-linecap': 'round',
+          pathLength: 1, 'stroke-dasharray': 1,
+          'stroke-dashoffset': 1 - easeCheckP,
+          opacity: 1,
+          class: 'verdict motion-element'
+        });
+      }
     } else {
-      svg.append(verdict);
+      // Hàng chưa quét tới: không có ✓ (opacity = 0)
+      shape(gDoc, 'path', {
+        d: `M ${chkX - 16} ${chkY} L ${chkX - 4} ${chkY + 12} L ${chkX + 16} ${chkY - 12}`,
+        stroke: strokeColor, 'stroke-width': 6, fill: 'none',
+        opacity: 0,
+        class: 'verdict motion-element'
+      });
     }
   });
 
@@ -807,8 +861,8 @@ function renderMagnifierCheck(ctx, svg, d, t, duration, context) {
   let lensY = targetLensY;
   let lensOp = 1.0;
 
-  if (t < 1.4) {
-    const enterP = clamp(t / 1.4);
+  if (t < scanArrivalT) {
+    const enterP = clamp(t / scanArrivalT);
     lensX = x - 80 + (targetLensX - (x - 80)) * easeOutCubic(enterP);
     lensY = y - 60 + (targetLensY - (y - 60)) * easeOutCubic(enterP);
     lensOp = clamp(enterP * 2);
@@ -1383,7 +1437,7 @@ function renderGaugeRing(ctx, svg, d, t, duration, variantIdx = 0) {
   });
 
   // Animated colored stroke
-  const currentArc = arcLength * (val / 100) * easeP;
+  const currentArc = arcLength * (Math.min(100, Math.max(0, val)) / 100) * easeP;
   shape(svg, 'circle', {
     cx, cy, r, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 38,
     'stroke-linecap': 'round',
@@ -1391,15 +1445,33 @@ function renderGaugeRing(ctx, svg, d, t, duration, variantIdx = 0) {
     transform: 'rotate(135 ' + cx + ' ' + cy + ')'
   });
 
-  // Center display
-  svg.append(el('text', {
-    x: cx, y: cy + 25, 'text-anchor': 'middle', 'font-size': '110', 'font-weight': 'bold', fill: '#ffffff'
-  }, formatNum(val * easeP) + (d.unit || '%')));
+  // Center display: NEVER fallback to '%' blindly
+  let displayVal = val * easeP;
+  let gaugeUnit = d.unit !== undefined && d.unit !== null ? String(d.unit).trim() : '';
+  if (Math.abs(val) >= 1e9) {
+    displayVal = (val / 1e9) * easeP;
+    if (!gaugeUnit || gaugeUnit === '%') gaugeUnit = 'tỷ USD';
+  } else if (Math.abs(val) >= 1e6) {
+    displayVal = (val / 1e6) * easeP;
+    if (!gaugeUnit || gaugeUnit === '%') gaugeUnit = 'triệu USD';
+  }
+  const gaugeNumText = formatRawViNum(displayVal, Math.abs(val) >= 100 ? 0 : 1);
+  const fullGaugeText = gaugeUnit ? (gaugeNumText + (gaugeUnit === '%' ? '%' : ' ' + gaugeUnit)) : gaugeNumText;
 
-  // Label shortened to <= 3 words, font-size >= 42px
+  // Fit font-size to ring container (max width 420px)
+  let gaugeFs = 110;
+  while (gaugeFs * 0.58 * fullGaugeText.length > 420 && gaugeFs > 36) {
+    gaugeFs -= 4;
+  }
+
+  svg.append(el('text', {
+    x: cx, y: cy + 25, 'text-anchor': 'middle', 'font-size': String(gaugeFs), 'font-weight': 'bold', fill: '#ffffff'
+  }, fullGaugeText));
+
+  // Label: preserve complete semantic phrase <= 4 words intact (e.g. 'Kinh tế tầm thấp')
   const rawGaugeLbl = d.label || d.text || 'Chỉ số';
   const gaugeWords = String(rawGaugeLbl).trim().split(/\s+/).filter(Boolean);
-  const cleanGaugeLbl = gaugeWords.length > 3 ? gaugeWords.slice(0, 3).join(' ') : rawGaugeLbl;
+  const cleanGaugeLbl = gaugeWords.length <= 4 ? rawGaugeLbl : gaugeWords.slice(0, 3).join(' ');
   svg.append(el('text', {
     x: cx, y: cy + 120, 'text-anchor': 'middle', 'font-size': '42', 'font-weight': '600', fill: '#94a3b8', class: 'ill-label'
   }, cleanGaugeLbl));

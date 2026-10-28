@@ -1,0 +1,40 @@
+{
+  "name": "bar_race",
+  "category": "number_stat",
+  "meaning": "Dùng khi so sánh sự bứt phá tốc độ, thị phần thay đổi hoặc đối tượng dẫn đầu vượt mặt đối thủ",
+  "metaphor": "Cuộc đua nước rút giữa các thanh tốc độ",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.7,
+      "description": "Các đường chạy và thanh đua xuất xưởng tại vạch xuất phát"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.7,
+      "end_sec": 2.5,
+      "description": "Các thanh đồng loạt tăng tốc, thanh chủ đạo bứt phá ngoạn mục vươn lên dẫn đầu"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.5,
+      "end_sec": 4.0,
+      "description": "Thanh về nhất cán đích, bung cờ vinh danh hoặc huy hiệu ngôi sao"
+    }
+  ],
+  "idle_motion": "Hạt tia lửa tốc độ phụt ra sau đuôi thanh dẫn đầu",
+  "default_bbox": [
+    100,
+    420,
+    880,
+    720
+  ],
+  "status": "active",
+  "params_schema": {
+    "items": "list",
+    "highlight_index": "int",
+    "unit": "str"
+  }
+}

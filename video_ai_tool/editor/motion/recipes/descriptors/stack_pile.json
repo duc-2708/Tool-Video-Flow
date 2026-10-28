@@ -1,0 +1,40 @@
+{
+  "name": "stack_pile",
+  "category": "concept_relation",
+  "meaning": "Dùng khi giải thích sự tích lũy tài nguyên, xếp chồng công nghệ (tech stack) hoặc tháp năng lực",
+  "metaphor": "Các tấm thẻ 3D xếp chồng lên nhau thành tháp vững chắc",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Tấm đế nền vững chãi xuất hiện tại trung tâm"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.3,
+      "description": "Từng tấm thẻ tầng tiếp theo rơi từ trên xuống xếp chồng nảy nhẹ"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.3,
+      "end_sec": 4.0,
+      "description": "Tấm đỉnh trên cùng bung viền neon sáng rực, tháp vững chãi hoàn thiện"
+    }
+  ],
+  "idle_motion": "Tháp thẻ bồng bềnh 3D nhấp nhô nhẹ theo nhịp thở",
+  "default_bbox": [
+    140,
+    440,
+    800,
+    680
+  ],
+  "status": "active",
+  "params_schema": {
+    "layers": "list",
+    "top_highlight": "str",
+    "label": "str"
+  }
+}

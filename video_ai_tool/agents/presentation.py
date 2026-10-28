@@ -9,7 +9,7 @@ TRAILING_CUTOFF = {
     'hoặc', 'nếu', 'khi', 'tuy', 'dẫu', 'dở', 'bị', 'được', 'đóng', 'đặt', 'này',
     'kia', 'đó', 'đây', 'tới', 'ở', 'gặp', 'gọi', 'như', 'theo', 'hành', 'tạo', 'làm',
     'khiến', 'giúp', 'sau', 'bày', 'tỏ', 'lên', 'xuống', 'qua', 'lại', 'thường', 'có',
-    'tài', 'đến', 'đi', 'có thể'
+    'tài', 'đến', 'đi', 'có thể', 'giống', 'ý', 'thì', 'rằng', 'vậy', 'thế', 'nào', 'sao', 'gì', 'ai', 'đâu', 'nữa', 'chăng'
 }
 
 LEADING_CUTOFF = {
@@ -22,16 +22,32 @@ LEADING_CUTOFF = {
 
 TRAILING = tuple(TRAILING_CUTOFF)
 
+KNOWN_PHRASE_EXPANSIONS = {
+    'minh họa ý': 'Minh họa ý tưởng',
+    'ý tưởng minh họa': 'Ý tưởng minh họa'
+}
+
 def clean_semantic_label(label: str) -> str:
     """Trim punctuation and eliminate truncated or dangling boundary words."""
     if not label: return ""
-    text = " ".join(label.split()).strip(" .,:;!?…()“”\"'")
+    text = " ".join(str(label).split()).strip(" .,:;!?…()“”\"'")
+    low = text.lower()
+    if low in KNOWN_PHRASE_EXPANSIONS:
+        return KNOWN_PHRASE_EXPANSIONS[low]
+
     words = text.split()
     while words and words[0].lower() in LEADING_CUTOFF:
         words.pop(0)
     while words and words[-1].lower() in TRAILING_CUTOFF:
         words.pop(-1)
-    if not (2 <= len(words) <= 5):
+
+    # Max 4 words for clean readable presentation labels
+    if len(words) > 4:
+        words = words[:4]
+        while words and words[-1].lower() in TRAILING_CUTOFF:
+            words.pop(-1)
+
+    if not (2 <= len(words) <= 4):
         return ""
     result = " ".join(words)
     return result[:1].upper() + result[1:]

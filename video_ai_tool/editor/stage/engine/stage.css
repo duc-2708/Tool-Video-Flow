@@ -23,8 +23,10 @@
 }
 
 body, html {
-  width: 1080px;
-  height: 1920px;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
   background-color: var(--bg-dark);
   font-family: "DTPhudu", "Arial", sans-serif;
@@ -35,6 +37,7 @@ body, html {
   position: relative;
   width: 1080px;
   height: 1920px;
+  transform-origin: 0 0;
   background: radial-gradient(circle at 50% 45%, #180a3a 0%, var(--bg-dark) 60%, var(--bg-deep) 100%);
   overflow: hidden;
 }
@@ -56,7 +59,7 @@ body, html {
 
 .ambient-glow {
   position: absolute;
-  top: 700px;
+  top: 585px;
   left: 340px;
   width: 400px;
   height: 400px;
@@ -73,8 +76,51 @@ body, html {
   left: 0;
   width: 1080px;
   height: 1920px;
-  transform-origin: 540px 920px;
-  will-change: transform;
+  transform-origin: 540px 785px;
+  will-change: transform, filter;
+  transition: filter 0.3s ease;
+}
+
+/* Effects: Blur-dissolve, Glitch, Stamp */
+.blur-dissolve-active {
+  filter: blur(14px) brightness(1.2);
+}
+
+@keyframes stageGlitchAnim {
+  0% { transform: translate(0, 0); filter: drop-shadow(0 0 10px rgba(247, 37, 133, 0.7)); }
+  25% { transform: translate(-8px, 4px) skewX(2deg); filter: hue-rotate(90deg) contrast(1.3); }
+  50% { transform: translate(6px, -4px) skewX(-2deg); filter: hue-rotate(180deg) saturate(2); }
+  75% { transform: translate(-4px, 2px); filter: hue-rotate(270deg); }
+  100% { transform: translate(0, 0); filter: drop-shadow(0 0 10px rgba(247, 37, 133, 0.7)); }
+}
+
+.glitch-active {
+  animation: stageGlitchAnim 0.22s infinite;
+}
+
+.stamp-overlay {
+  transform: rotate(-8deg) scale(1.05);
+  transform-origin: center center;
+  filter: drop-shadow(0 0 20px rgba(247, 37, 133, 0.9));
+}
+
+/* Road Recap Styles */
+.road-surface {
+  fill: #14082e;
+  stroke: var(--neon-purple);
+  stroke-width: 4px;
+  filter: drop-shadow(0 16px 40px rgba(0,0,0,0.6));
+}
+
+.road-center-line {
+  fill: none;
+  stroke: var(--neon-cyan);
+  stroke-width: 4px;
+  stroke-dasharray: 20 20;
+}
+
+.road-milestone {
+  filter: drop-shadow(0 0 12px var(--neon-cyan-glow));
 }
 
 #world-svg {

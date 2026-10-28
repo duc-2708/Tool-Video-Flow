@@ -1,0 +1,42 @@
+{
+  "name": "balance_scale",
+  "category": "compare_vs",
+  "meaning": "Dùng khi so sánh tương quan lực lượng, lợi ích vượt trội hoặc đánh đổi giữa hai giải pháp",
+  "metaphor": "Cán cân công lý 3D nghiêng về bên nặng ký hơn",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Trục cân kim loại và hai đĩa cân xuất hiện ở trạng thái cân bằng"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.3,
+      "description": "Vật nặng đặt lên đĩa cân, cán cân nghiêng dứt khoát về bên ưu thế"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.3,
+      "end_sec": 4.0,
+      "description": "Cán cân nhấp nhô tắt dần, nhãn bên thắng bừng sáng hào quang"
+    }
+  ],
+  "idle_motion": "Đĩa cân dao động điều hòa nhẹ nhàng quanh vị trí cân bằng mới",
+  "default_bbox": [
+    140,
+    440,
+    800,
+    680
+  ],
+  "status": "active",
+  "params_schema": {
+    "left_label": "str",
+    "right_label": "str",
+    "winner": "str",
+    "left_weight": "float",
+    "right_weight": "float"
+  }
+}

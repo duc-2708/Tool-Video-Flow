@@ -153,9 +153,23 @@ def html_document(payload,font):
         engine_css, engine_js, _ = bundle_engine()
     except Exception:
         engine_css, engine_js = "", ""
-    css+='\n'+scene_css+'\n'+themes_css+'\n'+engine_css;js=engine_js+'\n'+scene_js+'\n'+js
+    try:
+        from editor.depth import bundle_depth
+        depth_css, depth_js, _ = bundle_depth()
+    except Exception:
+        depth_css, depth_js = "", ""
+    css += '\n' + scene_css + '\n' + themes_css + '\n' + engine_css + '\n' + depth_css
+    js = depth_js + '\n' + engine_js + '\n' + scene_js + '\n' + js
     t_name = str(theme.get('name', 'studio'))
-    return f'<!doctype html><meta charset="utf-8"><style>{css}</style><div id="stage" class="theme-{t_name}"></div><script>window.MOTION_DATA={data};</script><script>{js}</script>'
+    depth_enabled = bool(payload.get("depth_3d", False))
+    if not depth_enabled:
+        try:
+            from config.settings import get_settings
+            depth_enabled = bool(get_settings().depth_3d_enabled)
+        except Exception:
+            depth_enabled = False
+    flag_script = f"window.DEPTH_3D_ENABLED = {'true' if depth_enabled else 'false'};"
+    return f'<!doctype html><meta charset="utf-8"><style>{css}</style><div id="stage" class="theme-{t_name}"></div><script>window.MOTION_DATA={data};{flag_script}</script><script>{js}</script>'
 
 
 @contextmanager

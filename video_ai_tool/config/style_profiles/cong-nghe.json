@@ -1,570 +1,704 @@
 {
+  "reference_entities": [
+    "GitHub",
+    "Cursor",
+    "Gemini",
+    "Claude",
+    "JetBrains",
+    "GPT",
+    "Beeknoee",
+    "Google",
+    "ChatGPT",
+    "Claude App",
+    "Claude Code",
+    "Gmail",
+    "SlimAI",
+    "Anthropic",
+    "LUNACLOUD",
+    "VPS",
+    "Docker",
+    "Ubuntu",
+    "Let's Encrypt"
+  ],
   "version": 1,
   "name": "công nghệ",
   "slug": "@category:cong-nghe",
   "reference_hashes": [
     "3f4c15b2a0d19cc035407d3f82018c9abf00a727867ae9e796c4370a522ada30",
     "0177397debc50e2f0dd76dbdaa1c6cd452b6ca77a63fbe3431a79a4a83dc8f75",
-    "e3e64da8b98dae29055873674cea3821497d2b39616cf76c4fcf4504bf94c2ff"
+    "e3e64da8b98dae29055873674cea3821497d2b39616cf76c4fcf4504bf94c2ff",
+    "a448cf9f586ef0bfa101e1c19fa46f7c42125c3e9ab7dda355bd84dd40d5d658"
   ],
   "reference_files": [
     "cong-nghe/cong_nghe_1.mp4",
     "cong-nghe/cong_nghe_2.mp4",
-    "cong-nghe/cong_nghe_4.mp4"
+    "cong-nghe/cong_nghe_4.mp4",
+    "cong-nghe/cong_nghe_5.mp4"
   ],
   "reference_texts": [
-    "Giới thiệu file prompt AI với số sao khủng",
-    "So sánh agent rườm rà và sự tối giản",
-    "Câu chuyện phong cách làm việc tối giản",
-    "Thang 7 bước kiểm tra trước khi viết code",
-    "Đánh giá tính năng, bảo mật và cài đặt",
-    "Bóc mẽ số liệu, đánh giá bên thứ ba và kết luận",
-    "Giới thiệu framework FAST tạo AI agent",
-    "Bước F: Cài đặt công cụ AI agent",
-    "Bước A: Kết nối công cụ với agent",
-    "Bước S và T: Giao nhiệm vụ và đóng gói skill tự động",
-    "Nhiều người dùng không hiểu hai thanh hạn mức.",
-    "Giải thích 5-hour limit và các yếu tố ảnh hưởng.",
-    "So sánh 5-hour limit và weekly limit qua hình ảnh chai và bình nước.",
-    "So sánh hạn mức của các gói Pro, Max 5x, Max 20x.",
-    "Quy đổi hạn mức sử dụng ra giá API theo ước lượng cộng đồng.",
-    "Lưu ý về sự biến động của hạn mức và tóm tắt toàn bộ.",
-    "Giới thiệu file prompt AI với số sao khủng nhưng bất ngờ về độ ngắn.",
-    "So sánh cách giải quyết rườm rà của agent thông thường với sự tối giản.",
-    "Kể câu chuyện về phong cách làm việc tối giản và hiệu quả.",
-    "Đưa ra thang 7 bước kiểm tra trước khi để AI viết code.",
-    "Đánh giá các tính năng bảo mật, cách cài đặt và phản ứng cộng đồng.",
-    "Bóc mẽ số liệu benchmark, đánh giá từ bên thứ ba và kết luận.",
-    "Giới thiệu cách tạo AI agent cực kỳ đơn giản với framework FAST.",
-    "Giải thích chữ F trong FAST là cài đặt công cụ AI agent trên máy.",
-    "Giải thích chữ A là kết nối công cụ như Gmail cho agent.",
-    "Giải thích chữ S (giao nhiệm vụ) và chữ T (đóng gói thành skill tự chạy).",
-    "Nhiều người dùng {topic} lâu năm nhưng vẫn chưa hiểu rõ hai thanh hạn mức.",
-    "Giải thích 5-hour limit và các yếu tố làm tụt nhanh hạn mức.",
-    "So sánh 5-hour limit như chai nước nhỏ và weekly limit như bình nước lớn.",
-    "So sánh 3 gói phổ biến Pro, Max 5x và Max 20x.",
-    "Cộng đồng quy đổi hạn mức ra giá API ước lượng cho từng gói.",
-    "Nhấn mạnh hạn mức không phải con số cố định và tóm tắt lại các điểm chính."
+    "Giới thiệu prompt lập trình",
+    "Thử nghiệm tạo component ngày tháng",
+    "Phong cách làm việc tối giản",
+    "Quy trình kiểm tra 7 bước",
+    "Đảm bảo tính bảo mật và validation",
+    "Thống kê lượt sao cộng đồng",
+    "Phân tích lại benchmark",
+    "Giới thiệu framework F-A-S-T để tạo AI agent.",
+    "Bước F: Cài đặt công cụ AI.",
+    "Bước A: Kết nối công cụ.",
+    "Bước S và T: Giao nhiệm vụ và đóng gói skill.",
+    "Vấn đề về hai thanh giới hạn của Claude",
+    "Giải thích 5-hour limit",
+    "So sánh với Weekly limit bằng hình ảnh chai và bình nước",
+    "Phân tích 3 gói Pro, Max 5x, Max 20x",
+    "Quy đổi hạn mức ra giá API theo cộng đồng",
+    "Các yếu tố khiến hạn mức thay đổi linh hoạt",
+    "Vấn đề chạy app trên laptop và giải pháp VPS",
+    "Thuê VPS và SSH",
+    "Cài Docker",
+    "Git clone và docker compose",
+    "Trỏ tên miền và HTTPS",
+    "Tổng kết quy trình",
+    "Giới thiệu file prompt lạ lập trình AI đạt lượng sao khủng.",
+    "Thử nghiệm tạo ô chọn ngày bằng prompt và so sánh dòng code.",
+    "Mô tả phong cách tối giản hiệu quả của tác giả.",
+    "Quy trình kiểm tra 7 bước trước khi AI viết code.",
+    "Đặc điểm về validation, bảo mật và khả năng tương thích.",
+    "Sự bùng nổ số lượng sao và sự quan tâm của cộng đồng.",
+    "Xem xét lại các số liệu benchmark và điều chỉnh thực tế.",
+    "Giới thiệu cách tạo AI agent cực kỳ đơn giản qua 4 chữ F-A-S-T.",
+    "F là File up, cài công cụ AI agent như ChatGPT app hoặc Claude app và bản code.",
+    "A là Attach, kết nối agent với công cụ cần thiết như Gmail.",
+    "S là Set giao nhiệm vụ cụ thể, T là Turn into skill đóng gói để tự động chạy.",
+    "Nhiều người dùng Claude lâu ngày nhưng vẫn chưa hiểu hai thanh giới hạn.",
+    "Giải thích 5-hour limit là lượng tài nguyên dùng trong 5 giờ, dùng nặng tụt càng nhanh.",
+    "So sánh 5-hour limit như chai nước nhỏ còn Weekly limit như bình nước lớn cả tuần.",
+    "So sánh 3 gói Pro, Max 5x và Max 20x theo quy mô bình nước.",
+    "Cộng đồng quy đổi giới hạn sử dụng ra giá API tương ứng cho từng gói.",
+    "Nhấn mạnh đây không phải con số cố định mà phụ thuộc vào model, context, output và workload.",
+    "Giới thiệu vấn đề chạy app trên laptop bị tắt khi gập máy và giải pháp dùng VPS.",
+    "Bước 1: Thuê VPS Ubuntu và đăng nhập SSH.",
+    "Bước 2: Cài Docker để đóng gói app giống hệt trên laptop.",
+    "Bước 3 & 4: Đẩy code lên GitHub, clone về VPS và chạy docker compose.",
+    "Bước 5: Trỏ tên miền và bật HTTPS miễn phí.",
+    "Tóm tắt 5 bước hoàn thành việc đưa app lên VPS chạy suốt ngày đêm."
   ],
   "hook_templates": [
-    "Cách tạo {topic} cho bất kỳ công việc nào của bạn cực kỳ đơn giản",
-    "Một file prompt {topic} viết code lười đi",
-    "Nhiều người dùng {topic} lâu năm nhưng vẫn chưa hiểu rõ..."
+    "App bạn vừa vibe code chạy ngon trên laptop, nhưng gặp máy lại là {topic}.",
+    "Cách tạo {topic} cho bất kỳ công việc nào của bạn cực kỳ đơn giản chỉ với {number} chữ cái",
+    "Một file prompt dạy AI {topic} gom {number} sao trong chưa đầy {number} tháng.",
+    "Nhiều {topic} cả năm trời... mà vẫn chưa hiểu {topic} là gì?"
   ],
   "hook_techniques": [
     "con số bất ngờ",
-    "câu hỏi / tuyên bố giá trị",
+    "câu hỏi / khung kiến thức",
+    "nêu vấn đề thực tế",
     "phản bác hiểu lầm"
   ],
   "structure": [
     {
       "name": "Hook",
-      "fraction": 0.040126823459214145
+      "fraction": 0.06783325183737392
     },
     {
-      "name": "Giải thích",
-      "fraction": 0.08860835949085351
-    },
-    {
-      "name": "Ví dụ",
-      "fraction": 0.08660888453065231
+      "name": "Bối cảnh",
+      "fraction": 0.1034289197330641
     },
     {
       "name": "Phân tích",
-      "fraction": 0.17717102714075175
+      "fraction": 0.5334754807284359
     },
     {
       "name": "Đánh giá",
-      "fraction": 0.3056784159905376
+      "fraction": 0.12520342915055127
     },
     {
-      "name": "Cao trào & Kết",
-      "fraction": 0.30180648938799076
+      "name": "CTA",
+      "fraction": 0.17005891855057487
     }
   ],
   "shot_seconds": {
-    "mean": 4.58,
-    "minimum": 2.74,
-    "maximum": 7.5
+    "mean": 5.7625,
+    "minimum": 3.5,
+    "maximum": 10.55
   },
   "speech_words_per_sec": {
-    "mean": 3.0,
-    "minimum": 2.8,
-    "maximum": 3.2
+    "mean": 2.95,
+    "minimum": 2.3,
+    "maximum": 3.5
   },
   "narration_rules": [
-    "Câu hỏi tu từ: Có",
-    "Câu hỏi tu từ: không dùng",
-    "Câu hỏi tu từ: Thứ này có cần tồn tại không?",
-    "Cảm xúc giọng: giải thích, hào hứng",
-    "Cảm xúc giọng: Hóm hỉnh, cuốn hút",
-    "Cảm xúc giọng: tự tin, chuyên nghiệp",
-    "Mức hài hước: Cao, châm biếm nhẹ nhàng",
     "Mức hài hước: thấp",
-    "Mức hài hước: vừa phải",
-    "Mức thân mật: thân mật",
-    "Mức thân mật: thân mật, hài hước",
-    "Mức thân mật: thân thiện, gần gũi",
-    "Xưng hô: anh em/mình",
-    "Xưng hô: Bạn/Mình/Ông anh",
-    "Xưng hô: bạn/nhiều ông",
+    "Câu hỏi tu từ: Có",
+    "Câu hỏi tu từ: không",
+    "Câu hỏi tu từ: muốn ai cũng vào được, suốt ngày đêm, hãy đưa nó lên {topic}?",
+    "Câu hỏi tu từ: Thứ này có cần tồn tại không?",
+    "Cảm xúc giọng: hào hứng, giải thích",
+    "Cảm xúc giọng: hứng khởi, châm biếm nhẹ",
+    "Cảm xúc giọng: truyền cảm hứng",
+    "Cảm xúc giọng: truyền cảm, tự tin",
+    "Mức hài hước: có",
+    "Mức hài hước: vừa phải, dí dỏm",
+    "Mức thân mật: thân mật, gần gũi",
+    "Mức thân mật: thân thiện",
+    "Mức thân mật: thân thiện, hài hước",
+    "Mức thân mật: thân thiện, hướng dẫn trực tiếp",
+    "Xưng hô: bạn/mình",
+    "Xưng hô: bạn/ông",
+    "Xưng hô: bạn/ông anh",
+    "Xưng hô: mình/anh em",
     "Câu dài trung bình khoảng {number} từ; xen câu ngắn và dài theo ý."
   ],
   "broll_patterns": [
     "animated graphics",
     "animation",
-    "avatar mascot",
-    "hoạt hình vẽ tay trên nền lưới",
+    "chữ lớn",
+    "drawing",
+    "hoạt hình mô phỏng",
+    "mascot",
+    "minh họa/hoạt hình",
     "screen recording",
-    "text"
+    "text",
+    "đồ họa",
+    "đồ họa bước đi"
   ],
   "visual_effects": [
-    "zoom",
-    "pan"
+    "zoom_in",
+    "pan",
+    "zoom_out"
   ],
   "transitions": [
+    "slide",
     "cut",
-    "cắt cảnh nhanh",
-    "fade",
-    "slide"
+    "cắt cảnh nhanh"
   ],
   "captions": {
-    "analysis_warnings": [],
+    "analysis_warnings": [
+      "color: #ffffff → #FFFFFF.",
+      "highlight_color: #00ff00 → #00FF00."
+    ],
     "enabled": true,
     "mode": "phrase",
-    "font_description": "Bold sans-serif",
+    "font_description": "sans-serif đậm",
     "font_scale": 0.05,
     "color": "#FFFFFF",
-    "highlight_color": "#00FF00",
+    "highlight_color": "#FFFF00",
     "stroke_color": "#000000",
-    "color_note": "",
-    "stroke_width_ratio": 0.005,
+    "color_note": "color: #ffffff; highlight_color: #00ff00",
+    "stroke_width_ratio": 0.00625,
     "position": "lower",
-    "emphasis": "Màu sắc nổi bật theo từ khóa",
-    "shadow": "Có"
+    "emphasis": "màu sắc",
+    "shadow": "có"
   },
   "audio": {
     "analysis_warnings": [],
-    "mood": "Hứng khởi, công nghệ",
-    "music_volume": 0.16666666666666666,
+    "mood": "công nghệ hiện đại",
+    "music_volume": 0.1625,
     "sfx_types": [
       "click",
       "pop",
-      "success chime",
-      "tiếng pop",
-      "tiếng viết bút",
-      "whoosh"
+      "transition",
+      "cash register",
+      "ding",
+      "pencil drawing",
+      "water pouring"
     ],
-    "sfx_per_10_sec": 2.0,
+    "sfx_per_10_sec": 1.875,
     "sfx_positions": [
-      0.0,
-      8.0,
+      1.0,
+      7.0,
+      18.0,
       26.0,
       43.0,
-      59.0,
-      119.0
+      59.0
     ],
     "ducking": true,
-    "details": "Âm thanh rõ ràng, nhạc nền nhịp nhàng ăn khớp với chuyển động"
+    "details": "Âm thanh rõ ràng, nhạc nền cuốn hút phù hợp nội dung công nghệ"
   },
   "ending_techniques": [
+    "giới thiệu nền tảng giải pháp",
+    "kêu gọi bình luận từ khóa để nhận tài liệu",
     "nhận định tổng kết",
-    "yêu cầu bình luận để nhận tài liệu",
-    "Đặt câu hỏi tương tác với người xem"
+    "tóm tắt lợi ích"
   ],
   "reusable_rules": [
-    "Bắt đầu video bằng việc chỉ ra một hiểu lầm phổ biến của số đông.",
-    "Chia nhỏ các gói cước phức tạp thành biểu đồ cột trực quan để so sánh nhanh.",
-    "Chia nhỏ hướng dẫn thành các bước trực quan trên màn hình",
-    "Chia nội dung thành các bước hoặc tiêu chuẩn rõ ràng",
-    "Dùng hoạt hình minh họa thay vì chỉ có chữ",
-    "Kết hợp avatar hoạt hình hướng dẫn để tăng sinh động",
-    "Kết hợp hiệu ứng viết tay và tiếng động (SFX) đồng bộ với chuyển động thị giác.",
-    "Kết hợp hài hước châm biếm để tăng tương tác",
-    "Sử dụng con số gây sốc ngay {number} giây đầu",
-    "Sử dụng hình ảnh ẩn dụ (như bình nước/chai nước) để giải thích định mức trừu tượng.",
-    "Sử dụng từ viết tắt dễ nhớ làm khung sườn nội dung",
-    "Đưa ra câu hỏi mở ở cuối video để kêu gọi bình luận",
-    "Đặt câu hỏi kêu gọi hành động cụ thể ở cuối video"
+    "Nhấn mạnh từ khóa quan trọng bằng màu sắc nổi bật",
+    "Chia nhỏ nội dung thành các bước tuần tự có đánh dấu trạng thái hoàn thành.",
+    "Chia nhỏ quy trình phức tạp thành các bước rõ ràng",
+    "Chia nhỏ thông tin thành các mốc rõ ràng trên nền bảng/giấy",
+    "Chia quy trình phức tạp thành các bước đánh số rõ ràng",
+    "Duy trì một phong cách thị giác (như nền giấy ô ly) xuyên suốt video",
+    "Duy trì nhịp độ chuyển cảnh nhanh đều đặn",
+    "Dùng hình ảnh mô phỏng tương quan giữa máy cá nhân và server",
+    "Dùng hình ảnh ẩn dụ (như bình nước) để giải thích các khái niệm trừu tượng",
+    "Dùng từ ngữ châm biếm, hài hước để tăng độ giữ chân",
+    "Kết hợp hiệu ứng âm thanh bút vẽ và pop tạo cảm giác sinh động",
+    "Kết hợp hình ảnh mascot hoạt hình với màn hình thao tác thực tế.",
+    "Kết hợp hình ảnh minh họa động cho nội dung kỹ thuật",
+    "Minh họa câu lệnh terminal trực tiếp trên màn hình",
+    "Mở đầu bằng câu hỏi hoặc phản bác hiểu lầm phổ biến",
+    "Sử dụng con số ấn tượng ngay từ {number} giây đầu",
+    "Sử dụng màu sắc tương phản để nhấn mạnh từ khóa quan trọng",
+    "Đan xen các phản biện để tăng tính khách quan",
+    "Đúc kết quy trình thành từ viết tắt dễ nhớ ở đầu video.",
+    "Đưa ra ước lượng từ cộng đồng khi số liệu chín h thức không được công bố",
+    "Đặt tiêu đề ngắn gọn ở đầu mỗi phần để định hướng người xem"
   ],
   "rule_frequencies": [
     {
-      "rule": "Bắt đầu video bằng việc chỉ ra một hiểu lầm phổ biến của số đông.",
+      "rule": "Nhấn mạnh từ khóa quan trọng bằng màu sắc nổi bật",
+      "video_count": 2
+    },
+    {
+      "rule": "Chia nhỏ nội dung thành các bước tuần tự có đánh dấu trạng thái hoàn thành.",
       "video_count": 1
     },
     {
-      "rule": "Chia nhỏ các gói cước phức tạp thành biểu đồ cột trực quan để so sánh nhanh.",
+      "rule": "Chia nhỏ quy trình phức tạp thành các bước rõ ràng",
       "video_count": 1
     },
     {
-      "rule": "Chia nhỏ hướng dẫn thành các bước trực quan trên màn hình",
+      "rule": "Chia nhỏ thông tin thành các mốc rõ ràng trên nền bảng/giấy",
       "video_count": 1
     },
     {
-      "rule": "Chia nội dung thành các bước hoặc tiêu chuẩn rõ ràng",
+      "rule": "Chia quy trình phức tạp thành các bước đánh số rõ ràng",
       "video_count": 1
     },
     {
-      "rule": "Dùng hoạt hình minh họa thay vì chỉ có chữ",
+      "rule": "Duy trì một phong cách thị giác (như nền giấy ô ly) xuyên suốt video",
       "video_count": 1
     },
     {
-      "rule": "Kết hợp avatar hoạt hình hướng dẫn để tăng sinh động",
+      "rule": "Duy trì nhịp độ chuyển cảnh nhanh đều đặn",
       "video_count": 1
     },
     {
-      "rule": "Kết hợp hiệu ứng viết tay và tiếng động (SFX) đồng bộ với chuyển động thị giác.",
+      "rule": "Dùng hình ảnh mô phỏng tương quan giữa máy cá nhân và server",
       "video_count": 1
     },
     {
-      "rule": "Kết hợp hài hước châm biếm để tăng tương tác",
+      "rule": "Dùng hình ảnh ẩn dụ (như bình nước) để giải thích các khái niệm trừu tượng",
       "video_count": 1
     },
     {
-      "rule": "Sử dụng con số gây sốc ngay {number} giây đầu",
+      "rule": "Dùng từ ngữ châm biếm, hài hước để tăng độ giữ chân",
       "video_count": 1
     },
     {
-      "rule": "Sử dụng hình ảnh ẩn dụ (như bình nước/chai nước) để giải thích định mức trừu tượng.",
+      "rule": "Kết hợp hiệu ứng âm thanh bút vẽ và pop tạo cảm giác sinh động",
       "video_count": 1
     },
     {
-      "rule": "Sử dụng từ viết tắt dễ nhớ làm khung sườn nội dung",
+      "rule": "Kết hợp hình ảnh mascot hoạt hình với màn hình thao tác thực tế.",
       "video_count": 1
     },
     {
-      "rule": "Đưa ra câu hỏi mở ở cuối video để kêu gọi bình luận",
+      "rule": "Kết hợp hình ảnh minh họa động cho nội dung kỹ thuật",
       "video_count": 1
     },
     {
-      "rule": "Đặt câu hỏi kêu gọi hành động cụ thể ở cuối video",
+      "rule": "Minh họa câu lệnh terminal trực tiếp trên màn hình",
+      "video_count": 1
+    },
+    {
+      "rule": "Mở đầu bằng câu hỏi hoặc phản bác hiểu lầm phổ biến",
+      "video_count": 1
+    },
+    {
+      "rule": "Sử dụng con số ấn tượng ngay từ {number} giây đầu",
+      "video_count": 1
+    },
+    {
+      "rule": "Sử dụng màu sắc tương phản để nhấn mạnh từ khóa quan trọng",
+      "video_count": 1
+    },
+    {
+      "rule": "Đan xen các phản biện để tăng tính khách quan",
+      "video_count": 1
+    },
+    {
+      "rule": "Đúc kết quy trình thành từ viết tắt dễ nhớ ở đầu video.",
+      "video_count": 1
+    },
+    {
+      "rule": "Đưa ra ước lượng từ cộng đồng khi số liệu chín h thức không được công bố",
+      "video_count": 1
+    },
+    {
+      "rule": "Đặt tiêu đề ngắn gọn ở đầu mỗi phần để định hướng người xem",
       "video_count": 1
     }
   ],
   "category_id": "cong-nghe",
   "video_type": null,
-  "video_count": 3,
+  "video_count": 4,
   "confidence_label": "ổn",
-  "source_signature": "d1acee3a7642eb67f1bd7e79052729d9846ca30170f0cea0c5a93b5f22ca7f61",
+  "source_signature": "2ba37cdac3374cab4a5c413196ce4752698797dc4690b72882e8653f7cf60210",
   "locked_fields": [],
   "scene_pacing": [
     {
       "duration_sec": 30.0,
       "scene_count": 2,
       "min_scene_count": 2,
-      "max_scene_count": 2,
+      "max_scene_count": 3,
       "avg_scene_sec": 15.0,
-      "min_scene_sec": 10.5,
-      "max_scene_sec": 19.5,
+      "min_scene_sec": 9.717391304347826,
+      "max_scene_sec": 20.282608695652172,
       "durations_sec": [
-        10.5,
-        19.5
+        9.717391304347826,
+        20.282608695652172
       ]
     },
     {
       "duration_sec": 60.0,
-      "scene_count": 3,
+      "scene_count": 4,
       "min_scene_count": 2,
-      "max_scene_count": 4,
-      "avg_scene_sec": 20.0,
-      "min_scene_sec": 6.723529411764706,
-      "max_scene_sec": 40.67647058823529,
+      "max_scene_count": 6,
+      "avg_scene_sec": 15.0,
+      "min_scene_sec": 7.8,
+      "max_scene_sec": 18.6,
       "durations_sec": [
-        6.723529411764706,
-        12.6,
-        40.67647058823529
+        7.8,
+        18.6,
+        15.9,
+        17.699999999999996
       ]
     },
     {
       "duration_sec": 90.0,
-      "scene_count": 4,
+      "scene_count": 5,
       "min_scene_count": 3,
-      "max_scene_count": 6,
-      "avg_scene_sec": 22.5,
-      "min_scene_sec": 8.088235294117647,
-      "max_scene_sec": 50.911764705882355,
+      "max_scene_count": 9,
+      "avg_scene_sec": 18.0,
+      "min_scene_sec": 6.2727272727272725,
+      "max_scene_sec": 42.40909090909091,
       "durations_sec": [
-        8.088235294117647,
-        16.323529411764707,
-        14.676470588235293,
-        50.911764705882355
+        6.2727272727272725,
+        14.454545454545455,
+        13.090909090909092,
+        42.40909090909091,
+        13.77272727272728
       ]
     },
     {
       "duration_sec": 120.0,
-      "scene_count": 5,
+      "scene_count": 7,
       "min_scene_count": 4,
-      "max_scene_count": 8,
-      "avg_scene_sec": 24.0,
-      "min_scene_sec": 9.063025210084033,
-      "max_scene_sec": 58.22268907563025,
+      "max_scene_count": 11,
+      "avg_scene_sec": 17.142857142857142,
+      "min_scene_sec": 5.800381508078995,
+      "max_scene_sec": 38.36041292639138,
       "durations_sec": [
-        9.063025210084033,
-        18.516806722689076,
-        17.571428571428573,
-        16.626050420168067,
-        58.22268907563025
+        5.800381508078995,
+        13.17246409335727,
+        11.943783662477557,
+        11.329443447037702,
+        38.36041292639138,
+        12.558123877917414,
+        26.835390484739676
       ]
     },
     {
       "duration_sec": 180.0,
-      "scene_count": 8,
+      "scene_count": 11,
       "min_scene_count": 6,
-      "max_scene_count": 12,
-      "avg_scene_sec": 22.5,
-      "min_scene_sec": 8.145569620253164,
-      "max_scene_sec": 51.34177215189873,
+      "max_scene_count": 17,
+      "avg_scene_sec": 16.363636363636363,
+      "min_scene_sec": 6.3039791806581595,
+      "max_scene_sec": 42.67696440564137,
       "durations_sec": [
-        8.145569620253164,
-        8.145569620253164,
-        16.45253164556962,
-        15.621835443037973,
-        14.791139240506329,
-        14.791139240506329,
-        51.34177215189873,
-        50.7104430379747
+        6.3039791806581595,
+        6.3039791806581595,
+        14.539372061786434,
+        14.539372061786434,
+        13.166806581598388,
+        12.480523841504365,
+        12.480523841504365,
+        42.67696440564137,
+        13.85308932169241,
+        13.85308932169241,
+        29.802300201477493
       ]
     }
   ],
   "narrative_flows": [
-    "Mở đầu bằng con số ấn tượng, sau đó giải thích vấn đề, đưa ra câu chuyện minh họa, phân tích chi tiết các bước, đánh giá khách quan và kết luận bằng bài học thực tế.",
-    "Video dẫn dắt người xem qua một framework {number} bước rõ ràng (F-A-S-T) để tự tạo AI agent, từ cài đặt, kết nối, giao nhiệm vụ đến đóng gói tự động hóa.",
-    "Video mở đầu bằng việc nêu thắc mắc phổ biến của người dùng về giới hạn sử dụng, sau đó lần lượt giải thích từng loại hạn mức, so sánh các gói cước, quy đổi ra giá trị thực tế và đưa ra kết luận tổng kết."
+    "Mở đầu bằng số liệu ấn tượng, đi vào phân tích chi tiết quy trình, số liệu thực tế, phản biện khách quan và kết thúc bằng đánh giá tổng quan.",
+    "Video bắt đầu bằng câu hỏi gây tò mò về vấn đề nhiều người gặp phải, sau đó giải thích chi tiết từng khái niệm qua hình ảnh trực quan (so sánh bình nước), tiếp theo quy ra giá trị thực tế bằng dữ liệu cộng đồng, đưa ra các lưu ý quan trọng và kết luận bằng bản tóm tắt ngắn gọn.",
+    "Video hướng dẫn {number} bước kỹ thuật từ laptop lên {topic} bằng đồ họa mô phỏng trực quan.",
+    "Video mở đầu bằng hook thu hút về framework {number} chữ cái, sau đó đi qua từng bước chi tiết kèm minh họa trực quan trên màn hình và kết thúc bằng CTA kêu gọi tương tác."
   ],
   "connective_phrases": [
-    "Bí mật nằm ở {topic}",
-    "Bạn chỉ xin {topic}",
-    "Chữ tiếp theo là",
-    "Chữ tiếp theo là {variable}",
-    "Chữ đầu tiên là",
-    "Chữ đầu tiên là {variable}",
-    "...nhưng bên ngoài còn một cái lớn hơn...",
-    "...nhưng bên ngoài còn một cái lớn hơn: {topic}",
-    "Nhưng lười không có nghĩa là {topic}",
-    "Nhưng đừng coi đây là...",
-    "Nhưng đừng coi đây là {topic}...",
-    "Nói ngắn gọn lại thì"
+    "Bí mật nằm ở",
+    "Bước ba",
+    "Bước ba, {topic}",
+    "Bước bốn",
+    "Bước hai",
+    "Bước hai, {topic}",
+    "Bước một",
+    "Bước một, {topic}",
+    "Bước năm",
+    "Bước năm, {topic}",
+    "Chữ tiếp theo là {topic}",
+    "Chữ đầu tiên là..."
   ],
   "connective_frequencies": [
     {
-      "rule": "Bí mật nằm ở {topic}",
+      "rule": "Bí mật nằm ở",
       "video_count": 1
     },
     {
-      "rule": "Bạn chỉ xin {topic}",
+      "rule": "Bước ba",
       "video_count": 1
     },
     {
-      "rule": "Chữ tiếp theo là",
+      "rule": "Bước ba, {topic}",
       "video_count": 1
     },
     {
-      "rule": "Chữ tiếp theo là {variable}",
+      "rule": "Bước bốn",
       "video_count": 1
     },
     {
-      "rule": "Chữ đầu tiên là",
+      "rule": "Bước hai",
       "video_count": 1
     },
     {
-      "rule": "Chữ đầu tiên là {variable}",
+      "rule": "Bước hai, {topic}",
       "video_count": 1
     },
     {
-      "rule": "...nhưng bên ngoài còn một cái lớn hơn...",
+      "rule": "Bước một",
       "video_count": 1
     },
     {
-      "rule": "...nhưng bên ngoài còn một cái lớn hơn: {topic}",
+      "rule": "Bước một, {topic}",
       "video_count": 1
     },
     {
-      "rule": "Nhưng lười không có nghĩa là {topic}",
+      "rule": "Bước năm",
       "video_count": 1
     },
     {
-      "rule": "Nhưng đừng coi đây là...",
+      "rule": "Bước năm, {topic}",
       "video_count": 1
     },
     {
-      "rule": "Nhưng đừng coi đây là {topic}...",
+      "rule": "Chữ tiếp theo là {topic}",
       "video_count": 1
     },
     {
-      "rule": "Nói ngắn gọn lại thì",
+      "rule": "Chữ đầu tiên là...",
       "video_count": 1
     }
   ],
   "scene_patterns": [
     {
       "purpose": "hook",
-      "fraction": 0.04488330341113106,
-      "shot_count": 3.6666666666666665,
-      "average_shot_sec": 2.0833333333333335,
+      "fraction": 0.03927289048473968,
+      "shot_count": 2.5,
+      "average_shot_sec": 2.415,
       "visual_types": [
         "animated graphics",
         "animation",
-        "avatar mascot",
-        "hoạt hình",
+        "mascot",
         "text"
       ],
       "effects": [
-        "zoom"
+        "none"
       ],
       "overlay_styles": [
-        "lower: color highlight",
-        "top: chữ lớn"
+        "bottom: bold",
+        "center: chữ viết tay"
+      ],
+      "sfx": [
+        "pencil drawing sound"
+      ],
+      "transition": "slide",
+      "connective_template": "Bước một, {topic}"
+    },
+    {
+      "purpose": "bối cảnh",
+      "fraction": 0.10659784560143626,
+      "shot_count": 3.0,
+      "average_shot_sec": 2.83,
+      "visual_types": [
+        "animated graphics",
+        "animation",
+        "diagram",
+        "mascot"
+      ],
+      "effects": [
+        "zoom_in"
+      ],
+      "overlay_styles": [
+        "bottom: bold",
+        "bottom: mũi tên",
+        "top: tiêu đề"
       ],
       "sfx": [
         "pop"
       ],
-      "transition": "cut",
-      "connective_template": "Bạn chỉ xin {topic}"
+      "transition": "slide",
+      "connective_template": "Bước hai, {topic}"
     },
     {
       "purpose": "giải thích",
-      "fraction": 0.10098743267504488,
-      "shot_count": 4.666666666666667,
-      "average_shot_sec": 3.9766666666666666,
-      "visual_types": [
-        "animation",
-        "app interface",
-        "hoạt hình",
-        "screen recording",
-        "text"
-      ],
-      "effects": [
-        "pan"
-      ],
-      "overlay_styles": [
-        "top: bold",
-        "top: glow"
-      ],
-      "sfx": [
-        "click"
-      ],
-      "transition": "cut",
-      "connective_template": "Bí mật nằm ở {topic}"
-    },
-    {
-      "purpose": "ví dụ",
       "fraction": 0.0953770197486535,
       "shot_count": 4.0,
-      "average_shot_sec": 5.11,
+      "average_shot_sec": 4.1,
       "visual_types": [
+        "animated graphics",
         "animation",
-        "app interface",
-        "hoạt hình",
-        "screen recording",
-        "text"
+        "drawing",
+        "screen recording"
       ],
       "effects": [
         "pan"
       ],
       "overlay_styles": [
-        "top: bold",
-        "top: glow"
+        "center: đóng khung đỏ",
+        "top: highlight",
+        "top: tiêu đề"
       ],
       "sfx": [
-        "click"
+        "water pouring"
       ],
-      "transition": "cut",
-      "connective_template": "Thứ này có cần {topic}"
+      "transition": "slide",
+      "connective_template": "Bước ba, {topic}"
     },
     {
       "purpose": "phân tích",
       "fraction": 0.08976660682226212,
-      "shot_count": 4.0,
-      "average_shot_sec": 5.033333333333333,
+      "shot_count": 4.5,
+      "average_shot_sec": 3.835,
       "visual_types": [
+        "animated graphics",
         "animation",
-        "connectors interface",
-        "hoạt hình",
-        "screen recording",
-        "text"
-      ],
-      "effects": [
-        "zoom in"
-      ],
-      "overlay_styles": [
-        "top: bold",
-        "top: circle"
-      ],
-      "sfx": [
-        "beep"
-      ],
-      "transition": "cut",
-      "connective_template": "Chữ tiếp theo là {variable}"
-    },
-    {
-      "purpose": "đánh giá",
-      "fraction": 0.3366247755834829,
-      "shot_count": 5.333333333333333,
-      "average_shot_sec": 6.6066666666666665,
-      "visual_types": [
-        "animation",
-        "connectors interface",
-        "hoạt hình",
-        "screen recording",
-        "text"
-      ],
-      "effects": [
-        "zoom in"
-      ],
-      "overlay_styles": [
-        "top: bold",
-        "top: circle"
-      ],
-      "sfx": [
-        "beep"
-      ],
-      "transition": "cut",
-      "connective_template": "Chữ tiếp theo là {variable}"
-    },
-    {
-      "purpose": "cao trào",
-      "fraction": 0.33236086175942553,
-      "shot_count": 9.333333333333334,
-      "average_shot_sec": 7.1033333333333335,
-      "visual_types": [
-        "animation",
-        "hoạt hình",
-        "prompt text",
-        "screen recording",
-        "text"
+        "drawing",
+        "screen recording"
       ],
       "effects": [
         "pan"
       ],
       "overlay_styles": [
-        "top: bold",
-        "top: highlight"
+        "center: đóng khung đỏ",
+        "top: highlight",
+        "top: tiêu đề"
       ],
       "sfx": [
-        "whoosh"
+        "water pouring"
+      ],
+      "transition": "slide",
+      "connective_template": "Bước ba, {topic}"
+    },
+    {
+      "purpose": "phân tích",
+      "fraction": 0.3366247755834829,
+      "shot_count": 4.5,
+      "average_shot_sec": 4.17,
+      "visual_types": [
+        "animated graphics",
+        "animation",
+        "chart",
+        "screen recording"
+      ],
+      "effects": [
+        "none"
+      ],
+      "overlay_styles": [
+        "top: giá",
+        "top: highlight",
+        "top: tiêu đề"
+      ],
+      "sfx": [
+        "pop"
+      ],
+      "transition": "slide",
+      "connective_template": "Bước năm, {topic}"
+    },
+    {
+      "purpose": "dẫn chứng",
+      "fraction": 0.10098743267504488,
+      "shot_count": 4.5,
+      "average_shot_sec": 5.17,
+      "visual_types": [
+        "animated graphics",
+        "animation",
+        "screen recording",
+        "text"
+      ],
+      "effects": [
+        "zoom_out"
+      ],
+      "overlay_styles": [
+        "center: đóng khung",
+        "top: highlight",
+        "top: tiêu đề"
+      ],
+      "sfx": [
+        "cash register"
+      ],
+      "transition": "slide",
+      "connective_template": "Chữ tiếp theo là {topic}"
+    },
+    {
+      "purpose": "phản biện",
+      "fraction": 0.23137342908438066,
+      "shot_count": 7.0,
+      "average_shot_sec": 15.46,
+      "visual_types": [
+        "animated graphics",
+        "list",
+        "screen recording",
+        "text"
+      ],
+      "effects": [
+        "none"
+      ],
+      "overlay_styles": [
+        "top: highlight",
+        "top: tiêu đề"
+      ],
+      "sfx": [
+        "ding"
       ],
       "transition": "cut",
       "connective_template": ""
     }
   ],
-  "shots_per_10_sec": 2.471949890271585,
+  "shots_per_10_sec": 1.9557690293130927,
   "warnings": [
-    "Dùng bản thô của lần gọi trước; ghi chú/model/cấu hình mới chưa được gửi Gemini. Muốn áp dụng mới, chọn Học lại có xác nhận.",
-    "Đã parse lại bản thô tại máy, không gọi Gemini.",
-    "scenes[4]: loại mốc bắt đầu 121 ngoài phạm vi/không hợp lệ.",
-    "scenes[3]: cắt end_sec 121s → 116.71s theo phạm vi video.",
-    "transcript_outline[4]: loại mốc bắt đầu 121 ngoài phạm vi/không hợp lệ.",
-    "transcript_outline[3]: cắt end_sec 121s → 116.71s theo phạm vi video.",
-    "scene_count=5 được đồng bộ về 4 cảnh có trong dữ liệu.",
+    "Hồ sơ: phát hiện placeholder làm hỏng câu/quá 2 placeholder; dùng bản gốc đã bỏ tên riêng và số liệu.",
+    "scenes[7]: loại mốc bắt đầu 201 ngoài phạm vi/không hợp lệ.",
+    "scenes[8]: loại mốc bắt đầu 225 ngoài phạm vi/không hợp lệ.",
+    "scenes[9]: loại mốc bắt đầu 247 ngoài phạm vi/không hợp lệ.",
+    "scenes[6]: cắt end_sec 201s → 178.24s theo phạm vi video.",
+    "transcript_outline[7]: loại mốc bắt đầu 201 ngoài phạm vi/không hợp lệ.",
+    "transcript_outline[8]: loại mốc bắt đầu 225 ngoài phạm vi/không hợp lệ.",
+    "transcript_outline[9]: loại mốc bắt đầu 247 ngoài phạm vi/không hợp lệ.",
+    "transcript_outline[6]: cắt end_sec 201s → 178.24s theo phạm vi video.",
+    "scene_count=10 được đồng bộ về 7 cảnh có trong dữ liệu.",
     "avg_scene_sec được tính lại từ start_sec/end_sec của các cảnh.",
+    "captions.color: #ffffff → #FFFFFF.",
+    "captions.highlight_color: #00ff00 → #00FF00.",
+    "scenes[3]: cắt end_sec 121s → 116.71s theo phạm vi video.",
+    "transcript_outline[3]: cắt end_sec 121s → 116.71s theo phạm vi video.",
     "captions.color: white → #FFFFFF.",
     "captions.highlight_color: yellow → #FFFF00.",
     "captions.stroke_color: black → #000000.",
-    "scenes[5]: cắt end_sec 112s → 89.12s theo phạm vi video.",
-    "transcript_outline[5]: cắt end_sec 112s → 89.12s theo phạm vi video.",
-    "captions.color: đen → #000000.",
-    "captions.highlight_color: xanh → #0000FF.",
-    "captions.stroke_color: trắng → #FFFFFF.",
-    "cong-nghe/cong_nghe_5.mp4: chưa có phân tích còn hiệu lực (FileNotFoundError)."
+    "scenes[6]: loại mốc bắt đầu 111 ngoài phạm vi/không hợp lệ.",
+    "scenes[5]: cắt end_sec 111s → 89.12s theo phạm vi video.",
+    "transcript_outline[6]: loại mốc bắt đầu 111 ngoài phạm vi/không hợp lệ.",
+    "transcript_outline[5]: cắt end_sec 111s → 89.12s theo phạm vi video.",
+    "scene_count=7 được đồng bộ về 6 cảnh có trong dữ liệu.",
+    "scenes.0.music: chuẩn hóa kiểu list → str.",
+    "scenes.1.music: chuẩn hóa kiểu list → str.",
+    "scenes.2.music: chuẩn hóa kiểu list → str.",
+    "scenes.3.music: chuẩn hóa kiểu list → str.",
+    "scenes.4.music: chuẩn hóa kiểu list → str.",
+    "scenes.5.music: chuẩn hóa kiểu list → str.",
+    "captions.highlight_color: #3b82f6 → #3B82F6.",
+    "captions.stroke_color: #ffffff → #FFFFFF."
   ]
 }

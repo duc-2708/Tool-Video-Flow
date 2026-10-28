@@ -65,6 +65,34 @@ class ElementRegistry:
             "prompt_card": "terminal_typing",
             "search_bar_typing": "terminal_typing",
             "code_card": "terminal_typing",
+            "slot_counter": "stat_number",
+            "strike_replace": "stat_number",
+            "gauge_needle": "gauge_ring",
+            "odometer": "stat_number",
+            "bar_race": "bar_compare",
+            "thermometer": "stat_number",
+            "battery_fill": "container_fill",
+            "glass_fill": "container_fill",
+            "balance_scale": "versus_split",
+            "tug_of_war": "versus_split",
+            "vs_flip_cards": "versus_split",
+            "before_after_wipe": "versus_split",
+            "conveyor_belt": "flow_chain",
+            "domino_chain": "flow_chain",
+            "funnel_filter": "flow_chain",
+            "pipeline_pipes": "flow_chain",
+            "dice_roll": "stat_number",
+            "lock_unlock": "stat_number",
+            "shield_hit": "stat_number",
+            "traffic_light": "stat_number",
+            "orbit_system": "hub_spoke",
+            "layered_onion": "container_fill",
+            "stack_pile": "steps_ladder",
+            "puzzle_snap": "steps_ladder",
+            "chat_thread": "chat_bubble_poll",
+            "mock_card_swipe": "versus_split",
+            "form_fill_submit": "mock_ui_window",
+            "terminal_command_run": "terminal_typing",
         }
         return fallbacks.get(type_name, "text_focus")
 
@@ -136,6 +164,271 @@ REGISTRY.register(
         description="đồng hồ đo hoặc vòng tròn tiến độ % bán nguyệt/toàn phần",
         fallback_type="bar_compare",
         render_module="editor.motion.scenes.gauge",
+    )
+)
+
+
+# -------------------------------------------------------------
+# Phase 7 Step (a): 8 Motion Vocabulary Recipes
+# -------------------------------------------------------------
+REGISTRY.register(
+    ElementDefinition(
+        type_name="slot_counter",
+        description="bộ đếm kiểu máy đánh bạc slot machine cuộn số dừng giật nấc, viền LED nhấp nháy",
+        fallback_type="stat_number",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"value": "float", "unit": "str", "label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="strike_replace",
+        description="gạch bỏ số liệu cũ bằng vệt chém đỏ và dấu ✗, số mới trồi lên bừng sáng",
+        fallback_type="stat_number",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"old_value": "float", "new_value": "float", "unit": "str", "label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="gauge_needle",
+        description="đồng hồ áp suất cơ khí kim quay bán nguyệt 3 dải màu xanh-vàng-đỏ rung cơ học",
+        fallback_type="gauge_ring",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"value": "float", "max_val": "float", "unit": "str", "label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="odometer",
+        description="trục số cơ khí xe hơi lăn bánh răng từng hàng đơn vị, chục, trăm",
+        fallback_type="stat_number",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"value": "float", "unit": "str", "label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="bar_race",
+        description="cuộc đua nước rút giữa các thanh tốc độ, bứt phá dẫn đầu cán đích",
+        fallback_type="bar_compare",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"items": "list", "unit": "str", "label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="thermometer",
+        description="cột nhiệt kế thủy ngân dâng cao qua các vạch chia độ, chạm đỉnh sôi tỏa sóng nhiệt",
+        fallback_type="stat_number",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"temperature": "float", "unit": "str", "label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="battery_fill",
+        description="thỏi pin 3D sạc từng nấc 25%-50%-75%-100% kèm tia sét đánh, phát xung điện quang",
+        fallback_type="container_fill",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"percentage": "float", "label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="glass_fill",
+        description="ly nước thủy tinh rót đầy có dòng nước rót, phao nổi dập dềnh và bọt lăn tăn",
+        fallback_type="container_fill",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"fill_percentage": "float", "label": "str"}
+    )
+)
+
+# -------------------------------------------------------------
+# Phase 7 Step (b): 12 Compare, Process & Risk Recipes
+# -------------------------------------------------------------
+REGISTRY.register(
+    ElementDefinition(
+        type_name="balance_scale",
+        description="cán cân công lý 3D nghiêng về bên nặng ký hơn / ưu việt hơn",
+        fallback_type="versus_split",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"left_label": "str", "right_label": "str", "winner": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="tug_of_war",
+        description="trận kéo co giằng co thế trận gay gắt, cờ đỏ nghiêng hẳn về phe thắng",
+        fallback_type="versus_split",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"team_a": "str", "team_b": "str", "winner": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="vs_flip_cards",
+        description="hai thẻ bài 3D lật xoay đối đầu trực diện so sánh ưu nhược điểm",
+        fallback_type="versus_split",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"card_a": "dict", "card_b": "dict", "winner": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="before_after_wipe",
+        description="thanh trượt laser quét qua phân chia lột xác trước và sau",
+        fallback_type="versus_split",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"before_label": "str", "after_label": "str", "metric_change": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="conveyor_belt",
+        description="băng chuyền nhà máy thông minh luân chuyển sản phẩm đóng dấu PASS",
+        fallback_type="flow_chain",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"steps": "list", "output_label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="domino_chain",
+        description="chuỗi quân cờ domino đổ liên hoàn kích hoạt kết quả đột phá",
+        fallback_type="flow_chain",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"steps": "list", "final_impact": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="funnel_filter",
+        description="chiếc phễu lọc đa tầng sàng lọc nhiều yếu tố thô thành tinh hoa",
+        fallback_type="flow_chain",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"input_count": "int", "output_count": "int"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="pipeline_pipes",
+        description="hệ thống đường ống công nghiệp nối các van và luồng xung năng lượng",
+        fallback_type="flow_chain",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"throughput": "str", "label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="dice_roll",
+        description="viên xúc xắc 3D lăn trong không gian rồi dừng lại ở mặt may mắn",
+        fallback_type="stat_number",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"result_number": "int", "probability": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="lock_unlock",
+        description="ổ khóa bảo mật cắm chìa, còng khóa bật mở (spring snap) bừng sáng",
+        fallback_type="stat_number",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"status": "str", "label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="shield_hit",
+        description="tấm khiên phòng thủ đỡ đòn tấn công, sóng xung kích phát sáng bảo vệ",
+        fallback_type="stat_number",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"defense_score": "str", "label": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="traffic_light",
+        description="trụ đèn giao thông 3D chuyển đỏ -> vàng -> xanh bừng sáng thông suốt",
+        fallback_type="stat_number",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"action_text": "str", "label": "str"}
+    )
+)
+
+# -------------------------------------------------------------
+# Phase 7 Step (c): 8 Concept, Relations & Mock UI Recipes
+# -------------------------------------------------------------
+REGISTRY.register(
+    ElementDefinition(
+        type_name="orbit_system",
+        description="hạt nhân trung tâm và các vệ tinh quay quanh quỹ đạo elip phát sóng beacon",
+        fallback_type="hub_spoke",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"center_node": "str", "satellites": "list"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="layered_onion",
+        description="vòng tròn đồng tâm bóc tách từng tầng hé lộ hạt nhân cốt lõi",
+        fallback_type="container_fill",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"core_text": "str", "layers": "list"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="stack_pile",
+        description="tháp thẻ 3D xếp chồng lên nhau thành tháp vững chắc, đỉnh phát quang",
+        fallback_type="steps_ladder",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"layers": "list"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="puzzle_snap",
+        description="mảnh ghép jigsaw trượt vào khớp nối khấc hoàn hảo, toàn tranh bừng sáng",
+        fallback_type="steps_ladder",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"solution_text": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="chat_thread",
+        description="giao diện tin nhắn hội thoại bong bóng gõ chữ real-time kèm double checkmark",
+        fallback_type="chat_bubble_poll",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"user_msg": "str", "bot_reply": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="mock_card_swipe",
+        description="thao tác quẹt thẻ sang phải chấp nhận APPROVED, thẻ sau trồi lên",
+        fallback_type="versus_split",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"decision": "str", "card_title": "str"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="form_fill_submit",
+        description="biểu mẫu trực tuyến tự động điền các trường và bấm nút gửi nảy haptic",
+        fallback_type="mock_ui_window",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"fields": "list"}
+    )
+)
+REGISTRY.register(
+    ElementDefinition(
+        type_name="terminal_command_run",
+        description="cửa sổ dòng lệnh Terminal gõ lệnh triển khai kèm kết quả SUCCESS xanh ngọc",
+        fallback_type="terminal_typing",
+        render_module="editor.motion.recipes.vocabulary",
+        params_schema={"command": "str", "output": "str"}
     )
 )
 

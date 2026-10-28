@@ -1,0 +1,41 @@
+{
+  "name": "before_after_wipe",
+  "category": "compare_vs",
+  "meaning": "Dùng khi minh họa sự chuyển đổi ngoạn mục, lột xác trước và sau khi áp dụng giải pháp",
+  "metaphor": "Thanh quét thần kỳ phân chia quá khứ và tương lai",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Khung cảnh 'Trước' xám tối, hỗn loạn xuất hiện bao trùm"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.4,
+      "description": "Thanh trượt thẳng đứng quét ngang màn hình từ trái qua phải mang lại ánh sáng"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.4,
+      "end_sec": 4.0,
+      "description": "Khung cảnh 'Sau' hiện ra rực rỡ hiện đại, tia sáng quét ngang mặt kính"
+    }
+  ],
+  "idle_motion": "Thanh trượt rung nhẹ tia laser, vùng mới tỏa ánh hào quang",
+  "default_bbox": [
+    120,
+    440,
+    840,
+    680
+  ],
+  "status": "active",
+  "params_schema": {
+    "before_label": "str",
+    "after_label": "str",
+    "metric_change": "str",
+    "label": "str"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "layered_onion",
+  "category": "concept_relation",
+  "meaning": "Dùng khi bóc tách các tầng bản chất, giải mã cấu trúc đa tầng hoặc đi sâu vào nguyên nhân gốc rễ",
+  "metaphor": "Bóc tách từng lớp củ hành hé lộ hạt nhân cốt lõi",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Khối cầu đa tầng đồng tâm xuất hiện với lớp vỏ bảo vệ ngoài cùng"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.3,
+      "description": "Lớp vỏ ngoài mở tách ra, lớp giữa xoay lệch hé lộ hạt nhân vàng rực"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.3,
+      "end_sec": 4.0,
+      "description": "Hạt nhân trung tâm trồi lên phát sáng rực rỡ, hiển thị từ khóa cốt lõi"
+    }
+  ],
+  "idle_motion": "Các vòng tròn đồng tâm xoay ngược chiều nhau nhẹ nhàng",
+  "default_bbox": [
+    160,
+    440,
+    760,
+    680
+  ],
+  "status": "active",
+  "params_schema": {
+    "layers": "list",
+    "core_text": "str",
+    "label": "str"
+  }
+}

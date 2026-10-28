@@ -1,0 +1,41 @@
+{
+  "name": "odometer",
+  "category": "number_stat",
+  "meaning": "Dùng khi thể hiện tích lũy số lượng, quãng đường, thời gian hoặc chi phí lăn bánh tăng dần",
+  "metaphor": "Trục số công-tơ-mét xe hơi cơ khí",
+  "max_words": 3,
+  "stages": [
+    {
+      "name": "enter",
+      "start_sec": 0.0,
+      "end_sec": 0.6,
+      "description": "Cụm cửa sổ cơ khí bo tròn viền kim loại xuất hiện"
+    },
+    {
+      "name": "action",
+      "start_sec": 0.6,
+      "end_sec": 2.4,
+      "description": "Các bánh răng lăn liên tục, số hàng đơn vị cuộn nhanh kéo theo hàng chục và hàng trăm"
+    },
+    {
+      "name": "impact",
+      "start_sec": 2.4,
+      "end_sec": 4.0,
+      "description": "Trục số khớp vào vị trí đích với độ nảy cơ khí, số phát sáng"
+    }
+  ],
+  "idle_motion": "Vệt sáng phản chiếu kim loại quét ngang mặt kính",
+  "default_bbox": [
+    140,
+    500,
+    800,
+    520
+  ],
+  "status": "active",
+  "params_schema": {
+    "value": "float",
+    "unit": "str",
+    "label": "str",
+    "start_val": "float"
+  }
+}

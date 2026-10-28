@@ -1,0 +1,323 @@
+/* Depth 3D Engine: CSS 3D & Isometric Perspective Styling */
+
+:root {
+  --depth-perspective: 1400px;
+  --depth-origin-x: 50%;
+  --depth-origin-y: 38%;
+  --light-angle: 45deg;
+}
+
+/* 3D Perspective Stage Container */
+.depth-stage-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  perspective: var(--depth-perspective);
+  perspective-origin: var(--depth-origin-x) var(--depth-origin-y);
+  transform-style: preserve-3d;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.depth-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* 1. Perspective Floor Grid */
+.depth-floor-container {
+  position: absolute;
+  top: 600px;
+  left: -200px;
+  width: 1480px;
+  height: 900px;
+  transform: rotateX(68deg) translateZ(-60px);
+  transform-origin: 50% 0%;
+  pointer-events: none;
+  opacity: 0.85;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 25%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 25%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+}
+
+.depth-floor-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 2. Parallax Depth Dust/Stars */
+.depth-parallax-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.depth-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffffff;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.depth-star.near {
+  box-shadow: 0 0 10px rgba(0, 245, 212, 0.8), 0 0 4px #fff;
+  opacity: 0.85;
+}
+
+.depth-star.mid {
+  box-shadow: 0 0 6px rgba(157, 78, 221, 0.6);
+  opacity: 0.60;
+}
+
+.depth-star.far {
+  opacity: 0.35;
+}
+
+/* 3. 3-Face Shading & Extruded Boxes */
+.cuboid-3d {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.face-top {
+  filter: brightness(1.18);
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 2px;
+}
+
+.face-left {
+  filter: brightness(0.95);
+}
+
+.face-right {
+  filter: brightness(0.72);
+}
+
+/* 4. Contact Shadow (Bóng tiếp xúc dẹp dưới chân vật thể) */
+.depth-contact-shadow {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(3, 1, 8, 0.85) 0%, rgba(3, 1, 8, 0.50) 55%, rgba(3, 1, 8, 0) 75%);
+  transform-origin: center center;
+  pointer-events: none;
+  filter: blur(4px);
+  will-change: transform, opacity;
+}
+
+/* 5. Neon Accents & Glow */
+.neon-glow-primary {
+  filter: drop-shadow(0 0 12px rgba(157, 78, 221, 0.55)) drop-shadow(0 0 3px rgba(199, 125, 255, 0.8));
+}
+
+.neon-glow-cyan {
+  filter: drop-shadow(0 0 14px rgba(0, 245, 212, 0.60)) drop-shadow(0 0 4px rgba(0, 245, 212, 0.9));
+}
+
+.neon-glow-magenta {
+  filter: drop-shadow(0 0 14px rgba(247, 37, 133, 0.60)) drop-shadow(0 0 4px rgba(247, 37, 133, 0.9));
+}
+
+.neon-glow-gold {
+  filter: drop-shadow(0 0 12px rgba(255, 209, 102, 0.55)) drop-shadow(0 0 3px rgba(255, 209, 102, 0.8));
+}
+
+/* 6. Typography Unskew: Chữ luôn dễ đọc, góc nghiêng <= 12° */
+.depth-label-text {
+  font-family: inherit;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85), 0 0 16px rgba(0, 0, 0, 0.95);
+  user-select: none;
+  will-change: transform;
+}
+
+.depth-huge-stat {
+  font-size: 130px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.depth-card-panel {
+  position: absolute;
+  border-radius: 20px;
+  background: rgba(18, 11, 40, 0.82);
+  border: 2px solid rgba(157, 78, 221, 0.35);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.65), 0 0 25px rgba(157, 78, 221, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+/* 7. Versus Slamming 3D Slabs */
+.versus-3d-badge {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #ffd166 0%, #f72585 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  font-weight: 900;
+  color: #030108;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.7), 0 0 30px rgba(255, 209, 102, 0.65);
+  border: 3px solid #ffffff;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* 8. Hub Spoke 3D & Orbiting Satellites */
+.hub-spoke-center-3d {
+  position: absolute;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  will-change: transform;
+}
+
+.satellite-node-3d {
+  position: absolute;
+  border-radius: 20px;
+  transform-style: preserve-3d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  will-change: transform;
+}
+
+/* 9. Checklist 3D Stacked Slabs */
+.checklist-slab-3d {
+  position: absolute;
+  border-radius: 18px;
+  transform-style: preserve-3d;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  will-change: transform, box-shadow;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.checklist-check-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  flex-shrink: 0;
+  will-change: transform;
+}
+
+/* 10. Stat Number 3D Multi-Layer Extrusion */
+.stat-extrusion-hero {
+  font-family: inherit;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -3px;
+  user-select: none;
+  will-change: transform;
+}
+
+.stat-pedestal-3d {
+  position: absolute;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+/* 11. Flow Chain 3D Stations */
+.flow-station-cuboid {
+  position: absolute;
+  border-radius: 16px;
+  transform-style: preserve-3d;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  will-change: transform;
+}
+
+/* 12. Terminal 3D Window */
+.terminal-window-3d {
+  position: absolute;
+  border-radius: 20px;
+  transform-style: preserve-3d;
+  box-sizing: border-box;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.terminal-titlebar-3d {
+  height: 52px;
+  background: rgba(18, 11, 40, 0.95);
+  border-bottom: 2px solid rgba(157, 78, 221, 0.35);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.terminal-cursor-3d {
+  display: inline-block;
+  width: 14px;
+  height: 34px;
+  vertical-align: middle;
+  margin-left: 6px;
+  background: #00f5d4;
+  box-shadow: 0 0 10px #00f5d4;
+}
+
+/* 13. Road Tracker 3D & Milestones */
+.road-milestone-cuboid {
+  position: absolute;
+  border-radius: 16px;
+  transform-style: preserve-3d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  will-change: transform;
+}
+
+.road-puck-beacon {
+  position: absolute;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Fallback transitions */
+.depth-fade-enter {
+  opacity: 0;
+  transform: scale(0.92) translateZ(-40px);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.depth-fade-enter.active {
+  opacity: 1;
+  transform: scale(1) translateZ(0);
+}

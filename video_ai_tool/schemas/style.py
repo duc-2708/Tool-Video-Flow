@@ -43,6 +43,7 @@ class NarrationStyle(StyleObservation):
     catchphrases: list[str] = Field(default_factory=list)
     humor: str = "Không rõ"
     words_per_sec: float | None = Field(default=None, gt=0, le=10)
+    words_per_sec_unit: str = "từ/giây"
     voice_gender_estimate: str | None = None
     voice_age_estimate: str | None = None
     voice_emotion: str = "Không rõ"
@@ -89,6 +90,9 @@ class CaptionStyle(StyleObservation):
         value=dict(value)
         warnings=list(value.get("analysis_warnings") or [])
         notes=[text(value["color_note"])] if value.get("color_note") else []
+        if "appearance" in value:
+            app_raw = str(value["appearance"] or "").strip().lower()
+            value["appearance"] = "pill" if "pill" in app_raw else "classic"
         for key in ("color","highlight_color","stroke_color"):
             if key not in value: continue
             original=value[key]
@@ -165,6 +169,7 @@ class ObservedScene(StyleObservation):
     narration_summary: str = "Không rõ"
     word_count: int | None = Field(default=None,ge=0)
     words_per_sec: float | None = Field(default=None, ge=0, le=15)
+    words_per_sec_unit: str = "từ/giây"
     shot_count: int | None = Field(default=None,ge=1)
     average_shot_sec: float | None = Field(default=None,gt=0)
     visual_types: list[str] = Field(default_factory=list)
@@ -195,11 +200,114 @@ class ObservedScene(StyleObservation):
         return self
 
 
+class ObservedMotionActor(StyleObservation):
+    name: str = "Không rõ"
+    first_sec: float | None = Field(default=None, ge=0)
+    last_sec: float | None = Field(default=None, ge=0)
+    persistent_across_scenes: bool | None = None
+    states_seen: list[str] = Field(default_factory=list)
+    motions: list[str] = Field(default_factory=list)
+
+
+class ObservedConnector(StyleObservation):
+    from_actor: str = "Không rõ"
+    to_actor: str = "Không rõ"
+    carries: str = "none"
+    start_sec: float | None = Field(default=None, ge=0)
+    end_sec: float | None = Field(default=None, ge=0)
+
+    @model_validator(mode="before")
+    @classmethod
+    def map_connector_aliases(cls, value):
+        if isinstance(value, dict):
+            value = dict(value)
+            if "from" in value and "from_actor" not in value:
+                value["from_actor"] = value.pop("from")
+            if "to" in value and "to_actor" not in value:
+                value["to_actor"] = value.pop("to")
+        return value
+
+
+class ObservedStepTracker(StyleObservation):
+    stations: int | None = Field(default=None, ge=0)
+    labels: list[str] = Field(default_factory=list)
+    marker_motion: str = "Không rõ"
+    morphs_into: str = "Không rõ"
+
+
+class ObservedHud(StyleObservation):
+    top_bar: str = "Không rõ"
+    step_tracker: ObservedStepTracker = Field(default_factory=ObservedStepTracker)
+    footer_note: str = "Không rõ"
+    progress_dots: bool | None = None
+
+
+class ObservedTextLayer(StyleObservation):
+    role: str = "explain"
+    position: str = "Không rõ"
+    size_rel: float | None = Field(default=None, ge=0, le=1)
+    color: str | None = None
+    keyword_highlight: str | None = None
+    enter_anim: str | None = None
+
+
+class ObservedSceneTransition(StyleObservation):
+    at_sec: float | None = Field(default=None, ge=0)
+    type: str = "none"
+    detail: str = "Không rõ"
+
+
+class ObservedCameraMove(StyleObservation):
+    at_sec: float | None = Field(default=None, ge=0)
+    move: str = "none"
+    amount_rel: float | None = Field(default=None, ge=0, le=1)
+
+
+class ObservedMotionAnalysis(StyleObservation):
+    world_type: Literal["continuous_stage", "cut_scenes"] = "continuous_stage"
+    real_cuts_count: int | None = Field(default=None, ge=0)
+    actors: list[ObservedMotionActor] = Field(default_factory=list)
+    connectors: list[ObservedConnector] = Field(default_factory=list)
+    hud: ObservedHud = Field(default_factory=ObservedHud)
+    text_layers: list[ObservedTextLayer] = Field(default_factory=list)
+    transitions_between_scenes: list[ObservedSceneTransition] = Field(default_factory=list)
+    camera: list[ObservedCameraMove] = Field(default_factory=list)
+    bookends: str = "Không rõ"
+    motion_events_per_10s: float | None = Field(default=None, ge=0)
+    longest_static_sec: float | None = Field(default=None, ge=0)
+    sfx_confidence: Literal["heard", "guessed"] | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_motion_fields(cls, value):
+        if isinstance(value, dict):
+            value = dict(value)
+            wt = value.get("world_type")
+            if isinstance(wt, str):
+                wt_clean = wt.strip().lower()
+                if "continuous" in wt_clean or "stage" in wt_clean:
+                    value["world_type"] = "continuous_stage"
+                elif "cut" in wt_clean:
+                    value["world_type"] = "cut_scenes"
+                else:
+                    value["world_type"] = "continuous_stage"
+            sc = value.get("sfx_confidence")
+            if isinstance(sc, str):
+                sc_clean = sc.strip().lower()
+                if "heard" in sc_clean:
+                    value["sfx_confidence"] = "heard"
+                elif "guess" in sc_clean:
+                    value["sfx_confidence"] = "guessed"
+                else:
+                    value["sfx_confidence"] = None
+        return value
+
+
 class StyleAnalysis(StyleObservation):
     entities_in_video: list[str] = Field(default_factory=list)
     normalization_notes: list[str] = Field(default_factory=list)
     category_guess: CategoryGuess | None = None
-    suggested_type: Literal["news", "review", "story"] | None = None
+    suggested_type: Literal["tutorial", "review", "news", "story", "explainer"] | None = None
     scenes: list[ObservedScene] = Field(default_factory=list, max_length=250)
     narrative_flow: str = ""
     connective_phrases: list[str] = Field(default_factory=list, max_length=12)
@@ -215,6 +323,7 @@ class StyleAnalysis(StyleObservation):
     captions: CaptionStyle = Field(default_factory=CaptionStyle)
     audio: AudioStyle = Field(default_factory=AudioStyle)
     cta_ending: StyleEnding = Field(default_factory=StyleEnding)
+    motion_analysis: ObservedMotionAnalysis = Field(default_factory=ObservedMotionAnalysis)
     strengths: list[str] = Field(default_factory=list, max_length=5)
     weaknesses: list[str] = Field(default_factory=list, max_length=3)
     reusable_rules: list[str] = Field(default_factory=list, max_length=12)
@@ -395,7 +504,8 @@ class StyleProfile(StrictModel):
     reusable_rules: list[str]
     rule_frequencies: list[RuleFrequency]
     category_id: str | None = None
-    video_type: Literal["news", "review", "story"] | None = None
+    video_type: Literal["tutorial", "review", "news", "story", "explainer"] | None = None
+    motion_analysis: ObservedMotionAnalysis | None = Field(default=None,exclude_if=lambda v:v is None)
     video_count: int = Field(default=0, ge=0)
     confidence_label: Literal["yếu", "đang tích lũy", "ổn", "mặc định"] = "yếu"
     source_signature: str = ""

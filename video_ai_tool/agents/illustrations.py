@@ -40,29 +40,71 @@ def concept_labels(text):
     return [label for _,label in sorted(found)]
 
 
-def spoken_stat(text,allowed):
+def spoken_stat(text, allowed):
     from agents.vietnamese_tts import spoken_to_digits
-    digits=spoken_to_digits(text)
-    accepted={str(n).rstrip('%') for n in allowed}
-    candidates={n for n in normalized_numbers(text,ignore_current_year=False) if n.rstrip('%') in accepted}
-    for token in sorted(candidates,key=lambda n:('%' not in n,-abs(float(n.rstrip('%'))))):
-        value=float(token.rstrip('%'))
-        if 1900<=value<=2100 and value.is_integer(): continue
-        raw=str(int(value)) if value.is_integer() else str(value)
-        if re.search(r'(?:ngày|tháng|năm)\s+'+re.escape(raw)+r'\b',digits,re.I): continue
-        return value,('%' if token.endswith('%') else ''),token
+    from editor.format_number import parse_display_number
+    digits = spoken_to_digits(text)
+    accepted = {str(n).rstrip('%') for n in allowed}
+
+    # Ưu tiên parse cụm số nguyên văn (e.g. '65 tỷ USD', '10 tỷ USD', '36,2%', '29,25 tỷ')
+    display_matches = re.finditer(
+        r"(?<!\w)(\d+(?:[.,]\d+)*\s*(?:tỷ|tỉ|triệu|nghìn|ngàn|b|m|k|%)?\s*(?:usd|\$|vnd|đ|eur|€|phần trăm)?)(?!\w)",
+        text,
+        re.I,
+    )
+    for m in display_matches:
+        cand_text = m.group(1).strip()
+        parsed = parse_display_number(cand_text)
+        if not parsed:
+            continue
+        full_str = str(int(parsed.full_numeric_value)) if parsed.full_numeric_value.is_integer() else str(parsed.full_numeric_value)
+        cand_str = str(int(parsed.value)) if parsed.value.is_integer() else str(parsed.value)
+        if full_str in accepted or cand_str in accepted or any(acc in cand_text for acc in accepted):
+            raw = str(int(parsed.value)) if parsed.value.is_integer() else str(parsed.value)
+            if 1900 <= parsed.value <= 2100 and parsed.value.is_integer() and not parsed.scale and not parsed.currency:
+                continue
+            if re.search(r'(?:ngày|tháng|năm)\s+' + re.escape(raw) + r'\b', digits, re.I):
+                continue
+            return parsed.value, parsed.unit_display, parsed.formatted_text
+
+    # Dự phòng normalized_numbers
+    candidates = {n for n in normalized_numbers(text, ignore_current_year=False) if n.rstrip('%') in accepted}
+    for token in sorted(candidates, key=lambda n: ('%' not in n, -abs(float(n.rstrip('%'))))):
+        value = float(token.rstrip('%'))
+        if 1900 <= value <= 2100 and value.is_integer():
+            continue
+        raw = str(int(value)) if value.is_integer() else str(value)
+        if re.search(r'(?:ngày|tháng|năm)\s+' + re.escape(raw) + r'\b', digits, re.I):
+            continue
+        parsed_token = parse_display_number(token)
+        if parsed_token:
+            return parsed_token.value, parsed_token.unit_display, parsed_token.formatted_text
+        return value, ('%' if token.endswith('%') else ''), token
     return None
 
 
-def enough(name,data):
+def enough(name, data):
     import math
-    n=len([s for s in data.items if str(s).strip()])
-    if name in {'bar_grow','gauge','ring'}: return data.value is not None and math.isfinite(data.value) and (name!='ring' or 0<=data.value<=100 and data.unit=='%')
-    if name=='line_draw': return len(data.bars)>=2 and all(math.isfinite(b.value) for b in data.bars)
-    if name in {'flow_chain','funnel_filter','network_nodes'}: return n>=3
-    if name=='versus_scale': return n>=2 or len(data.bars)>=2
-    if name=='timeline_march': return n>=2 and sum(bool(re.search(r'\d|ngày|tháng|năm',x,re.I)) for x in data.items)>=2
-    return n>=2 if name in TYPES else False
+    n = len([s for s in data.items if str(s).strip()])
+    # gauge and ring CHỈ dùng cho phần trăm / tỉ lệ 0-100
+    if name in {'gauge', 'ring'}:
+        return (
+            data.value is not None
+            and math.isfinite(data.value)
+            and 0 <= data.value <= 100
+            and data.unit == '%'
+        )
+    if name in {'bar_grow', 'stat_number'}:
+        return data.value is not None and math.isfinite(data.value)
+    if name == 'line_draw':
+        return len(data.bars) >= 2 and all(math.isfinite(b.value) for b in data.bars)
+    if name in {'flow_chain', 'funnel_filter', 'network_nodes'}:
+        return n >= 3
+    if name == 'versus_scale':
+        return n >= 2 or len(data.bars) >= 2
+    if name == 'timeline_march':
+        return n >= 2 and sum(bool(re.search(r'\d|ngày|tháng|năm', x, re.I)) for x in data.items) >= 2
+    return n >= 2 if name in TYPES else False
 
 
 def scene_data(scene,brief=None):
@@ -118,7 +160,7 @@ def scene_data(scene,brief=None):
 def _scene_payload(scene,index,previous,used,brief):
         data=scene_data(scene,brief);text=scene.narration.casefold();preferred=[]
         if re.search(r'so với|thay vì|không phải|trước.+sau|chênh',text): preferred.append('versus_scale')
-        if data.value is not None: preferred.extend(['ring','gauge','bar_grow'] if data.unit=='%' else ['bar_grow','gauge'])
+        if data.value is not None: preferred.extend(['ring','gauge','bar_grow'] if data.unit=='%' else ['bar_grow','stat_number'])
         if data.bars: preferred.append('line_draw')
         if re.search(r'có thật|kiểm chứng|phản bác|đúng|sai|báo cáo',text): preferred.append('magnifier_check')
         if re.search(r'lọc|loại bỏ|đầu vào|đầu ra|chọn lọc',text): preferred.append('funnel_filter')
@@ -133,6 +175,17 @@ def _scene_payload(scene,index,previous,used,brief):
             numeric=[n for n in candidates if n in {'ring','gauge','bar_grow','line_draw'}]
             candidates=numeric+[n for n in candidates if n not in numeric]
         chosen=next((n for n in candidates if n!=previous and n not in used),next((n for n in candidates if n!=previous),'text_focus'))
+        if chosen in {'gauge', 'ring'} and data.unit != '%':
+            chosen = 'stat_number' if data.value is not None else 'text_focus'
+        if scene.role == 'hook':
+            if chosen in {'checklist', 'steps_list', 'steps_ladder', 'timeline', 'terminal_type', 'magnifier_check', 'list'} and len(data.items) <= 1:
+                chosen = 'stack_cards'
+                if len(data.items) <= 1:
+                    data.items = [data.items[0] if data.items else (data.text or "Mở đầu vấn đề"), "Cơ chế then chốt", "Tác động thực tế"]
+        from utils.vietnamese_accent import restore_known_accents
+        if getattr(data, 'text', None): data.text = restore_known_accents(data.text)
+        if getattr(data, 'label', None): data.label = restore_known_accents(data.label)
+        if getattr(data, 'items', None): data.items = [restore_known_accents(itm) for itm in data.items]
         old=scene.visual_plan
         camera=old.camera if old else SceneCamera(kind=('push_in','pan_left','pull_out','pan_right')[index%4])
         state='surprised' if scene.role=='hook' else 'shrug' if scene.role=='cta' else 'think' if re.search(r'sai|kiểm chứng|phản',text) else 'point'

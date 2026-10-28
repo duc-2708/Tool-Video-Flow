@@ -112,7 +112,7 @@ def analysis_inputs(settings, filename):
     notes = notes_path.read_text(encoding="utf-8")[:8000] if notes_path.is_file() else ""
     prompt = analysis_prompt(settings)
     identity = {"file_hash": digest_file(path), "notes_hash": cache_key(notes),
-                "model": settings.gemini_style_model.strip() or settings.gemini_model.strip() or "unknown", "prompt_hash": cache_key([prompt,settings.style_media_resolution,settings.style_video_fps,settings.style_max_video_sec]), "version": 2}
+                "model": settings.style_analysis_model.strip() or settings.gemini_style_model.strip() or settings.gemini_model.strip() or "unknown", "prompt_hash": cache_key([prompt,settings.style_media_resolution,settings.style_video_fps,settings.style_max_video_sec]), "version": 2}
     return path, info, notes, prompt, identity
 
 
@@ -141,7 +141,18 @@ def available_cached_record(settings,identity,prompt):
     return cached_record(settings,identity) or cached_record(settings,{**identity,"prompt_hash":cache_key(prompt)})
 
 
-def estimate_batch(settings, filenames,*,from_raw=False):
+def estimate_cost_usd(model_name: str, input_tokens: int, output_tokens: int) -> float:
+    name = (model_name or "").lower()
+    if "pro" in name:
+        input_rate = 1.25 / 1_000_000
+        output_rate = 5.00 / 1_000_000
+    else:
+        input_rate = 0.075 / 1_000_000
+        output_rate = 0.30 / 1_000_000
+    return input_tokens * input_rate + output_tokens * output_rate
+
+
+def estimate_batch(settings, filenames,*,from_raw=False,force=False):
     filenames = list(dict.fromkeys(filenames))
     if len(filenames) > settings.style_max_videos_per_run:
         raise ValueError(f"Tối đa {settings.style_max_videos_per_run} video/lần (STYLE_MAX_VIDEOS_PER_RUN).")
@@ -160,7 +171,7 @@ def estimate_batch(settings, filenames,*,from_raw=False):
                 except StyleRawError: pass
                 truncated=store.is_truncated()
             # Conservative planning estimate, not a price or billing token count.
-            reusable=cached or raw_available
+            reusable=(cached or raw_available) and not force
             tokens = 0 if reusable or from_raw else estimated_video_tokens(settings,info["analysis_duration_sec"],len(prompt+notes))
             from pipeline.style_library import relative_name
             items.append({"filename": relative_name(settings,path), **info, "cached": reusable,"raw_available":raw_available,"truncated":truncated,
@@ -170,10 +181,17 @@ def estimate_batch(settings, filenames,*,from_raw=False):
             diagnostics.record_exception(error, f"Ước lượng video {Path(filename).name}")
             items.append({"filename": str(filename), "duration_sec": 0, "size_bytes": 0,
                           "cached": False, "estimated_input_tokens": 0, "error": diagnostics.redact(str(error)),"skipped":isinstance(error,StyleVideoSkipped)})
-    return {"items": items, "videos": len(items), "new_videos": sum(not i["cached"] and not i["error"] for i in items),
+    total_in = sum(i["estimated_input_tokens"] for i in items)
+    new_vids = sum(not i["cached"] and not i["error"] for i in items)
+    total_out = settings.style_max_output_tokens * new_vids
+    model_name = settings.style_analysis_model.strip() or settings.gemini_style_model.strip() or settings.gemini_model.strip() or "unknown"
+    est_cost = estimate_cost_usd(model_name, total_in, total_out)
+    return {"items": items, "videos": len(items), "new_videos": new_vids,
             "total_duration_sec": sum(i["duration_sec"] for i in items),
-            "estimated_input_tokens": sum(i["estimated_input_tokens"] for i in items),
-            "estimated_output_tokens": settings.style_max_output_tokens * sum(not i["cached"] and not i["error"] for i in items)}
+            "estimated_input_tokens": total_in,
+            "estimated_output_tokens": total_out,
+            "model": model_name,
+            "estimated_cost_usd": est_cost}
 
 
 def style_diagnostics(settings):
@@ -398,8 +416,8 @@ def analyze_one(settings, filename, *, provider=None, progress=lambda message: N
             "analysis":record.analysis.model_dump(mode="json"),"error":None,"warnings":record.warnings}
 
 
-def analyze_batch(settings, filenames, *, provider=None, progress=lambda message: None, from_raw=False):
-    estimate = estimate_batch(settings, filenames,from_raw=from_raw)
+def analyze_batch(settings, filenames, *, provider=None, progress=lambda message: None, from_raw=False, force=False):
+    estimate = estimate_batch(settings, filenames,from_raw=from_raw,force=force)
     results = []
     diagnostics = style_diagnostics(settings)
     for item in estimate["items"]:
@@ -412,7 +430,7 @@ def analyze_batch(settings, filenames, *, provider=None, progress=lambda message
                 if item["error"]:
                     raise ValueError(item["error"])
                 if item.get("scope_warning"): progress(item["scope_warning"])
-                result = analyze_one(settings, item["filename"], provider=provider, progress=progress,from_raw=from_raw)
+                result = analyze_one(settings, item["filename"], provider=provider, progress=progress,from_raw=from_raw,force=force)
         except Exception as error:
             diagnostics.record_exception(error, "Style file " + item["filename"])
             result = {"filename": item["filename"], "status": "failed", "error": diagnostics.redact(str(error))}
@@ -461,6 +479,7 @@ def main():
     parser.add_argument("--videos", nargs="+")
     parser.add_argument("--estimate-only", action="store_true")
     parser.add_argument("--from-raw",action="store_true",help="Chỉ parse lại bản thô, tuyệt đối không gọi Gemini")
+    parser.add_argument("--force",action="store_true",help="Bỏ qua cache và phân tích lại với prompt/schema mới")
     parser.add_argument("--max-sec",type=float,help="Chỉ phân tích 0–N giây, mặc định STYLE_MAX_VIDEO_SEC=180; video >600s được bỏ qua")
     args = parser.parse_args()
     settings = None
@@ -470,11 +489,23 @@ def main():
             if not 0<args.max_sec<=600: raise ValueError("--max-sec phải lớn hơn 0 và không quá 600.")
             settings=settings.model_copy(update={"style_max_video_sec":args.max_sec})
         from pipeline.style_library import list_videos
-        names = list_videos(settings,args.category) if args.analyze_all or args.analyze else args.videos or []
+        if args.videos:
+            names = [(f"{args.category}/{n}" if (args.category and "/" not in n and chr(92) not in n) else n) for n in args.videos]
+        elif args.analyze_all or args.analyze:
+            names = list_videos(settings, args.category)
+        else:
+            names = []
         if not names:
             parser.error("Thêm .mp4 vào assets/reference_videos/ và chọn --analyze-all hoặc --videos.")
-        estimate = estimate_batch(settings, names,from_raw=args.from_raw)
-        print(f"{estimate['videos']} video · {estimate['total_duration_sec']:g}s · {estimate['new_videos']} cần phân tích · ~{estimate['estimated_input_tokens']:,} token đầu vào + ~{estimate['estimated_output_tokens']:,} token đầu ra. Đây là ước lượng, giá phụ thuộc model/gói.")
+        estimate = estimate_batch(settings, names,from_raw=args.from_raw,force=args.force)
+        model_name = estimate.get("model") or settings.require_style_model()
+        print(f"Model phân tích: {model_name}")
+        print(f"{estimate['videos']} video · {estimate['total_duration_sec']:g}s · {estimate['new_videos']} cần phân tích · ~{estimate['estimated_input_tokens']:,} token đầu vào + ~{estimate['estimated_output_tokens']:,} token đầu ra.")
+        if estimate["new_videos"] > 0:
+            cost = estimate.get("estimated_cost_usd", 0.0)
+            print(f"Chi phí dự kiến tham khảo: ~${cost:.4f} USD (ước lượng theo biểu giá {model_name}; CHƯA XÁC NHẬN hóa đơn thực tế)")
+        else:
+            print("Chi phí dự kiến tham khảo: $0.0000 USD (toàn bộ video dùng cache hoặc bản thô có sẵn)")
         for item in estimate["items"]:
             if item.get("scope_warning"): print("Cảnh báo: "+item["scope_warning"])
             if item["error"]:
@@ -482,7 +513,7 @@ def main():
         if args.estimate_only:
             return int(any(item["error"] and not item.get("skipped") for item in estimate["items"]))
         # Invoking --analyze-all/--videos explicitly starts after the estimate above.
-        results = analyze_batch(settings, names, progress=print,from_raw=args.from_raw)
+        results = analyze_batch(settings, names, progress=print,from_raw=args.from_raw,force=args.force)
         for result in results:
             print(result['filename'] + ": " + result.get('status_label',result['status']) + (" · " + result['error'] if result['error'] else ""))
             for warning in result.get("warnings", []):
