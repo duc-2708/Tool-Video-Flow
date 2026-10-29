@@ -51,7 +51,10 @@ const formatRawViNum = (val, maxDecimals = 2) => {
 // 1. STAT_NUMBER (3 Variants)
 // =========================================================================
 function renderStatNumber(ctx, svg, d, t, duration, variantIdx = 0) {
-  const targetVal = Number(d.value ?? 50);
+  if (d.value === null || d.value === undefined || isNaN(Number(d.value))) {
+    return renderTextFocus(ctx, svg, d, t, duration, variantIdx);
+  }
+  const targetVal = Number(d.value);
   const unit = d.unit || '';
   const label = d.label || d.text || 'Chỉ số quan trọng';
   const progress = clamp(t / Math.max(0.8, duration * 0.45));
@@ -107,7 +110,10 @@ function renderStatNumber(ctx, svg, d, t, duration, variantIdx = 0) {
 
   } else if (variantIdx === 1) {
     // Variant 2: strike_replace_pop
-    const oldVal = (d.bars && d.bars[0]?.value) ? d.bars[0].value : Math.round(targetVal * 0.5);
+    const oldVal = (d.bars && d.bars[0]?.value !== undefined) ? d.bars[0].value : (d.old_value !== undefined ? d.old_value : null);
+    if (oldVal === null || isNaN(Number(oldVal))) {
+      return renderStatNumber(ctx, svg, d, t, duration, 0);
+    }
     const strikeProgress = clamp((t - 0.4) / 0.6);
     const replaceProgress = clamp((t - 1.0) / 0.7);
 
@@ -220,13 +226,15 @@ function renderBarCompare(ctx, svg, d, t, duration, variantIdx = 0) {
   if (d.bars && d.bars.length >= 2) {
     bars = d.bars.slice(0, 4);
   } else if (d.value !== null && d.value !== undefined) {
-    const mainVal = Number(d.value);
-    const unit = d.unit || (d.number_text && d.number_text.includes('$') ? '$' : '');
-    const mainLbl = d.label || d.text || 'Chi phí';
-    bars = [
-      { label: 'Ước tính', value: Math.round(mainVal * 0.45), unit },
-      { label: mainLbl, value: mainVal, unit }
-    ];
+    // ANTI-FAKE NUMBER: If only 1 number is provided, DO NOT create fake comparison bars!
+    return renderStatNumber(ctx, svg, d, t, duration, variantIdx);
+  } else if (d.bars && d.bars.length === 1) {
+    const singleData = Object.assign({}, d, {
+      value: d.bars[0].value,
+      label: d.bars[0].label || d.label,
+      unit: d.bars[0].unit || d.unit
+    });
+    return renderStatNumber(ctx, svg, singleData, t, duration, variantIdx);
   } else {
     return renderTextFocus(ctx, svg, d, t, duration, variantIdx);
   }
@@ -906,10 +914,10 @@ function renderMagnifierCheck(ctx, svg, d, t, duration, context) {
 }
 
 function renderVersusSplit(ctx, svg, d, t, duration, variantIdx = 0) {
-  const bars = (d.bars && d.bars.length >= 2) ? d.bars.slice(0, 2) : [
-    { label: d.items?.[0] || 'Giải pháp A', value: 40, unit: '%' },
-    { label: d.items?.[1] || 'Giải pháp B', value: 85, unit: '%' }
-  ];
+  if (!d.bars || d.bars.length < 2) {
+    return renderTextFocus(ctx, svg, d, t, duration, variantIdx);
+  }
+  const bars = d.bars.slice(0, 2);
   const cx = 540;
   const cy = 785;
   const p = clamp(t / Math.max(0.6, duration * 0.4));
@@ -1026,10 +1034,10 @@ function renderVersusSplit(ctx, svg, d, t, duration, variantIdx = 0) {
 // 11. LINE_CHART_DRAW (3 Variants)
 // =========================================================================
 function renderLineChartDraw(ctx, svg, d, t, duration, variantIdx = 0) {
-  const bars = (d.bars && d.bars.length >= 2) ? d.bars.slice(0, 5) : [
-    { label: 'Tháng 1', value: 20 }, { label: 'Tháng 2', value: 38 },
-    { label: 'Tháng 3', value: 45 }, { label: 'Tháng 4', value: 82 }
-  ];
+  if (!d.bars || d.bars.length < 2) {
+    return renderTextFocus(ctx, svg, d, t, duration, variantIdx);
+  }
+  const bars = d.bars.slice(0, 5);
   const maxVal = Math.max(1, ...bars.map(b => Number(b.value || 0)));
   const cx = 540;
   const cy = 785;
@@ -1303,18 +1311,27 @@ function renderProgressTracker(ctx, svg, d, t, duration, variantIdx = 0) {
 // 16. SOURCE_BADGE (3 Variants)
 // =========================================================================
 function renderSourceBadge(ctx, svg, d, t, duration, variantIdx = 0) {
-  const sourceName = d.source || d.text || 'Báo cáo độc lập 2025';
+  let sourceName = d.source || d.text || '';
+  if (!sourceName) return;
+  // Requirement 5: Only short source name (max 2 sources, 1 line, font >= 36px, y in [1245, 1280])
+  const parts = sourceName.split(/\s*·\s*|\s*,\s*|\s*;\s*/).filter(Boolean).slice(0, 2);
+  sourceName = parts.map(p => {
+    let clean = p.trim();
+    if (clean.length > 25) {
+      clean = clean.split(/[—–\-|:]/)[0].trim();
+      const words = clean.split(/\s+/).slice(0, 4);
+      clean = words.join(' ');
+    }
+    return clean;
+  }).join(' · ');
+
   const cx = 540;
-  // Position in dedicated bottom zone: y in [1240, 1320], strictly <= 1330px, horizontal [120, 960] inside [70, 1010]
   const w = 840;
   const h = 75;
   const x = cx - w / 2;
   const y = 1245;
 
-  const g = group(svg, {
-    class: 'motion-element'
-  });
-
+  const g = group(svg, { class: 'motion-element' });
   shape(g, 'rect', {
     x, y, width: w, height: h, rx: 20,
     fill: '#0e1a2eea', stroke: '#334155', 'stroke-width': 2
@@ -1326,16 +1343,12 @@ function renderSourceBadge(ctx, svg, d, t, duration, variantIdx = 0) {
     fill: 'var(--accent)'
   });
 
-  const rawLines = wrapText(sourceName, 30, 2);
-  const lines = rawLines.slice(0, 2);
-  lines.forEach((line, li) => {
-    const textY = (lines.length === 1) ? (y + 48) : (y + 30 + li * 32);
-    g.append(el('text', {
-      x: x + 85, y: textY,
-      'font-size': '36', 'font-weight': '700',
-      fill: '#cbd5e1', class: 'ill-label'
-    }, (li === 0 ? 'Nguồn: ' : '') + line));
-  });
+  const displayText = 'Nguồn: ' + sourceName;
+  g.append(el('text', {
+    x: x + 85, y: y + 48,
+    'font-size': '36', 'font-weight': '700',
+    fill: '#cbd5e1', class: 'ill-label'
+  }, displayText));
 }
 
 function renderIconTile(ctx, svg, d, t, duration, variantIdx = 0) {

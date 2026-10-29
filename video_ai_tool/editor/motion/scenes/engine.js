@@ -21,24 +21,34 @@ function box(parent,x,y,w,h,text,p,t){const g=group(parent,{class:'motion-elemen
 function dot(parent,x,y,r,t){return shape(parent,'circle',{class:'motion-element',cx:x+10*Math.sin(t),cy:y+10*Math.cos(t*.8),r:r*(1+.06*Math.sin(t*2)),fill:'var(--accent)',opacity:.7});}
 const fmt=(value,progress=1)=>{
  const num = Number(value || 0);
+ const clampedP = clamp(progress);
  if (Math.abs(num) >= 1e9) {
-  const red = (num / 1e9) * ease(progress);
+  const red = (num / 1e9) * ease(clampedP);
   const prec = Number.isInteger(red) ? 0 : 2;
-  return red.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: prec }) + ' tỷ';
+  const valStr = clampedP >= 0.99 ? (num / 1e9).toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: prec }) : red.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: prec });
+  return valStr + ' tỷ';
  }
  if (Math.abs(num) >= 1e6) {
-  const red = (num / 1e6) * ease(progress);
+  const red = (num / 1e6) * ease(clampedP);
   const prec = Number.isInteger(red) ? 0 : 2;
-  return red.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: prec }) + ' triệu';
+  const valStr = clampedP >= 0.99 ? (num / 1e6).toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: prec }) : red.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: prec });
+  return valStr + ' triệu';
  }
  const precision=Number.isInteger(num)?0:Math.min(2,(String(num).split('.')[1]||'').length);
- return (num*ease(progress)).toLocaleString('vi-VN',{minimumFractionDigits:0,maximumFractionDigits:precision});
+ const curVal = clampedP >= 0.99 ? num : (num*ease(clampedP));
+ return curVal.toLocaleString('vi-VN',{minimumFractionDigits:0,maximumFractionDigits:precision});
 };
 const paints={};
 paints.versus_scale=c=>{const {mid:m,front:f,d,t,p}=c;const sides=d.bars?.length>=2?d.bars.slice(0,2):(d.items||[]).slice(0,2).map(label=>({label}));
  sides.forEach((b,i)=>{box(m,70+i*480,260,410,560,b.label,ease(p*3-i*.25),t);if(Number.isFinite(b.value))label(f,fmt(b.value,p*2)+(b.unit||''),275+i*480,720,80,360,'var(--accent)');});
  const a=sides[0]?.value,b=sides[1]?.value,tilt=Number.isFinite(a)&&Number.isFinite(b)?Math.sign(b-a)*12*ease(p*2):0;const beam=group(f,{class:'motion-element',transform:`rotate(${tilt} 540 850)`});shape(beam,'path',{d:'M120 850H960M540 850V1000',stroke:'var(--accent)','stroke-width':18,fill:'none'});shape(f,'circle',{cx:540,cy:540,r:65,fill:'var(--accent)',class:'motion-element'});label(f,'VS',540,560,56,120,'#0c1829');};
-paints.numeric=c=>{const {mid:m,front:f,d,t,p,type}=c;const value=d.value??0,percent=d.unit==='%',q=percent?clamp(value/100):1,progress=ease(c.numberProgress);
+paints.numeric=c=>{const {mid:m,front:f,d,t,p,type}=c;
+ if (d.value === null || d.value === undefined || isNaN(Number(d.value))) {
+  if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+   return window.MotionRecipes.renderTextFocus(null, m, d, t, c.duration, 0);
+  }
+ }
+ const value=Number(d.value??0),percent=d.unit==='%',q=percent?clamp(value/100):1,progress=ease(c.numberProgress);
  if(type==='ring'||type==='gauge'){const radius=320,arc=type==='gauge'?Math.PI*radius:2*Math.PI*radius;shape(m,'circle',{cx:450,cy:500,r:radius,fill:'none',stroke:'#ffffff18','stroke-width':43,class:'motion-element'});shape(m,'circle',{cx:450,cy:500,r:radius,fill:'none',stroke:'var(--accent)','stroke-width':43,'stroke-linecap':'round','stroke-dasharray':`${arc*q*progress} ${2*Math.PI*radius}`,transform:'rotate(-90 450 500)',class:'motion-element'});if(type==='gauge'){shape(f,'line',{x1:450,y1:500,x2:450+275*Math.cos(Math.PI*(1-q*progress)),y2:500-275*Math.sin(Math.PI*(1-q*progress)),stroke:'var(--secondary)','stroke-width':14,'stroke-linecap':'round',class:'motion-element'});}}
  else {for(let i=0;i<5;i++)shape(m,'line',{x1:100,y1:210+i*140,x2:800,y2:210+i*140,stroke:'#ffffff18','stroke-width':2,class:'motion-element'});shape(m,'rect',{x:230,y:850-650*progress,width:440,height:Math.max(4,650*progress),rx:38,fill:'var(--accent)',class:'motion-element'});}
  label(f,fmt(value,c.numberProgress)+(d.unit||''),450,type==='bar_grow'?180:530,126,760,'var(--foreground)');label(f,d.label||d.text,450,900,50,800);
@@ -104,7 +114,18 @@ function draw(host,spec,t,duration,C){
  const context={svg,back,mid,front,d:spec.data,t,p,type:stype,duration,hold:C.min_card_hold_sec||1.2,numberProgress:clamp((t-start)/Math.max(.1,finish-start)),row:i=>ease((t-at('reveal_item_'+i,.15+i*.7))/.35)};
 
  if (window.MotionVocabulary && typeof window.MotionVocabulary[stype] === 'function') {
-   window.MotionVocabulary[stype](null, mid, spec.data, t, duration);
+   try {
+     window.MotionVocabulary[stype](null, mid, spec.data, t, duration);
+   } catch (err) {
+     console.warn('MotionVocabulary error for ' + stype + ', fallback to old element:', err);
+     if (registry[stype]) {
+       registry[stype](context);
+     } else if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+       window.MotionRecipes.renderTextFocus(null, mid, spec.data, t, duration, 0);
+     } else {
+       paints.numeric(context);
+     }
+   }
  } else if (window.MotionRecipes) {
    if (stype === 'stat_number' || stype === 'stat_card') {
      window.MotionRecipes.renderStatNumber(null, mid, spec.data, t, duration, 0);
@@ -126,7 +147,11 @@ function draw(host,spec,t,duration,C){
      window.MotionRecipes.renderMockUIWindow(null, mid, spec.data, t, duration);
    } else if (stype === 'magnifier_check') {
      window.MotionRecipes.renderMagnifierCheck(null, mid, spec.data, t, duration, context);
-   } else if (stype === 'versus_scale' || stype === 'versus_split') {
+   } else if (stype === 'text_focus' || stype === 'concept_card' || stype === 'icon_card') {
+    if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+      window.MotionRecipes.renderTextFocus(null, mid, spec.data, t, duration, 0);
+    }
+  } else if (stype === 'versus_scale' || stype === 'versus_split') {
      window.MotionRecipes.renderVersusScale(null, mid, spec.data, t, duration, 0);
    } else if (stype === 'terminal_typing' || stype === 'terminal_type' || stype === 'code_card') {
      window.MotionRecipes.renderTerminalTyping(null, front, spec.data, t, duration, 0);

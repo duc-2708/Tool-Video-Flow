@@ -376,12 +376,15 @@ def map_visual_scene_to_motion_scene_plan(
     }
     valid_scene_types = set(get_args(SceneType))
 
-    if primary_elem and primary_elem.type in valid_scene_types:
+        # Priority: recipe on scene -> primary_elem type -> fallback
+    if getattr(v_scene, "recipe", None) and v_scene.recipe in valid_scene_types:
+        stype = v_scene.recipe
+    elif primary_elem and primary_elem.type in valid_scene_types:
         stype = primary_elem.type
     elif primary_elem:
         stype = scene_type_map.get(primary_elem.type, "text_focus")
     else:
-        stype = "text_focus"
+        stype = "text_focus" 
 
     # Assemble VisualData
     data = VisualData()
@@ -559,6 +562,55 @@ def create_visual_plan_v3(
         registry=REGISTRY,
     )
 
+    # Anti-Repetition Scheduler: enforces no-repeat, diversity >=6, stillness <=2.5s, visual beats >=3
+    if getattr(cfg, "motion_recipes_enabled", True):
+        from editor.motion.scheduler import schedule_recipes_no_repeat, suggest_metaphor_recipe
+        scenes_data = []
+        for idx, sc in enumerate(plan.scenes):
+            v_sc = next((s for s in repaired_resp.scenes if s.scene_id == sc.id), None) or (repaired_resp.scenes[idx] if idx < len(repaired_resp.scenes) else None)
+            prim_el = v_sc.elements[0] if (v_sc and v_sc.elements) else None
+            rec = getattr(v_sc, "recipe", "") or (prim_el.type if prim_el else "")
+            valid_types = set(get_args(SceneType))
+            if not rec or rec not in valid_types:
+                prev_r = scenes_data[-1]["recipe"] if scenes_data else None
+                rec = suggest_metaphor_recipe(sc.narration, previous_recipe=prev_r)
+            scenes_data.append({
+                "scene_id": sc.id,
+                "recipe": rec,
+                "scene_type": rec,
+                "narration": sc.narration,
+                "duration": getattr(sc, "duration_sec", 0.0) or 8.0,
+                "duration_sec": getattr(sc, "duration_sec", 0.0) or 8.0,
+                "layout": getattr(v_sc, "layout", "center_hero") if v_sc else "center_hero",
+                "evidence": getattr(prim_el, "evidence", "") if prim_el else "",
+                "no_numbers": getattr(prim_el, "no_numbers", False) if prim_el else False,
+                "beats": [b.model_dump(mode="json") for b in getattr(v_sc, "elements", [])] if v_sc else [],
+            })
+
+        scheduled_scenes, sched_notes = schedule_recipes_no_repeat(
+            scenes_data,
+            min_distinct_recipes=min(6, len(plan.scenes)),
+            max_recipe_freq=2,
+            min_recipe_distance=4,
+            min_distinct_families=min(4, len(plan.scenes)),
+        )
+
+        sched_beats_by_id = {}
+        for sched_sc in scheduled_scenes:
+            sc_id = sched_sc["scene_id"]
+            sched_beats_by_id[sc_id] = sched_sc.get("beats", [])
+            target_v_sc = next((s for s in repaired_resp.scenes if s.scene_id == sc_id), None)
+            if target_v_sc:
+                target_v_sc.recipe = sched_sc["recipe"]
+                if target_v_sc.elements:
+                    target_v_sc.elements[0].type = sched_sc["recipe"]
+                    if sched_sc.get("no_numbers"):
+                        target_v_sc.elements[0].no_numbers = True
+
+        for note in sched_notes:
+            if note not in validation_notes:
+                validation_notes.append(note)
+
     # Publish notes to plan review_notes
     for note in validation_notes:
         if note not in plan.review_notes:
@@ -602,6 +654,13 @@ def create_visual_plan_v3(
                     anchor=anchor_elem,
                     metaphor_state=m_state,
                 )
+                if getattr(cfg, "motion_recipes_enabled", True) and scene.id in sched_beats_by_id:
+                    from schemas.visual import VisualBeat
+                    motion_plan.beats = [
+                        VisualBeat(at_sec=b["at_sec"], action=b["action"])
+                        for b in sched_beats_by_id[scene.id]
+                        if isinstance(b, dict) and "at_sec" in b and "action" in b
+                    ]
                 scene.visual_plan = motion_plan
             except Exception as exc:
                 _log_director_error(f"Cảnh {scene.id}: lỗi map MotionScenePlan ({exc}); fallback text_focus", exc, diagnostics)
@@ -628,6 +687,32 @@ def create_visual_plan_v3(
         )
     except Exception as exc:
         _log_director_error(f"Không thể lưu checkpoint visual_v3: {exc}", exc, diagnostics)
+
+    # Export visual_plan.json in project directory
+    project_dir = state_path.parent if state_path else (cfg.output_dir if hasattr(cfg, "output_dir") else cfg.root_dir)
+    visual_plan_path = project_dir / "visual_plan.json"
+    visual_plan_record = {
+        "theme": theme_name,
+        "central_metaphor": repaired_resp.central_metaphor.model_dump(mode="json"),
+        "scenes": [
+            {
+                "scene_id": s.id,
+                "role": getattr(s, "role", "explain"),
+                "visual_idea": getattr(next((vs for vs in repaired_resp.scenes if vs.scene_id == s.id), None), "visual_idea", "") or f"Minh họa ý chính cảnh {s.id}",
+                "recipe": s.visual_plan.scene_type if s.visual_plan else "slot_counter",
+                "layout": s.visual_plan.layout if s.visual_plan else "center_hero",
+                "metaphor_reason": getattr(next((vs for vs in repaired_resp.scenes if vs.scene_id == s.id), None), "metaphor_reason", "") or "Chuyển động trực quan diễn đạt đúng kịch bản",
+                "data": s.visual_plan.data.model_dump(mode="json") if s.visual_plan and s.visual_plan.data else {},
+                "beats": [b.model_dump(mode="json") for b in s.visual_plan.beats] if s.visual_plan and s.visual_plan.beats else [],
+            }
+            for s in plan.scenes
+        ],
+        "review_notes": plan.review_notes,
+    }
+    try:
+        write_json_atomic(visual_plan_path, visual_plan_record)
+    except Exception as exc:
+        _log_director_error(f"Không thể lưu visual_plan.json: {exc}", exc, diagnostics)
 
     if progress:
         progress("Hoàn thành lập kế hoạch hình ảnh hoạt họa Visual Planner v3.")

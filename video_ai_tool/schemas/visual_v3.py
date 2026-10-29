@@ -56,6 +56,9 @@ class VisualSFX(StrictModel):
 class VisualScene(StrictModel):
     scene_id: int
     purpose: Literal["hook", "explain", "example", "analysis", "evaluate", "climax", "recap"] = "explain"
+    visual_idea: str = ""
+    recipe: str = ""
+    metaphor_reason: str = ""
     section_title: str = ""
     section_icon: str = "sparkles"
     layout: Literal["center_hero", "split_2", "stack_3", "grid_4", "timeline_h"] = "center_hero"

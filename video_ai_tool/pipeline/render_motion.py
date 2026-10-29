@@ -23,7 +23,16 @@ from utils.word_timing import align_words,read_words,timing_source
 
 MOTION_DIR=Path(__file__).resolve().parents[1]/"editor/motion"
 SUPPORTED={"hook_card","steps_list","compare_bars","stat_card","source_card","text_focus",
-    "progress_tracker","ring_percent","line_growth","strike_replace","quote_card","timeline","versus","icon_card","cta_card"}
+    "progress_tracker","ring_percent","line_growth","strike_replace","quote_card","timeline","versus","icon_card","cta_card",
+    "slot_counter","gauge_needle","odometer","bar_race","thermometer","battery_fill",
+    "glass_fill","balance_scale","tug_of_war","vs_flip_cards","before_after_wipe",
+    "conveyor_belt","domino_chain","funnel_filter","pipeline_pipes","dice_roll",
+    "lock_unlock","shield_hit","traffic_light","orbit_system","layered_onion",
+    "stack_pile","puzzle_snap","chat_thread","mock_card_swipe","form_fill_submit",
+    "terminal_command_run","stat_number","bar_compare","container_fill","steps_ladder",
+    "stack_cards","flow_chain","network_nodes","terminal_type","magnifier_check",
+    "versus_scale","versus_split","code_card","timeline_march","mock_ui_window",
+    "checklist","hub_spoke"}
 
 
 @lru_cache(maxsize=4)

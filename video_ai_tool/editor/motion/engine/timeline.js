@@ -176,7 +176,7 @@ class MasterTimeline {
       window.MotionScenes.paint[sceneType](context);
     } else {
       // General text_focus
-      window.MotionRecipes.renderStatNumber(this.bgCtx, this.gContent, d, t, duration, 0);
+      window.MotionRecipes.renderTextFocus(this.bgCtx, this.gContent, d, t, duration, 0);
     }
 
     // 4. Annotations Layer (Layer 3 moving)
