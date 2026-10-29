@@ -61,6 +61,11 @@ const formatRawViNum = (val, maxDecimals = 2) => {
 // 1. SLOT_COUNTER: Máy quay số 3 cuộn lăn tít, dừng giật nấc, LED nháy
 // =========================================================================
 function renderSlotCounter(ctx, svg, d, t, duration = 4) {
+  if (!d._is_fixture && (d.value === null || d.value === undefined || isNaN(Number(d.value)))) {
+    if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+      return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
+    }
+  }
   const rawVal = Number(d.value ?? 777);
   const unit = d.unit || '';
   const labelRaw = d.label || d.text || 'Chỉ số bứt phá';
@@ -258,6 +263,11 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
 // 2. STRIKE_REPLACE: Số cũ bị gạch đỏ chém qua + ✗ nảy lên, số mới trồi lên
 // =========================================================================
 function renderStrikeReplace(ctx, svg, d, t, duration = 4) {
+  if (!d._is_fixture && (d.value === null || d.value === undefined) && (d.new_value === null || d.new_value === undefined)) {
+    if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+      return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
+    }
+  }
   const oldVal = Number(d.old_value ?? (d.bars && d.bars[0]?.value) ?? 30);
   const newVal = Number(d.new_value ?? d.value ?? 95);
   const unit = d.unit || '';
@@ -410,6 +420,11 @@ function renderStrikeReplace(ctx, svg, d, t, duration = 4) {
 // 3. GAUGE_NEEDLE: Đồng hồ áp suất kim quay bán nguyệt 3 dải màu, rung cơ học
 // =========================================================================
 function renderGaugeNeedle(ctx, svg, d, t, duration = 4) {
+  if (!d._is_fixture && (d.value === null || d.value === undefined || isNaN(Number(d.value)))) {
+    if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+      return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
+    }
+  }
   const targetVal = Number(d.value ?? 82);
   const maxVal = Number(d.max_val ?? 100);
   const unit = d.unit || '%';
@@ -580,6 +595,11 @@ function renderGaugeNeedle(ctx, svg, d, t, duration = 4) {
 // 4. ODOMETER: Trục số cơ khí xe hơi lăn bánh răng từng hàng đơn vị, chục, trăm
 // =========================================================================
 function renderOdometer(ctx, svg, d, t, duration = 4) {
+  if (!d._is_fixture && (d.value === null || d.value === undefined || isNaN(Number(d.value)))) {
+    if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+      return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
+    }
+  }
   const targetVal = Number(d.value ?? 1250);
   const unit = d.unit || '';
   const labelRaw = d.label || d.text || 'Chỉ số tích lũy';
@@ -722,6 +742,11 @@ function renderOdometer(ctx, svg, d, t, duration = 4) {
 // 5. BAR_RACE: Cuộc đua nước rút giữa các thanh tốc độ, bứt phá dẫn đầu
 // =========================================================================
 function renderBarRace(ctx, svg, d, t, duration = 4) {
+  if (!d._is_fixture && (!d.bars || d.bars.length < 2) && (!d.items || d.items.length < 2 || typeof d.items[0] !== 'object' || d.items[0].value === undefined)) {
+    if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+      return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
+    }
+  }
   const items = d.items || [
     { label: 'Thị phần A', value: 72 },
     { label: 'Dự án cốt lõi', value: 95, highlight: true },
@@ -867,6 +892,11 @@ function renderBarRace(ctx, svg, d, t, duration = 4) {
 // 6. THERMOMETER: Cột nhiệt kế dâng trào qua các vạch chia, tỏa sóng nhiệt đỏ
 // =========================================================================
 function renderThermometer(ctx, svg, d, t, duration = 4) {
+  if (!d._is_fixture && (d.temperature === undefined || d.temperature === null) && (d.value === null || d.value === undefined || isNaN(Number(d.value)))) {
+    if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+      return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
+    }
+  }
   const targetTemp = Number(d.temperature ?? d.value ?? 92);
   const maxTemp = Number(d.max_temp ?? 100);
   const unit = d.unit || '°C';
@@ -1015,6 +1045,11 @@ function renderThermometer(ctx, svg, d, t, duration = 4) {
 // 7. BATTERY_FILL: Thỏi pin 3D sạc từng nấc + tia sét đánh, phát xung điện quang
 // =========================================================================
 function renderBatteryFill(ctx, svg, d, t, duration = 4) {
+  if (!d._is_fixture && (d.percentage === undefined || d.percentage === null) && (d.value === null || d.value === undefined || isNaN(Number(d.value)))) {
+    if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+      return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
+    }
+  }
   const targetPct = Number(d.percentage ?? d.value ?? 100);
   const labelRaw = d.label || d.text || 'Nạp đầy năng lượng';
   const label = sanitizeSemanticLabel(labelRaw, 3);
@@ -1153,6 +1188,11 @@ function renderBatteryFill(ctx, svg, d, t, duration = 4) {
 // 8. GLASS_FILL: Ly nước rót đầy có dòng nước rót, phao nổi, bọt lăn tăn
 // =========================================================================
 function renderGlassFill(ctx, svg, d, t, duration = 4) {
+  if (!d._is_fixture && (d.fill_percentage === undefined || d.fill_percentage === null) && (d.value === null || d.value === undefined || isNaN(Number(d.value)))) {
+    if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+      return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
+    }
+  }
   const fillPct = Number(d.fill_percentage ?? d.value ?? 85);
   const labelRaw = d.label || d.text || 'Dung tích chứa';
   const label = sanitizeSemanticLabel(labelRaw, 3);

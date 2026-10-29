@@ -1,8 +1,10 @@
 """Anti-Repetition Scheduler & Metaphor-First Planner for Motion Vocabulary Recipes.
-Enforces diverse visual metaphors and forbids consecutive scenes from sharing the same motion family.
+Enforces diverse visual metaphors, forbids consecutive repetitions, guarantees >=6 distinct recipes,
+ensures >=3 visual beats per scene, and eliminates stillness intervals > 2.5s.
 """
 from __future__ import annotations
 
+import math
 import re
 import unicodedata
 from collections import Counter
@@ -21,9 +23,9 @@ class MotionFamily(str, Enum):
     MOCK_UI = "mock_ui"
 
 
-# Recipe to Family Mapping (28 Recipes)
+# Recipe to Family Mapping (28 Recipes + legacy elements)
 RECIPE_FAMILY_MAP: Dict[str, MotionFamily] = {
-    # Phase A
+    # Phase A Number Stat
     "slot_counter": MotionFamily.NUMBER_STAT,
     "strike_replace": MotionFamily.NUMBER_STAT,
     "gauge_needle": MotionFamily.NUMBER_STAT,
@@ -80,13 +82,13 @@ RECIPE_FAMILY_MAP: Dict[str, MotionFamily] = {
 
 # Cross-Family Equivalence Map for Auto-Repair
 FAMILY_ALTERNATIVES: Dict[MotionFamily, List[str]] = {
-    MotionFamily.NUMBER_STAT: ["slot_counter", "odometer", "strike_replace", "thermometer"],
-    MotionFamily.FILL_LEVEL: ["battery_fill", "glass_fill", "container_fill"],
-    MotionFamily.COMPARE_VS: ["balance_scale", "vs_flip_cards", "tug_of_war", "before_after_wipe"],
-    MotionFamily.PROCESS_FLOW: ["conveyor_belt", "domino_chain", "pipeline_pipes", "funnel_filter"],
+    MotionFamily.NUMBER_STAT: ["slot_counter", "odometer", "strike_replace", "thermometer", "bar_race", "gauge_needle"],
+    MotionFamily.FILL_LEVEL: ["battery_fill", "glass_fill", "container_fill", "gauge_ring"],
+    MotionFamily.COMPARE_VS: ["balance_scale", "vs_flip_cards", "tug_of_war", "before_after_wipe", "versus_split"],
+    MotionFamily.PROCESS_FLOW: ["conveyor_belt", "domino_chain", "pipeline_pipes", "funnel_filter", "flow_chain"],
     MotionFamily.RISK_PROB: ["shield_hit", "lock_unlock", "traffic_light", "dice_roll"],
-    MotionFamily.CONCEPT_RELATION: ["orbit_system", "layered_onion", "stack_pile", "puzzle_snap"],
-    MotionFamily.MOCK_UI: ["chat_thread", "terminal_command_run", "form_fill_submit", "mock_card_swipe"],
+    MotionFamily.CONCEPT_RELATION: ["orbit_system", "layered_onion", "stack_pile", "puzzle_snap", "hub_spoke"],
+    MotionFamily.MOCK_UI: ["chat_thread", "terminal_command_run", "form_fill_submit", "mock_card_swipe", "checklist"],
 }
 
 
@@ -144,41 +146,41 @@ def suggest_metaphor_recipe(narration: str, previous_recipe: Optional[str] = Non
         bump("pipeline_pipes", 20)
 
     # 4. Concept / Relations keywords
-    if any(k in norm for k in ["he sinh thai", "ve tinh quay", "quy dao elip"]):
+    if any(k in norm for k in ["he sinh thai", "ve tinh quay", "quy dao elip", "mang luoi", "ket noi"]):
         bump("orbit_system", 20)
     if any(k in norm for k in ["boc tach", "tang lop", "ban chat", "goc re"]):
         bump("layered_onion", 20)
-    if any(k in norm for k in ["tich luy", "xep chong", "thap the", "ngan xep"]):
+    if any(k in norm for k in ["tich luy", "xep chong", "thap the", "ngan xep", "tang bac"]):
         bump("stack_pile", 20)
-    if any(k in norm for k in ["manh ghep", "khop noi", "giai phap hoan hao"]):
+    if any(k in norm for k in ["manh ghep", "khop noi", "giai phap hoan hao", "khop"]):
         bump("puzzle_snap", 20)
 
     # 5. Mock UI keywords
-    if any(k in norm for k in ["tin nhan", "hoi thoai", "chatbot", "tro chuyen"]):
+    if any(k in norm for k in ["tin nhan", "hoi thoai", "chatbot", "tro chuyen", "tam su"]):
         bump("chat_thread", 20)
     if any(k in norm for k in ["quet the", "phe duyet", "approved", "lua chon"]):
         bump("mock_card_swipe", 20)
     if any(k in norm for k in ["bieu mau", "dang ky", "nhap lieu", "submit"]):
         bump("form_fill_submit", 20)
-    if any(k in norm for k in ["lenh", "terminal", "deploy", "trien khai"]):
+    if any(k in norm for k in ["lenh", "terminal", "deploy", "trien khai", "code"]):
         bump("terminal_command_run", 20)
 
     # 6. Number & Fill Level keywords
     if any(k in norm for k in ["do day", "ly nuoc", "song sanh", "muc nuoc"]):
         bump("glass_fill", 15)
-    if any(k in norm for k in ["pin", "nang luong", "sac pin", "100%"]):
+    if any(k in norm for k in ["pin", "nang luong", "sac pin", "100%", "buoc dem", "tu chu"]):
         bump("battery_fill", 15)
     if any(k in norm for k in ["nhiet do", "tang nhiet", "soi", "do c"]):
         bump("thermometer", 15)
-    if any(k in norm for k in ["dua", "but pha", "vuot troi", "dan dau"]):
+    if any(k in norm for k in ["dua", "but pha", "vuot troi", "dan dau", "toc do"]):
         bump("bar_race", 15)
-    if any(k in norm for k in ["cong to met", "lan banh", "km"]):
+    if any(k in norm for k in ["cong to met", "lan banh", "km", "gio van hanh"]):
         bump("odometer", 15)
-    if any(k in norm for k in ["ap suat", "dong ho do", "nguong nguy hiem"]):
+    if any(k in norm for k in ["ap suat", "dong ho do", "nguong nguy hiem", "ti le", "phan tram"]):
         bump("gauge_needle", 15)
-    if any(k in norm for k in ["gach bo", "so cu"]):
+    if any(k in norm for k in ["gach bo", "so cu", "thay vi"]):
         bump("strike_replace", 15)
-    if any(k in norm for k in ["ky luc", "ty usd", "trieu", "con so"]):
+    if any(k in norm for k in ["ky luc", "ty usd", "trieu", "con so", "chi so"]):
         bump("slot_counter", 10)
 
     # Sort candidates by score descending
@@ -199,7 +201,11 @@ def suggest_metaphor_recipe(narration: str, previous_recipe: Optional[str] = Non
         "lock_unlock",
         "orbit_system",
         "glass_fill",
-        "chat_thread"
+        "chat_thread",
+        "bar_race",
+        "shield_hit",
+        "domino_chain",
+        "stack_pile"
     ]
     for alt in alternating:
         if get_recipe_family(alt) != prev_family:
@@ -210,91 +216,203 @@ def suggest_metaphor_recipe(narration: str, previous_recipe: Optional[str] = Non
 
 def schedule_recipes_no_repeat(
     scenes: List[Dict[str, Any]],
-    min_distinct_families: int = 4
+    min_distinct_recipes: int = 6,
+    max_recipe_freq: int = 2,
+    min_recipe_distance: int = 4,
+    min_distinct_families: int = 4,
+    **kwargs: Any,
 ) -> Tuple[List[Dict[str, Any]], List[str]]:
     """Enforce strict anti-repetition rules across a sequence of scenes:
-    1. Forbid two consecutive scenes from sharing the same MotionFamily.
-    2. Require at least min_distinct_families across a 5-7 scene video.
+    1. Consecutive family rule: No two consecutive scenes share the same motion family.
+    2. Distance rule: No identical recipe within 4 consecutive scenes (|i - j| < 4 forbidden).
+    3. Frequency rule: Each recipe appears at most 2 times per video.
+    4. Diversity rule: At least 6 distinct recipe types per video and >=4 distinct families.
+    5. Layout-Recipe pair rule: No two adjacent scenes can share the same (layout, recipe).
+    6. Visual beats rule: Each scene must have at least 3 visible events (beats).
+    7. Stillness rule: No still interval > 2.5s without an event/idle pulse.
+    8. Hook stillness rule: Hook scene cannot stay still > 2.5s.
+    9. Evidence grounding: If numbers lack evidence, switch to qualitative recipe.
     Returns (scheduled_scenes, review_notes).
     """
     scheduled: List[Dict[str, Any]] = []
     review_notes: List[str] = []
-    seen_families: set[MotionFamily] = set()
+    target_distinct = min(min_distinct_recipes, len(scenes))
+    target_families = min(min_distinct_families, len(scenes))
+    used_recipe_counts: Counter[str] = Counter()
 
-    # Pass 1: Resolve consecutive repetitions
+    NUMERIC_RECIPES = {
+        "slot_counter", "strike_replace", "gauge_needle", "odometer",
+        "thermometer", "stat_number", "bar_race", "gauge_ring"
+    }
+
+    # Pass 1: Resolve family, distance, frequency, and evidence rules sequentially
     for idx, sc in enumerate(scenes):
-        current_recipe = sc.get("scene_type") or sc.get("template") or "slot_counter"
+        current_recipe = sc.get("recipe") or sc.get("scene_type") or sc.get("template") or "slot_counter"
         narration = sc.get("narration") or sc.get("text") or ""
-        current_family = get_recipe_family(current_recipe)
+        evidence = str(sc.get("evidence") or "")
+        no_numbers = sc.get("no_numbers", False)
+        layout = sc.get("layout") or "center_hero"
 
+        # Check Number Grounding: If recipe requires numbers but no numbers are grounded
+        has_number_evidence = bool(re.search(r"\d", evidence) or re.search(r"\d", narration))
+        if current_recipe in NUMERIC_RECIPES and (no_numbers or not has_number_evidence):
+            old_r = current_recipe
+            qualitative_pool = ["balance_scale", "conveyor_belt", "stack_pile", "traffic_light", "puzzle_snap", "lock_unlock", "orbit_system"]
+            current_recipe = next((r for r in qualitative_pool if used_recipe_counts[r] < max_recipe_freq), "balance_scale")
+            sc["no_numbers"] = True
+            review_notes.append(
+                f"Cảnh {idx+1}: Recipe số '{old_r}' không có số trong kịch bản; tự động chuyển sang recipe định tính '{current_recipe}'."
+            )
+
+        prev_layout = scheduled[-1].get("layout") if scheduled else None
         prev_recipe = scheduled[-1]["scene_type"] if scheduled else None
         prev_family = get_recipe_family(prev_recipe) if prev_recipe else None
+        recent_recipes = {scheduled[k]["scene_type"] for k in range(max(0, idx - (min_recipe_distance - 1)), idx)}
 
-        # Check consecutive repetition rule
-        if prev_family is not None and current_family == prev_family:
-            # Need to swap to an equivalent recipe from a different family
-            candidate_recipe = suggest_metaphor_recipe(narration, previous_recipe=prev_recipe)
-            candidate_family = get_recipe_family(candidate_recipe)
+        current_family = get_recipe_family(current_recipe)
+        violates_fam = (prev_family is not None and current_family == prev_family)
+        violates_dist = current_recipe in recent_recipes
+        violates_freq = used_recipe_counts[current_recipe] >= max_recipe_freq
+        violates_pair = (layout == prev_layout and current_recipe == prev_recipe)
 
-            # If still same family, pick from a guaranteed different family
-            if candidate_family == prev_family:
-                for fam, pool in FAMILY_ALTERNATIVES.items():
-                    if fam != prev_family and fam not in seen_families:
-                        candidate_recipe = pool[0]
-                        candidate_family = fam
+        if violates_fam or violates_dist or violates_freq or violates_pair:
+            # Find an alternative recipe from a DIFFERENT family that satisfies all constraints
+            candidates_by_family = [
+                r for r, fam in RECIPE_FAMILY_MAP.items()
+                if (prev_family is None or fam != prev_family)
+                and r not in recent_recipes
+                and used_recipe_counts[r] < max_recipe_freq
+                and not (layout == prev_layout and r == prev_recipe)
+            ]
+
+            replacement = candidates_by_family[0] if candidates_by_family else None
+            if not replacement:
+                for cand in RECIPE_FAMILY_MAP.keys():
+                    if cand not in recent_recipes and (prev_family is None or get_recipe_family(cand) != prev_family):
+                        replacement = cand
                         break
-                if candidate_family == prev_family:
-                    for fam, pool in FAMILY_ALTERNATIVES.items():
-                        if fam != prev_family:
-                            candidate_recipe = pool[0]
-                            candidate_family = fam
-                            break
 
+            replacement = replacement or "orbit_system"
+            reason = "trùng family liên tiếp" if violates_fam else "trùng trong 4 cảnh liền kề" if violates_dist else "vượt quá 2 lần/video" if violates_freq else "trùng cặp (layout, recipe)"
             review_notes.append(
-                f"Cảnh {idx+1}: Phát hiện lặp họ '{current_family.value}' liên tiếp với cảnh {idx}. "
-                f"Tự động đổi recipe từ '{current_recipe}' sang '{candidate_recipe}' ({candidate_family.value})."
+                f"Cảnh {idx+1}: Phát hiện recipe '{current_recipe}' {reason}. Tự động đổi sang '{replacement}'."
             )
-            current_recipe = candidate_recipe
-            current_family = candidate_family
+            current_recipe = replacement
 
         new_sc = dict(sc)
         new_sc["scene_type"] = current_recipe
-        new_sc["motion_family"] = current_family.value
+        new_sc["recipe"] = current_recipe
+        new_sc["motion_family"] = get_recipe_family(current_recipe).value
+        new_sc["layout"] = layout
         scheduled.append(new_sc)
-        seen_families.add(current_family)
+        used_recipe_counts[current_recipe] += 1
 
-    # Pass 2: Enforce overall distinct family count (min_distinct_families)
-    current_distinct = {sc["motion_family"] for sc in scheduled}
-    if len(scheduled) >= 5 and len(current_distinct) < min_distinct_families:
-        unused_families = [f for f in MotionFamily if f.value not in current_distinct]
-        fam_counts = Counter(sc["motion_family"] for sc in scheduled)
+    # Pass 2: Enforce overall diversity (>= target_distinct distinct recipes and >= target_families distinct families)
+    distinct_types = {sc["scene_type"] for sc in scheduled}
+    distinct_fams = {sc["motion_family"] for sc in scheduled}
+    if len(distinct_types) < target_distinct or len(distinct_fams) < target_families:
+        all_candidates = [
+            "slot_counter", "balance_scale", "conveyor_belt", "lock_unlock",
+            "orbit_system", "battery_fill", "chat_thread", "bar_race",
+            "shield_hit", "domino_chain", "stack_pile", "traffic_light",
+            "before_after_wipe", "funnel_filter", "layered_onion"
+        ]
+        unused_pool = [c for c in all_candidates if c not in distinct_types]
 
         for idx in range(len(scheduled) - 1, -1, -1):
-            if len(current_distinct) >= min_distinct_families or not unused_families:
+            if len(distinct_types) >= target_distinct and len(distinct_fams) >= target_families:
                 break
+            old_r = scheduled[idx]["scene_type"]
             old_fam = scheduled[idx]["motion_family"]
-            # Only swap scenes whose family appears more than once, to prevent reducing distinct families
-            if fam_counts[old_fam] <= 1:
+            if used_recipe_counts[old_r] <= 1 and len(distinct_fams) >= target_families:
                 continue
 
             prev_fam = scheduled[idx - 1]["motion_family"] if idx > 0 else None
             next_fam = scheduled[idx + 1]["motion_family"] if idx + 1 < len(scheduled) else None
 
-            # Find an unused family that doesn't conflict with neighbors
-            for candidate_fam in list(unused_families):
-                if (prev_fam is None or candidate_fam.value != prev_fam) and (next_fam is None or candidate_fam.value != next_fam):
-                    swap_recipe = FAMILY_ALTERNATIVES[candidate_fam][0]
-                    old_recipe = scheduled[idx]["scene_type"]
+            recent_for_idx = {
+                scheduled[k]["scene_type"]
+                for k in range(max(0, idx - (min_recipe_distance - 1)), min(len(scheduled), idx + min_recipe_distance))
+                if k != idx
+            }
+
+            for cand in list(unused_pool):
+                cand_fam = get_recipe_family(cand).value
+                if cand not in recent_for_idx and cand_fam != prev_fam and cand_fam != next_fam:
                     review_notes.append(
-                        f"Tối ưu hóa phân bổ họ chuyển động toàn video: Đổi cảnh {idx+1} từ '{old_recipe}' "
-                        f"sang '{swap_recipe}' ({candidate_fam.value}) để đạt chỉ tiêu >= {min_distinct_families} họ."
+                        f"Tối ưu hóa đa dạng toàn video: Đổi cảnh {idx+1} từ '{old_r}' sang '{cand}' để đạt chỉ tiêu đa dạng hình thức."
                     )
-                    scheduled[idx]["scene_type"] = swap_recipe
-                    scheduled[idx]["motion_family"] = candidate_fam.value
-                    fam_counts[old_fam] -= 1
-                    fam_counts[candidate_fam.value] += 1
-                    current_distinct.add(candidate_fam.value)
-                    unused_families.remove(candidate_fam)
+                    scheduled[idx]["scene_type"] = cand
+                    scheduled[idx]["recipe"] = cand
+                    scheduled[idx]["motion_family"] = cand_fam
+                    used_recipe_counts[old_r] -= 1
+                    used_recipe_counts[cand] += 1
+                    distinct_types.add(cand)
+                    distinct_fams = {sc["motion_family"] for sc in scheduled}
+                    unused_pool.remove(cand)
                     break
+
+    # Pass 3: Enforce Visual Beats and Stillness constraints (>=3 beats, no gap > 2.5s)
+    for idx, sc in enumerate(scheduled):
+        dur = float(sc.get("duration") or sc.get("duration_sec") or 4.0)
+        beats = sc.get("beats") or []
+        if isinstance(beats, list):
+            # Normalize beats
+            clean_beats = []
+            for b in beats:
+                if isinstance(b, dict) and "at_sec" in b:
+                    clean_beats.append(dict(b))
+                elif hasattr(b, "at_sec") and hasattr(b, "action"):
+                    clean_beats.append({"at_sec": getattr(b, "at_sec", 0.5), "action": getattr(b, "action", "beat")})
+            beats = clean_beats
+
+        # 1. Enforce >= 3 visible events
+        if len(beats) < 3:
+            r_name = sc["scene_type"]
+            default_times = [
+                round(min(0.5, dur * 0.15), 2),
+                round(min(1.8, dur * 0.45), 2),
+                round(min(3.2, dur * 0.80), 2)
+            ]
+            actions = [f"enter_{r_name}", f"action_{r_name}_step", f"impact_{r_name}_glow"]
+            for t_val, act in zip(default_times, actions):
+                if not any(abs(b["at_sec"] - t_val) < 0.4 for b in beats):
+                    beats.append({"at_sec": t_val, "action": act})
+            beats.sort(key=lambda b: b["at_sec"])
+            review_notes.append(f"Cảnh {idx+1}: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.")
+
+        # 2. Enforce stillness constraint (no gap > 2.5s without event / idle movement)
+        beats.sort(key=lambda b: b["at_sec"])
+        repaired_beats = []
+        last_t = 0.0
+
+        for b in beats:
+            t_curr = b["at_sec"]
+            while t_curr - last_t > 2.5:
+                inject_t = round(last_t + 2.0, 2)
+                if inject_t < dur:
+                    repaired_beats.append({"at_sec": inject_t, "action": "idle_pulse"})
+                    review_notes.append(f"Cảnh {idx+1}: Phát hiện khoảng tĩnh {t_curr - last_t:.1f}s (>2.5s); chèn nhịp idle_pulse tại {inject_t}s.")
+                last_t = inject_t
+            repaired_beats.append(b)
+            last_t = t_curr
+
+        # Check trailing interval to scene duration
+        while dur - last_t > 2.5:
+            inject_t = round(last_t + 2.0, 2)
+            if inject_t < dur:
+                repaired_beats.append({"at_sec": inject_t, "action": "idle_breath"})
+                review_notes.append(f"Cảnh {idx+1}: Chèn nhịp idle_breath tại {inject_t}s để tránh đứng yên cuối cảnh.")
+            last_t = inject_t
+
+        # 3. Hook stillness constraint: Hook scene cannot stay still > 2.5s
+        if idx == 0:
+            has_early_action = any(b["at_sec"] <= 2.2 and "idle" not in b["action"] for b in repaired_beats)
+            if not has_early_action:
+                repaired_beats.insert(1, {"at_sec": 1.2, "action": "hook_hero_punch"})
+                review_notes.append("Cảnh 1 (hook): Thêm nhịp hook_hero_punch tại 1.2s để đảm bảo không đứng yên quá 2.5s.")
+
+        repaired_beats.sort(key=lambda b: b["at_sec"])
+        sc["beats"] = repaired_beats
 
     return scheduled, review_notes

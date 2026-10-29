@@ -360,7 +360,7 @@ def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event
                         files = [project/"edit_plan.json"]
                     elif step == "assets":
                         run_assets(project/"edit_plan.json",settings,progress=lambda done,total,message:emit(step,message,done/max(1,total)))
-                        if getattr(settings, "script_v3_enabled", False):
+                        if getattr(settings, "script_v3_enabled", False) or getattr(settings, "motion_recipes_enabled", True):
                             emit(step, "Lập kế hoạch hình ảnh hoạt họa Visual Planner v3...")
                             from agents.visual_planner_v3 import create_visual_plan_v3
                             from utils.atomic_io import read_json_atomic, write_json_atomic

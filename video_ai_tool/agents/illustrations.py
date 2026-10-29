@@ -17,7 +17,12 @@ def illustration_diagnostics(diagnostics):
     try: yield
     finally: _diagnostics.reset(token)
 
-TYPES=('versus_scale','bar_grow','gauge','ring','line_draw','flow_chain','magnifier_check','funnel_filter','checklist','terminal_type','timeline_march','stack_cards','network_nodes')
+TYPES=(
+    'versus_scale','bar_grow','gauge','ring','line_draw','flow_chain','magnifier_check','funnel_filter','checklist','terminal_type','timeline_march','stack_cards','network_nodes',
+    'slot_counter','strike_replace','gauge_needle','odometer','bar_race','thermometer','battery_fill','glass_fill','balance_scale','tug_of_war','vs_flip_cards','before_after_wipe',
+    'conveyor_belt','domino_chain','pipeline_pipes','dice_roll','lock_unlock','shield_hit','traffic_light','orbit_system','layered_onion','stack_pile','puzzle_snap','chat_thread',
+    'mock_card_swipe','form_fill_submit','terminal_command_run','stat_number','bar_compare','container_fill','steps_ladder','hub_spoke','mock_ui_window','code_card','versus_split'
+)
 
 # Complete noun phrases only, matched in the actual narration. This lexicon
 # selects spoken concepts; it never supplies a missing step, number or claim.
@@ -42,16 +47,17 @@ def concept_labels(text):
 
 def spoken_stat(text, allowed):
     from agents.vietnamese_tts import spoken_to_digits
-    from editor.format_number import parse_display_number
+    from editor.format_number import parse_display_number, NumberKind
     digits = spoken_to_digits(text)
     accepted = {str(n).rstrip('%') for n in allowed}
 
-    # Ưu tiên parse cụm số nguyên văn (e.g. '65 tỷ USD', '10 tỷ USD', '36,2%', '29,25 tỷ')
+    # Match potential number phrases including tech units (nm, Hz, TB) and currency/scale
     display_matches = re.finditer(
-        r"(?<!\w)(\d+(?:[.,]\d+)*\s*(?:tỷ|tỉ|triệu|nghìn|ngàn|b|m|k|%)?\s*(?:usd|\$|vnd|đ|eur|€|phần trăm)?)(?!\w)",
+        r"(?<!\w)(\d+(?:[.,]\d+)*\s*(?:[A-Za-z%€$đ]+)?)(?!\w)",
         text,
         re.I,
     )
+    candidates = []
     for m in display_matches:
         cand_text = m.group(1).strip()
         parsed = parse_display_number(cand_text)
@@ -65,11 +71,20 @@ def spoken_stat(text, allowed):
                 continue
             if re.search(r'(?:ngày|tháng|năm)\s+' + re.escape(raw) + r'\b', digits, re.I):
                 continue
-            return parsed.value, parsed.unit_display, parsed.formatted_text
+            # Priority score: has specific unit/currency > bare number
+            has_unit = bool(parsed.unit_display)
+            priority = 2 if (parsed.kind in (NumberKind.MONEY, NumberKind.PERCENT, NumberKind.TECH_METRIC) and has_unit) else (1 if has_unit else 0)
+            candidates.append((priority, parsed))
+
+    if candidates:
+        # Pick highest priority, then highest absolute value
+        candidates.sort(key=lambda item: (item[0], item[1].full_numeric_value), reverse=True)
+        best = candidates[0][1]
+        return best.value, best.unit_display, best.formatted_text
 
     # Dự phòng normalized_numbers
-    candidates = {n for n in normalized_numbers(text, ignore_current_year=False) if n.rstrip('%') in accepted}
-    for token in sorted(candidates, key=lambda n: ('%' not in n, -abs(float(n.rstrip('%'))))):
+    cand_tokens = {n for n in normalized_numbers(text, ignore_current_year=False) if n.rstrip('%') in accepted}
+    for token in sorted(cand_tokens, key=lambda n: ('%' not in n, -abs(float(n.rstrip('%'))))):
         value = float(token.rstrip('%'))
         if 1900 <= value <= 2100 and value.is_integer():
             continue
@@ -81,7 +96,6 @@ def spoken_stat(text, allowed):
             return parsed_token.value, parsed_token.unit_display, parsed_token.formatted_text
         return value, ('%' if token.endswith('%') else ''), token
     return None
-
 
 def enough(name, data):
     import math
@@ -104,6 +118,17 @@ def enough(name, data):
         return n >= 2 or len(data.bars) >= 2
     if name == 'timeline_march':
         return n >= 2 and sum(bool(re.search(r'\d|ngày|tháng|năm', x, re.I)) for x in data.items) >= 2
+    # 28 Recipes validation rules
+    if name in {'slot_counter', 'strike_replace', 'gauge_needle', 'odometer', 'bar_race', 'thermometer'}:
+        return (data.value is not None and math.isfinite(data.value)) or bool(data.number_text) or bool(data.text)
+    if name in {'battery_fill', 'glass_fill', 'container_fill'}:
+        return True
+    if name in {'balance_scale', 'tug_of_war', 'vs_flip_cards', 'before_after_wipe', 'versus_split'}:
+        return n >= 1 or len(data.bars) >= 1 or bool(data.text)
+    if name in {'conveyor_belt', 'domino_chain', 'pipeline_pipes', 'stack_pile', 'puzzle_snap'}:
+        return n >= 1 or bool(data.text)
+    if name in {'dice_roll', 'lock_unlock', 'shield_hit', 'traffic_light', 'orbit_system', 'layered_onion', 'chat_thread', 'mock_card_swipe', 'form_fill_submit', 'terminal_command_run'}:
+        return True
     return n >= 2 if name in TYPES else False
 
 

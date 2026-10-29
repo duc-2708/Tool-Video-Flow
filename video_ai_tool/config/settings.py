@@ -66,8 +66,9 @@ class Settings(BaseModel):
 
     stage_engine_enabled: bool = False
     depth_3d_enabled: bool = False
+    motion_recipes_enabled: bool = True
 
-    @field_validator('motion_scenes_enabled','min_card_hold_sec','script_v3_enabled','max_elements_on_screen','grounding_mode','stage_engine_enabled','depth_3d_enabled',mode='before')
+    @field_validator('motion_scenes_enabled','min_card_hold_sec','script_v3_enabled','max_elements_on_screen','grounding_mode','stage_engine_enabled','depth_3d_enabled','motion_recipes_enabled',mode='before')
 
     @classmethod
 
@@ -75,7 +76,7 @@ class Settings(BaseModel):
 
         if value is None or isinstance(value,str) and not value.strip():
 
-            return {'motion_scenes_enabled':True,'min_card_hold_sec':1.2,'script_v3_enabled':False,'max_elements_on_screen':3,'grounding_mode':'fix','stage_engine_enabled':False,'depth_3d_enabled':False}[info.field_name]
+            return {'motion_scenes_enabled':True,'min_card_hold_sec':1.2,'script_v3_enabled':False,'max_elements_on_screen':3,'grounding_mode':'fix','stage_engine_enabled':False,'depth_3d_enabled':False,'motion_recipes_enabled':True}[info.field_name]
 
         return value
 

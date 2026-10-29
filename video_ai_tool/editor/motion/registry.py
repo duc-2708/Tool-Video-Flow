@@ -96,8 +96,33 @@ class ElementRegistry:
         }
         return fallbacks.get(type_name, "text_focus")
 
-    def catalog_prompt_string(self) -> str:
-        """Generate formatted element catalog string for Prompt B."""
+    def catalog_prompt_string(self, include_recipes: bool = True) -> str:
+        """Generate formatted element & recipe catalog string for Prompt B."""
+        if include_recipes:
+            try:
+                from editor.motion.recipes.recipe_meta import ALL_RECIPES
+                recipe_lines = []
+                for name, meta in ALL_RECIPES.items():
+                    params_str = ", ".join(f"{k}: {v}" for k, v in meta.params_schema.items()) if meta.params_schema else "không tham số"
+                    recipe_lines.append(
+                        f"- {name} (Ẩn dụ: {meta.metaphor}): Dùng khi: {meta.meaning}. Tham số: [{params_str}]. Giới hạn nhãn: <={meta.max_words} từ."
+                    )
+                recipes_catalog = "\n".join(recipe_lines)
+                legacy_elements = [
+                    f"- {k}: {v.description}" for k, v in self._registry.items()
+                    if k not in ALL_RECIPES
+                ]
+                elements_catalog = "\n".join(legacy_elements)
+                annots_str = ", ".join(sorted(self._annotations))
+                return (
+                    "DANH MỤC PHẦN TỬ & THƯ VIỆN CÔNG THỨC CHUYỂN ĐỘNG (RECIPES - ƯU TIÊN HÀNG ĐẦU để hình diễn đạt đúng nghĩa câu):\n"
+                    f"{recipes_catalog}\n\n"
+                    "CÁC PHẦN TỬ BỔ TRỢ (ELEMENTS):\n"
+                    f"{elements_catalog}\n\n"
+                    f"CHÚ THÍCH (ANNOTATIONS): {annots_str}."
+                )
+            except Exception:
+                pass
         elements_str = ", ".join(f"{k} ({v.description})" for k, v in self._registry.items())
         annots_str = ", ".join(sorted(self._annotations))
         return f"DANH MỤC PHẦN TỬ (chỉ dùng các type đã hỗ trợ): {elements_str}. CHÚ THÍCH (annotations): {annots_str}."

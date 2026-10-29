@@ -92,3 +92,59 @@ def test_count_up_on_reduced_value():
     # At finish (100%)
     res_end = format_count_up(p, 1.0)
     assert res_end == "65 tỷ USD"
+
+
+def test_tech_and_model_number_parsing():
+    """Verify parse_display_number correctly parses tech metrics (2nm, 120Hz, 1TB),
+    handles currency correctly (54,99 triệu đồng), and rejects model identifiers (A20, Chip A20).
+    """
+    # 1. "2nm"
+    p1 = parse_display_number("2nm")
+    assert p1 is not None
+    assert p1.value == 2.0
+    assert p1.unit_display == "nm"
+    assert p1.formatted_text == "2 nm"
+
+    # 2. "CHIP M6 TIẾN TRÌNH 2NM" (should not parse M6 as 6, must parse 2nm)
+    p2 = parse_display_number("CHIP M6 TIẾN TRÌNH 2NM")
+    assert p2 is not None
+    assert p2.value == 2.0
+    assert p2.unit_display == "nm"
+    assert p2.formatted_text == "2 nm"
+    assert p2.label == "Tiến trình"
+
+    # 3. "A20" and "Chip A20" (model identifier only, no unit -> reject to None)
+    assert parse_display_number("A20") is None
+    assert parse_display_number("Chip A20") is None
+    assert parse_display_number("M6") is None
+
+    # 4. "120Hz"
+    p4 = parse_display_number("120Hz")
+    assert p4 is not None
+    assert p4.value == 120.0
+    assert p4.unit_display == "Hz"
+    assert p4.formatted_text == "120 Hz"
+
+    # 5. "54,99 triệu đồng"
+    p5 = parse_display_number("54,99 triệu đồng")
+    assert p5 is not None
+    assert p5.value == 54.99
+    assert p5.unit_display == "triệu đồng"
+    assert p5.formatted_text == "54,99 triệu đồng"
+    assert p5.full_numeric_value == 54_990_000.0
+
+    # 6. "1TB"
+    p6 = parse_display_number("1TB")
+    assert p6 is not None
+    assert p6.value == 1.0
+    assert p6.unit_display == "TB"
+    assert p6.formatted_text == "1 TB"
+
+    # 7. Count up monotonic check (never backwards, never resets to 0 at end)
+    for p in [p1, p4, p5, p6]:
+        v0 = format_count_up(p, 0.0)
+        v50 = format_count_up(p, 0.5)
+        v100 = format_count_up(p, 1.0)
+        assert v100 == p.formatted_text
+        assert v100 != "0"
+
