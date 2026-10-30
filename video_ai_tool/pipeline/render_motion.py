@@ -76,7 +76,8 @@ def scene_payload(scene,size,caption_style,options=None):
         if 0 <= sc_idx < len(force_list):
             forced_recipe = force_list[sc_idx]
 
-    spec=getattr(scene.spec,'visual_plan',None)
+    spec=getattr(scene, 'visual_plan', None) or getattr(scene.spec,'visual_plan',None)
+    notes=list(getattr(spec, 'repair_notes', [])) if spec else []
     if forced_recipe:
         from schemas.visual_v3 import MotionScenePlan
         if not spec:
@@ -95,7 +96,7 @@ def scene_payload(scene,size,caption_style,options=None):
             'metaphor_name': getattr(spec, 'central_metaphor', None),
             'state': getattr(spec, 'metaphor_state', None),
         }
-        from config.settings import get_settings
+    from config.settings import get_settings
     settings = get_settings()
     illustrations_enabled = payload.get('illustrations_enabled', False) or bool(forced_recipe) or getattr(settings, 'motion_recipes_enabled', True)
     if spec and illustrations_enabled:
@@ -139,22 +140,14 @@ def scene_payload(scene,size,caption_style,options=None):
                     rebound_dict['value'] = p_num.value
                     rebound_dict['unit'] = p_num.unit_display
                     rebound_dict['number_text'] = p_num.formatted_number
+            # Cảnh báo đỏ nếu MOTION_FORCE_RECIPES được bật trong luồng chạy thật
+            force_warn = f"🚨 CẢNH BÁO ĐỎ [motion_debug]: MOTION_FORCE_RECIPES đang được bật ('{forced_recipe}')! Bỏ qua Visual Planner, chỉ dùng cho kiểm thử/công cụ nội bộ, không dùng cho sản xuất."
+            notes.append(force_warn)
             if forced_recipe == "glass_fill" and rebound_dict.get('value') is not None:
                 rebound_dict['fill_percentage'] = min(100, max(15, rebound_dict['value'] if rebound_dict['value'] <= 100 else 60))
             elif forced_recipe == "gauge_needle" and rebound_dict.get('value') is not None:
                 rebound_dict['max_val'] = 100
                 rebound_dict['unit'] = rebound_dict.get('unit') or '%'
-            elif forced_recipe == "balance_scale":
-                rebound_dict['left_label'] = 'Khu vực tư nhân'
-                rebound_dict['right_label'] = 'Ngân sách TP'
-                rebound_dict['winner'] = 'left'
-            elif forced_recipe == "dice_roll":
-                rebound_dict['result_number'] = 6
-                rebound_dict['probability'] = '50%'
-            elif forced_recipe == "strike_replace":
-                rebound_dict['old_value'] = 500
-                rebound_dict['new_value'] = 5000
-                rebound_dict['unit'] = 'tỷ đồng'
 
             beats = [
                 {"at_sec": 0.5, "action": f"enter_{forced_recipe}"},
@@ -191,12 +184,30 @@ def scene_payload(scene,size,caption_style,options=None):
             annots_json = [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in annots]
             payload['visual_plan']={**resolved.model_dump(mode='json'),'beats':beats,'annotations':annots_json}
         else:
-            # Fallback to qualitative recipe instead of silently dropping to text_focus
+            # Fallback dùng kết quả suggest_metaphor_recipe, chọn recipe theo lời đọc, tránh trùng cảnh liền kề, KHÔNG luôn trả balance_scale
             from editor.motion.scheduler import suggest_metaphor_recipe
-            alt_recipe = suggest_metaphor_recipe(scene.spec.narration, previous_recipe=None)
-            qualitative_pool = ["balance_scale", "conveyor_belt", "stack_pile", "lock_unlock", "orbit_system"]
-            chosen_alt = next((cand for cand in qualitative_pool if cand != spec.scene_type), "balance_scale")
+            prev_r = getattr(scene, 'previous_recipe', None) or (options.get('previous_recipe') if options else None)
+            cand_alt = suggest_metaphor_recipe(scene.spec.narration, previous_recipe=prev_r)
+            NUMERIC_RECIPES = {
+                "slot_counter", "strike_replace", "gauge_needle", "odometer",
+                "thermometer", "stat_number", "bar_race", "gauge_ring", "bar_compare"
+            }
+            if cand_alt in NUMERIC_RECIPES and rebound.value is None:
+                qualitative_pool = ["conveyor_belt", "domino_chain", "stack_pile", "lock_unlock", "orbit_system", "puzzle_snap", "traffic_light", "shield_hit", "balance_scale"]
+                chosen_alt = next((r for r in qualitative_pool if r != spec.scene_type and r != prev_r), "conveyor_belt")
+            else:
+                if cand_alt == spec.scene_type or cand_alt == prev_r:
+                    alt_pool = ["domino_chain", "stack_pile", "conveyor_belt", "orbit_system", "lock_unlock", "shield_hit"]
+                    chosen_alt = next((r for r in alt_pool if r != spec.scene_type and r != prev_r), "conveyor_belt")
+                else:
+                    chosen_alt = cand_alt
+
             rebound_dict = rebound.model_dump(mode='json') if hasattr(rebound, 'model_dump') else dict(rebound)
+            if not rebound_dict.get('label'):
+                from agents.presentation import card_phrase
+                clean_lbl = card_phrase(rebound.label or rebound.text, scene.spec.narration)
+                rebound_dict['label'] = clean_lbl
+
             alt_beats = [
                 {"at_sec": 0.5, "action": f"enter_{chosen_alt}"},
                 {"at_sec": 1.8, "action": f"action_{chosen_alt}_step"},
@@ -211,8 +222,9 @@ def scene_payload(scene,size,caption_style,options=None):
                 'beats': alt_beats,
                 'annotations': annots_json
             }
-            fallback_msg = f"Cảnh {scene.spec.id}: Recipe '{spec.scene_type}' thiếu số liệu (enough=False); tự động dùng recipe thay thế '{chosen_alt}'."
+            fallback_msg = f"Cảnh {scene.spec.id}: Recipe '{spec.scene_type}' thiếu số liệu (enough=False); tự động dùng recipe thay thế '{chosen_alt}' theo nội dung lời đọc."
             payload['illustration_fallback'] = fallback_msg
+            notes.append(fallback_msg)
     from utils.caption_timing import display_words
     payload['caption_words']=[{'text':text,'start':start,'end':end} for text,start,end in
         display_words([(w['text'],w['start'],w['end']) for w in words],scene.duration)]
@@ -223,7 +235,7 @@ def scene_payload(scene,size,caption_style,options=None):
     for shot in payload['shots']:
         shot['icon_name'],shot['icon_uri']=icon_for(root,str(shot['data'].get('text',''))+' '+scene.spec.narration)
     from agents.presentation import card_phrase,vietnamese_terms
-    notes=list(getattr(spec,'repair_notes',[]))
+    # Keep existing repair_notes in notes list
     for shot,spec in zip(payload["shots"],scene.shots):
         data=shot["data"];name=shot["template"]
         if payload.get('illustration_fallback') and name not in {'source_card','stock'}:
@@ -401,7 +413,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                 while not audit_passed and audit_retries < 2:
                     audit_retries += 1
                     if audit_retries == 1:
-                        page.evaluate("""() => {
+                        page.evaluate(r"""() => {
                             if (window.MOTION_DATA && window.MOTION_DATA.visual_plan && window.MOTION_DATA.visual_plan.data) {
                                 const d = window.MOTION_DATA.visual_plan.data;
                                 if (d.items) {
@@ -411,10 +423,24 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                         }""")
                         payload_repaired = True
                     elif audit_retries == 2:
-                        page.evaluate("""() => {
-                            if (window.MOTION_DATA && window.MOTION_DATA.visual_plan) {
-                                window.MOTION_DATA.visual_plan.scene_type = 'text_focus';
+                        # Lượt 2: Sửa nhẹ (co cỡ chữ, rút ngắn nhãn/items, sửa va chạm), KHÔNG biến thành text_focus
+                        page.evaluate(r"""() => {
+                            if (window.MOTION_DATA && window.MOTION_DATA.visual_plan && window.MOTION_DATA.visual_plan.data) {
+                                const d = window.MOTION_DATA.visual_plan.data;
+                                if (d.items) {
+                                    d.items = d.items.map(s => String(s).split(/(?<!\d)[.!?\n]|[.!?\n](?!\d)/)[0].split(/\s+/).slice(0, 4).join(' '));
+                                }
+                                if (d.label) {
+                                    d.label = String(d.label).split(/\s+/).slice(0, 3).join(' ');
+                                }
                             }
+                            const allTexts = document.querySelectorAll('.title, .bar-label, text, .ill-label, .row');
+                            allTexts.forEach(el => {
+                                const curSize = parseFloat(window.getComputedStyle(el).fontSize) || 40;
+                                if (curSize > 32) {
+                                    el.style.fontSize = Math.max(32, Math.round(curSize * 0.88)) + 'px';
+                                }
+                            });
                         }""")
                         payload_repaired = True
                     layout_audit = _eval_layout_audit()

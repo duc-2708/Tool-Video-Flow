@@ -2,12 +2,14 @@
 import json
 import pytest
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from agents.visual_planner_v3 import create_visual_plan_v3
-from editor.motion.scheduler import schedule_recipes_no_repeat, suggest_metaphor_recipe
+from editor.motion.scheduler import schedule_recipes_no_repeat, schedule_shots_no_repeat, suggest_metaphor_recipe
 from schemas.edit_plan import EditPlan, Scene, Shot, Music
-from schemas.motion_scene import SceneAnnotation
+from schemas.motion_scene import SceneAnnotation, MotionScenePlan
+from schemas.style import CaptionStyle
+from schemas.visual import VisualData, VisualBeat
 from utils.cache import cache_key
 
 
@@ -48,17 +50,18 @@ def test_scene_annotation_json_serializable():
 def test_visual_planner_v3_llm_failure_keyword_fallback(tmp_path):
     """When LLM router fails all retries, planner must fall back to keyword-driven metaphor recipes and save status files."""
     scenes = [
-        Scene(id=1, role="hook", narration="Nguy cơ tấn công mạng đang đe dọa an ninh dữ liệu.", shots=[_sample_shot(4.0)]),
-        Scene(id=2, role="body", narration="Trước đây quy trình rất chậm nhưng nay đã lột xác hoàn toàn.", shots=[_sample_shot(4.0)]),
-        Scene(id=3, role="body", narration="Hệ thống gồm nhiều lớp bóc tách từng tầng kiến trúc phức tạp.", shots=[_sample_shot(4.0)]),
-        Scene(id=4, role="body", narration="Hai bên đang giằng co quyết liệt từng điểm phần trăm thị phần.", shots=[_sample_shot(4.0)]),
-        Scene(id=5, role="cta", narration="Tổng kết lại toàn bộ các tiêu chí then chốt cần thực hiện ngay.", shots=[_sample_shot(4.0)]),
+        Scene(id=1, role="hook", narration="Nguy cơ tấn công mạng đang đe dọa an ninh dữ liệu.", shots=[_sample_shot(4.0) for _ in range(4)]),
+        Scene(id=2, role="body", narration="Trước đây quy trình rất chậm nhưng nay đã lột xác hoàn toàn.", shots=[_sample_shot(4.0) for _ in range(4)]),
+        Scene(id=3, role="body", narration="Hệ thống gồm nhiều lớp bóc tách từng tầng kiến trúc phức tạp.", shots=[_sample_shot(4.0) for _ in range(4)]),
+        Scene(id=4, role="body", narration="Hai bên đang giằng co quyết liệt từng điểm phần trăm thị phần.", shots=[_sample_shot(4.0) for _ in range(4)]),
+        Scene(id=5, role="cta", narration="Tổng kết lại toàn bộ các tiêu chí then chốt cần thực hiện ngay.", shots=[_sample_shot(4.0) for _ in range(4)]),
     ]
     plan = EditPlan(
         title="An ninh mạng và cải tổ quy trình",
         format="tiktok",
         voice="vi-VN-NamMinhNeural",
         music=Music(mood="calm", volume=0.08),
+        content_timed=True,
         scenes=scenes
     )
 
@@ -91,6 +94,11 @@ def test_visual_planner_v3_llm_failure_keyword_fallback(tmp_path):
     assert recipes[-1] in {"checklist", "layered_onion", "orbit_system"}
     # Metaphor matching: scene 1 has 'an ninh'/'tan cong' -> shield_hit
     assert recipes[0] == "shield_hit"
+
+    # Per-shot scheduling: Each scene must have >= 3 distinct recipes across its shots
+    for sc in res_plan.scenes:
+        shot_recipes = [sh.visual_plan.scene_type for sh in sc.shots if sh.visual_plan]
+        assert len(set(shot_recipes)) >= 3, f"Scene {sc.id} must have >= 3 distinct shot recipes, got: {shot_recipes}"
 
 
 def test_scheduler_recap_and_meaningful_beats():
@@ -133,3 +141,79 @@ def test_no_placeholder_labels_in_visual_plan():
     assert clean_semantic_label("Minh họa ý tưởng cảnh 1") == ""
     assert clean_semantic_label("Minh họa ý chính") == ""
     assert clean_semantic_label("Minh họa nội dung vụ án") == ""
+
+
+def test_fallback_diverse_not_always_balance_scale():
+    """When enough() is False, fallback in render_motion must use suggest_metaphor_recipe and not always return balance_scale."""
+    from pipeline.render_motion import scene_payload
+
+    class MockShot:
+        def __init__(self):
+            self.start = 0.0
+            self.duration = 4.0
+            self.visual = None
+            self.spec = MagicMock()
+            self.spec.visual = None
+            self.spec.visual_plan = None
+            self.visual_plan = None
+
+    class MockSceneSpec:
+        def __init__(self, id, narration, scene_type="timeline"):
+            self.id = id
+            self.narration = narration
+            self.role = "body"
+            self.fact_ids = []
+            # Visual plan requires items for timeline, but data has no items -> enough() will be False
+            self.visual_plan = MotionScenePlan(
+                scene_type=scene_type,
+                layout="center_hero",
+                data=VisualData(text=narration)
+            )
+
+    class MockScene:
+        def __init__(self, id, narration, scene_type="timeline", prev_recipe=None):
+            self.shots = [MockShot()]
+            self.spec = MockSceneSpec(id, narration, scene_type)
+            self.spec.shots = self.shots
+            self.start = 0.0
+            self.duration = 4.0
+            self.audio = Path(f"scene_{id}.mp3")
+            self.previous_recipe = prev_recipe
+
+    # Mock read_words and align_words
+    with patch("pipeline.render_motion.read_words", return_value=[]), \
+         patch("pipeline.render_motion.align_words", return_value=([], "projected")):
+        
+        # Scene 1: Security context
+        sc1 = MockScene(1, "Cuộc tấn công mạng quy mô lớn nhắm vào tấm khiên bảo mật quốc gia.")
+        p1 = scene_payload(sc1, (540, 960), CaptionStyle())
+        recipe1 = p1["visual_plan"]["scene_type"]
+        assert recipe1 == "shield_hit", f"Expected shield_hit for security context, got: {recipe1}"
+
+        # Scene 2: Process / pipeline context
+        sc2 = MockScene(2, "Quy trình chuyển giao qua đường ống dẫn và van điều phối.", prev_recipe=recipe1)
+        p2 = scene_payload(sc2, (540, 960), CaptionStyle())
+        recipe2 = p2["visual_plan"]["scene_type"]
+        assert recipe2 == "pipeline_pipes", f"Expected pipeline_pipes for pipeline context, got: {recipe2}"
+
+        # Recipe 1 and Recipe 2 must be different and not always balance_scale
+        assert recipe1 != recipe2
+        assert recipe1 != "balance_scale" or recipe2 != "balance_scale"
+
+
+def test_audit_failure_preserves_motion_not_text_focus():
+    """Audit retries must gently repair layout (shrink font, clip words) but never mutate motion recipe into text_focus."""
+    render_motion_path = Path(__file__).parent.parent / "pipeline" / "render_motion.py"
+    src = render_motion_path.read_text(encoding="utf-8")
+    assert "window.MOTION_DATA.visual_plan.scene_type = 'text_focus'" not in src, \
+        "Audit retry round 2 must not force scene_type = 'text_focus'!"
+
+
+def test_meta_json_scene_type_accurate_with_video():
+    """Result illustration scene_type must accurately reflect the payload visual_plan recipe, not declare false motion."""
+    # Verify mapping in render_motion.py
+    render_motion_path = Path(__file__).parent.parent / "pipeline" / "render_motion.py"
+    src = render_motion_path.read_text(encoding="utf-8")
+    assert "'scene_type':(payload.get('visual_plan') or {}).get('scene_type','text_focus')" in src or \
+           "'scene_type': (payload.get('visual_plan') or {}).get('scene_type', 'text_focus')" in src or \
+           "'scene_type':final_scene_type" in src

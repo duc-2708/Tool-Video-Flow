@@ -766,34 +766,58 @@ def create_visual_plan_v3(
             if fallback_note not in plan.review_notes:
                 plan.review_notes.append(fallback_note)
 
-        # Assign per-shot recipes when scene has >= 3 shots
-        if getattr(cfg, "motion_recipes_enabled", True) and len(scene.shots) >= 3:
-            from editor.motion.scheduler import suggest_metaphor_recipe, AVAILABLE_SHOT_RECIPES
-            from schemas.visual import VisualBeat
-            shot_used: set[str] = set()
-            prev_shot_r = scene.visual_plan.scene_type if scene.visual_plan else None
-            for shot_idx, shot in enumerate(scene.shots):
-                if shot_idx == 0 and scene.visual_plan:
-                    shot_r = scene.visual_plan.scene_type
-                else:
-                    shot_text = shot.text_overlay or shot.query or scene.narration
-                    shot_r = suggest_metaphor_recipe(shot_text, previous_recipe=prev_shot_r)
-                    if shot_r in shot_used:
-                        cand = next((r for r in AVAILABLE_SHOT_RECIPES if r not in shot_used and r != prev_shot_r), None)
-                        if cand: shot_r = cand
-                shot_used.add(shot_r)
-                prev_shot_r = shot_r
-                shot_beats = [
-                    VisualBeat(at_sec=round(min(0.3, shot.duration_sec * 0.15), 2), action=f"enter_{shot_r}"),
-                    VisualBeat(at_sec=round(min(1.5, shot.duration_sec * 0.50), 2), action=f"action_{shot_r}_step"),
-                    VisualBeat(at_sec=round(min(shot.duration_sec - 0.3, shot.duration_sec * 0.85), 2), action=f"impact_{shot_r}_glow"),
+    # Nối lập lịch theo shot: schedule_shots_no_repeat trên toàn bộ các shot của video
+    # Đảm bảo mỗi cảnh 11-14s có >= 3 shot 3-5s với recipe khác nhau,
+    # không trùng trong 3 shot liền kề, tổng video >= 6 recipe.
+    if getattr(cfg, "motion_recipes_enabled", True):
+        from editor.motion.scheduler import schedule_shots_no_repeat
+        from schemas.motion_scene import MotionScenePlan
+        from schemas.visual import VisualBeat, VisualData
+
+        all_shots_data = []
+        shot_map = []
+        for s_idx, scene in enumerate(plan.scenes):
+            for sh_idx, shot in enumerate(scene.shots):
+                dur = shot.duration_sec
+                raw_r = getattr(getattr(shot, "visual_plan", None), "scene_type", "")
+                if not raw_r and sh_idx == 0 and scene.visual_plan:
+                    raw_r = scene.visual_plan.scene_type
+                shot_text = shot.text_overlay or shot.query or scene.narration
+                all_shots_data.append({
+                    "recipe": raw_r,
+                    "text": shot_text,
+                    "narration": scene.narration,
+                    "duration": dur,
+                    "duration_sec": dur,
+                    "scene_id": scene.id,
+                    "shot_id": sh_idx + 1
+                })
+                shot_map.append((s_idx, sh_idx))
+
+        if all_shots_data:
+            target_distinct_shots = min(8, len(all_shots_data)) if len(all_shots_data) >= 8 else min(6, len(all_shots_data))
+            scheduled_shots, shot_notes = schedule_shots_no_repeat(
+                all_shots_data,
+                min_distinct=target_distinct_shots,
+                min_dist=3,
+                max_freq=max(2, (len(all_shots_data) // 6) + 1)
+            )
+            plan.review_notes.extend([n for n in shot_notes if n not in plan.review_notes])
+
+            for sh_data, (s_idx, sh_idx) in zip(scheduled_shots, shot_map):
+                target_scene = plan.scenes[s_idx]
+                target_shot = target_scene.shots[sh_idx]
+                chosen_recipe = sh_data["recipe"]
+                beats = [
+                    VisualBeat(at_sec=b["at_sec"], action=b["action"]) if isinstance(b, dict) else b
+                    for b in sh_data.get("beats", [])
                 ]
-                shot.visual_plan = MotionScenePlan(
-                    scene_type=shot_r,
-                    layout=scene.visual_plan.layout if scene.visual_plan else "center_hero",
+                target_shot.visual_plan = MotionScenePlan(
+                    scene_type=chosen_recipe,
+                    layout=target_scene.visual_plan.layout if target_scene.visual_plan else "center_hero",
                     theme=theme_name,
-                    data=scene.visual_plan.data if scene.visual_plan else VisualData(),
-                    beats=shot_beats,
+                    data=target_scene.visual_plan.data if target_scene.visual_plan else VisualData(),
+                    beats=beats,
                 )
 
     # Ensure at least one scene has a valid visual_plan
