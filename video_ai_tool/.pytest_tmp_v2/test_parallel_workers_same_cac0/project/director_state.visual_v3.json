@@ -1,0 +1,122 @@
+{
+  "visual_plan_v3": {
+    "theme": "neon_dark",
+    "central_metaphor": {
+      "name": "Hệ thống vận hành",
+      "anchor_element": "ổ khóa",
+      "states_by_scene": {
+        "1": "Trạng thái cảnh 1",
+        "8": "Trạng thái cảnh 8"
+      }
+    },
+    "scenes": [
+      {
+        "scene_id": 1,
+        "purpose": "hook",
+        "visual_idea": "Diễn hoạt slot_counter suy luận theo từ khóa cảnh 1",
+        "recipe": "balance_scale",
+        "metaphor_reason": "Suy luận trực quan theo từ khóa lời đọc cảnh 1",
+        "section_title": "Bạn có thể cắt",
+        "section_icon": "sparkles",
+        "layout": "center_hero",
+        "camera": {
+          "kind": "push_in",
+          "amount": 0.04
+        },
+        "elements": [
+          {
+            "id": "e1_1",
+            "type": "balance_scale",
+            "zone": "middle",
+            "content": {
+              "text": "Bạn có thể cắt",
+              "label": "Bạn có thể cắt",
+              "value": 100,
+              "unit": ""
+            },
+            "evidence": "Bạn có thể cắt",
+            "no_numbers": true,
+            "enter": {
+              "at_phrase": "",
+              "anim": "pop",
+              "at_sec": 1.0
+            },
+            "exit": {
+              "at_phrase": "scene_end",
+              "anim": "fade",
+              "at_sec": 2.0
+            },
+            "motion_recipe": null,
+            "variant_index": null,
+            "transition": null
+          }
+        ],
+        "annotations": [],
+        "mascot": null,
+        "sfx": [],
+        "highlight_words": [],
+        "repair_notes": [
+          "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm."
+        ]
+      },
+      {
+        "scene_id": 8,
+        "purpose": "explain",
+        "visual_idea": "Diễn hoạt checklist suy luận theo từ khóa cảnh 8",
+        "recipe": "checklist",
+        "metaphor_reason": "Suy luận trực quan theo từ khóa lời đọc cảnh 8",
+        "section_title": "Bạn muốn tìm hiểu",
+        "section_icon": "sparkles",
+        "layout": "stack_3",
+        "camera": {
+          "kind": "push_in",
+          "amount": 0.04
+        },
+        "elements": [
+          {
+            "id": "e8_1",
+            "type": "checklist",
+            "zone": "middle",
+            "content": {
+              "text": "Bạn muốn tìm hiểu",
+              "label": "Bạn muốn tìm hiểu",
+              "items": [
+                "Bạn muốn tìm hiểu",
+                "Bước thực hiện",
+                "Kết quả"
+              ]
+            },
+            "evidence": "Bạn muốn tìm hiểu",
+            "no_numbers": false,
+            "enter": {
+              "at_phrase": "",
+              "anim": "pop",
+              "at_sec": 1.0
+            },
+            "exit": {
+              "at_phrase": "scene_end",
+              "anim": "fade",
+              "at_sec": 2.0
+            },
+            "motion_recipe": null,
+            "variant_index": null,
+            "transition": null
+          }
+        ],
+        "annotations": [],
+        "mascot": null,
+        "sfx": [],
+        "highlight_words": []
+      }
+    ],
+    "repair_notes": [
+      "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm."
+    ]
+  },
+  "review_notes": [
+    "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+    "Cảnh 1: Recipe số 'slot_counter' không có số trong kịch bản; tự động chuyển sang recipe định tính 'balance_scale'.",
+    "Cảnh 1: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.",
+    "Cảnh 2: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện."
+  ]
+}

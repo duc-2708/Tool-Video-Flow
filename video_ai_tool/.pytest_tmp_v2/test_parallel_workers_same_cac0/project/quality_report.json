@@ -1,0 +1,212 @@
+{
+  "template_types": 1,
+  "template_counts": {
+    "text_focus": 2
+  },
+  "repeated_cards": [
+    {
+      "scene_id": 8,
+      "shot_id": 1,
+      "text": "Một ý chính mới"
+    }
+  ],
+  "generic_cards": [],
+  "still_intervals_over_3_5_sec": [],
+  "empty_cards_over_40_percent": [],
+  "text_overflow": [],
+  "numbers_not_in_narration_or_brief": [],
+  "numbers_not_in_narration": [],
+  "caption_gaps_over_0_6_sec": [],
+  "deferred_dom_samples": 0,
+  "scope": "Group 3; DOM samples and beat/display timing, not OCR, semantic fact validation or exhaustive motion detection.",
+  "illustration_coverage_percent": 100.0,
+  "scene_type_count": 2,
+  "scene_type_counts": {
+    "balance_scale": 1,
+    "checklist": 1
+  },
+  "moving_elements_per_scene": [
+    {
+      "scene_id": 1,
+      "scene_type": "balance_scale",
+      "count": 17
+    },
+    {
+      "scene_id": 8,
+      "scene_type": "checklist",
+      "count": 9
+    }
+  ],
+  "subtitle_only_intervals_over_2_sec": [],
+  "numeric_scenes_without_numeric_visual": [],
+  "metaphor_continuity_count": 2,
+  "metaphor_continuity_compliant": true,
+  "total_animated_elements": 6,
+  "screen_coverage_percent": 100.0,
+  "motion_energy_score": 10.0,
+  "safe_area_compliant": true,
+  "typography_hierarchy_compliant": true,
+  "illustrations_requested": true,
+  "illustration_metrics_scope": "Per rendered frame flags and DOM animated-element count, not optical flow/semantic verification.",
+  "fallbacks": [],
+  "video_hash": "ef308e1ece6d921ce72e77afa67a0aeba827a07da032b64f06129e19ab48e47c",
+  "is_current_hash": true,
+  "shots": [
+    {
+      "scene_id": 1,
+      "shot_id": 1,
+      "recipe": "evidence_board",
+      "duration": 1.6206666666666667
+    },
+    {
+      "scene_id": 8,
+      "shot_id": 1,
+      "recipe": "checklist",
+      "duration": 1.6206666666666667
+    }
+  ],
+  "duration_sec": 3.2413333333333334,
+  "sample_interval_sec": 2.5,
+  "frames": [
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\review_frames\\samples\\frame_0000.png",
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\review_frames\\samples\\frame_0001.png"
+  ],
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\review_frames\\contact_sheet.png",
+  "review_notes": [
+    "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+    "Cảnh 1: Recipe số 'slot_counter' không có số trong kịch bản; tự động chuyển sang recipe định tính 'balance_scale'.",
+    "Cảnh 1: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.",
+    "Cảnh 2: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.",
+    "Cảnh 1, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 8, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 8: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 1: [unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+    "Cảnh 1: motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."
+  ],
+  "warning_count": 1,
+  "layout_audit": {
+    "project": "project",
+    "video_hash": "ef308e1ece6d921ce72e77afa67a0aeba827a07da032b64f06129e19ab48e47c",
+    "is_current_hash": true,
+    "total_scenes": 2,
+    "overall_all_passed": false,
+    "scenes": [
+      {
+        "scene_id": 1,
+        "scene_type": "stat_number",
+        "audit_status": "ĐÃ ĐO",
+        "shots": [
+          {
+            "shot_id": 1,
+            "recipe": "stat_number",
+            "start": 0.0,
+            "duration": 2.0,
+            "card_text": "",
+            "data": {}
+          }
+        ],
+        "all_passed": false,
+        "metrics": {
+          "hero_width": 964,
+          "hero_area_ratio": 1.026,
+          "min_font_size": 36,
+          "clipped_rows": 2,
+          "bbox_overlaps": 0,
+          "t0_visible_count": 1,
+          "max_still_interval_sec": 0.4,
+          "empty_space_ratio": 0,
+          "duplicate_labels": 0,
+          "broken_labels": [],
+          "empty_prompts": 0,
+          "caption_collisions": 0,
+          "center_y_drift": 143,
+          "unaccented_vi_text": 0,
+          "numeric_hallucinations": 0,
+          "empty_gap_sec": 0.0,
+          "split_thousand_dot": 0,
+          "trailing_cutoffs": 0,
+          "numeric_regressions": 0
+        },
+        "pass_status": {
+          "hero_width": true,
+          "hero_area_ratio": true,
+          "min_font_size": true,
+          "clipped_rows": false,
+          "bbox_overlaps": true,
+          "t0_visible_count": true,
+          "max_still_interval_sec": true,
+          "empty_space_ratio": true,
+          "duplicate_labels": true,
+          "empty_prompts": true,
+          "caption_collisions": true,
+          "center_y_drift": false,
+          "unaccented_vi_text": true,
+          "numeric_hallucinations": true,
+          "empty_gap_sec": true,
+          "split_thousand_dot": true,
+          "trailing_cutoffs": true,
+          "numeric_regressions": true
+        }
+      },
+      {
+        "scene_id": 8,
+        "scene_type": "stat_number",
+        "audit_status": "ĐÃ ĐO",
+        "shots": [
+          {
+            "shot_id": 1,
+            "recipe": "stat_number",
+            "start": 0.0,
+            "duration": 2.0,
+            "card_text": "",
+            "data": {}
+          }
+        ],
+        "all_passed": true,
+        "metrics": {
+          "hero_width": 940,
+          "hero_area_ratio": 1,
+          "min_font_size": 38,
+          "clipped_rows": 0,
+          "bbox_overlaps": 0,
+          "t0_visible_count": 1,
+          "max_still_interval_sec": 0.4,
+          "empty_space_ratio": 0,
+          "duplicate_labels": 0,
+          "broken_labels": [],
+          "empty_prompts": 0,
+          "caption_collisions": 0,
+          "center_y_drift": 0,
+          "unaccented_vi_text": 0,
+          "numeric_hallucinations": 0,
+          "empty_gap_sec": 0.0,
+          "split_thousand_dot": 0,
+          "trailing_cutoffs": 0,
+          "numeric_regressions": 0
+        },
+        "pass_status": {
+          "hero_width": true,
+          "hero_area_ratio": true,
+          "min_font_size": true,
+          "clipped_rows": true,
+          "bbox_overlaps": true,
+          "t0_visible_count": true,
+          "max_still_interval_sec": true,
+          "empty_space_ratio": true,
+          "duplicate_labels": true,
+          "empty_prompts": true,
+          "caption_collisions": true,
+          "center_y_drift": true,
+          "unaccented_vi_text": true,
+          "numeric_hallucinations": true,
+          "empty_gap_sec": true,
+          "split_thousand_dot": true,
+          "trailing_cutoffs": true,
+          "numeric_regressions": true
+        }
+      }
+    ],
+    "phase8_director": null
+  }
+}

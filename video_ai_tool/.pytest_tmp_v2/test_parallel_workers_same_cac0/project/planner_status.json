@@ -1,0 +1,15 @@
+{
+  "llm_ok": false,
+  "fallback_used": true,
+  "reason": "Provider gemini đã tắt: thiếu GEMINI_API_KEY, GEMINI_DIRECTOR_MODEL hoặc GEMINI_MODEL.",
+  "scenes": {
+    "1": {
+      "recipe": "balance_scale",
+      "method": "keyword_inference"
+    },
+    "8": {
+      "recipe": "checklist",
+      "method": "keyword_inference"
+    }
+  }
+}

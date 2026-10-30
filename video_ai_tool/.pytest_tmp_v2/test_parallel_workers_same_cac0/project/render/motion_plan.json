@@ -1,0 +1,348 @@
+{
+  "render_style": {
+    "captions": {
+      "analysis_warnings": [],
+      "enabled": true,
+      "mode": "phrase",
+      "font_description": "Chữ đậm dễ đọc",
+      "font_scale": 0.064,
+      "color": "#FFFFFF",
+      "highlight_color": "#FFD741",
+      "stroke_color": "#000000",
+      "color_note": "",
+      "stroke_width_ratio": 0.006,
+      "position": "lower",
+      "emphasis": "Tô màu từ đang đọc",
+      "shadow": "Không rõ"
+    },
+    "ducking": true
+  },
+  "review_notes": [
+    "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+    "Cảnh 1: Recipe số 'slot_counter' không có số trong kịch bản; tự động chuyển sang recipe định tính 'balance_scale'.",
+    "Cảnh 1: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.",
+    "Cảnh 2: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.",
+    "Cảnh 1, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 8, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 8: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s."
+  ],
+  "title": "Dựng video",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "calm",
+    "volume": 0.1
+  },
+  "scenes": [
+    {
+      "visual_plan": {
+        "scene_type": "balance_scale",
+        "theme": "neon_dark",
+        "layout": "center_hero",
+        "zone": "middle",
+        "evidence": "Bạn có thể cắt",
+        "no_numbers": true,
+        "anchor": "ổ khóa",
+        "central_metaphor": "Hệ thống vận hành",
+        "metaphor_state": "Trạng thái cảnh 1",
+        "data": {
+          "text": "Bạn có thể cắt",
+          "highlight": [],
+          "value": 100.0,
+          "number_text": "100",
+          "label": "",
+          "unit": "",
+          "source": "",
+          "source_url": "",
+          "date": "",
+          "title": "Bạn có thể cắt",
+          "items": [],
+          "bars": [],
+          "fact_ids": [],
+          "status": "",
+          "left_label": "",
+          "right_label": ""
+        },
+        "beats": [
+          {
+            "at_sec": 0.3,
+            "action": "enter_balance_scale"
+          },
+          {
+            "at_sec": 0.9,
+            "action": "action_balance_scale_step"
+          },
+          {
+            "at_sec": 1.6,
+            "action": "impact_balance_scale_glow"
+          }
+        ],
+        "camera": {
+          "kind": "push_in",
+          "amount": 0.04
+        },
+        "mascot_state": "idle",
+        "repair_notes": [
+          "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm."
+        ]
+      },
+      "id": 1,
+      "role": "hook",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "visual_plan": {
+            "scene_type": "evidence_board",
+            "theme": "neon_dark",
+            "layout": "center_hero",
+            "zone": null,
+            "evidence": null,
+            "no_numbers": false,
+            "anchor": null,
+            "central_metaphor": null,
+            "metaphor_state": null,
+            "data": {
+              "text": "Dựng video dễ hiểu",
+              "highlight": [],
+              "value": null,
+              "number_text": "",
+              "label": "Dựng video dễ hiểu",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [
+                "Dựng video dễ hiểu"
+              ],
+              "bars": [],
+              "fact_ids": [],
+              "status": "",
+              "left_label": "",
+              "right_label": ""
+            },
+            "beats": [
+              {
+                "at_sec": 0.3,
+                "action": "enter_evidence_board"
+              },
+              {
+                "at_sec": 1.0,
+                "action": "action_evidence_board_step"
+              },
+              {
+                "at_sec": 1.7,
+                "action": "impact_evidence_board_glow"
+              }
+            ],
+            "camera": {
+              "kind": "push_in",
+              "amount": 0.06
+            },
+            "mascot_state": "idle"
+          },
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 0.0,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 0.55,
+                "action": "mascot_surprised"
+              }
+            ],
+            "template": "text_focus",
+            "data": {
+              "text": "Một ý chính mới",
+              "highlight": [],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [],
+              "status": "",
+              "left_label": "",
+              "right_label": ""
+            }
+          },
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 2.0,
+          "effect": "zoom_in",
+          "text_overlay": "Dựng video dễ hiểu"
+        }
+      ],
+      "transition_out": "fade",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false
+    },
+    {
+      "visual_plan": {
+        "scene_type": "checklist",
+        "theme": "neon_dark",
+        "layout": "stack_3",
+        "zone": "middle",
+        "evidence": "Bạn muốn tìm hiểu",
+        "no_numbers": false,
+        "anchor": "ổ khóa",
+        "central_metaphor": "Hệ thống vận hành",
+        "metaphor_state": "Trạng thái cảnh 8",
+        "data": {
+          "text": "Bạn muốn tìm hiểu",
+          "highlight": [],
+          "value": null,
+          "number_text": "",
+          "label": "",
+          "unit": "",
+          "source": "",
+          "source_url": "",
+          "date": "",
+          "title": "Bạn muốn tìm hiểu",
+          "items": [
+            "Bạn muốn tìm hiểu",
+            "Bước thực hiện",
+            "Kết quả"
+          ],
+          "bars": [],
+          "fact_ids": [],
+          "status": "",
+          "left_label": "",
+          "right_label": ""
+        },
+        "beats": [
+          {
+            "at_sec": 0.3,
+            "action": "enter_checklist"
+          },
+          {
+            "at_sec": 0.9,
+            "action": "action_checklist_step"
+          },
+          {
+            "at_sec": 1.6,
+            "action": "impact_checklist_glow"
+          }
+        ],
+        "camera": {
+          "kind": "push_in",
+          "amount": 0.04
+        },
+        "mascot_state": "idle"
+      },
+      "id": 8,
+      "role": "cta",
+      "narration": "Bạn muốn tìm hiểu bước nào?",
+      "shots": [
+        {
+          "visual_plan": {
+            "scene_type": "checklist",
+            "theme": "neon_dark",
+            "layout": "stack_3",
+            "zone": null,
+            "evidence": null,
+            "no_numbers": false,
+            "anchor": null,
+            "central_metaphor": null,
+            "metaphor_state": null,
+            "data": {
+              "text": "Dựng video dễ hiểu",
+              "highlight": [],
+              "value": null,
+              "number_text": "",
+              "label": "Dựng video dễ hiểu",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [
+                "Dựng video dễ hiểu"
+              ],
+              "bars": [],
+              "fact_ids": [],
+              "status": "",
+              "left_label": "",
+              "right_label": ""
+            },
+            "beats": [
+              {
+                "at_sec": 0.3,
+                "action": "enter_checklist"
+              },
+              {
+                "at_sec": 1.0,
+                "action": "action_checklist_step"
+              },
+              {
+                "at_sec": 1.7,
+                "action": "impact_checklist_glow"
+              }
+            ],
+            "camera": {
+              "kind": "push_in",
+              "amount": 0.06
+            },
+            "mascot_state": "idle"
+          },
+          "visual": {
+            "beats": [
+              {
+                "at_sec": 0.0,
+                "action": "reveal"
+              },
+              {
+                "at_sec": 0.55,
+                "action": "mascot_thinking"
+              }
+            ],
+            "template": "text_focus",
+            "data": {
+              "text": "Một ý chính mới",
+              "highlight": [],
+              "value": null,
+              "number_text": "",
+              "label": "",
+              "unit": "",
+              "source": "",
+              "source_url": "",
+              "date": "",
+              "title": "",
+              "items": [],
+              "bars": [],
+              "fact_ids": [],
+              "status": "",
+              "left_label": "",
+              "right_label": ""
+            }
+          },
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 2.0,
+          "effect": "zoom_in",
+          "text_overlay": "Dựng video dễ hiểu"
+        }
+      ],
+      "transition_out": "fade",
+      "sfx": "pop",
+      "fact_ids": [],
+      "pattern_interrupt": true
+    }
+  ],
+  "video_type": null,
+  "target_duration_sec": null,
+  "brief_hash": null,
+  "source_plan_hash": "fixture",
+  "timing_basis": "audio",
+  "warnings": []
+}

@@ -1,0 +1,79 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\30ad6e2eaf306cac0abb4c913813074a937150a533f75dceab9b84d498c5342c.mp4",
+  "cache_hit": false,
+  "scene_id": 8,
+  "width": 270,
+  "height": 480,
+  "fps": 5,
+  "duration_sec": 1.6206666666666667,
+  "render_seconds": 5.642,
+  "size_bytes": 33374,
+  "sha256": "4ec724e8704f91eb069477c3889d4c0f61ac377093d324250d4ae6dd851595bf",
+  "timing_source": "estimated_characters",
+  "illustration": {
+    "scene_type": "checklist",
+    "coverage_sec": 1.6206666666666667,
+    "moving_elements_min": 9,
+    "subtitle_only_intervals": []
+  },
+  "layout_audit": {
+    "hero_width": 940,
+    "hero_width_pass": true,
+    "hero_area_ratio": 1,
+    "hero_area_pass": true,
+    "min_font_size": 38,
+    "min_font_size_pass": true,
+    "clipped_rows": 0,
+    "clipped_rows_pass": true,
+    "bbox_overlaps": 0,
+    "bbox_overlaps_pass": true,
+    "t0_visible_count": 1,
+    "t0_visible_pass": true,
+    "max_still_interval_sec": 0.4,
+    "max_still_interval_pass": true,
+    "empty_space_ratio": 0,
+    "empty_space_pass": true,
+    "duplicate_labels": 0,
+    "duplicate_labels_pass": true,
+    "empty_prompts": 0,
+    "empty_prompts_pass": true,
+    "caption_collisions": 0,
+    "caption_collisions_pass": true,
+    "center_y": 785,
+    "center_y_drift": 0,
+    "center_y_drift_pass": true
+  },
+  "audit_failed": false,
+  "audit_retries": 0,
+  "quality": [
+    {
+      "issues": [],
+      "occupied": null,
+      "deferred_until_cue": false,
+      "graphic": {
+        "x": 0,
+        "y": 0,
+        "width": 270,
+        "height": 480
+      },
+      "caption": {
+        "x": 17.5,
+        "y": 345,
+        "width": 235,
+        "height": 80
+      },
+      "illustration": {
+        "scene_type": "checklist",
+        "moving_elements": 13,
+        "area_ratio": 0.56
+      },
+      "scope": "SVG design region and label bounds; not card ink-area occupancy",
+      "shot_id": 1,
+      "template": "checklist",
+      "rule_id": "motion_layout",
+      "group": 3
+    }
+  ],
+  "repair_notes": [],
+  "review_frame": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\30ad6e2eaf306cac0abb4c913813074a937150a533f75dceab9b84d498c5342c.review.png"
+}

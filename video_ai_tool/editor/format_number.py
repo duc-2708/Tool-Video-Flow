@@ -14,6 +14,7 @@ class NumberKind(str, Enum):
     PERCENT = "percent"
     MONEY = "money"
     COUNT = "count"
+    TIME = "time"
     MULTIPLIER = "multiplier"
     TECH_METRIC = "tech_metric"
 
@@ -153,9 +154,10 @@ def parse_display_number(raw_text: str) -> Optional[ParsedDisplayNumber]:
                 label = "Độ sáng đỉnh"
             elif "dung lượng" in text.lower() or "ssd" in text.lower():
                 label = "Dung lượng SSD"
+            actual_kind = NumberKind.TIME if default_label == "Thời gian" else NumberKind.TECH_METRIC
             return ParsedDisplayNumber(
                 value=num_val,
-                kind=NumberKind.TECH_METRIC,
+                kind=actual_kind,
                 scale="",
                 currency="",
                 unit_display=std_unit,
@@ -169,10 +171,10 @@ def parse_display_number(raw_text: str) -> Optional[ParsedDisplayNumber]:
     # 3. Phát hiện phần trăm
     has_percent = bool(re.search(r"%\s*|phần trăm", text, re.I))
     
-    # 4. Phát hiện loại tiền tệ
-    has_usd = bool(re.search(r"\$|\busd\b|đô la|dollar", text, re.I))
-    has_vnd = bool(re.search(r"đ|\bvnd\b|\bvnđ\b|đồng", text, re.I))
-    has_eur = bool(re.search(r"€|\beur\b|euro", text, re.I))
+    # 4. Phát hiện loại tiền tệ (chỉ bắt từ tiền tệ thật sự, tuyệt đối không match chữ 'đ' trơ trọi)
+    has_usd = bool(re.search(r"\$|\busd\b|\bđô la\b|\bdollar\b", text, re.I))
+    has_vnd = bool(re.search(r"(?<=\d)\s*(?:đ|vnd|vnđ|đồng)\b|\b(?:vnd|vnđ|đồng)\b", text, re.I))
+    has_eur = bool(re.search(r"€|\beur\b|\beuro\b", text, re.I))
     
     currency = ""
     orig_curr_word = ""
@@ -199,8 +201,8 @@ def parse_display_number(raw_text: str) -> Optional[ParsedDisplayNumber]:
         scale = "nghìn"
         mult = 1_000.0
     
-    # 6. Trích xuất số thực tế
-    clean = re.sub(r"[\$%€đ]|phần trăm|\busd\b|\bvnd\b|\bvnđ\b|\beur\b|đô la|đồng|tỷ|tỉ|triệu|nghìn|ngàn", " ", cleaned_for_metric, flags=re.I).strip()
+    # 6. Trích xuất số thực tế (làm sạch không làm mất số)
+    clean = re.sub(r"[\$%€]|phần trăm|\busd\b|\bvnd\b|\bvnđ\b|\beur\b|\bđô la\b|\bđồng\b|\btỷ\b|\btỉ\b|\btriệu\b|\bnghìn\b|\bngàn\b|(?<=\d)\s*đ\b", " ", cleaned_for_metric, flags=re.I).strip()
     m = re.search(r"(\d+(?:[.,]\d+)*)", clean)
     if not m:
         return None
@@ -245,38 +247,60 @@ def parse_display_number(raw_text: str) -> Optional[ParsedDisplayNumber]:
             val = val / 1_000.0
             mult = 1_000.0
 
+    # Phân loại ngữ nghĩa: percent, money, time, multiplier, count
+    time_m = re.search(r"\b(?:tháng|năm|ngày|giờ|phút|giây|tuần|thập kỷ|thế kỷ)\b", text, re.I)
+    time_word = time_m.group(0).lower() if time_m else ""
+
+    has_money_context = bool(currency or re.search(r"\b(?:tiền|giá|vốn|ngân sách|chi phí|doanh thu|đắt|rẻ|đầu tư|tài trợ|khoản)\b", text, re.I))
+    is_explicit_money = bool(currency or (scale in ("tỷ", "triệu") and has_money_context))
+
     if has_percent:
         kind = NumberKind.PERCENT
-    elif currency or scale in ("tỷ", "triệu") or "giá" in text.lower() or "tiền" in text.lower() or "usd" in text.lower():
+    elif is_explicit_money:
         kind = NumberKind.MONEY
-    elif re.search(r"lần|gấp", text, re.I):
+    elif time_word and not has_percent:
+        kind = NumberKind.TIME
+    elif re.search(r"\b(?:lần|gấp)\b", text, re.I):
         kind = NumberKind.MULTIPLIER
     else:
         kind = NumberKind.COUNT
     
     formatted_num = format_vi_number(val)
-    unit_parts = []
-    if scale:
-        unit_parts.append(scale)
-    if orig_curr_word:
-        unit_parts.append(orig_curr_word)
-    elif currency:
-        unit_parts.append(currency)
-    elif has_percent:
-        unit_parts.append("%")
-    
-    if has_percent and not scale:
+    if kind == NumberKind.PERCENT:
         unit_display = "%"
         formatted_text = f"{formatted_num}%"
-    elif unit_parts:
+    elif kind == NumberKind.MONEY:
+        unit_parts = []
+        if scale:
+            unit_parts.append(scale)
+        if orig_curr_word:
+            unit_parts.append(orig_curr_word)
+        elif currency:
+            unit_parts.append(currency)
         unit_display = " ".join(unit_parts)
         formatted_text = f"{formatted_num} {unit_display}".strip()
+    elif kind == NumberKind.TIME:
+        unit_display = time_word
+        formatted_text = f"{formatted_num} {unit_display}".strip()
+    elif kind == NumberKind.MULTIPLIER:
+        unit_display = "lần"
+        formatted_text = f"{formatted_num} lần"
     else:
-        unit_display = ""
-        formatted_text = formatted_num
+        # COUNT: không mặc định VND, chỉ hiển thị scale nếu có quy mô lớn (triệu, tỷ)
+        unit_display = scale if scale else ""
+        formatted_text = f"{formatted_num} {unit_display}".strip() if unit_display else formatted_num
     
     full_numeric_val = val * mult
-    label = "Số tiền" if kind == NumberKind.MONEY else ("Tỷ lệ" if kind == NumberKind.PERCENT else "Chỉ số")
+    if kind == NumberKind.MONEY:
+        label = "Số tiền"
+    elif kind == NumberKind.PERCENT:
+        label = "Tỷ lệ"
+    elif kind == NumberKind.TIME:
+        label = "Thời gian"
+    elif kind == NumberKind.COUNT:
+        label = "Số lượng"
+    else:
+        label = "Chỉ số"
     
     return ParsedDisplayNumber(
         value=val,

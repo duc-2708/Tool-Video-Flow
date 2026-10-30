@@ -1,0 +1,113 @@
+VAI TRÒ: Bạn là đạo diễn hoạt họa cho video dọc 9:16 giải thích công nghệ bằng tiếng Việt. Biến KỊCH BẢN bên dưới thành KỊCH BẢN HÌNH ẢNH hoạt họa dạng JSON. Chỉ trả về JSON hợp lệ, không giải thích.
+
+PHONG CÁCH (học cách làm, không sao chép nội dung/nhân vật/logo của video nào):
+- MỘT ẩn dụ chủ đạo, thể hiện bằng MỘT VẬT THỂ NEO ("anchor": ví dụ nhiệt kế, chai nước, cân) xuất hiện ở >=4 cảnh và đổi trạng thái theo nội dung.
+- Dựng dần: cứ 2-4 giây thêm một phần tử đúng lúc lời đọc nhắc tới; phần tử cũ MỜ DẦN khi chuyển ý. Tại một thời điểm chỉ tối đa 3 phần tử + 1 chú thích đang hiện.
+- Lớp chú thích: strike (CHỈ cho điều sai/cũ), check (CHỈ cho điều được xác nhận), cross (điều thiếu/hỏng), underline, circle_highlight, stamp (ví dụ "ƯỚC LƯỢNG"), question, arrow, pencil, tag.
+- Mọi con số/so sánh phải có hình. Chữ trên hình tối đa 6 từ, không chép lời đọc.
+- Cảnh hook: chỉ 1-2 phần tử lớn (con số hoặc hiểu lầm). Cảnh recap: tóm lại bằng vật thể neo + câu hỏi tương tác khớp nội dung.
+
+CHỦ ĐỀ: "neon_dark" (công nghệ/AI/code), "paper_brand" (hướng dẫn/quy trình), "whiteboard_sketch" (khái niệm/giá/so sánh).
+
+DANH MỤC PHẦN TỬ & THƯ VIỆN CÔNG THỨC CHUYỂN ĐỘNG (RECIPES - ƯU TIÊN HÀNG ĐẦU để hình diễn đạt đúng nghĩa câu):
+- slot_counter (Ẩn dụ: Trục quay số máy đánh bạc (slot machine reel)): Dùng khi: Dùng khi công bố số liệu đột phá, tỷ lệ tăng trưởng ấn tượng hoặc kết quả ngẫu nhiên may mắn. Tham số: [value: float, unit: str, label: str, digits: int]. Giới hạn nhãn: <=3 từ.
+- strike_replace (Ẩn dụ: Gạch bỏ sai lầm và vinh danh chân lý): Dùng khi: Dùng khi bác bỏ số liệu cũ, phủ định định mức lạc hậu hoặc đưa ra mức giá/con số mới vượt trội. Tham số: [old_value: float, new_value: float, unit: str, label: str]. Giới hạn nhãn: <=3 từ.
+- gauge_needle (Ẩn dụ: Đồng hồ đo áp suất kim quay công nghiệp): Dùng khi: Dùng khi đo lường mức độ rủi ro, áp lực, hiệu suất hoặc đo lường chỉ số trên ngưỡng an toàn/nguy hiểm. Tham số: [value: float, max_val: float, unit: str, label: str, warning_threshold: float]. Giới hạn nhãn: <=3 từ.
+- odometer (Ẩn dụ: Trục số công-tơ-mét xe hơi cơ khí): Dùng khi: Dùng khi thể hiện tích lũy số lượng, quãng đường, thời gian hoặc chi phí lăn bánh tăng dần. Tham số: [value: float, unit: str, label: str, start_val: float]. Giới hạn nhãn: <=3 từ.
+- bar_race (Ẩn dụ: Cuộc đua nước rút giữa các thanh tốc độ): Dùng khi: Dùng khi so sánh sự bứt phá tốc độ, thị phần thay đổi hoặc đối tượng dẫn đầu vượt mặt đối thủ. Tham số: [items: list, highlight_index: int, unit: str]. Giới hạn nhãn: <=3 từ.
+- thermometer (Ẩn dụ: Cột nhiệt kế thủy ngân dâng trào nhiệt lượng): Dùng khi: Dùng khi diễn tả độ nóng của thị trường, căng thẳng leo thang, biến đổi khí hậu hoặc chỉ số tăng nhiệt. Tham số: [temperature: float, max_temp: float, unit: str, label: str]. Giới hạn nhãn: <=3 từ.
+- battery_fill (Ẩn dụ: Thỏi pin năng lượng sạc điện thần tốc): Dùng khi: Dùng khi nói về tích lũy năng lượng, dung lượng pin, tiến độ hoàn thành hoặc khả năng chịu tải. Tham số: [percentage: float, label: str, status: str]. Giới hạn nhãn: <=3 từ.
+- glass_fill (Ẩn dụ: Ly nước thủy tinh đón dòng nước rót từ trên xuống): Dùng khi: Dùng khi diễn tả 'đổ đầy ly nước', dung lượng đã đầy, giới hạn chịu đựng hoặc mức độ đạt mục tiêu. Tham số: [fill_percentage: float, floating_icon: str, label: str]. Giới hạn nhãn: <=3 từ.
+- balance_scale (Ẩn dụ: Cán cân công lý 3D nghiêng về bên nặng ký hơn): Dùng khi: Dùng khi so sánh tương quan lực lượng, lợi ích vượt trội hoặc đánh đổi giữa hai giải pháp. Tham số: [left_label: str, right_label: str, winner: str, left_weight: float, right_weight: float]. Giới hạn nhãn: <=3 từ.
+- tug_of_war (Ẩn dụ: Trận kéo co căng thẳng giằng co vạch cờ): Dùng khi: Dùng khi mô tả cuộc cạnh tranh thị phần gay gắt, giằng co thế trận giữa hai thế lực lớn. Tham số: [team_a: str, team_b: str, winner: str, label: str]. Giới hạn nhãn: <=3 từ.
+- vs_flip_cards (Ẩn dụ: Hai thẻ bài 3D lật xoay đối đầu trực diện): Dùng khi: Dùng khi so sánh đối chiếu hai phương án, lật mở mặt trái/mặt phải hoặc ưu nhược điểm. Tham số: [card_a: dict, card_b: dict, winner: str, label: str]. Giới hạn nhãn: <=3 từ.
+- before_after_wipe (Ẩn dụ: Thanh quét thần kỳ phân chia quá khứ và tương lai): Dùng khi: Dùng khi minh họa sự chuyển đổi ngoạn mục, lột xác trước và sau khi áp dụng giải pháp. Tham số: [before_label: str, after_label: str, metric_change: str, label: str]. Giới hạn nhãn: <=3 từ.
+- conveyor_belt (Ẩn dụ: Băng chuyền nhà máy thông minh luân chuyển sản phẩm): Dùng khi: Dùng khi trình bày dây chuyền tự động hóa, quy trình sản xuất hàng loạt hoặc xử lý liên tục. Tham số: [steps: list, output_label: str, label: str]. Giới hạn nhãn: <=3 từ.
+- domino_chain (Ẩn dụ: Chuỗi quân cờ domino đổ liên hoàn kỳ thú): Dùng khi: Dùng khi giải thích phản ứng dây chuyền, một nguyên nhân dẫn đến hàng loạt hệ quả liên tiếp. Tham số: [steps: list, final_impact: str, label: str]. Giới hạn nhãn: <=3 từ.
+- funnel_filter (Ẩn dụ: Chiếc phễu lọc đa tầng chắt lọc tinh hoa): Dùng khi: Dùng khi mô tả quá trình chọn lọc, phễu chuyển đổi khách hàng hoặc sàng lọc dữ liệu tinh hoa. Tham số: [input_count: int, output_count: int, stages: list, label: str]. Giới hạn nhãn: <=3 từ.
+- pipeline_pipes (Ẩn dụ: Hệ thống đường ống dẫn công nghiệp phát sáng năng lượng): Dùng khi: Dùng khi mô tả đường ống dữ liệu, luồng vận chuyển tài nguyên hoặc hạ tầng kết nối liên thông. Tham số: [nodes: list, throughput: str, label: str]. Giới hạn nhãn: <=3 từ.
+- dice_roll (Ẩn dụ: Viên xúc xắc 3D lăn lông lốc trong không gian): Dùng khi: Dùng khi đề cập đến yếu tố may rủi, xác suất thống kê, canh bạc thị trường hoặc quyết định mạo hiểm. Tham số: [result_number: int, probability: str, label: str]. Giới hạn nhãn: <=3 từ.
+- lock_unlock (Ẩn dụ: Ổ khóa bảo mật công nghệ cao bật mở then chốt): Dùng khi: Dùng khi nói về bảo mật thông tin, giải mã rào cản, phá vỡ hạn chế hoặc mở khóa cơ hội mới. Tham số: [status: str, key_type: str, label: str]. Giới hạn nhãn: <=3 từ.
+- shield_hit (Ẩn dụ: Tấm khiên năng lượng đẩy lùi mọi đòn tấn công hiểm hóc): Dùng khi: Dùng khi nhấn mạnh khả năng chống chịu rủi ro, bảo vệ tài sản, phòng thủ an ninh mạng vững vàng. Tham số: [threat_name: str, defense_score: str, label: str]. Giới hạn nhãn: <=3 từ.
+- traffic_light (Ẩn dụ: Cột đèn giao thông chuyển trạng thái dứt khoát): Dùng khi: Dùng khi thể hiện tín hiệu đèn xanh/đỏ cho thị trường, cảnh báo dừng lại hay cho phép tăng tốc. Tham số: [active_signal: str, action_text: str, label: str]. Giới hạn nhãn: <=3 từ.
+- orbit_system (Ẩn dụ: Hệ mặt trời thu nhỏ với các vệ tinh quay quanh quỹ đạo elip): Dùng khi: Dùng khi mô tả hệ sinh thái xoay quanh một hạt nhân trung tâm, mạng lưới vệ tinh hoặc cấu trúc phân tán. Tham số: [center_node: str, satellites: list, label: str]. Giới hạn nhãn: <=3 từ.
+- layered_onion (Ẩn dụ: Bóc tách từng lớp củ hành hé lộ hạt nhân cốt lõi): Dùng khi: Dùng khi bóc tách các tầng bản chất, giải mã cấu trúc đa tầng hoặc đi sâu vào nguyên nhân gốc rễ. Tham số: [layers: list, core_text: str, label: str]. Giới hạn nhãn: <=3 từ.
+- stack_pile (Ẩn dụ: Các tấm thẻ 3D xếp chồng lên nhau thành tháp vững chắc): Dùng khi: Dùng khi giải thích sự tích lũy tài nguyên, xếp chồng công nghệ (tech stack) hoặc tháp năng lực. Tham số: [layers: list, top_highlight: str, label: str]. Giới hạn nhãn: <=3 từ.
+- puzzle_snap (Ẩn dụ: Mảnh ghép jigsaw trượt vào khớp nối 'khấc' hoàn hảo): Dùng khi: Dùng khi các yếu tố tìm thấy mảnh ghép còn thiếu, hợp tác hoàn hảo hoặc hoàn thành bức tranh tổng thể. Tham số: [key_piece: str, solution_text: str, label: str]. Giới hạn nhãn: <=3 từ.
+- chat_thread (Ẩn dụ: Giao diện tin nhắn thông minh hội thoại real-time): Dùng khi: Dùng khi mô tả tương tác người dùng, phản hồi chatbot AI, tin nhắn thông báo hoặc tranh luận. Tham số: [user_msg: str, bot_reply: str, label: str]. Giới hạn nhãn: <=3 từ.
+- mock_card_swipe (Ẩn dụ: Thao tác quẹt thẻ sang phải chấp thuận): Dùng khi: Dùng khi đưa ra quyết định chọn lựa nhanh, phê duyệt cơ hội hoặc loại bỏ giải pháp không phù hợp. Tham số: [decision: str, card_title: str, label: str]. Giới hạn nhãn: <=3 từ.
+- form_fill_submit (Ẩn dụ: Biểu mẫu trực tuyến tự động điền và bấm nút gửi): Dùng khi: Dùng khi minh họa quy trình đăng ký, xử lý hồ sơ tự động hoặc nhập liệu tốc độ cao. Tham số: [fields: list, status: str, label: str]. Giới hạn nhãn: <=3 từ.
+- terminal_command_run (Ẩn dụ: Cửa sổ dòng lệnh Terminal công nghệ cao thực thi thần tốc): Dùng khi: Dùng khi thực thi câu lệnh kỹ thuật, triển khai hệ thống (deploy) hoặc chạy thuật toán. Tham số: [command: str, output: str, label: str]. Giới hạn nhãn: <=3 từ.
+
+CÁC PHẦN TỬ BỔ TRỢ (ELEMENTS):
+- container_fill: chai/bình/cốc đổ đầy chất lỏng theo %, thể hiện giới hạn/dung lượng
+- bar_compare: biểu đồ cột so sánh tối thiểu 2 đối tượng có số liệu/nhãn
+- stat_number: con số thống kê lớn kèm nhãn: count_up (đếm lên) hoặc strike_replace (gạch số cũ hiện số mới)
+- flow_chain: chuỗi quy trình 3-4 bước nối nhau bằng mũi tên hoặc đường dẫn
+- steps_ladder: thang bậc các tầng/cấp độ theo chiều dọc hoặc bậc thang
+- gauge_ring: đồng hồ đo hoặc vòng tròn tiến độ % bán nguyệt/toàn phần
+- versus_split: so sánh hai bên đối lập chia đôi màn hình trái vs phải
+- mock_ui_window: cửa sổ ứng dụng giả lập chung chung có thanh tab/nút điều khiển
+- checklist: danh sách tiêu chí kèm dấu tích xanh hoặc gạch chéo đỏ
+- terminal_typing: cửa sổ dòng lệnh CLI gõ từng ký tự mã hoặc lệnh
+- line_chart_draw: biểu đồ đường vẽ dần qua các mốc thời gian
+- hub_spoke: mô hình trung tâm kết nối tỏa tròn ra các vệ tinh/nút mạng
+- magnifier_check: kính lúp soi cận cảnh kiểm tra tính xác thực hoặc lỗ hổng
+- progress_tracker: thanh tiến trình ngang đánh dấu các chặng của video
+- chat_bubble_poll: khung câu hỏi bình chọn tương tác hoặc bong bóng chat đối thoại
+- source_badge: huy hiệu chứng thực nguồn uy tín trích dẫn từ tài liệu
+- icon_tile: ô thẻ biểu tượng minh họa khái niệm trực quan
+- funnel: hình phễu lọc thu hẹp tỷ lệ chuyển đổi qua các giai đoạn
+- timeline: trục thời gian chạy dọc hoặc ngang qua các mốc lịch sử
+- prompt_card: thẻ câu lệnh prompt AI giả lập với nhãn tham số
+- search_bar_typing: thanh tìm kiếm gõ từ khóa và gợi ý kết quả
+- code_card: thẻ khối mã lập trình với cú pháp nổi bật
+
+CHÚ THÍCH (ANNOTATIONS): arrow, check, circle_highlight, cross, pencil, question, stamp, strike, tag, underline.
+
+QUY TẮC CỨNG:
+1. CHỈ dùng số liệu, tên riêng, tên nguồn có trong KỊCH BẢN/FACTS. Mỗi phần tử có số hoặc tên nguồn phải có "evidence": trích nguyên văn đoạn kịch bản chứa nó. Không có evidence thì KHÔNG dùng số đó: đổi sang hình định tính (icon, so sánh không số) và đặt "no_numbers": true. Cấm tự thêm "verified", cấm bịa tên nguồn; thiếu nguồn thì bỏ source_badge.
+2. Với MỖI CẢNH bắt buộc ghi:
+   - "visual_idea": ý tưởng hình ảnh diễn đạt nội dung câu nói bằng chuyển động trực quan.
+   - "recipe": tên recipe từ thư viện công thức chuyển động (hoặc element bổ trợ) phù hợp nhất.
+   - "metaphor_reason": lý do hình ảnh và cơ chế chuyển động này diễn giải ĐÚNG và TRỰC QUAN câu nói (hình là chủ thể, chữ chỉ là chú thích).
+3. TUYỆT ĐỐI KHÔNG dùng hub/orbit/list/flow_chain chỉ để làm khung chứa chữ. Mọi cảnh phải có chuyển động cơ học diễn giải ý nghĩa.
+4. "gauge_ring" CHỈ dùng cho phần trăm / tỷ lệ (0-100%). Với số tiền, số lượng lớn bắt buộc dùng slot_counter, bar_race hoặc stat_number.
+5. Số ước lượng hoặc từ cộng đồng: thêm stamp "ƯỚC LƯỢNG".
+6. Mỗi cảnh có "layout" (một trong: center_hero | split_2 | stack_3 | grid_4 | timeline_h) và mỗi phần tử có "zone" (top|middle|bottom|left|right) không chồng nhau.
+7. Không dùng cùng một layout + cặp loại phần tử cho 2 cảnh liền nhau; cả video >=6 loại hình/recipe khác nhau; số phần tử mỗi cảnh từ 1 (hook) đến 4.
+8. "at_phrase": đúng 2-3 từ LIÊN TIẾP, chép nguyên văn từ lời đọc của chính cảnh đó, KHÔNG dấu câu.
+9. Không logo/ảnh app/nhân vật có bản quyền; mascot chỉ là nhân vật gốc hình khối đơn giản, không xuất hiện ở mọi cảnh (tối đa 1 trong 2 cảnh).
+10. Camera nhẹ (push_in/pan <=6%).
+11. Chú thích phải đúng nghĩa (xem phong cách); poll/câu hỏi phải khớp với các lựa chọn và nội dung video.
+12. HỢP NHẤT SCENE DIRECTOR: Nếu kịch bản có [Scene Director Motion Brief] (ý tưởng hình, recipe đề xuất, key beats), BẮT BUỘC xem xét đề xuất này để lựa chọn recipe và cấu trúc sự kiện; chỉ được đổi sang recipe khác nếu cần tránh lặp họ chuyển động hoặc để đảm bảo quy tắc lập lịch không lặp.
+
+ĐẦU RA:
+{
+ "theme": "...",
+ "central_metaphor": {"name": "...", "anchor_element": "tên vật thể", "states_by_scene": {"1": "...", "2": "..."}},
+ "scenes": [{
+   "scene_id": 1, "purpose": "hook|explain|example|analysis|evaluate|climax|recap",
+   "visual_idea": "ý tưởng diễn đạt câu bằng chuyển động",
+   "recipe": "tên recipe/element",
+   "metaphor_reason": "lý do hình diễn đúng câu",
+   "section_title": "<=4 từ", "section_icon": "từ khóa icon",
+   "layout": "...", "camera": {"move": "push_in|pan_left|pan_right|none", "amount": 0.04},
+   "elements": [{"id": "e1", "type": "...", "zone": "...", "content": {}, "evidence": "trích kịch bản hoặc rỗng nếu no_numbers", "no_numbers": false,
+     "enter": {"at_phrase": "...", "anim": "slide_up|pop|draw|fill|type|count_up"}, "exit": {"at_phrase": "...|scene_end", "anim": "fade"}}],
+   "annotations": [{"type": "...", "target": "e1", "at_phrase": "...", "text": "<=3 từ hoặc rỗng"}],
+   "mascot": {"state": "idle|point|shrug|surprised|think", "at_phrase": "..."} hoặc null,
+   "sfx": [{"type": "pop|whoosh|click|chime", "at_phrase": "..."}],
+   "highlight_words": ["..."]
+ }]
+}
+
+TỰ KIỂM TRA TRƯỚC KHI TRẢ LỜI: (a) mọi số/nguồn có evidence nguyên văn? (b) vật thể neo xuất hiện >=4 cảnh? (c) không phần tử/chú thích nào chép nguyên câu lời đọc? (d) at_phrase nguyên văn, 2-3 từ, không dấu câu? (e) không quá 3 phần tử cùng lúc, không 2 cảnh liền cùng layout? (f) hook có <=2 phần tử? (g) strike/check/poll đúng nghĩa? (h) có đủ visual_idea, recipe, metaphor_reason cho từng cảnh? Sai thì sửa rồi mới trả JSON.
+
+KỊCH BẢN:
+CẢNH 1 (hook) [Facts: 1]:
+Lời đọc: Bạn có thể cắt và ghép video.
+
+CẢNH 8 (cta):
+Lời đọc: Bạn muốn tìm hiểu bước nào?
+

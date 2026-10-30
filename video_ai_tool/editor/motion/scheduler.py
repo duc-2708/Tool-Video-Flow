@@ -78,6 +78,19 @@ RECIPE_FAMILY_MAP: Dict[str, MotionFamily] = {
     "mock_ui_window": MotionFamily.MOCK_UI,
     "checklist": MotionFamily.MOCK_UI,
     "magnifier_check": MotionFamily.MOCK_UI,
+    # 12 New Recipes
+    "before_after_split": MotionFamily.COMPARE_VS,
+    "courtroom_balance": MotionFamily.COMPARE_VS,
+    "timeline_milestones": MotionFamily.PROCESS_FLOW,
+    "map_location_pin": MotionFamily.CONCEPT_RELATION,
+    "profile_dossier": MotionFamily.MOCK_UI,
+    "document_page_flip": MotionFamily.MOCK_UI,
+    "camera_surveillance_scan": MotionFamily.RISK_PROB,
+    "evidence_board": MotionFamily.CONCEPT_RELATION,
+    "network_graph": MotionFamily.CONCEPT_RELATION,
+    "countdown_timer": MotionFamily.NUMBER_STAT,
+    "code_terminal_window": MotionFamily.MOCK_UI,
+    "quote_dialog_card": MotionFamily.MOCK_UI,
 }
 
 # Cross-Family Equivalence Map for Auto-Repair
@@ -449,48 +462,66 @@ AVAILABLE_SHOT_RECIPES = [
     "funnel_filter", "pipeline_pipes", "dice_roll", "lock_unlock", "shield_hit",
     "traffic_light", "orbit_system", "layered_onion", "stack_pile", "puzzle_snap",
     "chat_thread", "mock_card_swipe", "form_fill_submit", "terminal_command_run",
-    "checklist"
+    "checklist",
+    # 12 New Recipes
+    "before_after_split", "timeline_milestones", "map_location_pin",
+    "profile_dossier", "document_page_flip", "camera_surveillance_scan",
+    "evidence_board", "network_graph", "countdown_timer",
+    "courtroom_balance", "code_terminal_window", "quote_dialog_card"
 ]
 
 NUMERIC_RECIPES = {
     "slot_counter", "strike_replace", "gauge_needle", "odometer",
-    "thermometer", "battery_fill", "glass_fill", "bar_race"
+    "thermometer", "battery_fill", "glass_fill", "bar_race", "countdown_timer"
 }
 
 
 def extract_shot_brief_and_data(text: str, scene_narration: str = "", is_recap: bool = False) -> dict:
-    """Extract semantic intent and factual data for an individual shot."""
+    """Extract semantic intent and factual data for an individual shot without manufactured text."""
     from editor.format_number import parse_display_number
     from agents.presentation import card_phrase
 
     combined_text = (text.strip() + " " + scene_narration.strip()).strip()
     norm = _normalize_text(combined_text)
 
-    # 1. Parse number
+    # 1. Parse number (with unit/currency distinction)
     p_num = parse_display_number(text) or parse_display_number(scene_narration)
     has_number = p_num is not None
     val = p_num.value if p_num else None
     unit = p_num.unit_display if p_num else ""
     num_text = p_num.formatted_number if p_num else ""
 
-    # 2. Extract semantic label
-    clean_lbl = card_phrase(text, scene_narration) if text else "Chi tiết"
-    if len(clean_lbl.split()) > 3:
-        clean_lbl = " ".join(clean_lbl.split()[:3])
+    # 2. Extract semantic label strictly from narration
+    clean_lbl = card_phrase(text, scene_narration) if text else ""
+    if not clean_lbl or re.search(r"^(?:minh\s+h[oọ]a|ý\s+t[uư][oợ]ng|y\s+ch[ií]nh\s+c[aầ]n\s+nh[oớ]|chi\s+ti[eế]t)", clean_lbl.strip(), re.I):
+        source_pool = text or scene_narration
+        first_clause = split_clauses_for_shot(source_pool)
+        clean_lbl = first_clause[0] if first_clause else "Nội dung"
+    words_lbl = clean_lbl.split()
+    if len(words_lbl) > 4:
+        clean_lbl = " ".join(words_lbl[:4])
 
-    # 3. Determine semantic intent
+    # 3. Determine semantic intent & domain match
     intent = "concept"
     if is_recap:
         intent = "recap"
     elif has_number:
         intent = "number"
-    elif any(k in norm for k in ["can can", "so sanh", "so voi", "doi dau", "truoc day", "thay doi", "hai ben", "mat trai", "uu the"]):
+    elif any(k in norm for k in ["toa an", "phien toa", "xet xu", "cao trang", "toi danh", "cao buoc", "tham phan", "luat su", "can can"]):
+        intent = "legal"
+    elif any(k in norm for k in ["ho so", "nhan than", "nghi pham", "doi tuong", "danh tinh", "ly lich"]):
+        intent = "profile"
+    elif any(k in norm for k in ["dia diem", "thanh pho", "tai", "khu vuc", "bang", "quoc gia", "tinh thanh", "noi dien ra"]):
+        intent = "location"
+    elif any(k in norm for k in ["chuyen doi", "so voi", "doi lap", "trai nguoc", "hai ben", "truoc va sau", "thay doi"]):
         intent = "compare"
-    elif any(k in norm for k in ["tam khien", "khien", "hang rao", "an ninh", "phong thu", "bao ve", "khoa", "mo khoa", "ngan chan", "canh bao", "toi danh", "cao buoc", "giam giu"]):
+    elif any(k in norm for k in ["an ninh", "canh bao", "giam sat", "camera", "nguy co", "rui ro", "khoa", "ngan chan"]):
         intent = "risk"
-    elif any(k in norm for k in ["quy trinh", "duong ong", "bang chuyen", "domino", "sang loc", "he thong", "buoc"]):
+    elif any(k in norm for k in ["tien trinh", "moc thoi gian", "giai doan", "nam thang", "chuoi su kien"]):
         intent = "process"
-    elif any(k in norm for k in ["tin nhan", "hoi thoai", "bieu mau", "lenh", "danh sach", "kiem tra"]):
+    elif any(k in norm for k in ["mang luoi", "lien ket", "so do", "he thong"]):
+        intent = "network"
+    elif any(k in norm for k in ["lenh", "ma doc", "terminal", "he thong", "du lieu", "tai lieu"]):
         intent = "mock_ui"
 
     return {
@@ -505,50 +536,266 @@ def extract_shot_brief_and_data(text: str, scene_narration: str = "", is_recap: 
     }
 
 
-def enough_for_shot(recipe: str, brief_info: dict) -> bool:
+def split_clauses_for_shot(text: str) -> list[str]:
+    """Split sentence into natural clauses/items based on punctuation and conjunctions."""
+    raw_parts = re.split(r"[,\.;:\?!]|(?:và|cùng|nhưng|tuy nhiên|thay vì|đồng thời|với|đối mặt với)", text, flags=re.I)
+    cleaned = []
+    for p in raw_parts:
+        c = re.sub(r"\s+", " ", p).strip()
+        if len(c.split()) >= 2:
+            cleaned.append(c)
+    if not cleaned:
+        words = text.strip().split()
+        if len(words) > 6:
+            mid = len(words) // 2
+            cleaned = [" ".join(words[:mid]), " ".join(words[mid:])]
+        else:
+            cleaned = [text.strip()]
+    return cleaned
+
+
+def build_shot_factual_data(recipe: str, brief_info: dict, text: str, scene_narration: str) -> dict:
+    """Build factual data schema strictly from the shot's spoken sentence.
+    All labels, items, left/right labels, and status MUST be extracted directly from
+    the shot's text/narration. No placeholder or manufactured strings allowed.
+    """
+    data: dict = {
+        "label": brief_info["label"],
+        "text": brief_info["label"],
+    }
+    if brief_info["has_number"]:
+        data["value"] = brief_info["value"]
+        data["unit"] = brief_info["unit"]
+        data["number_text"] = brief_info["number_text"]
+
+    clauses = split_clauses_for_shot(text)
+    if not clauses and scene_narration:
+        clauses = split_clauses_for_shot(scene_narration)
+
+    # Extract proper nouns / capitalized multi-word phrases directly from sentence
+    proper_nouns = re.findall(r"\b[A-ZÀ-Ỹ][a-zà-ỹ0-9_]*(?:\s+[A-ZÀ-Ỹ][a-zà-ỹ0-9_]*)+\b", text)
+    if not proper_nouns and scene_narration:
+        proper_nouns = re.findall(r"\b[A-ZÀ-Ỹ][a-zà-ỹ0-9_]*(?:\s+[A-ZÀ-Ỹ][a-zà-ỹ0-9_]*)+\b", scene_narration)
+    main_name = proper_nouns[0] if proper_nouns else (clauses[0] if clauses else brief_info["label"])
+    main_name = " ".join(main_name.split()[:4])
+
+    if recipe in {"courtroom_balance", "balance_scale", "versus_split", "before_after_split", "before_after_wipe"}:
+        if len(clauses) >= 2:
+            data["left_label"] = " ".join(clauses[0].split()[:3])
+            data["right_label"] = " ".join(clauses[1].split()[:3])
+        else:
+            words = text.split()
+            if len(words) >= 4:
+                data["left_label"] = " ".join(words[:2])
+                data["right_label"] = " ".join(words[-2:])
+            else:
+                data["left_label"] = brief_info["label"]
+                data["right_label"] = ""
+        data["title"] = " ".join(brief_info["label"].split()[:3])
+
+    elif recipe == "profile_dossier":
+        data["name"] = main_name
+        if len(clauses) >= 2:
+            data["role"] = " ".join(clauses[1].split()[:3])
+        if len(clauses) >= 3:
+            data["status"] = " ".join(clauses[2].split()[:3])
+        data["details"] = [" ".join(c.split()[:4]) for c in clauses[:3]]
+
+    elif recipe == "map_location_pin":
+        match_loc = re.search(r"\b(?:tại|ở|khu vực|thành phố|tỉnh|bang|nước)\s+([A-ZÀ-Ỹa-zà-ỹ0-9_\s]{2,20})", text, re.I)
+        loc = proper_nouns[0] if proper_nouns else (match_loc.group(1).strip() if match_loc else " ".join(text.split()[:3]))
+        data["location"] = " ".join(loc.split()[:4])
+
+    elif recipe == "timeline_milestones":
+        data["milestones"] = [{"label": " ".join(c.split()[:3])} for c in clauses[:4]]
+
+    elif recipe == "document_page_flip":
+        data["title"] = " ".join(brief_info["label"].split()[:4])
+        data["lines"] = [" ".join(c.split()[:4]) for c in clauses[:3]]
+
+    elif recipe == "camera_surveillance_scan":
+        data["target"] = main_name
+        if len(clauses) >= 2:
+            data["status"] = " ".join(clauses[1].split()[:3])
+
+    elif recipe == "evidence_board":
+        data["items"] = [" ".join(c.split()[:4]) for c in clauses[:3]]
+
+    elif recipe == "network_graph":
+        data["center_node"] = " ".join(main_name.split()[:2])
+        data["nodes"] = [" ".join(c.split()[:2]) for c in clauses[1:4]]
+
+    elif recipe == "countdown_timer":
+        data["value"] = brief_info.get("value") or 10
+        data["label"] = " ".join(brief_info["label"].split()[:3])
+
+    elif recipe == "code_terminal_window":
+        clean_kw = re.sub(r"[^a-zA-Z0-9_]", "", _normalize_text(brief_info["label"]))[:12]
+        data["command"] = f"run --{clean_kw or 'check'}"
+        data["lines"] = [" ".join(c.split()[:4]) for c in clauses[:3]]
+
+    elif recipe == "quote_dialog_card":
+        data["quote"] = text.strip()
+        data["author"] = main_name
+
+    elif recipe == "checklist":
+        data["items"] = [" ".join(c.split()[:4]) for c in clauses[:4]]
+
+    elif recipe == "lock_unlock":
+        if len(clauses) >= 2:
+            data["status"] = " ".join(clauses[1].split()[:3]).upper()
+
+    return data
+
+
+def validate_recipe_fit(recipe: str, shot_data: dict, text: str, scene_narration: str) -> bool:
+    """Validate that labels on the recipe contain keywords present in narration or brief."""
+    norm_script = _normalize_text(text + " " + scene_narration)
+
+    # Check every string in shot_data: it must contain words grounded in text/narration or be numeric/structural
+    for k, v in shot_data.items():
+        if k in {"value", "unit", "number_text", "action", "at_sec", "beats", "theme", "layout", "command"}:
+            continue
+        if isinstance(v, str):
+            norm_val = _normalize_text(v)
+            if norm_val in {"minh hoa y tuong", "y chinh can nho", "chi tiet", "noi dung", "none", ""}:
+                return False
+            # Check if at least one meaningful word in norm_val appears in norm_script
+            val_words = [w for w in norm_val.split() if len(w) >= 2]
+            if val_words and not any(w in norm_script for w in val_words):
+                return False
+        elif isinstance(v, list):
+            for item in v:
+                if isinstance(item, str):
+                    norm_item = _normalize_text(item)
+                    if norm_item in {"minh hoa y tuong", "y chinh can nho", "chi tiet", "noi dung", "none", ""}:
+                        return False
+                    item_words = [w for w in norm_item.split() if len(w) >= 2]
+                    if item_words and not any(w in norm_script for w in item_words):
+                        return False
+                elif isinstance(item, dict):
+                    lbl_sub = item.get("label") or item.get("text")
+                    if lbl_sub and isinstance(lbl_sub, str):
+                        norm_sub = _normalize_text(lbl_sub)
+                        sub_words = [w for w in norm_sub.split() if len(w) >= 2]
+                        if sub_words and not any(w in norm_script for w in sub_words):
+                            return False
+
+    # Recipes cannot have empty content
+    lbl = shot_data.get("label") or shot_data.get("text") or shot_data.get("title") or shot_data.get("name")
+    if not lbl or not str(lbl).strip():
+        return False
+    return True
+
+
+def enough_for_shot(recipe: str, brief_info: dict, text: str = "", shot_data: dict | None = None) -> bool:
     """Verify strictly if the shot has sufficient factual data for the recipe."""
     if recipe in NUMERIC_RECIPES:
         return bool(brief_info.get("has_number") and brief_info.get("value") is not None)
 
-    # Empty / generic card prohibition: layered_onion or stack_pile requires explicit semantic label
-    if recipe in {"layered_onion", "stack_pile", "orbit_system"}:
-        lbl = brief_info.get("label", "").strip()
-        norm_lbl = _normalize_text(lbl)
-        return bool(lbl and norm_lbl not in {"chi tiet", "minh hoa", "y chinh", "none", ""})
+    if shot_data is None:
+        shot_data = {}
+
+    clauses = split_clauses_for_shot(text or brief_info.get("text", ""))
+
+    if recipe in {"courtroom_balance", "balance_scale", "versus_split", "before_after_split", "before_after_wipe"}:
+        left = shot_data.get("left_label")
+        right = shot_data.get("right_label")
+        if not left or not right or left == right:
+            if len(clauses) < 2 and len((text or "").split()) < 4:
+                return False
+
+    if recipe in {"checklist", "evidence_board"}:
+        items = shot_data.get("items") or []
+        if len(items) < 2 and len(clauses) < 2:
+            return False
+
+    if recipe in {"timeline_milestones"}:
+        mstones = shot_data.get("milestones") or []
+        if len(mstones) < 2 and len(clauses) < 2:
+            return False
+
+    if recipe in {"network_graph"}:
+        nodes = shot_data.get("nodes") or []
+        if len(nodes) < 2 and len(clauses) < 3:
+            return False
+
+    # Empty / generic card prohibition
+    lbl = (shot_data.get("label") or brief_info.get("label", "") or brief_info.get("text", "")).strip()
+    norm_lbl = _normalize_text(lbl)
+    if not lbl or norm_lbl in {"chi tiet", "minh hoa", "y chinh", "none", "", "y chinh can nho", "minh hoa y tuong"}:
+        return False
 
     return True
 
 
+TRANSITION_TYPES = [
+    "morph_anchor",
+    "directional_wipe",
+    "zoom_through",
+    "particle_dissolve",
+    "mask_reveal",
+]
+
+
 def schedule_shots_no_repeat(
     shots_data: list[dict],
-    min_distinct: int = 8,
-    min_dist: int = 2,
+    min_distinct: int = 10,
+    min_dist: int = 4,
     max_freq: int = 2
 ) -> tuple[list[dict], list[str]]:
     """
-    Schedule recipes across all shots of the video to ensure high visual diversity:
-    - Every shot (3-5s) has motion_brief matching its spoken sentence.
-    - Select recipe matching semantic intent: number -> counter/gauge/odometer; compare -> scale/vs; process -> pipeline/domino; risk -> shield/lock.
-    - No same recipe within min_dist (default 2) consecutive shots (recipe_i != recipe_i-1).
-    - Each recipe used at most max_freq (default 2) times across the entire video.
-    - Video contains at least min_distinct (default 8) distinct recipes.
-    - Final recap scene uses dynamic animated checklist / orbit_system (no static cards, >=3 events per 4s).
+    Schedule recipes across all shots of the video adhering to:
+    - min_dist = 4 (no repeat of same recipe in 4 consecutive shots)
+    - max_freq = 2 (each recipe used at most 2 times across video)
+    - min_distinct = 10 (at least 10 distinct recipes for a 60s video)
+    - recipe_fit metadata explaining the match
+    - 5 transition styles between shots without consecutive repetition
+    - Persistent anchor across shots
+    - Factual data extracted strictly from spoken words
     """
-    from collections import Counter
     scheduled = []
     review_notes = []
     used_counts = Counter()
     total_shots = len(shots_data)
 
+    target_distinct = min(min_distinct, total_shots)
+
     INTENT_RECIPE_PRIORITY = {
-        "number": ["slot_counter", "odometer", "strike_replace", "gauge_needle", "battery_fill", "glass_fill", "bar_race", "thermometer"],
-        "compare": ["balance_scale", "vs_flip_cards", "tug_of_war", "before_after_wipe"],
-        "risk": ["shield_hit", "lock_unlock", "traffic_light", "dice_roll"],
-        "process": ["pipeline_pipes", "domino_chain", "conveyor_belt", "funnel_filter"],
-        "mock_ui": ["form_fill_submit", "mock_card_swipe", "chat_thread", "terminal_command_run", "checklist"],
-        "concept": ["orbit_system", "puzzle_snap", "stack_pile", "layered_onion"],
-        "recap": ["checklist", "orbit_system", "lock_unlock", "stack_pile"],
+        "legal": [
+            "courtroom_balance", "profile_dossier", "document_page_flip",
+            "camera_surveillance_scan", "evidence_board", "balance_scale"
+        ],
+        "profile": ["profile_dossier", "document_page_flip", "camera_surveillance_scan", "quote_dialog_card"],
+        "location": ["map_location_pin", "network_graph", "camera_surveillance_scan"],
+        "number": [
+            "slot_counter", "odometer", "strike_replace", "countdown_timer",
+            "gauge_needle", "battery_fill", "glass_fill", "bar_race", "thermometer"
+        ],
+        "compare": ["before_after_split", "balance_scale", "courtroom_balance", "vs_flip_cards", "tug_of_war", "before_after_wipe"],
+        "risk": ["shield_hit", "lock_unlock", "camera_surveillance_scan", "traffic_light", "dice_roll"],
+        "process": ["timeline_milestones", "pipeline_pipes", "domino_chain", "conveyor_belt", "funnel_filter"],
+        "network": ["network_graph", "evidence_board", "orbit_system", "puzzle_snap"],
+        "mock_ui": ["code_terminal_window", "form_fill_submit", "mock_card_swipe", "chat_thread", "terminal_command_run", "checklist"],
+        "concept": ["evidence_board", "orbit_system", "puzzle_snap", "stack_pile", "layered_onion"],
+        "recap": ["checklist", "timeline_milestones", "evidence_board", "orbit_system", "lock_unlock"],
     }
+
+    # Central anchor metaphor determined dynamically from script content
+    all_text = " ".join((sh.get("narration") or sh.get("text") or "") for sh in shots_data)
+    norm_all = _normalize_text(all_text)
+    if any(k in norm_all for k in ["co phieu", "chung khoan", "gia vang", "thi truong", "doanh thu", "loi nhuan", "tai chinh", "dau tu", "ngan hang"]):
+        central_anchor_name = "Chỉ số & Cột mốc Thị trường"
+        anchor_elem = "bar_race"
+    elif any(k in norm_all for k in ["cong nghe", "phan mem", "he thong", "du lieu", "ky thuat", "huong dan", "thiet bi", "chip", "ai", "code"]):
+        central_anchor_name = "Hệ thống & Cấu trúc Kỹ thuật"
+        anchor_elem = "network_graph"
+    elif any(k in norm_all for k in ["phap ly", "toa an", "xet xu", "vu an", "luat", "dieu tra", "cao trang"]):
+        central_anchor_name = "Hồ sơ & Cán cân Pháp lý"
+        anchor_elem = "courtroom_balance"
+    else:
+        central_anchor_name = "Mô hình & Chuỗi Diễn tiến"
+        anchor_elem = "timeline_milestones"
 
     for idx, sh in enumerate(shots_data):
         text = sh.get("narration") or sh.get("card_text") or sh.get("text") or ""
@@ -558,13 +805,13 @@ def schedule_shots_no_repeat(
         brief_info = extract_shot_brief_and_data(text, scene_narration, is_recap=is_recap)
         intent = brief_info["intent"]
 
-        # Prioritize recipes matching intent
+        # Build candidate pool prioritizing intent
         candidate_pool = list(INTENT_RECIPE_PRIORITY.get(intent, []))
-        # Append other available recipes as backup
         for r in AVAILABLE_SHOT_RECIPES:
             if r not in candidate_pool:
                 candidate_pool.append(r)
 
+        # Distance window: check previous min_dist shots
         recent_recipes = [s["recipe"] for s in scheduled[max(0, idx - min_dist):idx]]
 
         chosen_recipe = None
@@ -575,51 +822,53 @@ def schedule_shots_no_repeat(
                 continue
             if not enough_for_shot(cand, brief_info):
                 continue
+            # Tentative factual data check
+            tentative_data = build_shot_factual_data(cand, brief_info, text, scene_narration)
+            if not validate_recipe_fit(cand, tentative_data, text, scene_narration):
+                continue
             chosen_recipe = cand
             break
 
         if not chosen_recipe:
-            # Relax frequency or distance if strictly needed, but never violate enough_for_shot
+            # Relax distance from min_dist down to 1 if strictly necessary
             for cand in candidate_pool:
                 if (not recent_recipes or cand != recent_recipes[-1]) and enough_for_shot(cand, brief_info):
-                    chosen_recipe = cand
-                    break
+                    tentative_data = build_shot_factual_data(cand, brief_info, text, scene_narration)
+                    if validate_recipe_fit(cand, tentative_data, text, scene_narration):
+                        chosen_recipe = cand
+                        break
 
-        chosen_recipe = chosen_recipe or "shield_hit"
+        chosen_recipe = chosen_recipe or "courtroom_balance"
         used_counts[chosen_recipe] += 1
 
         dur = float(sh.get("duration") or sh.get("duration_sec") or 3.0)
 
-        # Generate animated beats (>= 3 events per 4s)
-        if chosen_recipe == "checklist":
-            items = ["Ashley Paul Griffith", "202 tội danh lạm dụng", "Hoãn phiên xét xử"]
-            step_t = round(dur / (len(items) + 1), 2)
-            shot_beats = [{"at_sec": 0.3, "action": "enter_checklist"}]
-            for it_idx in range(len(items)):
-                shot_beats.append({"at_sec": round(0.5 + (it_idx + 1) * step_t, 2), "action": f"tick_item_{it_idx+1}"})
-            shot_beats.append({"at_sec": round(max(0.6, dur - 0.3), 2), "action": "impact_checklist_glow"})
-        else:
-            shot_beats = [
-                {"at_sec": round(min(0.3, dur * 0.15), 2), "action": f"enter_{chosen_recipe}"},
-                {"at_sec": round(min(1.5, dur * 0.50), 2), "action": f"action_{chosen_recipe}_step"},
-                {"at_sec": round(min(dur - 0.3, dur * 0.85), 2), "action": f"impact_{chosen_recipe}_glow"}
-            ]
+        # Generate animated beats (>= 3 visible beats per shot)
+        shot_beats = [
+            {"at_sec": round(min(0.3, dur * 0.15), 2), "action": f"enter_{chosen_recipe}"},
+            {"at_sec": round(min(1.5, dur * 0.50), 2), "action": f"action_{chosen_recipe}_step"},
+            {"at_sec": round(min(dur - 0.3, dur * 0.85), 2), "action": f"impact_{chosen_recipe}_glow"}
+        ]
 
-        # Prepare factual data payload for the shot
-        shot_data = dict(sh.get("data") or {})
-        shot_data["label"] = brief_info["label"]
-        shot_data["text"] = brief_info["label"]
-        if brief_info["has_number"]:
-            shot_data["value"] = brief_info["value"]
-            shot_data["unit"] = brief_info["unit"]
-            shot_data["number_text"] = brief_info["number_text"]
-        if chosen_recipe == "checklist":
-            shot_data["items"] = ["Ashley Paul Griffith", "202 tội danh lạm dụng", "Hoãn phiên xét xử"]
-        elif chosen_recipe == "balance_scale":
-            shot_data["left_label"] = "Dấu hiệu bỏ qua"
-            shot_data["right_label"] = "202 tội danh"
-        elif chosen_recipe == "lock_unlock":
-            shot_data["status"] = "ĐANG TẠM GIAM"
+        # Extract factual data strictly grounded in narration
+        shot_data = build_shot_factual_data(chosen_recipe, brief_info, text, scene_narration)
+
+        # Select transition between shots (5 styles, no consecutive repetition)
+        prev_transition = scheduled[-1].get("transition") if scheduled else None
+        trans_candidates = [t for t in TRANSITION_TYPES if t != prev_transition]
+        if intent in {"legal", "compare"}:
+            chosen_trans = "morph_anchor" if "morph_anchor" in trans_candidates else trans_candidates[0]
+        elif intent in {"risk", "process"}:
+            chosen_trans = "directional_wipe" if "directional_wipe" in trans_candidates else trans_candidates[0]
+        elif intent in {"location", "network"}:
+            chosen_trans = "zoom_through" if "zoom_through" in trans_candidates else trans_candidates[0]
+        elif intent in {"mock_ui", "profile"}:
+            chosen_trans = "mask_reveal" if "mask_reveal" in trans_candidates else trans_candidates[0]
+        else:
+            chosen_trans = trans_candidates[0]
+
+        # Persistent anchor state for this shot
+        anchor_state = f"giai_doan_{idx+1}"
 
         new_sh = dict(sh)
         new_sh["recipe"] = chosen_recipe
@@ -627,31 +876,52 @@ def schedule_shots_no_repeat(
         new_sh["beats"] = shot_beats
         new_sh["data"] = shot_data
         new_sh["brief_info"] = brief_info
+        new_sh["transition"] = chosen_trans
+        new_sh["anchor"] = {
+            "metaphor_name": central_anchor_name,
+            "anchor_element": anchor_elem,
+            "state": anchor_state,
+        }
+        new_sh["recipe_fit"] = {
+            "recipe": chosen_recipe,
+            "intent": intent,
+            "reason": f"Khớp ý nghĩa câu: '{text[:35]}...' (ý chính: {brief_info['label']})",
+        }
         scheduled.append(new_sh)
 
-    # Pass 2: Ensure >= min_distinct recipes across video
+    # Pass 2: Ensure >= target_distinct recipes across video
     distinct_types = {s["recipe"] for s in scheduled}
-    if len(distinct_types) < min_distinct:
+    if len(distinct_types) < target_distinct:
         pool = [r for r in AVAILABLE_SHOT_RECIPES if r not in distinct_types]
         for idx in range(len(scheduled) - 1, -1, -1):
-            if len(distinct_types) >= min_distinct or not pool:
+            if len(distinct_types) >= target_distinct or not pool:
                 break
             if scheduled[idx].get("is_recap") or idx == len(scheduled) - 1:
                 continue
             cur_r = scheduled[idx]["recipe"]
             if used_counts[cur_r] <= 1:
                 continue
-            recent_idx = {scheduled[k]["recipe"] for k in range(max(0, idx - 1), min(len(scheduled), idx + 2)) if k != idx}
+            recent_idx = {scheduled[k]["recipe"] for k in range(max(0, idx - 2), min(len(scheduled), idx + 3)) if k != idx}
             b_info = scheduled[idx].get("brief_info", {})
+            sh_txt = scheduled[idx].get("narration") or scheduled[idx].get("text") or ""
+            sc_narration = scheduled[idx].get("scene_narration") or sh_txt
             for candidate in list(pool):
                 if candidate not in recent_idx and enough_for_shot(candidate, b_info):
-                    scheduled[idx]["recipe"] = candidate
-                    scheduled[idx]["scene_type"] = candidate
-                    used_counts[cur_r] -= 1
-                    used_counts[candidate] += 1
-                    distinct_types.add(candidate)
-                    pool.remove(candidate)
-                    review_notes.append(f"Shot {idx+1}: Tối ưu đa dạng toàn video, đổi sang recipe '{candidate}'.")
-                    break
+                    c_data = build_shot_factual_data(candidate, b_info, sh_txt, sc_narration)
+                    if validate_recipe_fit(candidate, c_data, sh_txt, sc_narration):
+                        scheduled[idx]["recipe"] = candidate
+                        scheduled[idx]["scene_type"] = candidate
+                        scheduled[idx]["data"] = c_data
+                        scheduled[idx]["recipe_fit"] = {
+                            "recipe": candidate,
+                            "intent": b_info.get("intent", "general"),
+                            "reason": f"Tối ưu đa dạng toàn video: khớp câu '{sh_txt[:35]}...'",
+                        }
+                        used_counts[cur_r] -= 1
+                        used_counts[candidate] += 1
+                        distinct_types.add(candidate)
+                        pool.remove(candidate)
+                        review_notes.append(f"Shot {idx+1}: Tối ưu đa dạng toàn video (>=10 loại), đổi sang recipe '{candidate}'.")
+                        break
 
     return scheduled, review_notes

@@ -1,0 +1,82 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\666292f3213c758f7a26401c2ffc35a8e000d8266decf89a5dc23e72e5c2abc4.mp4",
+  "cache_hit": false,
+  "scene_id": 1,
+  "width": 270,
+  "height": 480,
+  "fps": 5,
+  "duration_sec": 1.6206666666666667,
+  "render_seconds": 6.025,
+  "size_bytes": 31842,
+  "sha256": "a5f47a9f9fe4af730122052dfdead7be5acf29079ffd22473eb41ea7b1fd7fa6",
+  "timing_source": "estimated_characters",
+  "illustration": {
+    "scene_type": "balance_scale",
+    "coverage_sec": 1.6206666666666667,
+    "moving_elements_min": 17,
+    "subtitle_only_intervals": []
+  },
+  "layout_audit": {
+    "hero_width": 964,
+    "hero_width_pass": true,
+    "hero_area_ratio": 1.026,
+    "hero_area_pass": true,
+    "min_font_size": 36,
+    "min_font_size_pass": true,
+    "clipped_rows": 2,
+    "clipped_rows_pass": false,
+    "bbox_overlaps": 0,
+    "bbox_overlaps_pass": true,
+    "t0_visible_count": 1,
+    "t0_visible_pass": true,
+    "max_still_interval_sec": 0.4,
+    "max_still_interval_pass": true,
+    "empty_space_ratio": 0,
+    "empty_space_pass": true,
+    "duplicate_labels": 0,
+    "duplicate_labels_pass": true,
+    "empty_prompts": 0,
+    "empty_prompts_pass": true,
+    "caption_collisions": 0,
+    "caption_collisions_pass": true,
+    "center_y": 643,
+    "center_y_drift": 143,
+    "center_y_drift_pass": false
+  },
+  "audit_failed": true,
+  "audit_retries": 2,
+  "quality": [
+    {
+      "issues": [],
+      "occupied": null,
+      "deferred_until_cue": false,
+      "graphic": {
+        "x": 0,
+        "y": 0,
+        "width": 270,
+        "height": 480
+      },
+      "caption": {
+        "x": 17.5,
+        "y": 345,
+        "width": 235,
+        "height": 80
+      },
+      "illustration": {
+        "scene_type": "evidence_board",
+        "moving_elements": 17,
+        "area_ratio": 0.56
+      },
+      "scope": "SVG design region and label bounds; not card ink-area occupancy",
+      "shot_id": 1,
+      "template": "evidence_board",
+      "rule_id": "motion_layout",
+      "group": 3
+    }
+  ],
+  "repair_notes": [
+    "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+    "motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."
+  ],
+  "review_frame": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\666292f3213c758f7a26401c2ffc35a8e000d8266decf89a5dc23e72e5c2abc4.review.png"
+}

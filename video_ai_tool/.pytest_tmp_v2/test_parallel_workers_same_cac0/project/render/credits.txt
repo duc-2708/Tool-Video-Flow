@@ -1,0 +1,6 @@
+Nguồn fixture; không có stock bên ngoài.
+
+--- Render ---
+Font: DTPhudu-Bold.otf
+Nhạc nền: Không sử dụng
+Lucide icons: ISC/MIT notices in assets/icons/LICENSE. anime.js 3.2.2: MIT, assets/vendor/anime/LICENSE. Original geometric scenes/mascot: CC0, assets/illustrations/LICENSE and assets/mascot/LICENSE.
