@@ -219,7 +219,7 @@ def parse_display_number(raw_text: str) -> Optional[ParsedDisplayNumber]:
             normalized_num = num_str.replace(",", "")
     elif "." in num_str:
         parts = num_str.split(".")
-        if len(parts) == 2 and len(parts[1]) in (1, 2, 3):
+        if len(parts) == 2 and len(parts[1]) in (1, 2):
             normalized_num = num_str
         else:
             normalized_num = num_str.replace(".", "")

@@ -52,3 +52,9 @@ class AssetsManifest(StrictModel):
     status: Literal["complete", "partial"]
     scenes: list[SceneAssets]
     warnings: list[str]
+    # Dependency-separated hashes
+    audio_hash: str | None = None
+    clip_hash: str | None = None
+    visual_hash: str | None = None
+    scene_audio_hashes: dict[str, str] = Field(default_factory=dict)
+    scene_clip_hashes: dict[str, str] = Field(default_factory=dict)

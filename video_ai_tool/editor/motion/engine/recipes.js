@@ -557,7 +557,7 @@ function renderChecklist(ctx, svg, d, t, duration, variantIdx = 0) {
   const sanitize = window.MotionLayout?.sanitizeSemanticLabel || (s => s);
   const cleanItem = itm => {
     if (!itm) return '';
-    const firstSentence = String(itm).split(/[.!?\n]/)[0].trim();
+    const firstSentence = String(itm).split(/(?<!\d)[.!?\n]|[.!?\n](?!\d)/)[0].trim();
     return sanitize(firstSentence.split(/\s+/).filter(Boolean).slice(0, 6).join(' '));
   };
   const rawItems = (d.items && d.items.length >= 1) ? d.items.map(cleanItem).filter(Boolean) : [
@@ -1128,7 +1128,7 @@ function renderLineChartDraw(ctx, svg, d, t, duration, variantIdx = 0) {
 function renderTerminalTyping(ctx, svg, d, t, duration, variantIdx = 0) {
   const cleanItem = itm => {
     if (!itm) return '';
-    const firstSentence = String(itm).split(/[.!?\n]/)[0].trim();
+    const firstSentence = String(itm).split(/(?<!\d)[.!?\n]|[.!?\n](?!\d)/)[0].trim();
     return firstSentence.split(/\s+/).filter(Boolean).slice(0, 6).join(' ');
   };
   const rawItems = (d.items && d.items.length >= 1) ? d.items.map(cleanItem).filter(Boolean) : [
@@ -1648,7 +1648,7 @@ function renderAnnotation(svg, annot, targetBounds, t) {
 function renderStackCards(ctx, svg, d, t, duration, variantIdx = 0) {
   const cleanItem = itm => {
     if (!itm) return '';
-    const firstSentence = String(itm).split(/[.!?\n]/)[0].trim();
+    const firstSentence = String(itm).split(/(?<!\d)[.!?\n]|[.!?\n](?!\d)/)[0].trim();
     return firstSentence.split(/\s+/).filter(Boolean).slice(0, 6).join(' ');
   };
   const rawItems = (d.items && d.items.length >= 1) ? d.items.map(cleanItem).filter(Boolean) : [

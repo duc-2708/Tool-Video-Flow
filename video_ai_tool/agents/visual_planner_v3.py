@@ -61,8 +61,9 @@ def render_visual_prompt(
     plan: EditPlan,
     brief: ResearchBrief | None = None,
     registry: ElementRegistry = REGISTRY,
+    scene_plan: Any | None = None,
 ) -> str:
-    """Fill dynamic registry catalog and formatted script scenes into Prompt B."""
+    """Fill dynamic registry catalog, Scene Director briefs, and formatted script scenes into Prompt B."""
     total_sec = sum(getattr(s, "duration_sec", 0.0) or 8.0 for s in plan.scenes)
     if total_sec <= 0:
         total_sec = plan.duration_sec or 45.0
@@ -75,6 +76,20 @@ def render_visual_prompt(
         role_str = getattr(sc, "role", "explain")
         script_lines.append(f"CẢNH {sc.id} ({role_str}){facts_str}:")
         script_lines.append(f"Lời đọc: {sc.narration}")
+        if scene_plan:
+            sp_item = next((it for it in getattr(scene_plan, "scenes", []) if it.scene_id == sc.id), None)
+            if sp_item:
+                mb = getattr(sp_item, "motion_brief", None)
+                if mb:
+                    script_lines.append("  [Scene Director Motion Brief]:")
+                    script_lines.append(f"    - Chế độ (mode): {sp_item.mode}")
+                    if getattr(mb, "visual_idea", ""):
+                        script_lines.append(f"    - Ý tưởng hình: {mb.visual_idea}")
+                    if getattr(mb, "recipe_candidates", []):
+                        script_lines.append(f"    - Recipe đề xuất (BẮT BUỘC xem xét): {', '.join(mb.recipe_candidates)}")
+                    if getattr(mb, "key_beats", []):
+                        beats_str = "; ".join(f"'{b.at_phrase}' -> {b.event}" for b in mb.key_beats)
+                        script_lines.append(f"    - Key beats: {beats_str}")
         script_lines.append("")
 
     script_text = "\n".join(script_lines)
@@ -461,6 +476,7 @@ def create_visual_plan_v3(
     diagnostics: Diagnostics | None = None,
     progress: Callable[[str], None] | None = None,
     state_path: Path | None = None,
+    **kwargs: Any,
 ) -> EditPlan:
     """
     Execute Visual Planner Prompt B: generate rich motion visual plans,
@@ -476,7 +492,18 @@ def create_visual_plan_v3(
 
     prompt_path = find_prompt_path("visual_planner.md", cfg)
     template_text = prompt_path.read_text(encoding="utf-8")
-    rendered_prompt = render_visual_prompt(template_text, plan, brief, REGISTRY)
+    # Load scene_plan.json if available
+    scene_plan = kwargs.get("scene_plan")
+    if not scene_plan and state_path:
+        sp_candidate = Path(state_path).parent / "scene_plan.json"
+        if sp_candidate.is_file():
+            try:
+                from schemas.scene_director import ScenePlanResponse
+                scene_plan = ScenePlanResponse.model_validate_json(sp_candidate.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+
+    rendered_prompt = render_visual_prompt(template_text, plan, brief, REGISTRY, scene_plan=scene_plan)
 
     if progress:
         progress("Đang gọi LLM Visual Planner qua router...")
@@ -484,6 +511,8 @@ def create_visual_plan_v3(
     raw_response: str = ""
     parsed_json: dict[str, Any] = {}
     max_retries = 2
+    llm_ok: bool = True
+    planner_reason: str | None = None
 
     for attempt in range(max_retries + 1):
         try:
@@ -512,22 +541,75 @@ def create_visual_plan_v3(
         except Exception as exc:
             _log_director_error(f"Lần gọi {attempt+1} thất bại: {exc}", exc, diagnostics)
             if attempt == max_retries:
-                # Fallback to default visual plan for each scene
+                llm_ok = False
+                planner_reason = str(exc)
                 if progress:
-                    progress("LLM visual planner không trả về JSON hợp lệ; áp dụng kế hoạch hoạt họa mặc định.")
+                    progress("Planner AI lỗi: đang dùng recipe suy luận theo từ khóa từng cảnh...")
+                from editor.motion.scheduler import suggest_metaphor_recipe, AVAILABLE_SHOT_RECIPES
+                fallback_scenes = []
+                prev_recipe = None
+                used_recipes = set()
+                total_sc = len(plan.scenes)
+                for sc_idx, sc in enumerate(plan.scenes):
+                    is_last = (sc_idx == total_sc - 1)
+                    if is_last:
+                        recap_options = ["checklist", "layered_onion", "orbit_system"]
+                        chosen_rec = next((r for r in recap_options if r not in used_recipes), recap_options[0])
+                    else:
+                        chosen_rec = suggest_metaphor_recipe(sc.narration, previous_recipe=prev_recipe)
+                        if chosen_rec in used_recipes and len(used_recipes) < len(AVAILABLE_SHOT_RECIPES):
+                            alt = next((r for r in AVAILABLE_SHOT_RECIPES if r not in used_recipes and r != prev_recipe), None)
+                            if alt:
+                                chosen_rec = alt
+                    used_recipes.add(chosen_rec)
+                    prev_recipe = chosen_rec
+
+                    # Extract short clean title <= 4 words
+                    words = [w for w in sc.narration.split() if w.isalnum()]
+                    title_text = " ".join(words[:4]) if words else f"Cảnh {sc.id}"
+                    
+                    # Generate simple elements based on recipe type
+                    elem_content: dict[str, Any] = {"text": title_text, "label": title_text}
+                    if chosen_rec == "checklist":
+                        sentences = [s.strip() for s in re.split(r"[.!?]", sc.narration) if len(s.strip()) > 5]
+                        elem_content["items"] = [s[:30] for s in sentences[:3]] if len(sentences) >= 2 else [title_text, "Bước thực hiện", "Kết quả"]
+                    elif chosen_rec == "balance_scale":
+                        elem_content["left_label"] = "Mặt tích cực"
+                        elem_content["right_label"] = "Thách thức"
+                        elem_content["winner"] = "left"
+                        elem_content["value"] = 50
+                    elif chosen_rec == "slot_counter":
+                        elem_content["value"] = 100
+                        elem_content["unit"] = "%"
+                    elif chosen_rec == "layered_onion":
+                        elem_content["layers"] = ["Tầng nền tảng", "Tầng giải pháp", "Tầng cốt lõi"]
+                        elem_content["core_text"] = title_text
+                    elif chosen_rec == "lock_unlock":
+                        elem_content["status"] = "unlock"
+                        elem_content["key_text"] = title_text
+
+                    fallback_scenes.append({
+                        "scene_id": sc.id,
+                        "purpose": getattr(sc, "role", "explain"),
+                        "visual_idea": f"Diễn hoạt {chosen_rec} suy luận theo từ khóa cảnh {sc.id}",
+                        "recipe": chosen_rec,
+                        "metaphor_reason": f"Suy luận trực quan theo từ khóa lời đọc cảnh {sc.id}",
+                        "section_title": title_text,
+                        "layout": "center_hero" if sc_idx == 0 else "stack_3" if chosen_rec in {"layered_onion", "checklist"} else "split_2",
+                        "elements": [{
+                            "id": f"e{sc.id}_1",
+                            "type": chosen_rec,
+                            "zone": "middle",
+                            "content": elem_content,
+                            "evidence": title_text,
+                            "no_numbers": False
+                        }]
+                    })
+
                 parsed_json = {
                     "theme": "neon_dark",
-                    "central_metaphor": {"name": "Hệ thống chịu tải", "anchor_element": "cỗ máy"},
-                    "scenes": [
-                        {
-                            "scene_id": sc.id,
-                            "purpose": getattr(sc, "role", "explain"),
-                            "section_title": sc.narration[:20],
-                            "layout": "center_hero",
-                            "elements": [{"id": f"e{sc.id}_1", "type": "stat_number", "zone": "center"}],
-                        }
-                        for sc in plan.scenes
-                    ],
+                    "central_metaphor": {"name": "Hệ thống vận hành", "anchor_element": "ổ khóa", "states_by_scene": {str(s.id): f"Trạng thái cảnh {s.id}" for s in plan.scenes}},
+                    "scenes": fallback_scenes
                 }
 
     # Pre-validation normalization
@@ -663,13 +745,56 @@ def create_visual_plan_v3(
                     ]
                 scene.visual_plan = motion_plan
             except Exception as exc:
-                _log_director_error(f"Cảnh {scene.id}: lỗi map MotionScenePlan ({exc}); fallback text_focus", exc, diagnostics)
+                _log_director_error(f"Cảnh {scene.id}: lỗi map MotionScenePlan ({exc}); chọn recipe thay thế", exc, diagnostics)
+                from editor.motion.scheduler import suggest_metaphor_recipe
+                alt_recipe = suggest_metaphor_recipe(scene.narration, previous_recipe=None)
+                fallback_note = f"[visual_fallback, nhóm 2] Cảnh {scene.id}: lỗi map visual_plan ({type(exc).__name__}); dùng recipe thay thế '{alt_recipe}' theo từ khóa."
                 scene.visual_plan = MotionScenePlan(
-                    scene_type="text_focus",
-                    repair_notes=[f"[visual_error, nhóm 2] Lỗi tạo visual_plan cảnh {scene.id}; dùng text_focus."],
+                    scene_type=alt_recipe,
+                    repair_notes=[fallback_note],
                 )
+                if fallback_note not in plan.review_notes:
+                    plan.review_notes.append(fallback_note)
         else:
-            scene.visual_plan = MotionScenePlan(scene_type="text_focus")
+            from editor.motion.scheduler import suggest_metaphor_recipe
+            alt_recipe = suggest_metaphor_recipe(scene.narration, previous_recipe=None)
+            fallback_note = f"[visual_fallback, nhóm 2] Cảnh {scene.id}: thiếu kế hoạch hình ảnh; tự động suy luận recipe '{alt_recipe}' theo từ khóa."
+            scene.visual_plan = MotionScenePlan(
+                scene_type=alt_recipe,
+                repair_notes=[fallback_note],
+            )
+            if fallback_note not in plan.review_notes:
+                plan.review_notes.append(fallback_note)
+
+        # Assign per-shot recipes when scene has >= 3 shots
+        if getattr(cfg, "motion_recipes_enabled", True) and len(scene.shots) >= 3:
+            from editor.motion.scheduler import suggest_metaphor_recipe, AVAILABLE_SHOT_RECIPES
+            from schemas.visual import VisualBeat
+            shot_used: set[str] = set()
+            prev_shot_r = scene.visual_plan.scene_type if scene.visual_plan else None
+            for shot_idx, shot in enumerate(scene.shots):
+                if shot_idx == 0 and scene.visual_plan:
+                    shot_r = scene.visual_plan.scene_type
+                else:
+                    shot_text = shot.text_overlay or shot.query or scene.narration
+                    shot_r = suggest_metaphor_recipe(shot_text, previous_recipe=prev_shot_r)
+                    if shot_r in shot_used:
+                        cand = next((r for r in AVAILABLE_SHOT_RECIPES if r not in shot_used and r != prev_shot_r), None)
+                        if cand: shot_r = cand
+                shot_used.add(shot_r)
+                prev_shot_r = shot_r
+                shot_beats = [
+                    VisualBeat(at_sec=round(min(0.3, shot.duration_sec * 0.15), 2), action=f"enter_{shot_r}"),
+                    VisualBeat(at_sec=round(min(1.5, shot.duration_sec * 0.50), 2), action=f"action_{shot_r}_step"),
+                    VisualBeat(at_sec=round(min(shot.duration_sec - 0.3, shot.duration_sec * 0.85), 2), action=f"impact_{shot_r}_glow"),
+                ]
+                shot.visual_plan = MotionScenePlan(
+                    scene_type=shot_r,
+                    layout=scene.visual_plan.layout if scene.visual_plan else "center_hero",
+                    theme=theme_name,
+                    data=scene.visual_plan.data if scene.visual_plan else VisualData(),
+                    beats=shot_beats,
+                )
 
     # Ensure at least one scene has a valid visual_plan
     if not any(s.visual_plan is not None for s in plan.scenes):
@@ -698,7 +823,7 @@ def create_visual_plan_v3(
             {
                 "scene_id": s.id,
                 "role": getattr(s, "role", "explain"),
-                "visual_idea": getattr(next((vs for vs in repaired_resp.scenes if vs.scene_id == s.id), None), "visual_idea", "") or f"Minh họa ý chính cảnh {s.id}",
+                "visual_idea": getattr(next((vs for vs in repaired_resp.scenes if vs.scene_id == s.id), None), "visual_idea", "") or (" ".join(getattr(s, "narration", "").split()[:4]) if getattr(s, "narration", None) else ""),
                 "recipe": s.visual_plan.scene_type if s.visual_plan else "slot_counter",
                 "layout": s.visual_plan.layout if s.visual_plan else "center_hero",
                 "metaphor_reason": getattr(next((vs for vs in repaired_resp.scenes if vs.scene_id == s.id), None), "metaphor_reason", "") or "Chuyển động trực quan diễn đạt đúng kịch bản",
@@ -713,6 +838,58 @@ def create_visual_plan_v3(
         write_json_atomic(visual_plan_path, visual_plan_record)
     except Exception as exc:
         _log_director_error(f"Không thể lưu visual_plan.json: {exc}", exc, diagnostics)
+
+    # Save planner verification artifacts
+    try:
+        planner_status_path = project_dir / "planner_status.json"
+        planner_status_data = {
+            "llm_ok": llm_ok,
+            "fallback_used": not llm_ok,
+            "reason": planner_reason,
+            "scenes": {
+                str(s.id): {
+                    "recipe": s.visual_plan.scene_type if s.visual_plan else "text_focus",
+                    "method": "llm" if llm_ok else "keyword_inference"
+                }
+                for s in plan.scenes
+            }
+        }
+        write_json_atomic(planner_status_path, planner_status_data)
+
+        prompt_path = project_dir / "planner_prompt.txt"
+        prompt_path.write_text(str(rendered_prompt or ""), encoding="utf-8")
+
+        resp_path = project_dir / "planner_response.json"
+        write_json_atomic(resp_path, parsed_json if parsed_json else {"raw_response": raw_response})
+
+        decisions_path = project_dir / "planner_decisions.json"
+        decisions_data = {
+            "theme": theme_name,
+            "central_metaphor": metaphor_name,
+            "anchor_element": anchor_elem,
+            "llm_ok": llm_ok,
+            "scenes": [
+                {
+                    "scene_id": s.id,
+                    "role": getattr(s, "role", "explain"),
+                    "recipe": s.visual_plan.scene_type if s.visual_plan else "text_focus",
+                    "layout": s.visual_plan.layout if s.visual_plan else "center_hero",
+                    "method": "llm" if llm_ok else "keyword_inference",
+                    "shots": [
+                        {
+                            "shot_id": idx + 1,
+                            "recipe": getattr(sh.visual_plan, "scene_type", s.visual_plan.scene_type if s.visual_plan else "text_focus"),
+                            "duration_sec": sh.duration_sec
+                        }
+                        for idx, sh in enumerate(s.shots)
+                    ]
+                }
+                for s in plan.scenes
+            ]
+        }
+        write_json_atomic(decisions_path, decisions_data)
+    except Exception as exc:
+        _log_director_error(f"Không thể lưu planner artifacts: {exc}", exc, diagnostics)
 
     if progress:
         progress("Hoàn thành lập kế hoạch hình ảnh hoạt họa Visual Planner v3.")

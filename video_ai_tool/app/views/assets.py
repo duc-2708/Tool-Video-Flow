@@ -4,7 +4,11 @@ from pathlib import Path
 import streamlit as st
 from app.ui_errors import error_details
 from config.settings import Settings
-from pipeline.assets import load_assets, refresh_shot, refresh_audio,run_assets, safe_asset_path
+from pipeline.assets import load_assets, refresh_shot, refresh_audio, run_assets, safe_asset_path, sync_visual_plan_assets
+from pipeline.asset_hashes import detect_plan_changes
+from schemas.edit_plan import EditPlan
+from schemas.assets import AssetsManifest
+from pipeline.projects import read_json
 from pipeline.stock_assets import allowed_media_url
 from utils.diagnostics import Diagnostics
 
@@ -38,19 +42,52 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
         st.success(notice["message"])
     if not settings.pixabay_api_key.get_secret_value().strip():
         st.info("Chưa có PIXABAY_API_KEY. Có thể tiếp tục tạo giọng và dùng stock tùy chọn/nền màu fallback.")
-    if st.button("Tạo Assets", type="primary"):
-        st.session_state.pop("assets_error", None)
-        progress = st.progress(0.0, text="Chuẩn bị Assets…")
+    # Kiểm tra thay đổi chi tiết giữa kịch bản và Assets manifest hiện tại
+    plan_changes = None
+    if (project / "assets.json").exists():
         try:
-            with st.spinner("Đang tạo audio và tìm b-roll…"):
-                run_assets(plan_path, settings, progress=lambda done, total, message:
-                           progress.progress(done / total, text=diagnostics.redact(message)))
-            st.session_state["assets_notice"] = {"project": project.name, "message": "Đã lưu Assets, resolved plan và credits. Xem cảnh báo/fallback bên dưới."}
-            st.rerun()
-        except Exception as error:
-            report(error, project, diagnostics)
-        finally:
-            progress.empty()
+            curr_orig = EditPlan.model_validate(read_json(plan_path))
+            curr_mani = AssetsManifest.model_validate(read_json(project / "assets.json"))
+            plan_changes = detect_plan_changes(curr_mani, curr_orig)
+        except Exception:
+            pass
+
+    if plan_changes:
+        if plan_changes["audio_changed"]:
+            st.warning("⚠️ **Kịch bản/giọng đọc đã đổi:** " + "; ".join(plan_changes["explanation"]))
+        elif plan_changes["visual_only_changed"]:
+            st.info("💡 **Lời đọc và clip AI không đổi**, chỉ cập nhật công thức hoạt họa (recipe).")
+        if plan_changes.get("clips_changed"):
+            cost = plan_changes["cost_estimate"]
+            st.warning(f"⚠️ **Clip AI thay đổi ({len(plan_changes['clips_changed'])} clip):** Tạo lại sẽ tốn quota (ước tính ~${cost['estimated_cost_usd']:.2f}, thời gian ~{cost['estimated_time_sec']}s).")
+
+    col_btn1, col_btn2 = st.columns([1, 1])
+    with col_btn1:
+        if st.button("Tạo lại Assets (giữ kịch bản)", type="primary"):
+            st.session_state.pop("assets_error", None)
+            progress = st.progress(0.0, text="Chuẩn bị Assets…")
+            try:
+                with st.spinner("Đang tạo audio và tìm b-roll (tự động tái sử dụng các cảnh không đổi lời đọc)…"):
+                    run_assets(plan_path, settings, progress=lambda done, total, message:
+                               progress.progress(done / total, text=diagnostics.redact(message)))
+                st.session_state["assets_notice"] = {"project": project.name, "message": "Đã lưu Assets, resolved plan và credits. Tự động tái sử dụng audio/clip không đổi."}
+                st.rerun()
+            except Exception as error:
+                report(error, project, diagnostics)
+            finally:
+                progress.empty()
+
+    with col_btn2:
+        if plan_changes and not plan_changes["audio_changed"]:
+            if st.button("Giữ audio cũ, chỉ dựng lại hình"):
+                st.session_state.pop("assets_error", None)
+                try:
+                    with st.spinner("Đang đồng bộ cấu hình hình ảnh và giữ nguyên 100% audio…"):
+                        sync_visual_plan_assets(plan_path, settings)
+                    st.session_state["assets_notice"] = {"project": project.name, "message": "Đã đồng bộ công thức hoạt họa mới và giữ nguyên toàn bộ audio cũ thành công!"}
+                    st.rerun()
+                except Exception as error:
+                    report(error, project, diagnostics)
     show_error(project, debug)
     if not (project / "assets.json").exists():
         st.info("Chưa có Assets. Nhấn Tạo Assets để bắt đầu.")

@@ -22,16 +22,15 @@ LEADING_CUTOFF = {
 
 TRAILING = tuple(TRAILING_CUTOFF)
 
-KNOWN_PHRASE_EXPANSIONS = {
-    'minh họa ý': 'Minh họa ý tưởng',
-    'ý tưởng minh họa': 'Ý tưởng minh họa'
-}
+KNOWN_PHRASE_EXPANSIONS = {}
 
 def clean_semantic_label(label: str) -> str:
     """Trim punctuation and eliminate truncated or dangling boundary words."""
     if not label: return ""
     text = " ".join(str(label).split()).strip(" .,:;!?…()“”\"'")
     low = text.lower()
+    if re.search(r"^(?:minh họa|ý tưởng minh họa|minh họa ý tưởng|minh họa nội dung|nội dung chính|ý chính cần nhớ)(?:\s|$)", low, re.I):
+        return ""
     if low in KNOWN_PHRASE_EXPANSIONS:
         return KNOWN_PHRASE_EXPANSIONS[low]
 
@@ -121,7 +120,7 @@ def card_phrase(text,context="",*,used=None):
         match=re.search(r"(?<!\w)"+re.escape(phrase)+r"(?!\w)",context,re.I)
         if match: candidates.append(expand.get(phrase,match[0]))
     # Complete short clauses can be used; do not clip an unfinished clause.
-    candidates.extend(x.strip() for x in re.split(r"[.!?;:–—]",context) if valid_card(x))
+    candidates.extend(x.strip() for x in re.split(r"(?<!\d)\.|\.(?!\d)|[!?;:–—]",context) if valid_card(x))
     candidates=[x for x in candidates if valid_card(x)]
     result=next((x for x in candidates if x.casefold() not in used),next(iter(candidates),"Ý chính cần nhớ"))
     return result[:1].upper()+result[1:]

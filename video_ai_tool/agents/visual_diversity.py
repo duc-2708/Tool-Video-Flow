@@ -23,7 +23,7 @@ def concept_card(context,used=()):
         if m:
             label=m[0] if len(m[0].split())>=3 else ' '.join(('Bảo vệ' if phrase in {'danh tính','phòng thủ'} else ('Phân tích' if phrase in {'điểm yếu','lỗ hổng phần mềm'} else 'Vấn đề'),m[0]))
             candidates.append(label)
-    candidates.extend(c.strip(' ,:') for c in re.split(r'[.!?;:—]',context) if valid_card(c))
+    candidates.extend(c.strip(' ,:') for c in re.split(r'(?<!\d)\.|\.(?!\d)|[!?;:—]',context) if valid_card(c))
     phrase=card_phrase('',context,used=used_set)
     if not GENERIC.fullmatch(phrase): candidates.append(phrase)
 
@@ -34,7 +34,7 @@ def concept_card(context,used=()):
             return cleaned[:1].upper()+cleaned[1:], False
 
     # Extract clean clauses (3-6 words) from context rather than arbitrary sliding windows
-    clauses = re.split(r'[.!?;:—–,\(\)“”\"\[\]]|\b(?:và|hoặc|nhưng|mà|để|như|khi|sau khi|trong khi|thay vì|bởi vì)\b', context, flags=re.I)
+    clauses = re.split(r'(?<!\d)\.|\.(?!\d)|[!?;:—–,\(\)“”\"\[\]]|\b(?:và|hoặc|nhưng|mà|để|như|khi|sau khi|trong khi|thay vì|bởi vì)\b', context, flags=re.I)
     for cl in clauses:
         cl_clean = clean_semantic_label(cl)
         if cl_clean and valid_card(cl_clean) and cl_clean.casefold() not in used_set and not any(labels_are_duplicate(cl_clean, u) for u in used_set):
@@ -46,7 +46,7 @@ def concept_card(context,used=()):
                     sub = clean_semantic_label(' '.join(words[idx:idx+n_words]))
                     if sub and valid_card(sub) and sub.casefold() not in used_set and not any(labels_are_duplicate(sub, u) for u in used_set):
                         return sub[:1].upper()+sub[1:], True
-    return 'Minh họa ý tưởng',True
+    return '',False
 
 
 
@@ -127,6 +127,19 @@ def repair_numeric_cards(plan,brief=None):
         allowed = values_in(base)
 
         for index,shot in enumerate(scene.shots,1):
+            # Tự động chuẩn hóa chuỗi số thô > 6 chữ số sang quy mô rút gọn (triệu, tỷ)
+            v = shot.visual
+            if v and v.data:
+                raw_num = str(v.data.number_text or (v.data.value if v.data.value is not None else ""))
+                if re.search(r'\b\d{7,}\b', raw_num):
+                    from editor.format_number import parse_display_number
+                    parsed = parse_display_number(f"{raw_num} {v.data.unit or ''}")
+                    if parsed:
+                        v.data.value = parsed.value
+                        v.data.number_text = parsed.formatted_number
+                        v.data.unit = parsed.unit_display
+                        notes.append(f'[visual_number, nhóm 2] Cảnh {scene.id}, shot {index}: chuẩn hóa chuỗi số thô {raw_num} thành {parsed.formatted_text}.')
+
             bad=numeric_mismatches(scene,shot,brief)
             if not bad: continue
             v=shot.visual;v.template='text_focus'
@@ -137,6 +150,19 @@ def repair_numeric_cards(plan,brief=None):
 
         vp = getattr(scene, 'visual_plan', None)
         if vp and getattr(vp, 'data', None):
+            raw_vp_num = str(vp.data.number_text or (vp.data.value if vp.data.value is not None else ""))
+            if re.search(r'\b\d{7,}\b', raw_vp_num):
+                from editor.format_number import parse_display_number
+                parsed = parse_display_number(f"{raw_vp_num} {vp.data.unit or ''}")
+                if parsed:
+                    vp.data.value = parsed.value
+                    vp.data.number_text = parsed.formatted_number
+                    vp.data.unit = parsed.unit_display
+                    notes.append(f'[visual_number, nhóm 2] Cảnh {scene.id} visual_plan: chuẩn hóa chuỗi số thô {raw_vp_num} thành {parsed.formatted_text}.')
+            has_percent_evidence = ('%' in base) or ('phần trăm' in base.lower())
+            if vp.data.unit == '%' and not has_percent_evidence:
+                vp.data.unit = ''
+                notes.append(f'[visual_number, nhóm 2] Cảnh {scene.id} visual_plan: đơn vị % không có căn cứ; xóa đơn vị %.')
             actual = []
             if getattr(vp.data, 'value', None) is not None:
                 actual.append(vp.data.value)
@@ -147,7 +173,10 @@ def repair_numeric_cards(plan,brief=None):
                 vp.scene_type = 'text_focus'
                 vp.data.value = None
                 vp.data.bars = []
+                vp.data.unit = ''
                 notes.append(f'[visual_number, nhóm 2] Cảnh {scene.id} visual_plan: số {bad} không có trong lời đọc/brief; đổi sang text_focus.')
+            elif vp.data.value is None:
+                vp.data.unit = '' 
 
     plan.review_notes.extend(n for n in notes if n not in plan.review_notes)
     return notes
@@ -188,5 +217,6 @@ def select_templates(plan,brief=None):
         note='[visual_variety, nhóm 3] Chưa đủ dữ liệu cho 3 loại mẫu; không tạo số/trích dẫn để bù.'
         if note not in plan.review_notes: plan.review_notes.append(note)
     from agents.illustrations import plan_illustrations
-    plan_illustrations(plan,brief)
+    if not any(getattr(s, 'visual_plan', None) for s in plan.scenes):
+        plan_illustrations(plan,brief)
     return plan

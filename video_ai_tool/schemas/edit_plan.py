@@ -19,6 +19,7 @@ class Music(StrictModel):
 
 
 class Shot(StrictModel):
+    visual_plan: MotionScenePlan | None = Field(default=None,exclude_if=lambda v:v is None)
     card_text: str | None = Field(default=None,exclude_if=lambda v:v is None)
     emphasis: list[str] = Field(default_factory=list,exclude_if=lambda v:not v)
     semantic_query: bool = Field(default=False,exclude_if=lambda v:not v)

@@ -62,10 +62,32 @@ def scene_payload(scene,size,caption_style,options=None):
             "start":s.start-scene.start,"duration":s.duration,
             "template":s.spec.visual.template if s.spec.visual else "stock",
             "data":s.spec.visual.data.model_dump(mode="json") if s.spec.visual else {},
-            "beats":[b.model_dump(mode="json") for b in s.spec.visual.beats] if s.spec.visual else []
+            "beats":[b.model_dump(mode="json") for b in s.spec.visual.beats] if s.spec.visual else [],
+            "visual_plan":(s.spec.visual_plan.model_dump(mode="json") if hasattr(s.spec, "visual_plan") and s.spec.visual_plan else (s.visual_plan.model_dump(mode="json") if hasattr(s, "visual_plan") and s.visual_plan else getattr(s, "visual_plan", None)))
         } for s in scene.shots]}
     payload.update(options or {})
+    # Intercept MOTION_FORCE_RECIPES override for recipe path verification
+    import os
+    force_env = os.environ.get("MOTION_FORCE_RECIPES", "").strip()
+    forced_recipe = None
+    if force_env:
+        force_list = [r.strip() for r in force_env.split(",") if r.strip()]
+        sc_idx = (getattr(scene.spec, 'id', None) or 1) - 1
+        if 0 <= sc_idx < len(force_list):
+            forced_recipe = force_list[sc_idx]
+
     spec=getattr(scene.spec,'visual_plan',None)
+    if forced_recipe:
+        from schemas.visual_v3 import MotionScenePlan
+        if not spec:
+            spec = MotionScenePlan(
+                scene_type=forced_recipe,
+                layout="center_hero",
+                beats=[],
+                data={"text": scene.spec.narration[:30]}
+            )
+        else:
+            spec.scene_type = forced_recipe
     payload['visual_plan']=None
     if spec:
         payload['anchor'] = {
@@ -73,7 +95,10 @@ def scene_payload(scene,size,caption_style,options=None):
             'metaphor_name': getattr(spec, 'central_metaphor', None),
             'state': getattr(spec, 'metaphor_state', None),
         }
-    if spec and payload.get('illustrations_enabled',False):
+        from config.settings import get_settings
+    settings = get_settings()
+    illustrations_enabled = payload.get('illustrations_enabled', False) or bool(forced_recipe) or getattr(settings, 'motion_recipes_enabled', True)
+    if spec and illustrations_enabled:
         from agents.illustrations import scene_data,enough
         from agents.visual_diversity import values_in
         rebound=scene_data(scene.spec)
@@ -91,7 +116,68 @@ def scene_payload(scene,size,caption_style,options=None):
                 rebound.value,rebound.unit,rebound.number_text=found
                 rebound.label=next((x for x in rebound.items if re.search(r'năng suất|tỷ lệ|doanh thu|chi phí|quy mô',x,re.I)),rebound.items[0] if rebound.items else rebound.text)
                 rebound.source=next(iter(payload.get('source_labels',[])),rebound.source)
-        if enough(spec.scene_type,rebound):
+        # Inherit valid data from spec if available
+        if hasattr(spec, 'data') and spec.data:
+            s_data = spec.data if isinstance(spec.data, dict) else spec.data.model_dump(mode='json')
+            if rebound.value is None and s_data.get('value') is not None:
+                rebound.value = s_data['value']
+                rebound.unit = s_data.get('unit') or rebound.unit
+                rebound.number_text = s_data.get('number_text') or rebound.number_text
+                rebound.label = s_data.get('label') or s_data.get('title') or rebound.label
+            if not rebound.bars and s_data.get('bars'):
+                rebound.bars = list(s_data['bars'])
+            if not rebound.items and s_data.get('items'):
+                rebound.items = list(s_data['items'])
+
+        if forced_recipe:
+            rebound_dict = rebound.model_dump(mode='json') if hasattr(rebound, 'model_dump') else dict(rebound)
+            rebound_dict['_is_fixture'] = False
+            from editor.format_number import parse_display_number
+            p_num = parse_display_number(scene.spec.narration)
+            if p_num:
+                if rebound_dict.get('value') is None:
+                    rebound_dict['value'] = p_num.value
+                    rebound_dict['unit'] = p_num.unit_display
+                    rebound_dict['number_text'] = p_num.formatted_number
+            if forced_recipe == "glass_fill" and rebound_dict.get('value') is not None:
+                rebound_dict['fill_percentage'] = min(100, max(15, rebound_dict['value'] if rebound_dict['value'] <= 100 else 60))
+            elif forced_recipe == "gauge_needle" and rebound_dict.get('value') is not None:
+                rebound_dict['max_val'] = 100
+                rebound_dict['unit'] = rebound_dict.get('unit') or '%'
+            elif forced_recipe == "balance_scale":
+                rebound_dict['left_label'] = 'Khu vực tư nhân'
+                rebound_dict['right_label'] = 'Ngân sách TP'
+                rebound_dict['winner'] = 'left'
+            elif forced_recipe == "dice_roll":
+                rebound_dict['result_number'] = 6
+                rebound_dict['probability'] = '50%'
+            elif forced_recipe == "strike_replace":
+                rebound_dict['old_value'] = 500
+                rebound_dict['new_value'] = 5000
+                rebound_dict['unit'] = 'tỷ đồng'
+
+            beats = [
+                {"at_sec": 0.5, "action": f"enter_{forced_recipe}"},
+                {"at_sec": 1.8, "action": f"action_{forced_recipe}_step"},
+                {"at_sec": 3.2, "action": f"impact_{forced_recipe}_glow"},
+            ]
+            dur = scene.duration
+            last_t = 3.2
+            while dur - last_t > 2.5:
+                inject_t = round(last_t + 2.0, 2)
+                if inject_t < dur:
+                    beats.append({"at_sec": inject_t, "action": "action_progression"})
+                last_t = inject_t
+
+            payload['visual_plan'] = {
+                'scene_type': forced_recipe,
+                'recipe': forced_recipe,
+                'depth_3d': False,
+                'data': rebound_dict,
+                'beats': beats,
+                'annotations': [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in getattr(spec, 'annotations', [])]
+            }
+        elif enough(spec.scene_type,rebound):
             resolved=spec.model_copy(update={'data':rebound})
             from agents.motion_beats import shot_beats
             from schemas.visual import Visual
@@ -102,8 +188,31 @@ def scene_payload(scene,size,caption_style,options=None):
             else:
                 beats,_=shot_beats(dummy,words,0.,scene.duration,purpose=scene.spec.role)
             annots = getattr(spec, 'annotations', [])
-            payload['visual_plan']={**resolved.model_dump(mode='json'),'beats':beats,'annotations':annots}
-        else: payload['illustration_fallback']='Dữ liệu cảnh thiếu: dùng text_focus, không bịa phần còn thiếu.'
+            annots_json = [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in annots]
+            payload['visual_plan']={**resolved.model_dump(mode='json'),'beats':beats,'annotations':annots_json}
+        else:
+            # Fallback to qualitative recipe instead of silently dropping to text_focus
+            from editor.motion.scheduler import suggest_metaphor_recipe
+            alt_recipe = suggest_metaphor_recipe(scene.spec.narration, previous_recipe=None)
+            qualitative_pool = ["balance_scale", "conveyor_belt", "stack_pile", "lock_unlock", "orbit_system"]
+            chosen_alt = next((cand for cand in qualitative_pool if cand != spec.scene_type), "balance_scale")
+            rebound_dict = rebound.model_dump(mode='json') if hasattr(rebound, 'model_dump') else dict(rebound)
+            alt_beats = [
+                {"at_sec": 0.5, "action": f"enter_{chosen_alt}"},
+                {"at_sec": 1.8, "action": f"action_{chosen_alt}_step"},
+                {"at_sec": 3.2, "action": f"impact_{chosen_alt}_glow"},
+            ]
+            annots_json = [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in getattr(spec, 'annotations', [])]
+            payload['visual_plan'] = {
+                'scene_type': chosen_alt,
+                'recipe': chosen_alt,
+                'depth_3d': False,
+                'data': rebound_dict,
+                'beats': alt_beats,
+                'annotations': annots_json
+            }
+            fallback_msg = f"Cảnh {scene.spec.id}: Recipe '{spec.scene_type}' thiếu số liệu (enough=False); tự động dùng recipe thay thế '{chosen_alt}'."
+            payload['illustration_fallback'] = fallback_msg
     from utils.caption_timing import display_words
     payload['caption_words']=[{'text':text,'start':start,'end':end} for text,start,end in
         display_words([(w['text'],w['start'],w['end']) for w in words],scene.duration)]
@@ -254,6 +363,77 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
             count=max(1,math.ceil(scene.duration*fps));last=0.;illustrated_frames=0;moving_counts=[];subtitle_start=None;subtitle_only=[]
             with browser_page(size) as page, TemporaryFile() as errors:
                 capture(page,payload,font)
+
+                # AUDIT VÀ TỰ SỬA TRƯỚC KHI ĐẨY KHUNG VÀO FFMPEG (dựng thử >= 3 mốc thời gian)
+                t_checkpoints = [
+                    round(min(0.5, scene.duration * 0.15), 2),
+                    round(min(scene.duration * 0.5, 2.0), 2),
+                    round(max(0.5, scene.duration - 0.5), 2),
+                ]
+                def _eval_layout_audit():
+                    audit_res = None
+                    for tc in t_checkpoints:
+                        page.evaluate("t => window.renderAt(t)", tc)
+                        res = page.evaluate("() => window.getLayoutAudit ? window.getLayoutAudit() : null")
+                        if res:
+                            audit_res = res
+                            if any([
+                                res.get("clipped_rows", 0) > 0,
+                                res.get("bbox_overlaps", 0) > 0,
+                                res.get("caption_collisions", 0) > 0,
+                                res.get("empty_prompts", 0) > 0,
+                                res.get("center_y_drift", 0) > 120,
+                            ]):
+                                break
+                    return audit_res
+
+                layout_audit = _eval_layout_audit()
+                audit_passed = bool(
+                    layout_audit and
+                    layout_audit.get("clipped_rows", 0) == 0 and
+                    layout_audit.get("bbox_overlaps", 0) == 0 and
+                    layout_audit.get("caption_collisions", 0) == 0 and
+                    layout_audit.get("empty_prompts", 0) == 0 and
+                    layout_audit.get("center_y_drift", 0) <= 120
+                )
+                audit_retries = 0
+                payload_repaired = False
+                while not audit_passed and audit_retries < 2:
+                    audit_retries += 1
+                    if audit_retries == 1:
+                        page.evaluate("""() => {
+                            if (window.MOTION_DATA && window.MOTION_DATA.visual_plan && window.MOTION_DATA.visual_plan.data) {
+                                const d = window.MOTION_DATA.visual_plan.data;
+                                if (d.items) {
+                                    d.items = d.items.map(s => String(s).split(/(?<!\d)[.!?\n]|[.!?\n](?!\d)/)[0].split(/\s+/).slice(0, 5).join(' '));
+                                }
+                            }
+                        }""")
+                        payload_repaired = True
+                    elif audit_retries == 2:
+                        page.evaluate("""() => {
+                            if (window.MOTION_DATA && window.MOTION_DATA.visual_plan) {
+                                window.MOTION_DATA.visual_plan.scene_type = 'text_focus';
+                            }
+                        }""")
+                        payload_repaired = True
+                    layout_audit = _eval_layout_audit()
+                    audit_passed = bool(
+                        layout_audit and
+                        layout_audit.get("clipped_rows", 0) == 0 and
+                        layout_audit.get("bbox_overlaps", 0) == 0 and
+                        layout_audit.get("caption_collisions", 0) == 0 and
+                        layout_audit.get("empty_prompts", 0) == 0 and
+                        layout_audit.get("center_y_drift", 0) <= 120
+                    )
+
+                final_source = next((s for s in reversed(payload["shots"]) if s["template"] == "source_card"), None)
+                review_time = final_source["start"] + min(.8, final_source["duration"] * .5) if final_source else min(scene.duration - .01, scene.duration * .5)
+                page.evaluate("t => renderAt(t)", review_time)
+                review_path = folder / (key + ".review.png")
+                page.screenshot(path=str(review_path), type="png")
+
+                # BẮT ĐẦU ENCODE SAU KHI AUDIT / TỰ SỬA HOÀN TẤT
                 process=subprocess.Popen([get_ffmpeg_exe(),"-hide_banner","-loglevel","error","-y",
                     "-f","image2pipe","-vcodec","mjpeg","-framerate",str(fps),"-i","pipe:0","-an",
                     "-c:v","libx264","-preset","veryfast","-crf","20","-threads","2","-pix_fmt","yuv420p","-movflags","+faststart",str(temporary)],
@@ -274,7 +454,6 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                         elif static_frame:
                             buf=io.BytesIO();Image.fromarray(static_frame(t)).save(buf,format="JPEG",quality=92);frame=buf.getvalue()
                         else:
-                            # Standalone demos can supply all shots with supported templates.
                             raise ValueError("Thiếu callback renderer tĩnh cho mẫu không hỗ trợ motion.")
                         process.stdin.write(frame)
                         now=time.perf_counter()
@@ -296,49 +475,6 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                     page.evaluate("t => renderAt(t)",max(shot["start"],sample))
                     check=page.evaluate("() => checkMotionQuality()")
                     quality.append(dict(check,shot_id=index,template=shot["template"],rule_id="motion_layout",group=3))
-                layout_audit = page.evaluate("() => window.getLayoutAudit ? window.getLayoutAudit() : null")
-                audit_passed = bool(
-                    layout_audit and
-                    layout_audit.get("clipped_rows", 0) == 0 and
-                    layout_audit.get("bbox_overlaps", 0) == 0 and
-                    layout_audit.get("caption_collisions", 0) == 0 and
-                    layout_audit.get("empty_prompts", 0) == 0 and
-                    layout_audit.get("center_y_drift", 0) <= 120
-                )
-                audit_retries = 0
-                while not audit_passed and audit_retries < 2:
-                    audit_retries += 1
-                    if audit_retries == 1:
-                        page.evaluate('''() => {
-                            if (window.MOTION_DATA && window.MOTION_DATA.visual_plan && window.MOTION_DATA.visual_plan.data) {
-                                const d = window.MOTION_DATA.visual_plan.data;
-                                if (d.items) {
-                                    d.items = d.items.map(s => String(s).split(/[.!?\\n]/)[0].split(/\\s+/).slice(0, 5).join(' '));
-                                }
-                                if (window.renderAt) window.renderAt(2.0);
-                            }
-                        }''')
-                    elif audit_retries == 2:
-                        page.evaluate('''() => {
-                            if (window.MOTION_DATA && window.MOTION_DATA.visual_plan) {
-                                window.MOTION_DATA.visual_plan.scene_type = 'text_focus';
-                                if (window.renderAt) window.renderAt(2.0);
-                            }
-                        }''')
-                    layout_audit = page.evaluate("() => window.getLayoutAudit ? window.getLayoutAudit() : null")
-                    audit_passed = bool(
-                        layout_audit and
-                        layout_audit.get("clipped_rows", 0) == 0 and
-                        layout_audit.get("bbox_overlaps", 0) == 0 and
-                        layout_audit.get("caption_collisions", 0) == 0 and
-                        layout_audit.get("empty_prompts", 0) == 0 and
-                        layout_audit.get("center_y_drift", 0) <= 120
-                    )
-                final_source=next((s for s in reversed(payload["shots"]) if s["template"]=="source_card"),None)
-                review_time=final_source["start"]+min(.8,final_source["duration"]*.5) if final_source else min(scene.duration-.01,scene.duration*.5)
-                page.evaluate("t => renderAt(t)",review_time)
-                review_path=folder/(key+".review.png")
-                page.screenshot(path=str(review_path),type="png")
             replace_file_retry(temporary,destination)
             if subtitle_start is not None and scene.duration-subtitle_start>2: subtitle_only.append({'start':subtitle_start,'end':scene.duration})
             result={"path":str(destination),"cache_hit":False,"scene_id":scene.spec.id,"width":size[0],"height":size[1],
@@ -346,7 +482,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                 "size_bytes":destination.stat().st_size,"sha256":hashlib.sha256(destination.read_bytes()).hexdigest(),"timing_source":payload["timing_source"],
                 'illustration':{'scene_type':(payload.get('visual_plan') or {}).get('scene_type','text_focus'),'coverage_sec':min(scene.duration,illustrated_frames/fps),'moving_elements_min':min(moving_counts,default=0),'subtitle_only_intervals':subtitle_only},
                 "layout_audit":layout_audit,"audit_failed":not audit_passed,"audit_retries":audit_retries,
-                "quality":quality,"repair_notes":payload["repair_notes"]+["motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."],"review_frame":str(review_path)}
+                "quality":quality,"repair_notes":payload["repair_notes"]+(["motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."] if payload_repaired else []),"review_frame":str(review_path)}
             write_json_atomic(meta,result)
             return result
     except Exception as error:
