@@ -777,20 +777,25 @@ def create_visual_plan_v3(
         all_shots_data = []
         shot_map = []
         for s_idx, scene in enumerate(plan.scenes):
+            is_recap_scene = (s_idx == len(plan.scenes) - 1)
             for sh_idx, shot in enumerate(scene.shots):
                 dur = shot.duration_sec
                 raw_r = getattr(getattr(shot, "visual_plan", None), "scene_type", "")
                 if not raw_r and sh_idx == 0 and scene.visual_plan:
                     raw_r = scene.visual_plan.scene_type
-                shot_text = shot.text_overlay or shot.query or scene.narration
+                shot_text = shot.card_text or shot.text_overlay or shot.query or scene.narration
+                s_data = (shot.visual.data.model_dump(mode="json") if (shot.visual and shot.visual.data) else {})
                 all_shots_data.append({
                     "recipe": raw_r,
                     "text": shot_text,
-                    "narration": scene.narration,
+                    "narration": shot_text,
+                    "scene_narration": scene.narration,
+                    "is_recap": is_recap_scene,
                     "duration": dur,
                     "duration_sec": dur,
                     "scene_id": scene.id,
-                    "shot_id": sh_idx + 1
+                    "shot_id": sh_idx + 1,
+                    "data": s_data,
                 })
                 shot_map.append((s_idx, sh_idx))
 
@@ -799,7 +804,7 @@ def create_visual_plan_v3(
             scheduled_shots, shot_notes = schedule_shots_no_repeat(
                 all_shots_data,
                 min_distinct=target_distinct_shots,
-                min_dist=3,
+                min_dist=2,
                 max_freq=max(2, (len(all_shots_data) // 6) + 1)
             )
             plan.review_notes.extend([n for n in shot_notes if n not in plan.review_notes])
@@ -812,11 +817,15 @@ def create_visual_plan_v3(
                     VisualBeat(at_sec=b["at_sec"], action=b["action"]) if isinstance(b, dict) else b
                     for b in sh_data.get("beats", [])
                 ]
+                # Merge per-shot specific data with scene data
+                valid_vkeys = set(VisualData.model_fields.keys())
+                clean_vdata = {k: v for k, v in sh_data["data"].items() if k in valid_vkeys} if isinstance(sh_data.get("data"), dict) else {}
+                shot_spec_data = VisualData(**clean_vdata) if clean_vdata else (target_scene.visual_plan.data if target_scene.visual_plan else VisualData())
                 target_shot.visual_plan = MotionScenePlan(
                     scene_type=chosen_recipe,
                     layout=target_scene.visual_plan.layout if target_scene.visual_plan else "center_hero",
                     theme=theme_name,
-                    data=target_scene.visual_plan.data if target_scene.visual_plan else VisualData(),
+                    data=shot_spec_data,
                     beats=beats,
                 )
 

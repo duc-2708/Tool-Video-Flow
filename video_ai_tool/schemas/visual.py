@@ -32,6 +32,9 @@ class VisualData(StrictModel):
     items: list[str] = Field(default_factory=list)
     bars: list[VisualBar] = Field(default_factory=list)
     fact_ids: list[int] = Field(default_factory=list)
+    status: str = ""
+    left_label: str = ""
+    right_label: str = ""
     repair_notes: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)
 
 

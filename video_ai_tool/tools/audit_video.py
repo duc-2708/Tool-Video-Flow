@@ -194,7 +194,10 @@ def audit_project(project_dir: Path | str, force: bool = False) -> dict:
 
         for mf in cache_meta_files:
 
-            if mf.name.endswith(".json") and mf.name != "edit_plan.json" and mf.name != "director_state.json":
+            if mf.name in {"edit_plan.json", "director_state.json", "quality_report.json", "layout_report.json", "visual_review.json", "preview.json", "motion_review.json", "motion_plan.json"}:
+                continue
+
+            if mf.name.endswith(".json"):
 
                 try:
 
@@ -215,79 +218,40 @@ def audit_project(project_dir: Path | str, force: bool = False) -> dict:
 
 
         audit_data = meta.get("layout_audit") if meta else None
+        has_real_audit = bool(audit_data and isinstance(audit_data, dict) and "hero_width" in audit_data)
 
-
-
-        if audit_data:
-
-            hero_width = audit_data.get("hero_width", 880)
-
-            hero_area_ratio = audit_data.get("hero_area_ratio", 0.58)
-
-            min_font_size = audit_data.get("min_font_size", 44)
-
-            clipped_rows = audit_data.get("clipped_rows", 0)
-
-            bbox_overlaps = audit_data.get("bbox_overlaps", 0)
-
+        if has_real_audit:
+            hero_width = audit_data["hero_width"]
+            hero_area_ratio = audit_data["hero_area_ratio"]
+            min_font_size = audit_data["min_font_size"]
+            clipped_rows = audit_data["clipped_rows"]
+            bbox_overlaps = audit_data["bbox_overlaps"]
             t0_visible_count = audit_data.get("t0_visible_count", 1)
-
             max_still_interval_sec = audit_data.get("max_still_interval_sec", 0.4)
-
             empty_space_ratio = audit_data.get("empty_space_ratio", 0.32)
-
-            empty_prompts = audit_data.get("empty_prompts", 0)
-
-            caption_collisions = audit_data.get("caption_collisions", 0)
-
-            center_y_drift = audit_data.get("center_y_drift", 0)
-
+            empty_prompts = audit_data["empty_prompts"]
+            caption_collisions = audit_data["caption_collisions"]
+            center_y_drift = audit_data["center_y_drift"]
             duplicate_labels = audit_data.get("duplicate_labels", 0)
-
             broken_labels = audit_data.get("broken_labels", [])
-
+            audit_status = "ĐÃ ĐO"
         else:
-
-            # Analytical audit from recipe geometry
-
-            hero_width = 880
-
-            hero_area = 880 * 760
-
-            hero_area_ratio = round(hero_area / CONTENT_ZONE_AREA, 3)
-
-            min_font_size = 42
-
-            clipped_rows = 0
-
-            bbox_overlaps = 0
-
-            t0_visible_count = 1
-
-            # Measure stillness directly from rendered video file if present
-            clip_path = project_dir / f"clips/scene_{scene_id}.mp4"
-            if not clip_path.exists():
-                clip_path = project_dir / f"render/scene_{scene_id}.mp4"
-            if clip_path.exists():
-                max_still_interval_sec = measure_max_still_interval_ffmpeg(clip_path)
-            else:
-                max_still_interval_sec = 0.4
-
-            empty_space_ratio = round(max(0, 1.0 - hero_area_ratio), 3)
-
-            empty_prompts = 0
-
-            caption_collisions = 0
-
-            center_y_drift = 0
-
+            # Thiếu layout_audit trong meta => trạng thái "CHƯA ĐO", không phải pass
+            hero_width = None
+            hero_area_ratio = None
+            min_font_size = None
+            clipped_rows = None
+            bbox_overlaps = None
+            t0_visible_count = 0
+            max_still_interval_sec = None
+            empty_space_ratio = None
+            empty_prompts = None
+            caption_collisions = None
+            center_y_drift = None
             duplicate_labels = 0
-
             broken_labels = []
-
-
-
-        # If duplicate_labels wasn't in audit_data or running analytical, check items
+            audit_status = "CHƯA ĐO"
+# If duplicate_labels wasn't in audit_data or running analytical, check items
 
         if duplicate_labels == 0 and not audit_data:
 
@@ -386,7 +350,7 @@ def audit_project(project_dir: Path | str, force: bool = False) -> dict:
 
         # Check empty gap
         empty_gap_sec = audit_data.get("empty_gap_sec", 0.0) if audit_data else 0.0
-        if max_still_interval_sec > 1.2:
+        if max_still_interval_sec is not None and max_still_interval_sec > 1.2:
             empty_gap_sec = max(empty_gap_sec, max_still_interval_sec)
 
             
@@ -404,10 +368,17 @@ def audit_project(project_dir: Path | str, force: bool = False) -> dict:
 
         # (e) Check trailing cutoffs (labels ending in prepositions/conjunctions)
         trailing_cutoffs = 0
-        for st in all_scene_texts:
+        visual_labels_to_check = [str(t_val) for t_val in [data.get("text", ""), data.get("label", ""), *items] if t_val]
+        for sh in scene.get("shots", []):
+            if sh.get("card_text"): visual_labels_to_check.append(str(sh["card_text"]))
+            if sh.get("text"): visual_labels_to_check.append(str(sh["text"]))
+        for st in visual_labels_to_check:
             words = st.strip().split()
-            if words and words[-1].lower() in TRAILING_CUTOFF:
-                trailing_cutoffs += 1
+            if words:
+                last_w = words[-1].lower().strip(".,;:?!()[]{}'\"")
+                is_compound_noun = (len(words) >= 2 and words[-2].lower() in {'vụ', 'công'} and last_w == 'việc')
+                if last_w in TRAILING_CUTOFF and not is_compound_noun:
+                    trailing_cutoffs += 1
 
         # (b) Numeric regression check (monotonic increase without dropping to 0)
         numeric_regressions = 0
@@ -444,10 +415,20 @@ def audit_project(project_dir: Path | str, force: bool = False) -> dict:
         all_passed = True
 
         for m_name, m_spec in METRICS_SPEC.items():
-
-            val = metrics.get(m_name, 0)
-
-            p = m_spec["check"](val)
+            val = metrics.get(m_name)
+            if audit_status == "CHƯA ĐO" and m_name in {
+                "hero_width", "hero_area_ratio", "min_font_size", "clipped_rows",
+                "bbox_overlaps", "caption_collisions", "center_y_drift", "empty_prompts",
+                "t0_visible_count", "empty_space_ratio", "empty_gap_sec"
+            }:
+                p = False
+            elif val is None:
+                p = False
+            else:
+                try:
+                    p = bool(m_spec["check"](val))
+                except Exception:
+                    p = False
 
             pass_status[m_name] = p
 
@@ -457,18 +438,28 @@ def audit_project(project_dir: Path | str, force: bool = False) -> dict:
 
 
 
+        # Collect per-shot information
+        scene_shots_info = []
+        for sh_idx, sh in enumerate(scene.get("shots", [])):
+            sh_vp = sh.get("visual_plan") or {}
+            sh_recipe = sh_vp.get("scene_type") or sh_vp.get("recipe") or stype
+            scene_shots_info.append({
+                "shot_id": sh_idx + 1,
+                "recipe": sh_recipe,
+                "start": sh.get("start", 0.0),
+                "duration": sh.get("duration") or sh.get("duration_sec", 3.0),
+                "card_text": sh.get("card_text", ""),
+                "data": sh_vp.get("data", {})
+            })
+
         scene_audits.append({
-
             "scene_id": scene_id,
-
             "scene_type": stype,
-
+            "audit_status": audit_status,
+            "shots": scene_shots_info,
+            "all_passed": all_passed,
             "metrics": metrics,
-
             "pass_status": pass_status,
-
-            "all_passed": all_passed
-
         })
 
 
@@ -477,10 +468,20 @@ def audit_project(project_dir: Path | str, force: bool = False) -> dict:
 
     overall_all_passed = all(sa["all_passed"] for sa in scene_audits)
 
+    # Calculate video_hash of destination MP4
+    video_files = list(project_dir.glob("render/*_preview.mp4")) or list(project_dir.glob("render/*_final.mp4"))
+    current_video_hash = None
+    if video_files:
+        try:
+            import hashlib
+            current_video_hash = hashlib.sha256(video_files[0].read_bytes()).hexdigest()
+        except Exception:
+            current_video_hash = None
+
     report = {
-
         "project": project_dir.name,
-
+        "video_hash": current_video_hash,
+        "is_current_hash": True,
         "total_scenes": len(scene_audits),
 
         "overall_all_passed": overall_all_passed,

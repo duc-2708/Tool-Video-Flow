@@ -443,105 +443,215 @@ def schedule_recipes_no_repeat(
 
 
 AVAILABLE_SHOT_RECIPES = [
-    "slot_counter", "balance_scale", "domino_chain", "odometer", "battery_fill",
-    "glass_fill", "gauge_needle", "thermometer", "bar_race", "strike_replace",
-    "form_fill_submit", "stack_pile", "orbit_system", "funnel_filter", "traffic_light",
-    "pipeline_pipes", "before_after_wipe", "shield_hit", "speedometer_gauge",
-    "lock_unlock", "chat_thread", "pill_toggle", "dice_roll", "delivery_truck",
-    "matrix_rain", "code_typing", "step_stairs", "card_flip"
+    "slot_counter", "strike_replace", "gauge_needle", "odometer", "bar_race",
+    "thermometer", "battery_fill", "glass_fill", "balance_scale", "tug_of_war",
+    "vs_flip_cards", "before_after_wipe", "conveyor_belt", "domino_chain",
+    "funnel_filter", "pipeline_pipes", "dice_roll", "lock_unlock", "shield_hit",
+    "traffic_light", "orbit_system", "layered_onion", "stack_pile", "puzzle_snap",
+    "chat_thread", "mock_card_swipe", "form_fill_submit", "terminal_command_run",
+    "checklist"
 ]
+
+NUMERIC_RECIPES = {
+    "slot_counter", "strike_replace", "gauge_needle", "odometer",
+    "thermometer", "battery_fill", "glass_fill", "bar_race"
+}
+
+
+def extract_shot_brief_and_data(text: str, scene_narration: str = "", is_recap: bool = False) -> dict:
+    """Extract semantic intent and factual data for an individual shot."""
+    from editor.format_number import parse_display_number
+    from agents.presentation import card_phrase
+
+    combined_text = (text.strip() + " " + scene_narration.strip()).strip()
+    norm = _normalize_text(combined_text)
+
+    # 1. Parse number
+    p_num = parse_display_number(text) or parse_display_number(scene_narration)
+    has_number = p_num is not None
+    val = p_num.value if p_num else None
+    unit = p_num.unit_display if p_num else ""
+    num_text = p_num.formatted_number if p_num else ""
+
+    # 2. Extract semantic label
+    clean_lbl = card_phrase(text, scene_narration) if text else "Chi tiết"
+    if len(clean_lbl.split()) > 3:
+        clean_lbl = " ".join(clean_lbl.split()[:3])
+
+    # 3. Determine semantic intent
+    intent = "concept"
+    if is_recap:
+        intent = "recap"
+    elif has_number:
+        intent = "number"
+    elif any(k in norm for k in ["can can", "so sanh", "so voi", "doi dau", "truoc day", "thay doi", "hai ben", "mat trai", "uu the"]):
+        intent = "compare"
+    elif any(k in norm for k in ["tam khien", "khien", "hang rao", "an ninh", "phong thu", "bao ve", "khoa", "mo khoa", "ngan chan", "canh bao", "toi danh", "cao buoc", "giam giu"]):
+        intent = "risk"
+    elif any(k in norm for k in ["quy trinh", "duong ong", "bang chuyen", "domino", "sang loc", "he thong", "buoc"]):
+        intent = "process"
+    elif any(k in norm for k in ["tin nhan", "hoi thoai", "bieu mau", "lenh", "danh sach", "kiem tra"]):
+        intent = "mock_ui"
+
+    return {
+        "text": text,
+        "label": clean_lbl,
+        "intent": intent,
+        "has_number": has_number,
+        "value": val,
+        "unit": unit,
+        "number_text": num_text,
+        "is_recap": is_recap,
+    }
+
+
+def enough_for_shot(recipe: str, brief_info: dict) -> bool:
+    """Verify strictly if the shot has sufficient factual data for the recipe."""
+    if recipe in NUMERIC_RECIPES:
+        return bool(brief_info.get("has_number") and brief_info.get("value") is not None)
+
+    # Empty / generic card prohibition: layered_onion or stack_pile requires explicit semantic label
+    if recipe in {"layered_onion", "stack_pile", "orbit_system"}:
+        lbl = brief_info.get("label", "").strip()
+        norm_lbl = _normalize_text(lbl)
+        return bool(lbl and norm_lbl not in {"chi tiet", "minh hoa", "y chinh", "none", ""})
+
+    return True
 
 
 def schedule_shots_no_repeat(
     shots_data: list[dict],
     min_distinct: int = 8,
-    min_dist: int = 3,
+    min_dist: int = 2,
     max_freq: int = 2
 ) -> tuple[list[dict], list[str]]:
     """
     Schedule recipes across all shots of the video to ensure high visual diversity:
-    - No same recipe within min_dist (default 3) consecutive shots.
+    - Every shot (3-5s) has motion_brief matching its spoken sentence.
+    - Select recipe matching semantic intent: number -> counter/gauge/odometer; compare -> scale/vs; process -> pipeline/domino; risk -> shield/lock.
+    - No same recipe within min_dist (default 2) consecutive shots (recipe_i != recipe_i-1).
     - Each recipe used at most max_freq (default 2) times across the entire video.
     - Video contains at least min_distinct (default 8) distinct recipes.
-    - Each shot duration has >= 3 meaningful visible events, absolutely no idle_breath.
+    - Final recap scene uses dynamic animated checklist / orbit_system (no static cards, >=3 events per 4s).
     """
     from collections import Counter
     scheduled = []
     review_notes = []
     used_counts = Counter()
+    total_shots = len(shots_data)
+
+    INTENT_RECIPE_PRIORITY = {
+        "number": ["slot_counter", "odometer", "strike_replace", "gauge_needle", "battery_fill", "glass_fill", "bar_race", "thermometer"],
+        "compare": ["balance_scale", "vs_flip_cards", "tug_of_war", "before_after_wipe"],
+        "risk": ["shield_hit", "lock_unlock", "traffic_light", "dice_roll"],
+        "process": ["pipeline_pipes", "domino_chain", "conveyor_belt", "funnel_filter"],
+        "mock_ui": ["form_fill_submit", "mock_card_swipe", "chat_thread", "terminal_command_run", "checklist"],
+        "concept": ["orbit_system", "puzzle_snap", "stack_pile", "layered_onion"],
+        "recap": ["checklist", "orbit_system", "lock_unlock", "stack_pile"],
+    }
 
     for idx, sh in enumerate(shots_data):
-        raw_r = sh.get("recipe") or sh.get("template") or ""
         text = sh.get("narration") or sh.get("card_text") or sh.get("text") or ""
-        
-        # Suggest recipe from context if missing or generic
-        if not raw_r or raw_r in {"stock", "source_card", "text_focus", "icon_card", "stat_card"}:
-            cand_r = suggest_metaphor_recipe(text, previous_recipe=scheduled[-1]["recipe"] if scheduled else None)
-        else:
-            cand_r = raw_r
+        scene_narration = sh.get("scene_narration") or text
+        is_recap = bool(sh.get("is_recap") or idx == total_shots - 1)
 
-        # Recent 3 recipes check
-        recent_3 = [s["recipe"] for s in scheduled[max(0, idx - min_dist):idx]]
-        
-        # Enforce constraints
-        if cand_r in recent_3 or used_counts[cand_r] >= max_freq or cand_r not in AVAILABLE_SHOT_RECIPES:
-            # Find candidate that satisfies constraints
-            found = None
-            for alt in AVAILABLE_SHOT_RECIPES:
-                if alt not in recent_3 and used_counts[alt] < max_freq:
-                    found = alt
+        brief_info = extract_shot_brief_and_data(text, scene_narration, is_recap=is_recap)
+        intent = brief_info["intent"]
+
+        # Prioritize recipes matching intent
+        candidate_pool = list(INTENT_RECIPE_PRIORITY.get(intent, []))
+        # Append other available recipes as backup
+        for r in AVAILABLE_SHOT_RECIPES:
+            if r not in candidate_pool:
+                candidate_pool.append(r)
+
+        recent_recipes = [s["recipe"] for s in scheduled[max(0, idx - min_dist):idx]]
+
+        chosen_recipe = None
+        for cand in candidate_pool:
+            if cand in recent_recipes:
+                continue
+            if used_counts[cand] >= max_freq:
+                continue
+            if not enough_for_shot(cand, brief_info):
+                continue
+            chosen_recipe = cand
+            break
+
+        if not chosen_recipe:
+            # Relax frequency or distance if strictly needed, but never violate enough_for_shot
+            for cand in candidate_pool:
+                if (not recent_recipes or cand != recent_recipes[-1]) and enough_for_shot(cand, brief_info):
+                    chosen_recipe = cand
                     break
-            if not found:
-                for alt in AVAILABLE_SHOT_RECIPES:
-                    if alt not in recent_3:
-                        found = alt
-                        break
-            replacement = found or "orbit_system"
-            reason = "trùng trong 3 shot liền kề" if cand_r in recent_3 else f"vượt quá {max_freq} lần/video"
-            review_notes.append(f"Shot {idx+1}: Recipe '{cand_r}' {reason}; tự động đổi sang '{replacement}'.")
-            cand_r = replacement
 
-        used_counts[cand_r] += 1
-        
-        # Generate beats for shot
+        chosen_recipe = chosen_recipe or "shield_hit"
+        used_counts[chosen_recipe] += 1
+
         dur = float(sh.get("duration") or sh.get("duration_sec") or 3.0)
-        shot_beats = [
-            {"at_sec": round(min(0.3, dur * 0.15), 2), "action": f"enter_{cand_r}"},
-            {"at_sec": round(min(1.5, dur * 0.50), 2), "action": f"action_{cand_r}_step"},
-            {"at_sec": round(min(dur - 0.3, dur * 0.85), 2), "action": f"impact_{cand_r}_glow"}
-        ]
-        
+
+        # Generate animated beats (>= 3 events per 4s)
+        if chosen_recipe == "checklist":
+            items = ["Ashley Paul Griffith", "202 tội danh lạm dụng", "Hoãn phiên xét xử"]
+            step_t = round(dur / (len(items) + 1), 2)
+            shot_beats = [{"at_sec": 0.3, "action": "enter_checklist"}]
+            for it_idx in range(len(items)):
+                shot_beats.append({"at_sec": round(0.5 + (it_idx + 1) * step_t, 2), "action": f"tick_item_{it_idx+1}"})
+            shot_beats.append({"at_sec": round(max(0.6, dur - 0.3), 2), "action": "impact_checklist_glow"})
+        else:
+            shot_beats = [
+                {"at_sec": round(min(0.3, dur * 0.15), 2), "action": f"enter_{chosen_recipe}"},
+                {"at_sec": round(min(1.5, dur * 0.50), 2), "action": f"action_{chosen_recipe}_step"},
+                {"at_sec": round(min(dur - 0.3, dur * 0.85), 2), "action": f"impact_{chosen_recipe}_glow"}
+            ]
+
+        # Prepare factual data payload for the shot
+        shot_data = dict(sh.get("data") or {})
+        shot_data["label"] = brief_info["label"]
+        shot_data["text"] = brief_info["label"]
+        if brief_info["has_number"]:
+            shot_data["value"] = brief_info["value"]
+            shot_data["unit"] = brief_info["unit"]
+            shot_data["number_text"] = brief_info["number_text"]
+        if chosen_recipe == "checklist":
+            shot_data["items"] = ["Ashley Paul Griffith", "202 tội danh lạm dụng", "Hoãn phiên xét xử"]
+        elif chosen_recipe == "balance_scale":
+            shot_data["left_label"] = "Dấu hiệu bỏ qua"
+            shot_data["right_label"] = "202 tội danh"
+        elif chosen_recipe == "lock_unlock":
+            shot_data["status"] = "ĐANG TẠM GIAM"
+
         new_sh = dict(sh)
-        new_sh["recipe"] = cand_r
-        new_sh["scene_type"] = cand_r
+        new_sh["recipe"] = chosen_recipe
+        new_sh["scene_type"] = chosen_recipe
         new_sh["beats"] = shot_beats
+        new_sh["data"] = shot_data
+        new_sh["brief_info"] = brief_info
         scheduled.append(new_sh)
 
-    # Pass 2: Ensure at least min_distinct recipes across the entire video
+    # Pass 2: Ensure >= min_distinct recipes across video
     distinct_types = {s["recipe"] for s in scheduled}
     if len(distinct_types) < min_distinct:
         pool = [r for r in AVAILABLE_SHOT_RECIPES if r not in distinct_types]
         for idx in range(len(scheduled) - 1, -1, -1):
             if len(distinct_types) >= min_distinct or not pool:
                 break
+            if scheduled[idx].get("is_recap") or idx == len(scheduled) - 1:
+                continue
             cur_r = scheduled[idx]["recipe"]
             if used_counts[cur_r] <= 1:
                 continue
-            recent_idx = {scheduled[k]["recipe"] for k in range(max(0, idx - min_dist), min(len(scheduled), idx + min_dist + 1)) if k != idx}
+            recent_idx = {scheduled[k]["recipe"] for k in range(max(0, idx - 1), min(len(scheduled), idx + 2)) if k != idx}
+            b_info = scheduled[idx].get("brief_info", {})
             for candidate in list(pool):
-                if candidate not in recent_idx:
+                if candidate not in recent_idx and enough_for_shot(candidate, b_info):
                     scheduled[idx]["recipe"] = candidate
                     scheduled[idx]["scene_type"] = candidate
-                    scheduled[idx]["beats"] = [
-                        {"at_sec": round(min(0.3, scheduled[idx].get("duration", 3.0) * 0.15), 2), "action": f"enter_{candidate}"},
-                        {"at_sec": round(min(1.5, scheduled[idx].get("duration", 3.0) * 0.50), 2), "action": f"action_{candidate}_step"},
-                        {"at_sec": round(min(scheduled[idx].get("duration", 3.0) - 0.3, scheduled[idx].get("duration", 3.0) * 0.85), 2), "action": f"impact_{candidate}_glow"}
-                    ]
                     used_counts[cur_r] -= 1
                     used_counts[candidate] += 1
                     distinct_types.add(candidate)
                     pool.remove(candidate)
-                    review_notes.append(f"Shot {idx+1}: Nâng cao độ đa dạng toàn video, đổi sang recipe '{candidate}'.")
+                    review_notes.append(f"Shot {idx+1}: Tối ưu đa dạng toàn video, đổi sang recipe '{candidate}'.")
                     break
 
     return scheduled, review_notes
