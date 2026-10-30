@@ -66,9 +66,9 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
       return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
     }
   }
-  const rawVal = Number(d.value ?? 777);
+  const rawVal = Number(d.value ?? 0);
   const unit = d.unit || '';
-  const labelRaw = d.label || d.text || 'Chỉ số bứt phá';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -117,7 +117,7 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
     x: 540, y: boxY + 10, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'KẾT QUẢ ĐỘT PHÁ'));
+  }, label));
 
   // Animated LED border dots (36 dots around border)
   const numDots = 28;
@@ -174,20 +174,23 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
     });
 
     // Reel spinning calculation
-    // Stop times: 1.2s + idx * 0.25s
-    const stopTime = 1.2 + idx * 0.25;
+    // Stop times: 1.0s + idx * 0.35s (so le rõ ràng)
+    const stopTime = 1.0 + idx * 0.35;
     const isStopping = t >= stopTime;
     const gReel = group(root, { 'clip-path': `url(#${clipId})` });
 
     const targetDigit = Number.isNaN(Number(ch)) ? 0 : Number(ch);
     let offset = 0;
 
-    if (t < 0.6) {
-      offset = 0;
+    // Vận tốc và pha cuộn lệch nhau để không bao giờ quay đồng bộ 1 1 1
+    const spinSpeed = 1600 + idx * 320;
+    const phaseOffset = idx * 270;
+
+    if (t < 0.5) {
+      offset = phaseOffset % 1200;
     } else if (t < stopTime) {
-      // Spinning fast
-      const spinSpeed = 1800; // px/sec
-      offset = ((t - 0.6) * spinSpeed) % 1200;
+      // Spinning fast với pha so le
+      offset = ((t - 0.5) * spinSpeed + phaseOffset) % 1200;
     } else {
       // Impact snap with spring bounce
       const snapElapsed = t - stopTime;
@@ -197,10 +200,9 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
 
     // Draw digits reel strip
     const reelGroup = group(gReel, { transform: `translate(0, ${-offset})` });
-    const digitsToDraw = isStopping ? [targetDigit] : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, targetDigit];
 
     if (isStopping) {
-      // Stationary final number
+      // Stationary final number: hiển thị đúng chữ số đích thực tế
       const isImpact = t >= 2.2;
       reelGroup.append(el('text', {
         x: slotX + slotW / 2, y: slotY + slotH / 2 + 38,
@@ -211,9 +213,10 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
         class: 'ill-label'
       }, ch));
     } else {
-      // Blurring strip while spinning
+      // Blurring strip while spinning với dải số lệch pha cho từng cuộn
+      const reelShift = (idx * 3 + 1) % 10;
       for (let dIdx = -2; dIdx < 12; dIdx++) {
-        const dNum = (dIdx + 10) % 10;
+        const dNum = (dIdx + reelShift + 20) % 10;
         reelGroup.append(el('text', {
           x: slotX + slotW / 2, y: slotY + slotH / 2 + 38 + dIdx * 110,
           'text-anchor': 'middle',
@@ -268,10 +271,10 @@ function renderStrikeReplace(ctx, svg, d, t, duration = 4) {
       return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
     }
   }
-  const oldVal = Number(d.old_value ?? (d.bars && d.bars[0]?.value) ?? 30);
-  const newVal = Number(d.new_value ?? d.value ?? 95);
+  const oldVal = Number(d.old_value ?? (d.bars && d.bars[0]?.value) ?? 0);
+  const newVal = Number(d.new_value ?? d.value ?? 0);
   const unit = d.unit || '';
-  const labelRaw = d.label || d.text || 'Bước chuyển đổi';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -413,7 +416,7 @@ function renderStrikeReplace(ctx, svg, d, t, duration = 4) {
     x: cx, y: 484, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: '#f8fafc', class: 'ill-label'
-  }, label || 'THAY ĐỔI VƯỢT BẬC'));
+  }, label));
 }
 
 // =========================================================================
@@ -425,10 +428,10 @@ function renderGaugeNeedle(ctx, svg, d, t, duration = 4) {
       return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
     }
   }
-  const targetVal = Number(d.value ?? 82);
-  const maxVal = Number(d.max_val ?? 100);
+  const targetVal = Number(d.value ?? 0);
+  const maxVal = Number(d.max_val ?? (targetVal > 100 ? targetVal * 1.2 : 100));
   const unit = d.unit || '%';
-  const labelRaw = d.label || d.text || 'Mức độ cảnh báo';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -467,7 +470,7 @@ function renderGaugeNeedle(ctx, svg, d, t, duration = 4) {
     x: cx, y: cy - 215, 'text-anchor': 'middle',
     'font-size': '40', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'CHỈ SỐ ĐO LƯỜNG'));
+  }, label));
 
   // Gauge Arc: from -135 deg to +135 deg (total 270 deg)
   // Let 0 deg be 12 o'clock, so -135 deg is bottom-left, +135 deg is bottom-right
@@ -600,9 +603,9 @@ function renderOdometer(ctx, svg, d, t, duration = 4) {
       return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
     }
   }
-  const targetVal = Number(d.value ?? 1250);
+  const targetVal = Number(d.value ?? 0);
   const unit = d.unit || '';
-  const labelRaw = d.label || d.text || 'Chỉ số tích lũy';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -645,7 +648,7 @@ function renderOdometer(ctx, svg, d, t, duration = 4) {
     x: cx, y: boxY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'CÔNG TƠ MÉT'));
+  }, label));
 
   // Digits array (e.g. 0 1 2 5 0)
   const valStr = String(Math.round(targetVal));
@@ -672,7 +675,7 @@ function renderOdometer(ctx, svg, d, t, duration = 4) {
     const power = numDigits - 1 - i;
     // Continuous rolling value for this drum
     const totalRolls = targetDigit + (power === 0 ? 10 * (1 - smoothedP) : 0);
-    const curContinuousVal = smoothedP >= 1.0 ? targetDigit : (targetDigit * smoothedP + (1 - smoothedP) * 3);
+    const curContinuousVal = smoothedP >= 1.0 ? targetDigit : (targetDigit * smoothedP + (1 - smoothedP) * ((i * 3 + 1) % 10) + smoothedP * (numDigits - i) * 4) % 10;
 
     const clipId = `odo-clip-${i}-${Math.floor(t * 100)}`;
     const clip = el('clipPath', { id: clipId });
@@ -753,7 +756,7 @@ function renderBarRace(ctx, svg, d, t, duration = 4) {
     { label: 'Đối thủ B', value: 58 }
   ];
   const unit = d.unit || '%';
-  const labelRaw = d.label || d.text || 'Cuộc đua tốc độ';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -796,7 +799,7 @@ function renderBarRace(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 60, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'CUỘC ĐUA BỨT PHÁ'));
+  }, label));
 
   // Finish Line on the right side
   const finishX = cardX + cardW - 130;
@@ -820,7 +823,7 @@ function renderBarRace(ctx, svg, d, t, duration = 4) {
     const laneY = startLaneY + idx * laneHeight;
     const isHighlight = Boolean(item.highlight || idx === 1);
     const itemLabel = sanitizeSemanticLabel(item.label || `Làn ${idx + 1}`, 3);
-    const targetVal = Number(item.value || 50);
+    const targetVal = Number(item.value || 0);
 
     // Track lane background
     shape(root, 'rect', {
@@ -865,7 +868,7 @@ function renderBarRace(ctx, svg, d, t, duration = 4) {
     const tipX = barX + currentW - 15;
     root.append(el('text', {
       x: Math.max(barX + 65, tipX), y: laneY + 50, 'text-anchor': 'end',
-      'font-size': '34', 'font-weight': 'bold',
+      'font-size': '36', 'font-weight': 'bold',
       fill: isHighlight ? '#020617' : '#ffffff', class: 'ill-label'
     }, `${Math.round(currentPct)}${unit}`));
 
@@ -897,10 +900,10 @@ function renderThermometer(ctx, svg, d, t, duration = 4) {
       return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
     }
   }
-  const targetTemp = Number(d.temperature ?? d.value ?? 92);
+  const targetTemp = Number(d.temperature ?? d.value ?? 0);
   const maxTemp = Number(d.max_temp ?? 100);
   const unit = d.unit || '°C';
-  const labelRaw = d.label || d.text || 'Nhiệt lượng thị trường';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -943,7 +946,7 @@ function renderThermometer(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'NHIỆT ĐỘ TĂNG CAO'));
+  }, label));
 
   // Thermometer Stem & Bulb Layout
   const stemX = cardX + 180;
@@ -994,7 +997,7 @@ function renderThermometer(ctx, svg, d, t, duration = 4) {
       const valAtTick = Math.round((maxTemp / numTicks) * i);
       root.append(el('text', {
         x: stemX + stemW / 2 + 45, y: tickY + 8,
-        'font-size': '24', fill: '#94a3b8'
+        'font-size': '36', fill: '#94a3b8'
       }, `${valAtTick}°`));
     }
   }
@@ -1050,8 +1053,8 @@ function renderBatteryFill(ctx, svg, d, t, duration = 4) {
       return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
     }
   }
-  const targetPct = Number(d.percentage ?? d.value ?? 100);
-  const labelRaw = d.label || d.text || 'Nạp đầy năng lượng';
+  const targetPct = Number(d.percentage ?? d.value ?? 0);
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -1094,7 +1097,7 @@ function renderBatteryFill(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'TIẾN ĐỘ HOÀN THÀNH'));
+  }, label));
 
   // Horizontal Battery Specs
   const batW = 560;
@@ -1193,8 +1196,8 @@ function renderGlassFill(ctx, svg, d, t, duration = 4) {
       return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
     }
   }
-  const fillPct = Number(d.fill_percentage ?? d.value ?? 85);
-  const labelRaw = d.label || d.text || 'Dung tích chứa';
+  const fillPct = Number(d.fill_percentage ?? d.value ?? 0);
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -1237,7 +1240,7 @@ function renderGlassFill(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'MỨC ĐỘ ĐỔ ĐẦY'));
+  }, label));
 
   // Glass Cup Geometry
   const topW = 340;
@@ -1374,12 +1377,12 @@ function renderGlassFill(ctx, svg, d, t, duration = 4) {
 // 9. BALANCE_SCALE: Cán cân công lý 3D nghiêng về bên nặng hơn / ưu việt hơn
 // =========================================================================
 function renderBalanceScale(ctx, svg, d, t, duration = 4) {
-  const leftLabelRaw = d.left_label || 'Giải pháp cũ';
-  const rightLabelRaw = d.right_label || 'Giải pháp mới';
+  const leftLabelRaw = d.left_label || (d.bars && d.bars[0]?.label) || (d.items && d.items[0]) || '';
+  const rightLabelRaw = d.right_label || (d.bars && d.bars[1]?.label) || (d.items && d.items[1]) || '';
   const leftLabel = sanitizeSemanticLabel(leftLabelRaw, 3);
   const rightLabel = sanitizeSemanticLabel(rightLabelRaw, 3);
   const winner = d.winner || 'right'; // 'left' or 'right'
-  const titleRaw = d.label || d.text || 'So sánh lợi ích';
+  const titleRaw = d.label || d.text || '';
   const title = sanitizeSemanticLabel(titleRaw, 3);
 
   // Stages:
@@ -1422,7 +1425,7 @@ function renderBalanceScale(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, title || 'CÁN CÂN SO SÁNH'));
+  }, title));
 
   // Scale Center Pillar & Pivot
   const pivotX = cx;
@@ -1501,7 +1504,7 @@ function renderBalanceScale(ctx, svg, d, t, duration = 4) {
   });
   gPanL.append(el('text', {
     x: 0, y: chainH + 46, 'text-anchor': 'middle',
-    'font-size': '32', 'font-weight': 'bold',
+    'font-size': '36', 'font-weight': 'bold',
     fill: isLeftWinner ? 'var(--accent, #00f5d4)' : '#94a3b8', class: 'ill-label'
   }, leftLabel));
 
@@ -1521,7 +1524,7 @@ function renderBalanceScale(ctx, svg, d, t, duration = 4) {
   });
   gPanR.append(el('text', {
     x: 0, y: chainH + 46, 'text-anchor': 'middle',
-    'font-size': '32', 'font-weight': 'bold',
+    'font-size': '36', 'font-weight': 'bold',
     fill: isRightWinner ? 'var(--accent, #00f5d4)' : '#94a3b8', class: 'ill-label'
   }, rightLabel));
 
@@ -1543,10 +1546,10 @@ function renderBalanceScale(ctx, svg, d, t, duration = 4) {
 // 10. TUG_OF_WAR: Trận kéo co giằng co thế trận, cờ lệch hẳn về phe thắng
 // =========================================================================
 function renderTugOfWar(ctx, svg, d, t, duration = 4) {
-  const teamA = sanitizeSemanticLabel(d.team_a || 'Đội Xanh', 3);
-  const teamB = sanitizeSemanticLabel(d.team_b || 'Đội Đỏ', 3);
+  const teamA = sanitizeSemanticLabel(d.team_a || (d.bars && d.bars[0]?.label) || '', 3);
+  const teamB = sanitizeSemanticLabel(d.team_b || (d.bars && d.bars[1]?.label) || '', 3);
   const winner = d.winner || 'team_a';
-  const titleRaw = d.label || d.text || 'Thế trận giằng co';
+  const titleRaw = d.label || d.text || '';
   const title = sanitizeSemanticLabel(titleRaw, 3);
 
   // Stages:
@@ -1588,7 +1591,7 @@ function renderTugOfWar(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, title || 'GIẰNG CO THỊ PHẦN'));
+  }, title));
 
   // Tug line center and boundary lines
   const ropeY = cy + 20;
@@ -1676,7 +1679,7 @@ function renderTugOfWar(ctx, svg, d, t, duration = 4) {
     const winX = isAWin ? cardX + 160 : cardX + cardW - 160;
     root.append(el('text', {
       x: winX, y: ropeY + 95, 'text-anchor': 'middle',
-      'font-size': '34', 'font-weight': '900',
+      'font-size': '36', 'font-weight': '900',
       fill: '#fbbf24', class: 'ill-label'
     }, 'CHIẾN THẮNG'));
   }
@@ -1688,12 +1691,12 @@ function renderTugOfWar(ctx, svg, d, t, duration = 4) {
 function renderVsFlipCards(ctx, svg, d, t, duration = 4) {
   const cardA = d.card_a || { title: 'Truyền thống', stat: '45%' };
   const cardB = d.card_b || { title: 'Hiện đại hóa', stat: '98%' };
-  const titleA = sanitizeSemanticLabel(cardA.title || 'Phương án A', 3);
-  const titleB = sanitizeSemanticLabel(cardB.title || 'Phương án B', 3);
-  const statA = cardA.stat || '45%';
-  const statB = cardB.stat || '98%';
+  const titleA = sanitizeSemanticLabel(cardA.title || (d.bars && d.bars[0]?.label) || '', 3);
+  const titleB = sanitizeSemanticLabel(cardB.title || (d.bars && d.bars[1]?.label) || '', 3);
+  const statA = cardA.stat || (cardA.value !== undefined ? String(cardA.value) : '');
+  const statB = cardB.stat || (cardB.value !== undefined ? String(cardB.value) : '');
   const winner = d.winner || 'card_b';
-  const labelRaw = d.label || d.text || 'Đối đầu trực diện';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -1735,7 +1738,7 @@ function renderVsFlipCards(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'SO SÁNH ĐỐI ĐẦU'));
+  }, label));
 
   // 3D Flip progress [0.6s - 2.3s]
   const flipP = clamp((t - 0.6) / 1.7);
@@ -1817,7 +1820,7 @@ function renderVsFlipCards(ctx, svg, d, t, duration = 4) {
   shape(gVs, 'circle', { cx: 0, cy: 0, r: 42, fill: '#ef4444', filter: 'url(#neon-glow)' });
   gVs.append(el('text', {
     x: 0, y: 13, 'text-anchor': 'middle',
-    'font-size': '34', 'font-weight': '900',
+    'font-size': '36', 'font-weight': '900',
     fill: '#ffffff', class: 'ill-label'
   }, 'VS'));
 }
@@ -1826,10 +1829,10 @@ function renderVsFlipCards(ctx, svg, d, t, duration = 4) {
 // 12. BEFORE_AFTER_WIPE: Thanh trượt wipe quét qua, lột xác trước và sau
 // =========================================================================
 function renderBeforeAfterWipe(ctx, svg, d, t, duration = 4) {
-  const beforeLbl = sanitizeSemanticLabel(d.before_label || 'Trước đây', 3);
-  const afterLbl = sanitizeSemanticLabel(d.after_label || 'Sau tối ưu', 3);
-  const metric = d.metric_change || '+150%';
-  const titleRaw = d.label || d.text || 'Lột xác toàn diện';
+  const beforeLbl = sanitizeSemanticLabel(d.before_label || '', 3);
+  const afterLbl = sanitizeSemanticLabel(d.after_label || '', 3);
+  const metric = d.metric_change || (d.value ? String(d.value) : '');
+  const titleRaw = d.label || d.text || '';
   const title = sanitizeSemanticLabel(titleRaw, 3);
 
   // Stages:
@@ -1871,7 +1874,7 @@ function renderBeforeAfterWipe(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, title || 'CHUYỂN ĐỔI NGOẠN MỤC'));
+  }, title));
 
   const stageW = cardW - 80;
   const stageH = cardH - 140;
@@ -1951,9 +1954,9 @@ function renderBeforeAfterWipe(ctx, svg, d, t, duration = 4) {
 // 13. CONVEYOR_BELT: Băng chuyền chuyển động liên tục, robot kiểm tra đóng dấu
 // =========================================================================
 function renderConveyorBelt(ctx, svg, d, t, duration = 4) {
-  const labelRaw = d.label || d.text || 'Quy trình sản xuất';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
-  const outLabel = sanitizeSemanticLabel(d.output_label || 'Hoàn tất', 3);
+  const outLabel = sanitizeSemanticLabel(d.output_label || '', 3);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Băng chuyền và cánh tay robot xuất hiện
@@ -1994,7 +1997,7 @@ function renderConveyorBelt(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'BĂNG CHUYỀN TỰ ĐỘNG'));
+  }, label));
 
   // Conveyor Belt Assembly
   const beltY = cardY + 380;
@@ -2082,7 +2085,7 @@ function renderConveyorBelt(ctx, svg, d, t, duration = 4) {
     });
     gStamp.append(el('text', {
       x: 0, y: 8, 'text-anchor': 'middle',
-      'font-size': '24', 'font-weight': '900',
+      'font-size': '36', 'font-weight': '900',
       fill: '#ffffff', class: 'ill-label'
     }, 'PASS'));
   }
@@ -2099,9 +2102,9 @@ function renderConveyorBelt(ctx, svg, d, t, duration = 4) {
 // 14. DOMINO_CHAIN: Chuỗi cờ domino đổ liên hoàn từ quân kích hoạt tới đích
 // =========================================================================
 function renderDominoChain(ctx, svg, d, t, duration = 4) {
-  const steps = d.steps || ['Kích hoạt', 'Lan truyền', 'Tăng tốc', 'Bùng nổ'];
-  const finalImpact = sanitizeSemanticLabel(d.final_impact || 'Đột phá', 3);
-  const labelRaw = d.label || d.text || 'Phản ứng dây chuyền';
+  const steps = d.steps || d.items || [];
+  const finalImpact = sanitizeSemanticLabel(d.final_impact || '', 3);
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -2143,7 +2146,7 @@ function renderDominoChain(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'HIỆU ỨNG DÂY CHUYỀN'));
+  }, label));
 
   // 4 Domino Tiles
   const numTiles = 4;
@@ -2183,7 +2186,7 @@ function renderDominoChain(ctx, svg, d, t, duration = 4) {
     // Step label above tile
     root.append(el('text', {
       x: tileBaseX, y: floorY + 45, 'text-anchor': 'middle',
-      'font-size': '28', 'font-weight': 'bold',
+      'font-size': '36', 'font-weight': 'bold',
       fill: isTriggered ? 'var(--accent, #00f5d4)' : '#94a3b8', class: 'ill-label'
     }, sanitizeSemanticLabel(stepText, 2)));
   });
@@ -2204,7 +2207,7 @@ function renderDominoChain(ctx, svg, d, t, duration = 4) {
     shape(gGoal, 'circle', { cx: 0, cy: 0, r: 60, fill: '#10b981', filter: 'url(#neon-glow)' });
     gGoal.append(el('text', {
       x: 0, y: 12, 'text-anchor': 'middle',
-      'font-size': '34', 'font-weight': '900',
+      'font-size': '36', 'font-weight': '900',
       fill: '#ffffff', class: 'ill-label'
     }, finalImpact));
   }
@@ -2214,9 +2217,9 @@ function renderDominoChain(ctx, svg, d, t, duration = 4) {
 // 15. FUNNEL_FILTER: Chiếc phễu lọc đa tầng sàng lọc nhiều yếu tố thành tinh hoa
 // =========================================================================
 function renderFunnelFilter(ctx, svg, d, t, duration = 4) {
-  const inCount = d.input_count || 1000;
-  const outCount = d.output_count || 50;
-  const labelRaw = d.label || d.text || 'Sàng lọc cốt lõi';
+  const inCount = Number(d.input_count ?? (d.bars && d.bars[0]?.value) ?? 0);
+  const outCount = Number(d.output_count ?? (d.bars && d.bars[1]?.value) ?? 0);
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -2258,7 +2261,7 @@ function renderFunnelFilter(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'PHỄU CHUYỂN ĐỔI'));
+  }, label));
 
   // Funnel Geometry (3 tiers)
   const topY = cardY + 130;
@@ -2301,7 +2304,7 @@ function renderFunnelFilter(ctx, svg, d, t, duration = 4) {
   // Top Input Count
   root.append(el('text', {
     x: cx, y: topY - 15, 'text-anchor': 'middle',
-    'font-size': '34', 'font-weight': 'bold',
+    'font-size': '36', 'font-weight': 'bold',
     fill: '#94a3b8', class: 'ill-label'
   }, `ĐẦU VÀO: ${inCount}`));
 
@@ -2314,7 +2317,7 @@ function renderFunnelFilter(ctx, svg, d, t, duration = 4) {
     shape(gDrop, 'circle', { cx: 0, cy: 0, r: 35, fill: '#f59e0b', filter: 'url(#neon-glow)' });
     gDrop.append(el('text', {
       x: 0, y: 12, 'text-anchor': 'middle',
-      'font-size': '32', 'font-weight': '900',
+      'font-size': '36', 'font-weight': '900',
       fill: '#ffffff', class: 'ill-label'
     }, String(outCount)));
   }
@@ -2324,8 +2327,8 @@ function renderFunnelFilter(ctx, svg, d, t, duration = 4) {
 // 16. PIPELINE_PIPES: Đường ống công nghiệp nối các van và luồng năng lượng
 // =========================================================================
 function renderPipelinePipes(ctx, svg, d, t, duration = 4) {
-  const throughput = d.throughput || '10 Gbps';
-  const labelRaw = d.label || d.text || 'Mạng lưới liên thông';
+  const throughput = d.throughput || (d.value ? String(d.value) + (d.unit || '') : '');
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -2367,7 +2370,7 @@ function renderPipelinePipes(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'HẠ TẦNG KẾT NỐI'));
+  }, label));
 
   // Pipe Route (Zigzag through 4 nodes)
   const p0 = { x: cardX + 120, y: cardY + 220 };
@@ -2417,7 +2420,7 @@ function renderPipelinePipes(ctx, svg, d, t, duration = 4) {
   });
   root.append(el('text', {
     x: p3.x, y: p3.y + 12, 'text-anchor': 'middle',
-    'font-size': '26', 'font-weight': '900',
+    'font-size': '36', 'font-weight': '900',
     fill: t >= 2.3 ? '#10b981' : '#94a3b8', class: 'ill-label'
   }, 'MAX'));
 
@@ -2433,9 +2436,9 @@ function renderPipelinePipes(ctx, svg, d, t, duration = 4) {
 // 17. DICE_ROLL: Viên xúc xắc 3D lăn trong không gian rồi chốt mặt may mắn
 // =========================================================================
 function renderDiceRoll(ctx, svg, d, t, duration = 4) {
-  const resultNum = Number(d.result_number ?? 6);
-  const prob = d.probability || '1/6';
-  const labelRaw = d.label || d.text || 'Xác suất may rủi';
+  const resultNum = Number(d.result_number ?? (d.value ?? 0));
+  const prob = d.probability || '';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -2477,7 +2480,7 @@ function renderDiceRoll(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'XÁC SUẤT ĐẦU TƯ'));
+  }, label));
 
   // Dice Animation Physics [0.5s - 2.2s]
   let diceRot = 0;
@@ -2549,8 +2552,8 @@ function renderDiceRoll(ctx, svg, d, t, duration = 4) {
 // 18. LOCK_UNLOCK: Ổ khóa cắm chìa, còng bật mở (spring snap), bừng sáng
 // =========================================================================
 function renderLockUnlock(ctx, svg, d, t, duration = 4) {
-  const status = d.status || 'ĐÃ BẢO VỆ';
-  const labelRaw = d.label || d.text || 'Mở khóa then chốt';
+  const status = d.status || '';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -2592,7 +2595,7 @@ function renderLockUnlock(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'GIẢI MÃ THEN CHỐT'));
+  }, label));
 
   const isUnlocked = t >= 1.8;
 
@@ -2649,8 +2652,8 @@ function renderLockUnlock(ctx, svg, d, t, duration = 4) {
 // 19. SHIELD_HIT: Khiên phòng thủ đỡ đòn tấn công, sóng xung kích phát sáng
 // =========================================================================
 function renderShieldHit(ctx, svg, d, t, duration = 4) {
-  const defense = d.defense_score || '99.9%';
-  const labelRaw = d.label || d.text || 'Phòng thủ vững chắc';
+  const defense = d.defense_score || (d.value ? String(d.value) + (d.unit || '%') : '');
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -2692,7 +2695,7 @@ function renderShieldHit(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'BẢO MẬT TUYỆT ĐỐI'));
+  }, label));
 
   // Shield Geometry
   const shW = 260;
@@ -2758,8 +2761,8 @@ function renderShieldHit(ctx, svg, d, t, duration = 4) {
 // 20. TRAFFIC_LIGHT: Trụ đèn tín hiệu chuyển đỏ -> vàng -> xanh bừng sáng
 // =========================================================================
 function renderTrafficLight(ctx, svg, d, t, duration = 4) {
-  const actionText = d.action_text || 'TĂNG TỐC';
-  const labelRaw = d.label || d.text || 'Tín hiệu thị trường';
+  const actionText = d.action_text || '';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -2801,7 +2804,7 @@ function renderTrafficLight(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'TÍN HIỆU ĐÈN GIAO THÔNG'));
+  }, label));
 
   // Traffic Light Housing
   const houseW = 180;
@@ -2876,9 +2879,9 @@ function renderTrafficLight(ctx, svg, d, t, duration = 4) {
 // 21. ORBIT_SYSTEM: Hạt nhân trung tâm, 3 quỹ đạo elip vệ tinh quay & beacon
 // =========================================================================
 function renderOrbitSystem(ctx, svg, d, t, duration = 4) {
-  const centerNode = sanitizeSemanticLabel(d.center_node || 'HẠT NHÂN AI', 3);
-  const satellites = (d.satellites || ['Dữ liệu', 'Thuật toán', 'Bảo mật']).map(s => sanitizeSemanticLabel(s, 2));
-  const labelRaw = d.label || d.text || 'Hệ sinh thái liên kết';
+  const centerNode = sanitizeSemanticLabel(d.center_node || d.text || '', 3);
+  const satellites = (d.satellites || d.items || []).map(s => sanitizeSemanticLabel(s, 2));
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -2920,7 +2923,7 @@ function renderOrbitSystem(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'HỆ SINH THÁI ĐỒNG BỘ'));
+  }, label));
 
   // 3 Tilted Elliptical Orbit Rings
   const orbits = [
@@ -2946,7 +2949,7 @@ function renderOrbitSystem(ctx, svg, d, t, duration = 4) {
   });
   root.append(el('text', {
     x: cx, y: cy + 10, 'text-anchor': 'middle',
-    'font-size': '24', 'font-weight': '900',
+    'font-size': '36', 'font-weight': '900',
     fill: '#ffffff', class: 'ill-label'
   }, centerNode));
 
@@ -2980,7 +2983,7 @@ function renderOrbitSystem(ctx, svg, d, t, duration = 4) {
     // Satellite label tag
     root.append(el('text', {
       x: satX, y: satY - 32, 'text-anchor': 'middle',
-      'font-size': '26', 'font-weight': 'bold',
+      'font-size': '36', 'font-weight': 'bold',
       fill: '#f8fafc', class: 'ill-label'
     }, satName));
   });
@@ -3002,9 +3005,9 @@ function renderOrbitSystem(ctx, svg, d, t, duration = 4) {
 // 22. LAYERED_ONION: Vòng đồng tâm bóc tách từng tầng hé lộ hạt nhân cốt lõi
 // =========================================================================
 function renderLayeredOnion(ctx, svg, d, t, duration = 4) {
-  const coreText = sanitizeSemanticLabel(d.core_text || 'BẢN CHẤT', 3);
-  const layers = (d.layers || ['Biểu hiện', 'Cấu trúc', 'Cốt lõi']).map(l => sanitizeSemanticLabel(l, 2));
-  const labelRaw = d.label || d.text || 'Bóc tách bản chất';
+  const coreText = sanitizeSemanticLabel(d.core_text || d.text || '', 3);
+  const layers = (d.layers || d.items || []).map(l => sanitizeSemanticLabel(l, 2));
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -3046,7 +3049,7 @@ function renderLayeredOnion(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'BÓC TÁCH ĐA TẦNG'));
+  }, label));
 
   // Outer Shell Peeling Split [0.6s - 2.3s]
   let peelX = 0;
@@ -3088,24 +3091,24 @@ function renderLayeredOnion(ctx, svg, d, t, duration = 4) {
   });
   gCore.append(el('text', {
     x: cx, y: cy + 12, 'text-anchor': 'middle',
-    'font-size': '30', 'font-weight': '900',
+    'font-size': '36', 'font-weight': '900',
     fill: '#020617', class: 'ill-label'
   }, coreText));
 
   // Layer Annotation Labels
   root.append(el('text', {
     x: cx, y: cy + 285, 'text-anchor': 'middle',
-    'font-size': '32', 'font-weight': 'bold',
+    'font-size': '36', 'font-weight': 'bold',
     fill: '#38bdf8', class: 'ill-label'
-  }, layers[0] || 'TẦNG CỐT LÕI'));
+  }, layers[0] || ''));
 }
 
 // =========================================================================
 // 23. STACK_PILE: Tháp thẻ 3D xếp chồng lên nhau vững chãi, đỉnh phát quang
 // =========================================================================
 function renderStackPile(ctx, svg, d, t, duration = 4) {
-  const layers = (d.layers || ['Hạ tầng', 'Nền tảng', 'Ứng dụng', 'Trải nghiệm']).map(l => sanitizeSemanticLabel(l, 3));
-  const labelRaw = d.label || d.text || 'Ngăn xếp công nghệ';
+  const layers = (d.layers || d.items || []).map(l => sanitizeSemanticLabel(l, 3));
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -3147,7 +3150,7 @@ function renderStackPile(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'THÁP NĂNG LỰC'));
+  }, label));
 
   // 4 Stacked Slabs (bottom to top)
   const slabW = 600;
@@ -3182,7 +3185,7 @@ function renderStackPile(ctx, svg, d, t, duration = 4) {
 
     gSlab.append(el('text', {
       x: 0, y: slabH / 2 + 12, 'text-anchor': 'middle',
-      'font-size': '34', 'font-weight': 'bold',
+      'font-size': '36', 'font-weight': 'bold',
       fill: isTop && t >= 2.3 ? '#ffffff' : '#cbd5e1', class: 'ill-label'
     }, layerText));
   });
@@ -3192,8 +3195,8 @@ function renderStackPile(ctx, svg, d, t, duration = 4) {
 // 24. PUZZLE_SNAP: Mảnh ghép jigsaw trượt vào khớp nối 'khấc' hoàn mỹ
 // =========================================================================
 function renderPuzzleSnap(ctx, svg, d, t, duration = 4) {
-  const solutionText = sanitizeSemanticLabel(d.solution_text || 'MẢNH GHÉP HOÀN HẢO', 3);
-  const labelRaw = d.label || d.text || 'Khớp nối giải pháp';
+  const solutionText = sanitizeSemanticLabel(d.solution_text || d.text || '', 3);
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -3235,7 +3238,7 @@ function renderPuzzleSnap(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'MẢNH GHÉP QUYẾT ĐỊNH'));
+  }, label));
 
   // Puzzle Frame (2x2 grid, bottom-right piece is dynamic key)
   const pieceW = 240;
@@ -3292,7 +3295,7 @@ function renderPuzzleSnap(ctx, svg, d, t, duration = 4) {
   });
   gKey.append(el('text', {
     x: pieceW / 2, y: pieceH / 2 + 10, 'text-anchor': 'middle',
-    'font-size': '28', 'font-weight': '900',
+    'font-size': '36', 'font-weight': '900',
     fill: '#ffffff', class: 'ill-label'
   }, isSnapped ? 'HOÀN HẢO' : 'CHÌA KHÓA'));
 
@@ -3308,9 +3311,9 @@ function renderPuzzleSnap(ctx, svg, d, t, duration = 4) {
 // 25. CHAT_THREAD: Khung ứng dụng tin nhắn gõ chữ real-time + reply bung nở
 // =========================================================================
 function renderChatThread(ctx, svg, d, t, duration = 4) {
-  const userMsg = d.user_msg || 'Làm sao để bứt phá?';
-  const botReply = d.bot_reply || 'Tự động hóa toàn diện!';
-  const labelRaw = d.label || d.text || 'Hội thoại thông minh';
+  const userMsg = d.user_msg || (d.items && d.items[0]) || '';
+  const botReply = d.bot_reply || (d.items && d.items[1]) || '';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -3352,7 +3355,7 @@ function renderChatThread(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'HỘI THOẠI TRỰC QUAN'));
+  }, label));
 
   // 1. User Message (Right Side)
   const userBubbleW = 440;
@@ -3366,7 +3369,7 @@ function renderChatThread(ctx, svg, d, t, duration = 4) {
   });
   root.append(el('text', {
     x: userX + 30, y: userY + 58,
-    'font-size': '32', 'font-weight': 'bold',
+    'font-size': '36', 'font-weight': 'bold',
     fill: '#ffffff', class: 'ill-label'
   }, userMsg));
 
@@ -3402,7 +3405,7 @@ function renderChatThread(ctx, svg, d, t, duration = 4) {
     });
     gBot.append(el('text', {
       x: 35, y: 68,
-      'font-size': '34', 'font-weight': '900',
+      'font-size': '36', 'font-weight': '900',
       fill: '#ffffff', class: 'ill-label'
     }, botReply));
   }
@@ -3415,7 +3418,7 @@ function renderChatThread(ctx, svg, d, t, duration = 4) {
   });
   root.append(el('text', {
     x: cardX + 90, y: inputY + 40,
-    'font-size': '28', fill: '#64748b', class: 'ill-label'
+    'font-size': '36', fill: '#64748b', class: 'ill-label'
   }, 'Nhập phản hồi...'));
 
   // Blinking vertical cursor
@@ -3431,9 +3434,9 @@ function renderChatThread(ctx, svg, d, t, duration = 4) {
 // 26. MOCK_CARD_SWIPE: Thao tác quẹt thẻ sang phải chấp nhận (APPROVED)
 // =========================================================================
 function renderMockCardSwipe(ctx, svg, d, t, duration = 4) {
-  const cardTitle = sanitizeSemanticLabel(d.card_title || 'Giải pháp đột phá', 3);
-  const decision = d.decision || 'APPROVED';
-  const labelRaw = d.label || d.text || 'Quyết định lựa chọn';
+  const cardTitle = sanitizeSemanticLabel(d.card_title || d.text || '', 3);
+  const decision = d.decision || '';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -3475,7 +3478,7 @@ function renderMockCardSwipe(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'LỰA CHỌN CHIẾN LƯỢC'));
+  }, label));
 
   // Swipe Card Dimensions
   const swW = 440;
@@ -3534,7 +3537,7 @@ function renderMockCardSwipe(ctx, svg, d, t, duration = 4) {
     });
     gStamp.append(el('text', {
       x: 0, y: 13, 'text-anchor': 'middle',
-      'font-size': '32', 'font-weight': '900',
+      'font-size': '36', 'font-weight': '900',
       fill: '#10b981', filter: 'url(#neon-glow)', class: 'ill-label'
     }, decision));
   }
@@ -3544,8 +3547,8 @@ function renderMockCardSwipe(ctx, svg, d, t, duration = 4) {
 // 27. FORM_FILL_SUBMIT: Form biểu mẫu tự động điền + nút bấm nảy haptic
 // =========================================================================
 function renderFormFillSubmit(ctx, svg, d, t, duration = 4) {
-  const fields = (d.fields || ['Họ và tên', 'Mục tiêu', 'Ngân sách']).map(f => sanitizeSemanticLabel(f, 2));
-  const labelRaw = d.label || d.text || 'Xử lý hồ sơ';
+  const fields = (d.fields || d.items || []).map(f => sanitizeSemanticLabel(f, 2));
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -3587,7 +3590,7 @@ function renderFormFillSubmit(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'BIỂU MẪU TỰ ĐỘNG'));
+  }, label));
 
   // 3 Form Input Fields
   const fieldW = cardW - 140;
@@ -3608,7 +3611,7 @@ function renderFormFillSubmit(ctx, svg, d, t, duration = 4) {
     // Label on top
     root.append(el('text', {
       x: cardX + 90, y: fY - 10,
-      'font-size': '24', fill: '#94a3b8', class: 'ill-label'
+      'font-size': '36', fill: '#94a3b8', class: 'ill-label'
     }, fldName));
 
     if (isFilled) {
@@ -3616,7 +3619,7 @@ function renderFormFillSubmit(ctx, svg, d, t, duration = 4) {
       shape(root, 'circle', { cx: cardX + fieldW + 30, cy: fY + fieldH / 2, r: 16, fill: '#10b981' });
       root.append(el('text', {
         x: cardX + 100, y: fY + 46,
-        'font-size': '28', 'font-weight': 'bold',
+        'font-size': '36', 'font-weight': 'bold',
         fill: '#f8fafc', class: 'ill-label'
       }, '✓ Đã hoàn tất'));
     }
@@ -3637,7 +3640,7 @@ function renderFormFillSubmit(ctx, svg, d, t, duration = 4) {
   });
   gBtn.append(el('text', {
     x: 0, y: 44, 'text-anchor': 'middle',
-    'font-size': '32', 'font-weight': '900',
+    'font-size': '36', 'font-weight': '900',
     fill: '#020617', class: 'ill-label'
   }, isSubmitted ? '✓ ĐÃ XÁC NHẬN' : 'GỬI YÊU CẦU'));
 }
@@ -3646,9 +3649,9 @@ function renderFormFillSubmit(ctx, svg, d, t, duration = 4) {
 // 28. TERMINAL_COMMAND_RUN: Cửa sổ dòng lệnh Terminal gõ lệnh + SUCCESS bừng sáng
 // =========================================================================
 function renderTerminalCommandRun(ctx, svg, d, t, duration = 4) {
-  const cmd = d.command || 'deploy --prod --scale=max';
-  const outLog = d.output || '✓ SUCCESS: 0 ERRORS';
-  const labelRaw = d.label || d.text || 'Thực thi câu lệnh';
+  const cmd = d.command || (d.text ? String(d.text) : '');
+  const outLog = d.output || '';
+  const labelRaw = d.label || d.text || '';
   const label = sanitizeSemanticLabel(labelRaw, 3);
 
   // Stages:
@@ -3690,7 +3693,7 @@ function renderTerminalCommandRun(ctx, svg, d, t, duration = 4) {
     x: cx, y: cardY + 65, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': 'bold',
     fill: 'var(--accent, #00f5d4)', class: 'ill-label'
-  }, label || 'DÒNG LỆNH HỆ THỐNG'));
+  }, label));
 
   // Terminal Window Frame
   const termW = cardW - 80;
@@ -3718,7 +3721,7 @@ function renderTerminalCommandRun(ctx, svg, d, t, duration = 4) {
 
   root.append(el('text', {
     x: termX + 30, y: termY + 100,
-    'font-size': '32', 'font-weight': 'bold',
+    'font-size': '36', 'font-weight': 'bold',
     fill: '#38bdf8', font_family: 'monospace', class: 'ill-label'
   }, `$ ${currentTypedCmd}`));
 
@@ -3746,7 +3749,7 @@ function renderTerminalCommandRun(ctx, svg, d, t, duration = 4) {
     });
     gOut.append(el('text', {
       x: termX + 60, y: termY + 255,
-      'font-size': '34', 'font-weight': '900',
+      'font-size': '36', 'font-weight': '900',
       fill: '#34d399', font_family: 'monospace', class: 'ill-label'
     }, outLog));
   }

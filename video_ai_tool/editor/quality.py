@@ -119,6 +119,26 @@ def save_quality(timeline,results,video_path,*,scene_id=None):
         x=i%columns*cell[0];y=i//columns*cell[1]
         sheet.paste(image,(x+(cell[0]-image.width)//2,y));draw.text((x+5,y+322),f'{times[i]:.1f}s',fill='white')
     target=timeline.project/'review_frames'/('contact_sheet'+suffix+'.png');sheet.save(target)
+    import hashlib
+    try:
+        report['video_hash'] = hashlib.sha256(Path(video_path).read_bytes()).hexdigest()
+        report['is_current_hash'] = True
+    except Exception:
+        report['video_hash'] = None
+
+    shots_listing = []
+    for sc in timeline.scenes:
+        for sh in sc.shots:
+            sh_vp = getattr(sh.spec, "visual_plan", None) or getattr(sh, "visual_plan", None)
+            sh_r = getattr(sh_vp, "scene_type", None) or (sc.spec.visual_plan.scene_type if getattr(sc.spec, "visual_plan", None) else "text_focus")
+            shots_listing.append({
+                "scene_id": sc.spec.id,
+                "shot_id": getattr(sh, "shot_id", 1),
+                "recipe": sh_r,
+                "duration": sh.duration
+            })
+    report['shots'] = shots_listing
+
     report.update(duration_sec=timeline.duration,sample_interval_sec=2.5,frames=paths,contact_sheet=str(target),review_notes=timeline.plan.review_notes)
     report['warning_count']=len(extra)+sum(len(report[k]) for k in ('repeated_cards','still_intervals_over_3_5_sec','empty_cards_over_40_percent','text_overflow','numbers_not_in_narration','caption_gaps_over_0_6_sec'))
     try:

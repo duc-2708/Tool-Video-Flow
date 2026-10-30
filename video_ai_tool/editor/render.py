@@ -224,18 +224,23 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                     all_tl_shots = []
                     tl_coords = []
                     for sc_idx, sc in enumerate(timeline.scenes):
+                        is_recap_scene = (sc_idx == len(timeline.scenes) - 1)
                         for sh_idx, sh in enumerate(sc.shots):
                             sh_vp = getattr(sh.spec, "visual_plan", None) or getattr(sh, "visual_plan", None)
                             raw_r = sh_vp.scene_type if sh_vp else (sc.spec.visual_plan.scene_type if getattr(sc.spec, 'visual_plan', None) else "")
                             sh_text = sh.spec.card_text or (sh.spec.visual.data.text if sh.spec.visual and sh.spec.visual.data else "") or sc.spec.narration
+                            s_data = (sh.spec.visual.data.model_dump(mode="json") if (sh.spec.visual and sh.spec.visual.data) else {})
                             all_tl_shots.append({
                                 "recipe": raw_r,
                                 "text": sh_text,
-                                "narration": sc.spec.narration,
+                                "narration": sh_text,
+                                "scene_narration": sc.spec.narration,
+                                "is_recap": is_recap_scene,
                                 "duration": sh.duration,
                                 "duration_sec": sh.duration,
                                 "scene_id": sc.spec.id,
-                                "shot_id": sh.shot_id
+                                "shot_id": sh.shot_id,
+                                "data": s_data,
                             })
                             tl_coords.append((sc_idx, sh_idx))
                     if all_tl_shots:
@@ -243,7 +248,7 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                         scheduled_tl_shots, tl_notes = schedule_shots_no_repeat(
                             all_tl_shots,
                             min_distinct=target_dist,
-                            min_dist=3,
+                            min_dist=2,
                             max_freq=max(2, (len(all_tl_shots) // 6) + 1)
                         )
                         timeline.plan.review_notes.extend([n for n in tl_notes if n not in timeline.plan.review_notes])
@@ -256,15 +261,23 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                                 VisualBeat(at_sec=b["at_sec"], action=b["action"]) if isinstance(b, dict) else b
                                 for b in sh_data.get("beats", [])
                             ]
+                            valid_vkeys = set(VisualData.model_fields.keys())
+                            clean_vdata = {k: v for k, v in sh_data["data"].items() if k in valid_vkeys} if isinstance(sh_data.get("data"), dict) else {}
+                            shot_spec_data = VisualData(**clean_vdata) if clean_vdata else (target_sc.spec.visual_plan.data if getattr(target_sc.spec, 'visual_plan', None) and target_sc.spec.visual_plan.data else VisualData())
                             vp_obj = MotionScenePlan(
                                 scene_type=chosen_r,
                                 layout=target_sc.spec.visual_plan.layout if getattr(target_sc.spec, 'visual_plan', None) else "center_hero",
                                 theme=theme_cur,
-                                data=target_sc.spec.visual_plan.data if getattr(target_sc.spec, 'visual_plan', None) and target_sc.spec.visual_plan.data else VisualData(),
+                                data=shot_spec_data,
                                 beats=beats,
                             )
                             target_sh.spec.visual_plan = vp_obj
                             target_sh.visual_plan = vp_obj
+                            # Đồng bộ cả vào timeline.plan để serialized plan chứa đầy đủ shot recipes
+                            try:
+                                timeline.plan.scenes[sc_idx].shots[sh_idx].visual_plan = vp_obj
+                            except Exception:
+                                pass
                 except Exception as tl_sched_err:
                     diagnostics.record_exception(tl_sched_err, "Lập lịch recipe theo shot khi render lỗi")
 
