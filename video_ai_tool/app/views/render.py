@@ -18,13 +18,30 @@ def show_result(result,project,diagnostics):
         st.warning("File MP4 chưa có hoặc đã được di chuyển.")
         return
     st.caption(f"{result['duration_sec']:.2f} giây · {result['width']} × {result['height']} · {result['fps']} fps · {path.stat().st_size/1024**2:.2f} MB · Dựng trong {result['render_seconds']:.1f} giây")
+    # Kiểm tra trạng thái LLM Planner v3
+    status_file = project / "planner_status.json"
+    if status_file.is_file():
+        try:
+            p_status = read_json(status_file)
+            if not p_status.get("llm_ok", True):
+                st.warning("⚠️ Planner AI lỗi: đang dùng recipe suy luận theo từ khóa")
+        except Exception:
+            pass
+
     if result.get('audit_failed') or (project / 'layout_report.json').is_file():
         try:
             lr_path = project / 'layout_report.json'
             if lr_path.is_file():
                 lr_data = read_json(lr_path)
                 if not lr_data.get('overall_all_passed', True):
-                    st.error('🚨 CẢNH BÁO ĐỎ: Phát hiện lỗi kiểm định bố cục hoạt họa (layout_report.json) sau 2 lượt tự sửa! Hãy kiểm tra tràn lề hoặc đè phụ đề.')
+                    st.error('🚨 CẢNH BÁO ĐỎ: Phát hiện lỗi kiểm định bố cục hoạt họa sau 2 lượt tự sửa!')
+                    scenes_fail = [s for s in lr_data.get('scenes', []) if not s.get('all_passed', True)]
+                    for sf in scenes_fail:
+                        sc_id = sf.get('scene_id')
+                        fails = [m for m, p in sf.get('metrics', {}).items() if isinstance(p, dict) and not p.get('passed', True)]
+                        fail_desc = ", ".join(fails) if fails else "Vi phạm khoảng an toàn / đè chữ"
+                        rf_link = sf.get('review_frame') or f"review_frames/scene_{sc_id}.png"
+                        st.markdown(f"- **Cảnh {sc_id}**: Lỗi `{fail_desc}`. [Xem khung hình kiểm tra]({rf_link})")
         except Exception:
             pass
     if result.get('quality_summary'):
@@ -32,10 +49,14 @@ def show_result(result,project,diagnostics):
         st.caption(f"Kiểm tra hình ảnh: {qc['template_types']} loại mẫu · {qc['warning_count']} cảnh báo · {qc['deferred_dom_samples']} mẫu DOM chưa hiện đủ.")
         if 'illustration_coverage_percent' in qc:
             st.caption(f"Minh họa: {qc['illustration_coverage_percent']:.1f}% thời lượng · {qc['scene_type_count']} loại cảnh hoạt họa.")
-            if qc['illustration_coverage_percent']<85 and result.get('illustrations_requested'): st.warning('Hình minh họa dưới85%; xem quality_report.json để biết cảnh thiếu dữ liệu hoặc đang fallback.')
+            if qc['illustration_coverage_percent']<85 and result.get('illustrations_requested'): st.warning('Hình minh họa dưới 85%; xem quality_report.json để biết cảnh thiếu dữ liệu hoặc đang fallback.')
         with st.expander('Báo cáo chất lượng hình ảnh'):
             try:
                 report=read_json(confined(project,Path(result['quality_report']).name))
+                if report.get('fallbacks'):
+                    st.warning("⚠️ Danh sách cảnh fallback:")
+                    for fb in report['fallbacks']:
+                        st.write(f"- Cảnh {fb.get('scene_id')}: {fb.get('reason')}")
                 st.json(report)
             except (OSError,ValueError): st.info('Chưa đọc được báo cáo chất lượng.')
     st.video(str(path))

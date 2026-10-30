@@ -26,6 +26,7 @@ QUY TẮC CỨNG:
 9. Không logo/ảnh app/nhân vật có bản quyền; mascot chỉ là nhân vật gốc hình khối đơn giản, không xuất hiện ở mọi cảnh (tối đa 1 trong 2 cảnh).
 10. Camera nhẹ (push_in/pan <=6%).
 11. Chú thích phải đúng nghĩa (xem phong cách); poll/câu hỏi phải khớp với các lựa chọn và nội dung video.
+12. HỢP NHẤT SCENE DIRECTOR: Nếu kịch bản có [Scene Director Motion Brief] (ý tưởng hình, recipe đề xuất, key beats), BẮT BUỘC xem xét đề xuất này để lựa chọn recipe và cấu trúc sự kiện; chỉ được đổi sang recipe khác nếu cần tránh lặp họ chuyển động hoặc để đảm bảo quy tắc lập lịch không lặp.
 
 ĐẦU RA:
 {

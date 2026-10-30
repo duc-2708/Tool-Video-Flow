@@ -264,6 +264,16 @@ def schedule_recipes_no_repeat(
                 f"Cảnh {idx+1}: Recipe số '{old_r}' không có số trong kịch bản; tự động chuyển sang recipe định tính '{current_recipe}'."
             )
 
+        # Enforce Recap scene constraint: final scene must use high-motion recap recipe
+        is_recap = (idx == len(scenes) - 1)
+        RECAP_RECIPES = ["checklist", "layered_onion", "orbit_system"]
+        if is_recap and current_recipe not in RECAP_RECIPES:
+            chosen_recap = sorted(RECAP_RECIPES, key=lambda r: used_recipe_counts[r])[0]
+            review_notes.append(
+                f"Cảnh {idx+1} (Recap cuối): Ép dùng recipe tổng kết rõ nét '{chosen_recap}' (thay vì '{current_recipe}')."
+            )
+            current_recipe = chosen_recap
+
         prev_layout = scheduled[-1].get("layout") if scheduled else None
         prev_recipe = scheduled[-1]["scene_type"] if scheduled else None
         prev_family = get_recipe_family(prev_recipe) if prev_recipe else None
@@ -366,8 +376,9 @@ def schedule_recipes_no_repeat(
                     clean_beats.append({"at_sec": getattr(b, "at_sec", 0.5), "action": getattr(b, "action", "beat")})
             beats = clean_beats
 
-        # 1. Enforce >= 3 visible events
-        if len(beats) < 3:
+        # 1. Enforce >= 3 visible events (idle_breath does NOT count as an event)
+        meaningful_beats = [b for b in beats if "idle_breath" not in str(b.get("action", "")).lower()]
+        if len(meaningful_beats) < 3:
             r_name = sc["scene_type"]
             default_times = [
                 round(min(0.5, dur * 0.15), 2),
@@ -376,7 +387,8 @@ def schedule_recipes_no_repeat(
             ]
             actions = [f"enter_{r_name}", f"action_{r_name}_step", f"impact_{r_name}_glow"]
             for t_val, act in zip(default_times, actions):
-                if not any(abs(b["at_sec"] - t_val) < 0.4 for b in beats):
+                # Only consider meaningful beats when checking for conflicts
+                if not any(abs(b["at_sec"] - t_val) < 0.3 and "idle_breath" not in str(b.get("action", "")).lower() for b in beats):
                     beats.append({"at_sec": t_val, "action": act})
             beats.sort(key=lambda b: b["at_sec"])
             review_notes.append(f"Cảnh {idx+1}: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.")
@@ -391,8 +403,9 @@ def schedule_recipes_no_repeat(
             while t_curr - last_t > 2.5:
                 inject_t = round(last_t + 2.0, 2)
                 if inject_t < dur:
-                    repaired_beats.append({"at_sec": inject_t, "action": "idle_pulse"})
-                    review_notes.append(f"Cảnh {idx+1}: Phát hiện khoảng tĩnh {t_curr - last_t:.1f}s (>2.5s); chèn nhịp idle_pulse tại {inject_t}s.")
+                    r_name = sc.get("scene_type", "element")
+                    repaired_beats.append({"at_sec": inject_t, "action": f"action_{r_name}_step_{len(repaired_beats)+1}"})
+                    review_notes.append(f"Cảnh {idx+1}: Phát hiện khoảng tĩnh {t_curr - last_t:.1f}s (>2.5s); bổ sung nhịp diễn hoạt chuyển nấc tại {inject_t}s.")
                 last_t = inject_t
             repaired_beats.append(b)
             last_t = t_curr
@@ -401,8 +414,9 @@ def schedule_recipes_no_repeat(
         while dur - last_t > 2.5:
             inject_t = round(last_t + 2.0, 2)
             if inject_t < dur:
-                repaired_beats.append({"at_sec": inject_t, "action": "idle_breath"})
-                review_notes.append(f"Cảnh {idx+1}: Chèn nhịp idle_breath tại {inject_t}s để tránh đứng yên cuối cảnh.")
+                r_name = sc.get("scene_type", "element")
+                repaired_beats.append({"at_sec": inject_t, "action": f"impact_{r_name}_shift_{len(repaired_beats)+1}"})
+                review_notes.append(f"Cảnh {idx+1}: Bổ sung giai đoạn trực quan chuyển động tại {inject_t}s để tránh đứng yên.")
             last_t = inject_t
 
         # 3. Hook stillness constraint: Hook scene cannot stay still > 2.5s
@@ -414,5 +428,120 @@ def schedule_recipes_no_repeat(
 
         repaired_beats.sort(key=lambda b: b["at_sec"])
         sc["beats"] = repaired_beats
+
+        # Enforce headline bounds: <= 6 words, clean
+        hl = sc.get("top_headline") or sc.get("headline")
+        if hl and isinstance(hl, str):
+            hl_words = hl.strip().split()
+            if len(hl_words) > 6:
+                sc["top_headline"] = " ".join(hl_words[:6])
+            else:
+                sc["top_headline"] = " ".join(hl_words)
+
+    return scheduled, review_notes
+
+
+
+AVAILABLE_SHOT_RECIPES = [
+    "slot_counter", "balance_scale", "domino_chain", "odometer", "battery_fill",
+    "glass_fill", "gauge_needle", "thermometer", "bar_race", "strike_replace",
+    "form_fill_submit", "stack_pile", "orbit_system", "funnel_filter", "traffic_light",
+    "pipeline_pipes", "before_after_wipe", "shield_hit", "speedometer_gauge",
+    "lock_unlock", "chat_thread", "pill_toggle", "dice_roll", "delivery_truck",
+    "matrix_rain", "code_typing", "step_stairs", "card_flip"
+]
+
+
+def schedule_shots_no_repeat(
+    shots_data: list[dict],
+    min_distinct: int = 8,
+    min_dist: int = 3,
+    max_freq: int = 2
+) -> tuple[list[dict], list[str]]:
+    """
+    Schedule recipes across all shots of the video to ensure high visual diversity:
+    - No same recipe within min_dist (default 3) consecutive shots.
+    - Each recipe used at most max_freq (default 2) times across the entire video.
+    - Video contains at least min_distinct (default 8) distinct recipes.
+    - Each shot duration has >= 3 meaningful visible events, absolutely no idle_breath.
+    """
+    from collections import Counter
+    scheduled = []
+    review_notes = []
+    used_counts = Counter()
+
+    for idx, sh in enumerate(shots_data):
+        raw_r = sh.get("recipe") or sh.get("template") or ""
+        text = sh.get("narration") or sh.get("card_text") or sh.get("text") or ""
+        
+        # Suggest recipe from context if missing or generic
+        if not raw_r or raw_r in {"stock", "source_card", "text_focus", "icon_card", "stat_card"}:
+            cand_r = suggest_metaphor_recipe(text, previous_recipe=scheduled[-1]["recipe"] if scheduled else None)
+        else:
+            cand_r = raw_r
+
+        # Recent 3 recipes check
+        recent_3 = [s["recipe"] for s in scheduled[max(0, idx - min_dist):idx]]
+        
+        # Enforce constraints
+        if cand_r in recent_3 or used_counts[cand_r] >= max_freq or cand_r not in AVAILABLE_SHOT_RECIPES:
+            # Find candidate that satisfies constraints
+            found = None
+            for alt in AVAILABLE_SHOT_RECIPES:
+                if alt not in recent_3 and used_counts[alt] < max_freq:
+                    found = alt
+                    break
+            if not found:
+                for alt in AVAILABLE_SHOT_RECIPES:
+                    if alt not in recent_3:
+                        found = alt
+                        break
+            replacement = found or "orbit_system"
+            reason = "trùng trong 3 shot liền kề" if cand_r in recent_3 else f"vượt quá {max_freq} lần/video"
+            review_notes.append(f"Shot {idx+1}: Recipe '{cand_r}' {reason}; tự động đổi sang '{replacement}'.")
+            cand_r = replacement
+
+        used_counts[cand_r] += 1
+        
+        # Generate beats for shot
+        dur = float(sh.get("duration") or sh.get("duration_sec") or 3.0)
+        shot_beats = [
+            {"at_sec": round(min(0.3, dur * 0.15), 2), "action": f"enter_{cand_r}"},
+            {"at_sec": round(min(1.5, dur * 0.50), 2), "action": f"action_{cand_r}_step"},
+            {"at_sec": round(min(dur - 0.3, dur * 0.85), 2), "action": f"impact_{cand_r}_glow"}
+        ]
+        
+        new_sh = dict(sh)
+        new_sh["recipe"] = cand_r
+        new_sh["scene_type"] = cand_r
+        new_sh["beats"] = shot_beats
+        scheduled.append(new_sh)
+
+    # Pass 2: Ensure at least min_distinct recipes across the entire video
+    distinct_types = {s["recipe"] for s in scheduled}
+    if len(distinct_types) < min_distinct:
+        pool = [r for r in AVAILABLE_SHOT_RECIPES if r not in distinct_types]
+        for idx in range(len(scheduled) - 1, -1, -1):
+            if len(distinct_types) >= min_distinct or not pool:
+                break
+            cur_r = scheduled[idx]["recipe"]
+            if used_counts[cur_r] <= 1:
+                continue
+            recent_idx = {scheduled[k]["recipe"] for k in range(max(0, idx - min_dist), min(len(scheduled), idx + min_dist + 1)) if k != idx}
+            for candidate in list(pool):
+                if candidate not in recent_idx:
+                    scheduled[idx]["recipe"] = candidate
+                    scheduled[idx]["scene_type"] = candidate
+                    scheduled[idx]["beats"] = [
+                        {"at_sec": round(min(0.3, scheduled[idx].get("duration", 3.0) * 0.15), 2), "action": f"enter_{candidate}"},
+                        {"at_sec": round(min(1.5, scheduled[idx].get("duration", 3.0) * 0.50), 2), "action": f"action_{candidate}_step"},
+                        {"at_sec": round(min(scheduled[idx].get("duration", 3.0) - 0.3, scheduled[idx].get("duration", 3.0) * 0.85), 2), "action": f"impact_{candidate}_glow"}
+                    ]
+                    used_counts[cur_r] -= 1
+                    used_counts[candidate] += 1
+                    distinct_types.add(candidate)
+                    pool.remove(candidate)
+                    review_notes.append(f"Shot {idx+1}: Nâng cao độ đa dạng toàn video, đổi sang recipe '{candidate}'.")
+                    break
 
     return scheduled, review_notes

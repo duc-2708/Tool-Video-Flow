@@ -21,7 +21,8 @@ def prepare_graphics(timeline,diagnostics=None):
         from agents.visual_planner import assign_visuals
         try:
             brief=ResearchBrief.model_validate_json(brief_path.read_text(encoding="utf-8"))
-            assign_visuals(plan,brief)
+            if not any(getattr(s, 'visual_plan', None) for s in plan.scenes):
+                assign_visuals(plan,brief)
         except Exception as error:
             brief=None
             if diagnostics: diagnostics.record_exception(error,"Không đọc/chuẩn bị được brief đồ họa; dùng bản trung tính")
@@ -61,7 +62,8 @@ def prepare_graphics(timeline,diagnostics=None):
     # change to group-1 checks or the immutable resolved plan on disk.
     from agents.visual_diversity import select_templates,repair_numeric_cards
     repair_numeric_cards(plan,brief)
-    select_templates(plan,brief)
+    if not any(getattr(s, 'visual_plan', None) for s in plan.scenes):
+        select_templates(plan,brief)
 
 
 class ProgressTracker:

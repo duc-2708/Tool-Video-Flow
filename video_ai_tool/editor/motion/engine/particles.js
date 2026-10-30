@@ -134,7 +134,7 @@ function calculateScreenShake(t, hitTimes = [], maxIntensity = 10) {
 // 5. Odometer Number Calculation
 function calculateOdometer(currentValue, targetValue, progress) {
   const p = clamp(progress);
-  if (p >= 1) return { display: targetValue, bounceY: 0 };
+  if (p >= 1) return { value: targetValue, display: targetValue, bounceY: 0 };
   const smoothP = easeOutCubic(p);
   const val = currentValue + (targetValue - currentValue) * smoothP;
   // Subtle vertical bounce settling at end

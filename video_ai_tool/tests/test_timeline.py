@@ -53,7 +53,7 @@ def render_project(tmp_path):
 
 def hashes(project):
     # Render products now include the explicitly requested review_frames/ folder.
-    return {str(p.relative_to(project)):hashlib.sha256(p.read_bytes()).hexdigest() for p in project.rglob("*") if p.is_file() and not p.is_relative_to(project/"render") and not p.is_relative_to(project/"review_frames") and not p.name.startswith('quality_report')}
+    return {str(p.relative_to(project)):hashlib.sha256(p.read_bytes()).hexdigest() for p in project.rglob("*") if p.is_file() and not p.is_relative_to(project/"render") and not p.is_relative_to(project/"review_frames") and not p.name.startswith('quality_report') and not p.name.startswith('layout_report')}
 
 
 def test_timeline_matches_real_audio_and_keeps_inputs(render_project):

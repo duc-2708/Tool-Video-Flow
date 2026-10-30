@@ -143,8 +143,7 @@ const LEADING_CUTOFF_JS = new Set([
 function sanitizeSemanticLabel(label, maxWords = 4) {
   if (!label) return '';
   const str = String(label).trim().replace(/[.,:;!?…()“”"']/g, '');
-  if (str.toLowerCase() === 'minh họa ý') return 'Minh họa ý tưởng';
-  if (str.toLowerCase() === 'ý tưởng minh họa') return 'Ý tưởng minh họa';
+  if (/^(?:minh họa|ý tưởng minh họa|minh họa ý tưởng|minh họa nội dung|ý chính cần nhớ)/i.test(str)) return '';
 
   let words = str.split(/\s+/).filter(Boolean);
   while (words.length > 0 && LEADING_CUTOFF_JS.has(words[0].toLowerCase())) {

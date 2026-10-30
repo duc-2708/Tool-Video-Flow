@@ -64,20 +64,41 @@ def render_batch(timeline,folder,size,font,settings,diagnostics,notify,*,force_s
         scene_allowed=values_in(' '.join((f.fact_vi or f.claim)+' '+f.claim+' '+(f.evidence_quote or '') for f in facts)) if facts else set()
         options.update(illustrations_enabled=settings.motion_scenes_enabled,min_card_hold_sec=settings.min_card_hold_sec,amplitude=amplitude.get(scene.spec.id,{}),allowed_numbers=sorted(scene_allowed),source_labels=list(dict.fromkeys(f.source_name for f in facts)))
         try:
-            from pipeline.controlled_ai import backgrounds_for_scene
-            options['ai_backgrounds']=backgrounds_for_scene(scene,timeline.project) if settings.ai_clips_per_video else []
-            for background in options['ai_backgrounds']:
-                if background.get('provider_duration_sec',0)>background.get('requested_seconds',30)+.05:
-                    notice=f"Cảnh {scene.spec.id}: gateway trả clip {background['provider_duration_sec']:g}s, yêu cầu {background['requested_seconds']:g}s; chỉ dùng {background['duration']:g}s đã cho phép, giữ file gốc."
-                    timeline.warnings.append(notice);diagnostics.record(notice)
+            from pipeline.hybrid_render import prepare_scene_hybrid_payload
+            hybrid_info = prepare_scene_hybrid_payload(
+                scene_id=scene.spec.id,
+                scene_duration=scene.duration,
+                project_dir=timeline.project,
+                settings=settings,
+                diagnostics=diagnostics,
+            )
+            options['scene_mode'] = hybrid_info.get('mode', 'motion')
+            options['ai_backgrounds'] = hybrid_info.get('ai_backgrounds', [])
+            options['ai_simulation_badge'] = bool(hybrid_info.get('badge_label'))
+            if hybrid_info.get('fallback_to_motion'):
+                fb_recipe = hybrid_info.get('fallback_recipe')
+                fb_reason = hybrid_info.get('reason', 'Clip AI không khả dụng; fallback hoạt họa motion')
+                timeline.warnings.append(f"Cảnh {scene.spec.id}: {fb_reason}.")
+                if getattr(scene.spec, 'visual_plan', None) and fb_recipe:
+                    if getattr(scene.spec.visual_plan, 'scene_type', None) in ('text_focus', None):
+                        scene.spec.visual_plan.scene_type = fb_recipe
+            # Legacy fallback
+            if not options['ai_backgrounds'] and getattr(settings, 'ai_clips_per_video', 0) and (timeline.project / 'render/ai_backgrounds.json').exists():
+                from pipeline.controlled_ai import backgrounds_for_scene
+                options['ai_backgrounds'] = backgrounds_for_scene(scene, timeline.project)
         except Exception as error:
-            diagnostics.record_exception(error,f'Clip AI nền cảnh {scene.spec.id}; dùng gradient')
+            diagnostics.record_exception(error, f'Clip AI nền cảnh {scene.spec.id}; dùng gradient')
             timeline.warnings.append(f'Cảnh {scene.spec.id}: không đọc được clip AI nền, dùng gradient.')
+            options['scene_mode'] = 'motion'
+            options['ai_backgrounds'] = []
         try:
             result=render_scene(scene,folder,size=size,font=font,caption_style=captions.style.model_copy(update={"enabled":True}) if scene.audio_silent else captions.style,
                 fps=settings.motion_fps,static_frame=fallback,progress=progress,diagnostics=diagnostics,
                 extra_identity={"scene":scene.spec.model_dump(mode="json")},options=options,force=force_scene==scene.spec.id)
-            if result: result['ai_background_count']=len(options.get('ai_backgrounds',[]))
+            if result:
+                result['ai_background_count']=len(options.get('ai_backgrounds',[]))
+                result['scene_mode']=options.get('scene_mode','motion')
+                result['ai_clip_path']=(options.get('ai_backgrounds',[{}])[0].get('clip_path')) if options.get('ai_backgrounds') else None
             return result
         finally: frames.close()
     results={}

@@ -50,8 +50,12 @@ def build_timeline(plan_path: Path) -> Timeline:
     plan = ResolvedEditPlan.model_validate_json(plan_path.read_text(encoding="utf-8"))
     manifest_path = project / "assets.json"
     manifest = AssetsManifest.model_validate_json(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else None
-    if manifest and (manifest.resolved_plan_hash != cache_key(plan.model_dump(mode="json")) or manifest.source_plan_hash != plan.source_plan_hash):
-        raise ValueError("Assets không khớp resolved plan. Hãy chạy lại Giai đoạn Assets.")
+    if manifest:
+        from pipeline.asset_hashes import detect_plan_changes
+        changes = detect_plan_changes(manifest, plan)
+        if changes["audio_changed"]:
+            explanation = "; ".join(changes["explanation"]) if changes["explanation"] else "Kịch bản hoặc giọng đọc đã đổi"
+            raise ValueError(f"Assets không khớp resolved plan ({explanation}). Hãy chạy lại Giai đoạn Assets.")
     records = {s.scene_id: s for s in manifest.scenes} if manifest else {}
     scenes, warnings, clock = [], list(plan.warnings), 0.0
     for scene in plan.scenes:

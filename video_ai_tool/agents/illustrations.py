@@ -18,11 +18,16 @@ def illustration_diagnostics(diagnostics):
     finally: _diagnostics.reset(token)
 
 TYPES=(
-    'versus_scale','bar_grow','gauge','ring','line_draw','flow_chain','magnifier_check','funnel_filter','checklist','terminal_type','timeline_march','stack_cards','network_nodes',
+    'versus_scale','bar_grow','gauge','ring','line_draw','flow_chain','magnifier_check','funnel_filter','checklist','terminal_type','timeline_march','stack_cards','network_nodes'
+)
+
+RECIPE_TYPES=(
     'slot_counter','strike_replace','gauge_needle','odometer','bar_race','thermometer','battery_fill','glass_fill','balance_scale','tug_of_war','vs_flip_cards','before_after_wipe',
     'conveyor_belt','domino_chain','pipeline_pipes','dice_roll','lock_unlock','shield_hit','traffic_light','orbit_system','layered_onion','stack_pile','puzzle_snap','chat_thread',
     'mock_card_swipe','form_fill_submit','terminal_command_run','stat_number','bar_compare','container_fill','steps_ladder','hub_spoke','mock_ui_window','code_card','versus_split'
 )
+
+ALL_TYPES = TYPES + RECIPE_TYPES
 
 # Complete noun phrases only, matched in the actual narration. This lexicon
 # selects spoken concepts; it never supplies a missing step, number or claim.
@@ -51,9 +56,11 @@ def spoken_stat(text, allowed):
     digits = spoken_to_digits(text)
     accepted = {str(n).rstrip('%') for n in allowed}
 
-    # Match potential number phrases including tech units (nm, Hz, TB) and currency/scale
+    # Match potential number phrases including tech units (nm, Hz, TB), currency/scale, and Vietnamese units
+    from editor.format_number import TECH_UNITS_MAP
+    tech_units_pattern = "|".join(TECH_UNITS_MAP.keys())
     display_matches = re.finditer(
-        r"(?<!\w)(\d+(?:[.,]\d+)*\s*(?:[A-Za-z%€$đ]+)?)(?!\w)",
+        r"(?<!\w)(\d+(?:[.,]\d+)*\s*(?:tỷ|tỉ|triệu|nghìn|ngàn|b|m|k|%)?\s*(?:usd|\$|vnd|đ|eur|€|phần trăm|" + tech_units_pattern + r")?)(?!\w)",
         text,
         re.I,
     )
@@ -129,7 +136,7 @@ def enough(name, data):
         return n >= 1 or bool(data.text)
     if name in {'dice_roll', 'lock_unlock', 'shield_hit', 'traffic_light', 'orbit_system', 'layered_onion', 'chat_thread', 'mock_card_swipe', 'form_fill_submit', 'terminal_command_run'}:
         return True
-    return n >= 2 if name in TYPES else False
+    return n >= 2 if (name in TYPES or name in RECIPE_TYPES) else False
 
 
 def scene_data(scene,brief=None):
@@ -156,7 +163,7 @@ def scene_data(scene,brief=None):
         if not data.source and v.data.source: data.source=v.data.source;data.source_url=v.data.source_url
     # Extract complete semantic clauses from narration without arbitrary word-slicing
     if len(items)<3:
-        clauses=re.split(r'[.!?;:]|\b(?:nhưng|trong khi|thay vì|bởi vì)\b',scene.narration,flags=re.I)
+        clauses=re.split(r'(?<!\d)\.|\.(?!\d)|[!?;:]|\b(?:nhưng|trong khi|thay vì|bởi vì)\b',scene.narration,flags=re.I)
         for clause in clauses:
             subclauses=re.split(r'[,–—]',clause)
             for sc in subclauses:
@@ -199,9 +206,10 @@ def _scene_payload(scene,index,previous,used,brief):
         if data.value is not None:
             numeric=[n for n in candidates if n in {'ring','gauge','bar_grow','line_draw'}]
             candidates=numeric+[n for n in candidates if n not in numeric]
-        chosen=next((n for n in candidates if n!=previous and n not in used),next((n for n in candidates if n!=previous),'text_focus'))
+        fallback_qualitative = 'stack_cards' if previous != 'stack_cards' else 'network_nodes'
+        chosen=next((n for n in candidates if n!=previous and n not in used),next((n for n in candidates if n!=previous), fallback_qualitative))
         if chosen in {'gauge', 'ring'} and data.unit != '%':
-            chosen = 'stat_number' if data.value is not None else 'text_focus'
+            chosen = 'stat_number' if data.value is not None else fallback_qualitative
         if scene.role == 'hook':
             if chosen in {'checklist', 'steps_list', 'steps_ladder', 'timeline', 'terminal_type', 'magnifier_check', 'list'} and len(data.items) <= 1:
                 chosen = 'stack_cards'
@@ -265,11 +273,13 @@ def _log_director_error(message: str, error: BaseException | None = None, diagno
         pass
 
 
-def plan_illustrations(plan,brief=None,*,diagnostics=None):
+def plan_illustrations(plan,brief=None,*,diagnostics=None,force=False):
     """Isolate presentation failure per scene. Never retry an LLM or facts."""
     diagnostics=diagnostics or _diagnostics.get()
     previous=None;used=set()
     for index,scene in enumerate(plan.scenes):
+        if not force and getattr(scene, 'visual_plan', None) and getattr(scene.visual_plan, 'scene_type', None):
+            continue
         payload=None;notes=[]
         try:
             payload=_scene_payload(scene,index,previous,used,brief)
@@ -280,7 +290,7 @@ def plan_illustrations(plan,brief=None,*,diagnostics=None):
             repaired=dict(payload) if isinstance(payload,dict) else {}
             repaired.pop('camera', None)
             repaired.pop('beats', None)
-            fallback_text = concept_card(scene.narration)[0] if getattr(scene, 'narration', None) else 'Minh họa nội dung'
+            fallback_text = concept_card(scene.narration)[0] if getattr(scene, 'narration', None) else ''
             repaired.update(scene_type='text_focus', data=VisualData(text=fallback_text), camera=SceneCamera(), beats=[], mascot_state='idle', repair_notes=notes)
             try:
                 scene.visual_plan,more=_construct(repaired);notes.extend(more)

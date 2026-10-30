@@ -41,7 +41,7 @@ def build_and_render_macbook():
     plan = EditPlan.model_validate(plan_data)
     brief = ResearchBrief.model_validate(brief_data) if brief_data else None
 
-    # Define verified data grounded in facts
+    # Define verified data grounded in facts (6 distinct recipes, grounded numbers only)
     scenes_meta = [
         {
             "id": 1,
@@ -58,16 +58,15 @@ def build_and_render_macbook():
         },
         {
             "id": 2,
-            "recipe": "battery_fill",
-            "evidence": "công nghệ tandem OLED giúp các điểm ảnh tự phát sáng mạnh mẽ hơn mà vẫn tiết kiệm năng lượng",
+            "recipe": "gauge_needle",
+            "evidence": "Màn hình PROLED XDR đạt độ sáng đỉnh hai nghìn nit cùng tần số quét 120Hz.",
             "no_numbers": False,
             "data": {
-                "label": "Tiết kiệm năng lượng",
-                "percentage": 100,
-                "value": 100,
-                "unit": "%",
+                "label": "Tần số quét màn hình",
+                "value": 120,
+                "unit": "Hz",
                 "source": "PetaPixel · VnExpress",
-                "items": ["Tandem OLED", "Điểm ảnh tự phát sáng", "Tiết kiệm pin"]
+                "items": ["Màn hình OLED", "Tần số 120Hz", "Độ sáng 2.000 nit"]
             }
         },
         {
@@ -184,7 +183,7 @@ def build_and_render_macbook():
     print(f"Render completed: {video_res}")
 
     print("=== Running Video Audit ===")
-    audit_res = audit_project(project_dir)
+    audit_res = audit_project(project_dir, force=True)
     print(f"Audit overall passed: {audit_res.get('overall_all_passed')}")
 
     # Build Contact Sheet (6 scenes)
@@ -199,39 +198,29 @@ def build_and_render_macbook():
             try:
                 data = json.loads(f.read_text(encoding="utf-8"))
                 sid = data.get("scene_id")
-                r_png = data.get("review_frame")
-                if sid and r_png and Path(r_png).is_file():
-                    scene_frames[sid] = Path(r_png)
+                png_path = f.with_suffix(".png")
+                if sid and png_path.is_file() and sid not in scene_frames:
+                    scene_frames[sid] = png_path
             except Exception:
                 pass
 
-    sorted_frames = [scene_frames.get(sc.id) for sc in plan.scenes if sc.id in scene_frames]
-    if len(sorted_frames) == 6 and all(sorted_frames):
-        sheet_w = 3 * 360
-        sheet_h = 2 * 640
-        sheet = Image.new("RGB", (sheet_w, sheet_h), (16, 24, 38))
-        draw = ImageDraw.Draw(sheet)
+    if len(scene_frames) >= 6:
+        thumbs = [Image.open(scene_frames[i]).resize((360, 640)) for i in range(1, 7)]
+        sheet = Image.new("RGB", (360 * 3, 640 * 2), (15, 23, 42))
+        for idx, thumb in enumerate(thumbs):
+            r = idx // 3
+            c = idx % 3
+            sheet.paste(thumb, (c * 360, r * 640))
+        out_sheet = review_dir / "contact_sheet.png"
+        sheet.save(out_sheet)
+        print(f"Contact sheet saved to {out_sheet}")
 
-        for idx, f_path in enumerate(sorted_frames):
-            col = idx % 3
-            row = idx // 3
-            x = col * 360
-            y = row * 640
-            img = Image.open(f_path).convert("RGB")
-            img = img.resize((360, 640), Image.Resampling.LANCZOS)
-            sheet.paste(img, (x, y))
-            rec_name = scenes_meta[idx]["recipe"]
-            draw.rectangle([x + 10, y + 10, x + 340, y + 55], fill=(10, 16, 28, 220))
-            draw.text((x + 20, y + 20), f"Scene {idx+1}: {rec_name}", fill=(0, 245, 212))
+        # Also save to artifact directory
+        artifact_path = Path(r"C:\Users\admin\.gemini\antigravity\brain\9c8d69ff-e905-4ac2-97dc-25baf1a541df\contact_sheet_macbook_oled_clean.png")
+        sheet.save(artifact_path)
+        print(f"Artifact contact sheet updated at {artifact_path}")
 
-        contact_path = review_dir / "contact_sheet.png"
-        sheet.save(contact_path)
-        print(f"Saved contact sheet to {contact_path}")
-
-        artifact_dir = Path("C:/Users/admin/.gemini/antigravity/brain/9c8d69ff-e905-4ac2-97dc-25baf1a541df")
-        if artifact_dir.is_dir():
-            sheet.save(artifact_dir / "contact_sheet_macbook_oled_clean.png")
-            print("Copied contact sheet to artifact directory: contact_sheet_macbook_oled_clean.png")
+    return audit_res
 
 if __name__ == "__main__":
     build_and_render_macbook()

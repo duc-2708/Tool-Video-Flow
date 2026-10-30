@@ -40,12 +40,8 @@ def stock_providers(settings: Settings, diagnostics: Diagnostics) -> list[StockP
 
 
 def source_hash(plan: EditPlan) -> str:
-    data = plan.model_dump(mode="json")
-    # Prompt-only edits do not change narration, timing or stock assets.
-    for scene in data["scenes"]:
-        for shot in scene["shots"]:
-            shot.pop("ai_prompt",None)
-    return cache_key(data)
+    from pipeline.asset_hashes import source_script_hash
+    return source_script_hash(plan)
 
 
 def retime_scene(scene: Scene, duration: float, target_shot_sec: float = 3.) -> Scene:
@@ -81,10 +77,16 @@ def load_assets(plan_path: Path) -> tuple[EditPlan, ResolvedEditPlan, AssetsMani
     original = EditPlan.model_validate(read_json(plan_path))
     resolved = ResolvedEditPlan.model_validate(read_json(plan_path.parent / "edit_plan.resolved.json"))
     manifest = AssetsManifest.model_validate(read_json(plan_path.parent / "assets.json"))
+    from pipeline.asset_hashes import detect_plan_changes
+    changes = detect_plan_changes(manifest, original)
+    if not changes["audio_changed"] and not changes["clips_changed"]:
+        # Visual-only changes (recipes, layouts, beats) do not invalidate voice or stock/AI clips
+        return original, resolved, manifest
+    explanation = "; ".join(changes["explanation"]) if changes["explanation"] else "Kịch bản hoặc giọng đọc đã thay đổi"
     if source_hash(original) != manifest.source_plan_hash or resolved.source_plan_hash != manifest.source_plan_hash:
-        raise ValueError("Edit Plan gốc đã đổi; hãy tạo lại Assets để tránh dùng audio/clip cũ.")
+        raise ValueError(f"Edit Plan gốc đã đổi ({explanation}); hãy tạo lại Assets để tránh dùng audio/clip cũ.")
     if cache_key(resolved.model_dump(mode="json")) != manifest.resolved_plan_hash:
-        raise ValueError("Resolved plan không khớp manifest; hãy tạo lại Assets.")
+        raise ValueError(f"Resolved plan không khớp manifest ({explanation}); hãy tạo lại Assets.")
     return original, resolved, manifest
 
 
@@ -144,7 +146,10 @@ def scene_audio(scene,voice,path,settings,diagnostics,tts,protected_names):
             duration=tts.synthesize(clean,voice,path,scene_id=scene.id,duration_sec=scene.duration_sec)
             meta=read_json(audio_metadata_path(path))
         else:
-            duration=tts.synthesize(clean,voice,path)
+            try:
+                duration=tts.synthesize(clean,voice,path,scene_id=scene.id,duration_sec=scene.duration_sec)
+            except TypeError:
+                duration=tts.synthesize(clean,voice,path)
             meta={"audio_silent":False,"audio_error":None,"voice_used":voice,"warnings":[]}
             write_json_atomic(audio_metadata_path(path),meta)
         if scene.sentences:
@@ -194,6 +199,8 @@ def run_assets(plan_path: Path, settings: Settings, *, progress: Callable[[int, 
     try:
         original = EditPlan.model_validate(read_json(plan_path))
         project = plan_path.parent
+        (project / "audio").mkdir(parents=True, exist_ok=True)
+        (project / "clips").mkdir(parents=True, exist_ok=True)
         fingerprint = source_hash(original)
         settings.ensure_directories()
         tts = tts or EdgeTTSProvider(settings, diagnostics)
@@ -203,20 +210,57 @@ def run_assets(plan_path: Path, settings: Settings, *, progress: Callable[[int, 
         warnings: list[str] = []
         if not settings.pixabay_api_key.get_secret_value().strip() and providers:
             warnings.append("Chưa có PIXABAY_API_KEY; sẽ dùng stock tùy chọn hoặc nền màu khi không tìm được clip.")
-        # Giữ query thay riêng shot khi chạy lại cùng Edit Plan.
+        # Giữ query thay riêng shot khi chạy lại cùng Edit Plan; tái sử dụng audio nếu lời đọc không đổi.
         previous_queries = {}
+        old_manifest = None
         try:
             old = AssetsManifest.model_validate(read_json(project / "assets.json"))
-            if old.source_plan_hash == fingerprint:
+            old_manifest = old
+            if old.source_plan_hash == fingerprint or getattr(old, "audio_hash", None):
                 previous_queries = {(s.scene_id, a.shot_id): a.query for s in old.scenes for a in s.shots}
         except (OSError, ValueError):
             pass
+
+        from pipeline.asset_hashes import compute_scene_audio_hash, compute_scene_clip_hash, compute_audio_hash, compute_clip_hash, compute_visual_hash
+        scene_audio_hashes = {}
+        scene_clip_hashes = {}
         scene_plans, scene_assets = [], []
+
         for index, scene in enumerate(original.scenes):
-            if progress:
-                progress(index, len(original.scenes), f"Cảnh {scene.id}: đang tạo giọng và chuẩn bị b-roll…")
+            cur_sc_audio_hash = compute_scene_audio_hash(scene, original.voice)
+            cur_sc_clip_hash = compute_scene_clip_hash(scene)
+            scene_audio_hashes[str(scene.id)] = cur_sc_audio_hash
+            scene_clip_hashes[str(scene.id)] = cur_sc_clip_hash
             audio_path = project / "audio" / f"scene_{scene.id}.mp3"
-            duration, audio=scene_audio(scene,original.voice,audio_path,settings,diagnostics,tts,protected_names)
+
+            reuse_audio = False
+            if old_manifest and audio_path.is_file():
+                old_rec = next((s for s in old_manifest.scenes if s.scene_id == scene.id), None)
+                old_hash = getattr(old_manifest, "scene_audio_hashes", {}).get(str(scene.id)) or getattr(old_manifest, "scene_audio_hashes", {}).get(scene.id)
+                if old_rec and not old_rec.audio_silent and (old_hash == cur_sc_audio_hash or old_manifest.source_plan_hash == fingerprint):
+                    try:
+                        dur = old_rec.audio_duration_sec or 0.0
+                        if dur < 1.0:
+                            from providers.tts_edge import audio_duration
+                            dur = audio_duration(audio_path)
+                        if dur >= 1.0:
+                            duration = dur
+                            audio = {
+                                "audio_silent": False,
+                                "audio_error": None,
+                                "voice_used": old_rec.audio_voice or original.voice,
+                                "warnings": []
+                            }
+                            reuse_audio = True
+                            if progress:
+                                progress(index, len(original.scenes), f"Cảnh {scene.id}: Lời đọc và giọng không đổi, tái sử dụng audio ({duration:.2f}s).")
+                    except Exception:
+                        reuse_audio = False
+
+            if not reuse_audio:
+                if progress:
+                    progress(index, len(original.scenes), f"Cảnh {scene.id}: đang tạo giọng và chuẩn bị b-roll…")
+                duration, audio = scene_audio(scene, original.voice, audio_path, settings, diagnostics, tts, protected_names)
             warnings.extend(audio["warnings"])
             resolved_scene=retime_scene(scene,duration,original.style_profile.shot_seconds.mean if original.style_profile else 3.)
             if len(resolved_scene.shots)!=len(scene.shots):
@@ -251,9 +295,18 @@ def run_assets(plan_path: Path, settings: Settings, *, progress: Callable[[int, 
             # audio-resolved plans: it invalidates the already-built manifest.
             warnings.append(f"Tổng thời lượng theo audio {resolved.duration_sec:.2f}s khác yêu cầu {original.target_duration_sec:.2f}s quá 10%; giữ nguyên timing audio, chưa tự đổi tốc độ giọng.")
         resolved.warnings = list(dict.fromkeys(warnings))
-        manifest = AssetsManifest(source_plan_hash=fingerprint, resolved_plan_hash=cache_key(resolved.model_dump(mode="json")),
+        manifest = AssetsManifest(
+            source_plan_hash=fingerprint,
+            resolved_plan_hash=cache_key(resolved.model_dump(mode="json")),
             status="complete",
-            scenes=scene_assets, warnings=resolved.warnings)
+            scenes=scene_assets,
+            warnings=resolved.warnings,
+            audio_hash=compute_audio_hash(original),
+            clip_hash=compute_clip_hash(original),
+            visual_hash=compute_visual_hash(resolved),
+            scene_audio_hashes=scene_audio_hashes,
+            scene_clip_hashes=scene_clip_hashes
+        )
         return persist(project, resolved, manifest, diagnostics,motion_enabled=settings.motion_enabled)
     except Exception as error:
         diagnostics.record_exception(error, "Assets pipeline failed")
@@ -397,3 +450,49 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+
+@asset_writer
+def sync_visual_plan_assets(plan_path: Path, settings: Settings) -> Path:
+    """
+    Tùy chọn: 'Giữ audio cũ, chỉ dựng lại hình'.
+    Đồng bộ hóa manifest và resolved plan với visual_plan mới mà KHÔNG chạm vào audio hay stock/AI clips.
+    """
+    diagnostics = assets_diagnostics(settings)
+    original = EditPlan.model_validate(read_json(plan_path))
+    project = plan_path.parent
+    resolved_p = project / "edit_plan.resolved.json"
+    manifest_p = project / "assets.json"
+    if not resolved_p.exists() or not manifest_p.exists():
+        raise FileNotFoundError("Chưa có edit_plan.resolved.json hoặc assets.json; hãy tạo Assets trước.")
+
+    resolved = ResolvedEditPlan.model_validate(read_json(resolved_p))
+    manifest = AssetsManifest.model_validate(read_json(manifest_p))
+
+    from pipeline.asset_hashes import (
+        detect_plan_changes, source_script_hash, compute_audio_hash,
+        compute_clip_hash, compute_visual_hash, compute_scene_audio_hash, compute_scene_clip_hash
+    )
+    changes = detect_plan_changes(manifest, original)
+    if changes["audio_changed"]:
+        explanation = "; ".join(changes["explanation"])
+        raise ValueError(f"Không thể giữ audio cũ vì lời đọc hoặc giọng đã thay đổi ({explanation}). Hãy chọn 'Tạo lại Assets'.")
+
+    # Đồng bộ visual_plan từ original sang resolved
+    for sc in original.scenes:
+        if getattr(sc, "visual_plan", None):
+            target_r = next((r for r in resolved.scenes if r.id == sc.id), None)
+            if target_r:
+                target_r.visual_plan = sc.visual_plan
+
+    fingerprint = source_script_hash(original)
+    resolved.source_plan_hash = fingerprint
+    manifest.source_plan_hash = fingerprint
+    manifest.audio_hash = compute_audio_hash(original)
+    manifest.clip_hash = compute_clip_hash(original)
+    manifest.visual_hash = compute_visual_hash(resolved)
+    manifest.scene_audio_hashes = {str(s.id): compute_scene_audio_hash(s, original.voice) for s in original.scenes}
+    manifest.scene_clip_hashes = {str(s.id): compute_scene_clip_hash(s) for s in original.scenes}
+
+    return persist(project, resolved, manifest, diagnostics, motion_enabled=settings.motion_enabled)

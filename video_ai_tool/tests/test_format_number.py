@@ -148,3 +148,38 @@ def test_tech_and_model_number_parsing():
         assert v100 == p.formatted_text
         assert v100 != "0"
 
+
+def test_thousands_dot_and_decimal_vietnamese_cases():
+    """Verify dot thousands separator and comma decimals for Vietnamese news context."""
+    # "5.000 tỷ đồng"
+    p1 = parse_display_number("5.000 tỷ đồng")
+    assert p1 is not None
+    assert p1.value == 5000.0
+    assert p1.scale == "tỷ"
+    assert p1.currency == "VND"
+    assert p1.unit_display == "tỷ đồng"
+    assert p1.formatted_number == "5.000"
+    assert p1.formatted_text == "5.000 tỷ đồng"
+    assert p1.full_numeric_value == 5_000_000_000_000.0
+
+    # "1.800 tỷ"
+    p2 = parse_display_number("1.800 tỷ")
+    assert p2 is not None
+    assert p2.value == 1800.0
+    assert p2.scale == "tỷ"
+    assert p2.unit_display == "tỷ"
+    assert p2.formatted_number == "1.800"
+    assert p2.formatted_text == "1.800 tỷ"
+    assert p2.full_numeric_value == 1_800_000_000_000.0
+
+    # "225,88 tỷ"
+    p3 = parse_display_number("225,88 tỷ")
+    assert p3 is not None
+    assert p3.value == 225.88
+    assert p3.scale == "tỷ"
+    assert p3.unit_display == "tỷ"
+    assert p3.formatted_number == "225,88"
+    assert p3.formatted_text == "225,88 tỷ"
+    assert p3.full_numeric_value == 225_880_000_000.0
+
+

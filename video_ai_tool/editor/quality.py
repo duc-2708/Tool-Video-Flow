@@ -84,10 +84,20 @@ def save_quality(timeline,results,video_path,*,scene_id=None):
     extra=[]
     if requested and metaphor_count<metaphor_target and len(timeline.scenes)>=4:
         extra.append(f'[metaphor_continuity, nhóm 3] Ẩn dụ/vật thể neo xuất hiện ở {metaphor_count} cảnh (yêu cầu >= 4 cảnh).')
+    # Collect scene fallbacks from render results
+    fallbacks = []
+    for r in results:
+        sc_id = r.get('scene_id')
+        for n in r.get('repair_notes', []):
+            if any(k in n.lower() for k in ['thiếu dữ liệu', 'enough=false', 'tự động dùng recipe thay thế', 'chuyển sang recipe']):
+                fallbacks.append({'scene_id': sc_id, 'reason': n})
+    report['fallbacks'] = fallbacks
+
+    target_types = 5 if len(timeline.scenes) >= 5 else min(4, len(timeline.scenes))
     if requested:
-        if report['illustration_coverage_percent']<85: extra.append('[illustration_coverage, nhóm 3] Hình minh họa dưới85% thời lượng.')
-        if len(types)<4: extra.append('[illustration_variety, nhóm 3] Dưới4scene_type; không bịa dữ liệu để bù.')
-        if any(v['count']<4 for v in moving): extra.append('[illustration_motion, nhóm 3] Có cảnh dưới4phần tử chuyển động/đang fallback.')
+        if report['illustration_coverage_percent']<85: extra.append('[illustration_coverage, nhóm 3] Hình minh họa dưới 85% thời lượng.')
+        if len(types)<target_types: extra.append(f'[illustration_variety, nhóm 3] Dưới {target_types} loại recipe ({len(types)}/{target_types}); cần tăng đa dạng trực quan.')
+        if any(v['count']<4 for v in moving): extra.append('[illustration_motion, nhóm 3] Có cảnh dưới 4 phần tử chuyển động/đang fallback.')
         if subtitle: extra.append('[illustration_hold, nhóm 3] Có khoảng chỉ phụ đề>2s.')
         if missing_numeric: extra.append(f'[illustration_numbers, nhóm 3] Cảnh có số nhưng không có hình số: {missing_numeric}.')
     timeline.plan.review_notes.extend(n for n in extra if n not in timeline.plan.review_notes)

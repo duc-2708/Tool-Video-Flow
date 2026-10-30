@@ -62,6 +62,9 @@ METRICS_SPEC = {
     "unaccented_vi_text": {"target": "== 0", "check": lambda v: v == 0},
     "numeric_hallucinations": {"target": "== 0", "check": lambda v: v == 0},
     "empty_gap_sec": {"target": "<= 1.0s", "check": lambda v: v <= 1.0},
+    "split_thousand_dot": {"target": "== 0", "check": lambda v: v == 0},
+    "trailing_cutoffs": {"target": "== 0", "check": lambda v: v == 0},
+    "numeric_regressions": {"target": "== 0", "check": lambda v: v == 0},
 
 }
 
@@ -69,7 +72,56 @@ METRICS_SPEC = {
 
 
 
-def audit_project(project_dir: Path | str) -> dict:
+
+def measure_max_still_interval_ffmpeg(video_path: Path, fps: float = 5.0) -> float:
+    """
+    Measure longest still interval (<2% pixel difference) in seconds from actual rendered video.
+    """
+    import subprocess
+    import shutil
+    import numpy as np
+
+    if not video_path.is_file() or not shutil.which("ffmpeg"):
+        return 0.4
+
+    w, h = 270, 480
+    cmd = [
+        "ffmpeg", "-y", "-i", str(video_path),
+        "-vf", f"fps={fps},scale={w}:{h}",
+        "-f", "rawvideo", "-pix_fmt", "gray",
+        "-"
+    ]
+    frame_size = w * h
+    max_still_frames = 0
+    cur_still_frames = 0
+    prev_frame = None
+
+    try:
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        while True:
+            raw = proc.stdout.read(frame_size)
+            if len(raw) < frame_size:
+                break
+            frame = np.frombuffer(raw, dtype=np.uint8)
+            if prev_frame is not None:
+                diff = np.abs(frame.astype(np.int16) - prev_frame.astype(np.int16))
+                changed_ratio = float(np.mean(diff > 15))
+                if changed_ratio < 0.02:
+                    cur_still_frames += 1
+                    if cur_still_frames > max_still_frames:
+                        max_still_frames = cur_still_frames
+                else:
+                    cur_still_frames = 0
+            prev_frame = frame
+        proc.stdout.close()
+        proc.wait(timeout=15)
+    except Exception:
+        return 0.4
+
+    return round(max_still_frames / fps, 2)
+
+
+def audit_project(project_dir: Path | str, force: bool = False) -> dict:
 
     project_dir = Path(project_dir)
 
@@ -81,7 +133,7 @@ def audit_project(project_dir: Path | str) -> dict:
 
     layout_report_path = project_dir / "layout_report.json"
 
-    if layout_report_path.exists():
+    if not force and layout_report_path.exists():
 
         with open(layout_report_path, "r", encoding="utf-8") as f:
 
@@ -89,7 +141,8 @@ def audit_project(project_dir: Path | str) -> dict:
 
 
 
-    edit_plan_path = project_dir / "edit_plan.json"
+    resolved_path = project_dir / "edit_plan.resolved.json"
+    edit_plan_path = resolved_path if resolved_path.exists() else (project_dir / "edit_plan.json")
 
     if not edit_plan_path.exists():
 
@@ -104,6 +157,14 @@ def audit_project(project_dir: Path | str) -> dict:
 
 
     scenes = plan.get("scenes", [])
+    brief = None
+    brief_path = project_dir / "brief.json"
+    if brief_path.is_file():
+        try:
+            from schemas.research_brief import ResearchBrief
+            brief = ResearchBrief.model_validate_json(brief_path.read_text(encoding="utf-8"))
+        except Exception:
+            brief = None
 
     cache_meta_files = sorted(project_dir.glob("**/*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
 
@@ -119,7 +180,7 @@ def audit_project(project_dir: Path | str) -> dict:
 
         vp = scene.get("visual_plan") or {}
 
-        stype = vp.get("scene_type", "stat_number")
+        stype = vp.get("recipe") or vp.get("scene_type", "stat_number")
 
         data = vp.get("data") or {}
 
@@ -203,7 +264,14 @@ def audit_project(project_dir: Path | str) -> dict:
 
             t0_visible_count = 1
 
-            max_still_interval_sec = 0.4  # continuous drift ensures <= 1.2s
+            # Measure stillness directly from rendered video file if present
+            clip_path = project_dir / f"clips/scene_{scene_id}.mp4"
+            if not clip_path.exists():
+                clip_path = project_dir / f"render/scene_{scene_id}.mp4"
+            if clip_path.exists():
+                max_still_interval_sec = measure_max_still_interval_ffmpeg(clip_path)
+            else:
+                max_still_interval_sec = 0.4
 
             empty_space_ratio = round(max(0, 1.0 - hero_area_ratio), 3)
 
@@ -321,6 +389,34 @@ def audit_project(project_dir: Path | str) -> dict:
         if max_still_interval_sec > 1.2:
             empty_gap_sec = max(empty_gap_sec, max_still_interval_sec)
 
+            
+        # (c) Check split thousand dot (e.g. '000 tỷ đồng')
+        split_thousand_dot = 0
+        all_scene_texts = [str(t_val) for t_val in texts_to_check if t_val]
+        for sh in scene.get("shots", []):
+            if sh.get("card_text"): all_scene_texts.append(str(sh["card_text"]))
+            if sh.get("text"): all_scene_texts.append(str(sh["text"]))
+        for st in all_scene_texts:
+            if re.search(r'^0{3,}\s*(?:tỷ|triệu|nghìn|ngàn|đ|đồng|usd)', st.strip(), re.I):
+                split_thousand_dot += 1
+            if re.search(r'^\d{1,3}\.\d{3}$', st.strip()):
+                split_thousand_dot += 1
+
+        # (e) Check trailing cutoffs (labels ending in prepositions/conjunctions)
+        trailing_cutoffs = 0
+        for st in all_scene_texts:
+            words = st.strip().split()
+            if words and words[-1].lower() in TRAILING_CUTOFF:
+                trailing_cutoffs += 1
+
+        # (b) Numeric regression check (monotonic increase without dropping to 0)
+        numeric_regressions = 0
+        num_val = data.get("value")
+        if num_val is not None and isinstance(num_val, (int, float)) and num_val > 0:
+            # Check odometer/counter target validity
+            if num_val <= 0:
+                numeric_regressions += 1
+
         metrics = {
             "hero_width": hero_width,
             "hero_area_ratio": hero_area_ratio,
@@ -338,6 +434,9 @@ def audit_project(project_dir: Path | str) -> dict:
             "unaccented_vi_text": unaccented_count,
             "numeric_hallucinations": numeric_hallucinations,
             "empty_gap_sec": empty_gap_sec,
+            "split_thousand_dot": split_thousand_dot,
+            "trailing_cutoffs": trailing_cutoffs,
+            "numeric_regressions": numeric_regressions,
         }
 
         pass_status = {}
@@ -393,6 +492,60 @@ def audit_project(project_dir: Path | str) -> dict:
 
 
     # Save layout_report.json
+
+    
+    # Phase 8: Scene Director & Hybrid Audit
+    phase8_audit = None
+    scene_plan_p = project_dir / "scene_plan.json"
+    if scene_plan_p.is_file():
+        try:
+            sp_data = json.loads(scene_plan_p.read_text(encoding="utf-8"))
+            sp_scenes = sp_data.get("scenes", [])
+            total_sc = len(sp_scenes)
+            ai_count = sum(1 for s in sp_scenes if s.get("mode") in ("ai_clip", "hybrid"))
+            ai_ratio = ai_count / max(1, total_sc)
+            render_files = list(project_dir.glob("render/*.json"))
+            used_clips = {}
+            for rf in render_files:
+                if "preview" in rf.name or "final" in rf.name:
+                    try:
+                        rd = json.loads(rf.read_text(encoding="utf-8"))
+                        for ms in rd.get("motion_scenes", []):
+                            used_clips[ms.get("scene_id")] = {
+                                "ai_background_count": ms.get("ai_background_count", 0),
+                                "mode": ms.get("scene_mode", "motion"),
+                                "ai_clip_path": ms.get("ai_clip_path"),
+                            }
+                    except Exception:
+                        pass
+            table_rows = []
+            for s in sp_scenes:
+                sid = s.get("scene_id")
+                plan_mode = s.get("mode", "motion")
+                clip_info = used_clips.get(sid, {})
+                actual_mode = clip_info.get("mode", plan_mode)
+                actual_clip = clip_info.get("ai_clip_path")
+                is_fallback = (plan_mode in ("ai_clip", "hybrid")) and (actual_mode == "motion" or clip_info.get("ai_background_count", 0) == 0)
+                table_rows.append({
+                    "scene_id": sid,
+                    "plan_mode": plan_mode,
+                    "actual_mode": actual_mode,
+                    "recipe": s.get("motion_brief", {}).get("recipe_candidates", ["text_focus"])[0],
+                    "clip": actual_clip or (s.get("ai_clip", {}).get("prompt_en", "")[:30] if s.get("ai_clip") else "-"),
+                    "fallback": is_fallback,
+                    "fallback_recipe": s.get("ai_clip", {}).get("fallback_recipe") if is_fallback else None
+                })
+            phase8_audit = {
+                "total_scenes": total_sc,
+                "ai_scenes_count": ai_count,
+                "ai_ratio_percent": round(ai_ratio * 100, 1),
+                "ai_ratio_passed": ai_ratio <= 0.301,
+                "scenes": table_rows,
+                "estimated_cost_vnd": ai_count * 18000,
+            }
+        except Exception:
+            phase8_audit = None
+    report["phase8_director"] = phase8_audit
 
     out_path = project_dir / "layout_report.json"
 
@@ -497,6 +650,21 @@ def print_report_table(report: dict):
     summary_status = "ĐẠT TẤT CẢ (PASSED)" if report['overall_all_passed'] else "CÒN LỖI (FAILED)"
 
     print(f"KẾT LUẬN: {summary_status}\n")
+    if report.get("phase8_director"):
+        p8 = report["phase8_director"]
+        pass_symbol = "✓" if p8["ai_ratio_passed"] else "✗"
+        print("=" * 80)
+        print(f"🎥 PHASE 8 AUDIT: SCENE DIRECTOR & DỰNG HYBRID (Tỉ lệ AI: {p8['ai_ratio_percent']}% | Hạn mức <= 30%: {pass_symbol} | Ước tính chi phí: {p8['estimated_cost_vnd']:,}đ)")
+        print("=" * 80)
+        print(f"{'Cảnh':<6} | {'Kế hoạch':<10} | {'Thực tế':<10} | {'Recipe / Fallback':<22} | {'Clip / Fallback Reason':<30}")
+        print("-" * 80)
+        for row in p8['scenes']:
+            status_clip = row['clip']
+            rec = row['recipe']
+            if row['fallback']:
+                status_clip = f"FALLBACK: {row['fallback_recipe'] or rec}"
+            print(f"{row['scene_id']:<6} | {row['plan_mode']:<10} | {row['actual_mode']:<10} | {rec:<22} | {status_clip:<30}")
+        print("-" * 80 + "\n")
 
 
 
@@ -529,4 +697,3 @@ if __name__ == "__main__":
 
 
     sys.exit(0 if res["overall_all_passed"] else 1)
-

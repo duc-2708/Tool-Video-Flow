@@ -181,6 +181,36 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
         if settings.motion_enabled:
             from editor.motion.source import ensure_source_slot
             ensure_source_slot(timeline)
+        # Tự động chạy Visual Planner v3 nếu timeline thiếu visual_plan (kể cả tạo theo danh mục hoặc dùng lại assets)
+        if settings.motion_enabled and getattr(settings, 'motion_recipes_enabled', True):
+            has_vp = any(getattr(sc, 'visual_plan', None) is not None for sc in timeline.plan.scenes)
+            if not has_vp:
+                try:
+                    from agents.visual_planner_v3 import create_visual_plan_v3
+                    from utils.word_timing import read_words
+                    from schemas.research_brief import ResearchBrief
+                    from utils.atomic_io import read_json_atomic
+                    brief_file = timeline.project / "brief.json"
+                    brief_obj = ResearchBrief.model_validate(read_json_atomic(brief_file)) if brief_file.is_file() else None
+                    words_map = {}
+                    for sc in timeline.plan.scenes:
+                        words_file = timeline.project / "audio" / f"scene_{sc.id}.words.json"
+                        if words_file.is_file():
+                            words_map[sc.id] = read_words(words_file)
+                    new_plan = create_visual_plan_v3(
+                        timeline.plan,
+                        words_by_scene=words_map,
+                        brief=brief_obj,
+                        settings=settings,
+                        diagnostics=diagnostics,
+                        state_path=timeline.project / "director_state.visual_v3.json",
+                    )
+                    timeline.plan = new_plan
+                    for sc, p_sc in zip(timeline.scenes, new_plan.scenes):
+                        sc.spec.visual_plan = p_sc.visual_plan
+                except Exception as vp_err:
+                    diagnostics.record_exception(vp_err, "Tự bổ sung visual_plan v3 khi render lỗi")
+
         prepare_graphics(timeline,diagnostics)
         timeline.illustrations_requested=bool(settings.motion_enabled and settings.motion_scenes_enabled)
         if scene_id is not None:
@@ -249,14 +279,15 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
             credits = original_credits.read_text(encoding="utf-8") if original_credits.is_file() else "Chưa có credits.txt của Assets.\n"
             credits += f"\n--- Render ---\nFont: {font.name}\nNhạc nền: {music.name if music else 'Không sử dụng'}\n"
             if settings.motion_enabled: credits+='Lucide icons: ISC/MIT notices in assets/icons/LICENSE. anime.js 3.2.2: MIT, assets/vendor/anime/LICENSE. Original geometric scenes/mascot: CC0, assets/illustrations/LICENSE and assets/mascot/LICENSE.\n'
-            ai_used=sum(r.get('ai_background_count',0) for r in motion_results)
-            if ai_used: credits+='\nNội dung có hình AI — nền minh họa tạo bằng Hinton gateway, không phải hình ảnh chứng cứ của sự kiện.\n'
+            ai_scenes = [r.get('scene_id') for r in motion_results if r.get('ai_background_count', 0) > 0 or r.get('scene_mode') in ('hybrid', 'ai_clip')]
+            ai_used = len(ai_scenes)
+            if ai_used: credits+='\nNội dung có hỗ trợ AI — hình mô phỏng tạo bằng AI/nhập tay, không phải hình ảnh chứng cứ của sự kiện.\n'
             write_text_atomic(confined(render_dir,"credits.txt"), credits)
             result = {"path":str(destination),"filename":filename,"mode":mode,"duration_sec":timeline.duration,
                 "width":size[0],"height":size[1],"fps":fps,"size_bytes":destination.stat().st_size,
                 "render_seconds":round(time.perf_counter()-started,3),"warnings":timeline.warnings,
                 "caption_timing":"Word sidecar nếu hợp lệ; còn lại ước lượng theo số ký tự"}
-            result.update(ai_backgrounds_used=ai_used,description='Nội dung có hình AI' if ai_used else '')
+            result.update(ai_backgrounds_used=ai_used,ai_disclosure='nội dung có hỗ trợ AI' if ai_used else '',ai_scenes=ai_scenes,description='nội dung có hỗ trợ AI' if ai_used else '')
             if settings.motion_enabled:
                 from editor.motion.finish import save_review
                 quality=save_review(timeline,motion_results,destination,scene_id=scene_id)
