@@ -208,8 +208,65 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                     timeline.plan = new_plan
                     for sc, p_sc in zip(timeline.scenes, new_plan.scenes):
                         sc.spec.visual_plan = p_sc.visual_plan
+                        for sh, p_sh in zip(sc.shots, p_sc.shots):
+                            sh.spec.visual_plan = getattr(p_sh, 'visual_plan', None)
+                            sh.visual_plan = getattr(p_sh, 'visual_plan', None)
                 except Exception as vp_err:
                     diagnostics.record_exception(vp_err, "Tự bổ sung visual_plan v3 khi render lỗi")
+
+            # Đảm bảo mọi shot trong timeline đều có visual_plan được lập lịch riêng
+            any_shot_missing_vp = any(getattr(sh.spec, 'visual_plan', None) is None for sc in timeline.scenes for sh in sc.shots)
+            if any_shot_missing_vp:
+                try:
+                    from editor.motion.scheduler import schedule_shots_no_repeat
+                    from schemas.motion_scene import MotionScenePlan
+                    from schemas.visual import VisualBeat, VisualData
+                    all_tl_shots = []
+                    tl_coords = []
+                    for sc_idx, sc in enumerate(timeline.scenes):
+                        for sh_idx, sh in enumerate(sc.shots):
+                            sh_vp = getattr(sh.spec, "visual_plan", None) or getattr(sh, "visual_plan", None)
+                            raw_r = sh_vp.scene_type if sh_vp else (sc.spec.visual_plan.scene_type if getattr(sc.spec, 'visual_plan', None) else "")
+                            sh_text = sh.spec.card_text or (sh.spec.visual.data.text if sh.spec.visual and sh.spec.visual.data else "") or sc.spec.narration
+                            all_tl_shots.append({
+                                "recipe": raw_r,
+                                "text": sh_text,
+                                "narration": sc.spec.narration,
+                                "duration": sh.duration,
+                                "duration_sec": sh.duration,
+                                "scene_id": sc.spec.id,
+                                "shot_id": sh.shot_id
+                            })
+                            tl_coords.append((sc_idx, sh_idx))
+                    if all_tl_shots:
+                        target_dist = min(8, len(all_tl_shots)) if len(all_tl_shots) >= 8 else min(6, len(all_tl_shots))
+                        scheduled_tl_shots, tl_notes = schedule_shots_no_repeat(
+                            all_tl_shots,
+                            min_distinct=target_dist,
+                            min_dist=3,
+                            max_freq=max(2, (len(all_tl_shots) // 6) + 1)
+                        )
+                        timeline.plan.review_notes.extend([n for n in tl_notes if n not in timeline.plan.review_notes])
+                        theme_cur = timeline.plan.render_style.theme if timeline.plan.render_style else "neon_dark"
+                        for sh_data, (sc_idx, sh_idx) in zip(scheduled_tl_shots, tl_coords):
+                            target_sc = timeline.scenes[sc_idx]
+                            target_sh = target_sc.shots[sh_idx]
+                            chosen_r = sh_data["recipe"]
+                            beats = [
+                                VisualBeat(at_sec=b["at_sec"], action=b["action"]) if isinstance(b, dict) else b
+                                for b in sh_data.get("beats", [])
+                            ]
+                            vp_obj = MotionScenePlan(
+                                scene_type=chosen_r,
+                                layout=target_sc.spec.visual_plan.layout if getattr(target_sc.spec, 'visual_plan', None) else "center_hero",
+                                theme=theme_cur,
+                                data=target_sc.spec.visual_plan.data if getattr(target_sc.spec, 'visual_plan', None) and target_sc.spec.visual_plan.data else VisualData(),
+                                beats=beats,
+                            )
+                            target_sh.spec.visual_plan = vp_obj
+                            target_sh.visual_plan = vp_obj
+                except Exception as tl_sched_err:
+                    diagnostics.record_exception(tl_sched_err, "Lập lịch recipe theo shot khi render lỗi")
 
         prepare_graphics(timeline,diagnostics)
         timeline.illustrations_requested=bool(settings.motion_enabled and settings.motion_scenes_enabled)
