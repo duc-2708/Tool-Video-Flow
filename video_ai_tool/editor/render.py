@@ -5,6 +5,7 @@ from collections import OrderedDict
 from pathlib import Path
 import json
 import os
+import re
 import subprocess
 import time
 import uuid
@@ -184,7 +185,8 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
         # Tự động chạy Visual Planner v3 nếu timeline thiếu visual_plan (kể cả tạo theo danh mục hoặc dùng lại assets)
         if settings.motion_enabled and getattr(settings, 'motion_recipes_enabled', True):
             has_vp = any(getattr(sc, 'visual_plan', None) is not None for sc in timeline.plan.scenes)
-            if not has_vp:
+            has_brief = (timeline.project / "brief.json").is_file()
+            if not has_vp and has_brief:
                 try:
                     from agents.visual_planner_v3 import create_visual_plan_v3
                     from utils.word_timing import read_words
@@ -203,7 +205,7 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                         brief=brief_obj,
                         settings=settings,
                         diagnostics=diagnostics,
-                        state_path=timeline.project / "director_state.visual_v3.json",
+                        state_path=timeline.project / "render" / "director_state.visual_v3.json",
                     )
                     timeline.plan = new_plan
                     for sc, p_sc in zip(timeline.scenes, new_plan.scenes):
@@ -216,7 +218,7 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
 
             # Đảm bảo mọi shot trong timeline đều có visual_plan được lập lịch riêng
             any_shot_missing_vp = any(getattr(sh.spec, 'visual_plan', None) is None for sc in timeline.scenes for sh in sc.shots)
-            if any_shot_missing_vp:
+            if any_shot_missing_vp and (timeline.project / "brief.json").is_file():
                 try:
                     from editor.motion.scheduler import schedule_shots_no_repeat
                     from schemas.motion_scene import MotionScenePlan
@@ -228,7 +230,11 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                         for sh_idx, sh in enumerate(sc.shots):
                             sh_vp = getattr(sh.spec, "visual_plan", None) or getattr(sh, "visual_plan", None)
                             raw_r = sh_vp.scene_type if sh_vp else (sc.spec.visual_plan.scene_type if getattr(sc.spec, 'visual_plan', None) else "")
-                            sh_text = sh.spec.card_text or (sh.spec.visual.data.text if sh.spec.visual and sh.spec.visual.data else "") or sc.spec.narration
+                            raw_card = sh.spec.card_text or (sh.spec.visual.data.text if sh.spec.visual and sh.spec.visual.data else "")
+                            if raw_card and not re.search(r"^(?:minh\s+h[oọ]a|ý\s+t[uư][oợ]ng|n[oộ]i\s+dung\s+ch[ií]nh|y\s+ch[ií]nh)", raw_card.strip(), re.I):
+                                sh_text = raw_card
+                            else:
+                                sh_text = sc.spec.narration
                             s_data = (sh.spec.visual.data.model_dump(mode="json") if (sh.spec.visual and sh.spec.visual.data) else {})
                             all_tl_shots.append({
                                 "recipe": raw_r,
@@ -244,12 +250,12 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                             })
                             tl_coords.append((sc_idx, sh_idx))
                     if all_tl_shots:
-                        target_dist = min(8, len(all_tl_shots)) if len(all_tl_shots) >= 8 else min(6, len(all_tl_shots))
+                        target_dist = min(10, len(all_tl_shots))
                         scheduled_tl_shots, tl_notes = schedule_shots_no_repeat(
                             all_tl_shots,
                             min_distinct=target_dist,
-                            min_dist=2,
-                            max_freq=max(2, (len(all_tl_shots) // 6) + 1)
+                            min_dist=4,
+                            max_freq=2
                         )
                         timeline.plan.review_notes.extend([n for n in tl_notes if n not in timeline.plan.review_notes])
                         theme_cur = timeline.plan.render_style.theme if timeline.plan.render_style else "neon_dark"
@@ -306,7 +312,7 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
             captions = Captions(timeline,size,font)
             frames = Frames(timeline,size,font,diagnostics,theme)
             motion_results=[]
-            if settings.motion_enabled and timeline.plan.render_style.visual_templates:
+            if settings.motion_enabled and (getattr(timeline.plan.render_style, 'visual_templates', True) is not False):
                 from pipeline.motion_batch import render_batch
                 motion_results=render_batch(timeline,render_dir/"motion_cache",size,font,settings,diagnostics,notify,force_scene=force_scene)
                 frames.motion_paths={r["scene_id"]:r["path"] for r in motion_results}

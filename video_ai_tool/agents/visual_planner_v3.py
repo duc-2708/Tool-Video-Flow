@@ -800,12 +800,12 @@ def create_visual_plan_v3(
                 shot_map.append((s_idx, sh_idx))
 
         if all_shots_data:
-            target_distinct_shots = min(8, len(all_shots_data)) if len(all_shots_data) >= 8 else min(6, len(all_shots_data))
+            target_distinct_shots = min(10, len(all_shots_data))
             scheduled_shots, shot_notes = schedule_shots_no_repeat(
                 all_shots_data,
                 min_distinct=target_distinct_shots,
-                min_dist=2,
-                max_freq=max(2, (len(all_shots_data) // 6) + 1)
+                min_dist=4,
+                max_freq=2
             )
             plan.review_notes.extend([n for n in shot_notes if n not in plan.review_notes])
 

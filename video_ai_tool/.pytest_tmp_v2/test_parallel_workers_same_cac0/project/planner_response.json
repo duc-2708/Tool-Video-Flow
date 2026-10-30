@@ -1,0 +1,64 @@
+{
+  "theme": "neon_dark",
+  "central_metaphor": {
+    "name": "Hệ thống vận hành",
+    "anchor_element": "ổ khóa",
+    "states_by_scene": {
+      "1": "Trạng thái cảnh 1",
+      "8": "Trạng thái cảnh 8"
+    }
+  },
+  "scenes": [
+    {
+      "scene_id": 1,
+      "purpose": "hook",
+      "visual_idea": "Diễn hoạt slot_counter suy luận theo từ khóa cảnh 1",
+      "recipe": "slot_counter",
+      "metaphor_reason": "Suy luận trực quan theo từ khóa lời đọc cảnh 1",
+      "section_title": "Bạn có thể cắt",
+      "layout": "center_hero",
+      "elements": [
+        {
+          "id": "e1_1",
+          "type": "slot_counter",
+          "zone": "middle",
+          "content": {
+            "text": "Bạn có thể cắt",
+            "label": "Bạn có thể cắt",
+            "value": 100,
+            "unit": "%"
+          },
+          "evidence": "Bạn có thể cắt",
+          "no_numbers": false
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "purpose": "cta",
+      "visual_idea": "Diễn hoạt checklist suy luận theo từ khóa cảnh 8",
+      "recipe": "checklist",
+      "metaphor_reason": "Suy luận trực quan theo từ khóa lời đọc cảnh 8",
+      "section_title": "Bạn muốn tìm hiểu",
+      "layout": "stack_3",
+      "elements": [
+        {
+          "id": "e8_1",
+          "type": "checklist",
+          "zone": "middle",
+          "content": {
+            "text": "Bạn muốn tìm hiểu",
+            "label": "Bạn muốn tìm hiểu",
+            "items": [
+              "Bạn muốn tìm hiểu",
+              "Bước thực hiện",
+              "Kết quả"
+            ]
+          },
+          "evidence": "Bạn muốn tìm hiểu",
+          "no_numbers": false
+        }
+      ]
+    }
+  ]
+}

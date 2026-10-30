@@ -69,7 +69,19 @@ SceneType=Literal[
     'chat_thread',
     'mock_card_swipe',
     'form_fill_submit',
-    'terminal_command_run'
+    'terminal_command_run',
+    'before_after_split',
+    'timeline_milestones',
+    'map_location_pin',
+    'profile_dossier',
+    'document_page_flip',
+    'camera_surveillance_scan',
+    'evidence_board',
+    'network_graph',
+    'countdown_timer',
+    'courtroom_balance',
+    'code_terminal_window',
+    'quote_dialog_card'
 ]
 
 

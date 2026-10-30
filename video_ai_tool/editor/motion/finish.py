@@ -19,7 +19,7 @@ def mux_scenes(results,timeline,audio,destination,render_dir,fps,mode,notify):
         audio.write_audiofile(str(sound),fps=44100,codec="pcm_s16le",logger=None)
         command=[get_ffmpeg_exe(),"-hide_banner","-loglevel","error","-y","-f","concat","-safe","0","-i",str(concat),"-i",str(sound),
             "-t",str(timeline.duration),"-map","0:v:0","-map","1:a:0","-vf",f"fps={fps},scale=out_range=tv:out_color_matrix=bt709,format=yuv420p","-c:v","libx264","-preset","ultrafast" if mode=="preview" else "fast","-crf","27" if mode=="preview" else "20",
-            "-threads","4","-pix_fmt","yuv420p","-color_range","tv","-colorspace","bt709","-color_primaries","bt709","-color_trc","bt709","-c:a","aac","-b:a","192k","-movflags","+faststart",str(destination)]
+            "-threads","4","-pix_fmt","yuv420p","-color_range","tv","-colorspace","bt709","-color_primaries","bt709","-color_trc","bt709","-x264-params","colorprim=bt709:transfer=bt709:colormatrix=bt709","-c:a","aac","-b:a","192k","-movflags","+faststart",str(destination)]
         notify(.80,"Đang ghép các cảnh motion và âm thanh bằng FFmpeg")
         result=subprocess.run(command,capture_output=True,timeout=max(180,timeline.duration*12))
         if result.returncode: raise RuntimeError(result.stderr.decode("utf-8",errors="replace")[:2000])

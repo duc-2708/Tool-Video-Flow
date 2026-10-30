@@ -1,0 +1,36 @@
+{
+  "theme": "neon_dark",
+  "central_metaphor": "Hệ thống vận hành",
+  "anchor_element": "ổ khóa",
+  "llm_ok": false,
+  "scenes": [
+    {
+      "scene_id": 1,
+      "role": "hook",
+      "recipe": "balance_scale",
+      "layout": "center_hero",
+      "method": "keyword_inference",
+      "shots": [
+        {
+          "shot_id": 1,
+          "recipe": "evidence_board",
+          "duration_sec": 2.0
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "role": "cta",
+      "recipe": "checklist",
+      "layout": "stack_3",
+      "method": "keyword_inference",
+      "shots": [
+        {
+          "shot_id": 1,
+          "recipe": "checklist",
+          "duration_sec": 2.0
+        }
+      ]
+    }
+  ]
+}

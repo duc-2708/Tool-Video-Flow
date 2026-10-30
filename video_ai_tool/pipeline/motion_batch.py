@@ -17,14 +17,24 @@ def scene_options(timeline,scene,theme,mascots,configured=None):
 
 
 def render_batch(timeline,folder,size,font,settings,diagnostics,notify,*,force_scene=None):
-    from pipeline.render_motion import render_scene,SUPPORTED
+    from pipeline.render_motion import render_scene,SUPPORTED,is_motion_supported
     from editor.render import Frames
     from editor.captions import Captions
     from editor.templates.theme import load_theme
     prepare_motion_beats(timeline)
     theme=load_motion_theme(settings.root_dir,timeline.plan,settings.motion_theme)
     timeline.warnings.extend(theme["warnings"])
-    scenes=[s for s in timeline.scenes if any(q.spec.visual and q.spec.visual.template in SUPPORTED for q in s.shots)]
+    scenes=[
+        s for s in timeline.scenes
+        if getattr(s.spec, 'visual_plan', None) is not None
+        or getattr(s, 'visual_plan', None) is not None
+        or any(
+            (getattr(q.spec, 'visual_plan', None) is not None)
+            or (getattr(q, 'visual_plan', None) is not None)
+            or (q.spec.visual and is_motion_supported(q.spec.visual.template))
+            for q in s.shots
+        )
+    ]
     values={s.spec.id:0. for s in scenes};lock=Lock()
     profile=timeline.plan.style_profile
     transition_names=getattr(profile,"transitions",[])

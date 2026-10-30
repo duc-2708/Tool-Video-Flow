@@ -3755,6 +3755,559 @@ function renderTerminalCommandRun(ctx, svg, d, t, duration = 4) {
   }
 }
 
+// =============================================================================
+// 12 RECIPES MỚI THEO YÊU CẦU A3
+// =============================================================================
+
+// 29. BEFORE_AFTER_SPLIT: So sánh trực quan Before / After với thanh trượt kép
+function renderBeforeAfterSplit(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const enterScale = overshoot(enterP, 1.1);
+  const cx = 540, cy = 780;
+  const w = 940, h = 480;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const leftLbl = sanitizeSemanticLabel(d.left_label || d.label || 'Trước', 3);
+  const rightLbl = sanitizeSemanticLabel(d.right_label || d.text || 'Sau', 3);
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${enterScale}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  // Nền phân tách 2 nửa
+  shape(root, 'rect', { x, y, width: w / 2, height: h, rx: 24, fill: '#1e293b', stroke: '#334155', 'stroke-width': 3 });
+  shape(root, 'rect', { x: cx, y, width: w / 2, height: h, rx: 24, fill: '#0f172a', stroke: '#334155', 'stroke-width': 3 });
+
+  // Thanh ngăn cách trung tâm animated
+  const splitP = clamp((t - 0.5) / 1.5);
+  const barX = cx + Math.sin(splitP * Math.PI) * 40;
+  shape(root, 'line', { x1: barX, y1: y + 20, x2: barX, y2: y + h - 20, stroke: 'var(--accent)', 'stroke-width': 6, 'stroke-linecap': 'round' });
+
+  // Nhãn Before & After
+  root.append(el('text', {
+    x: x + w * 0.25, y: cy - 30, 'text-anchor': 'middle',
+    'font-size': '44', 'font-weight': '900', fill: '#94a3b8', class: 'ill-label'
+  }, leftLbl));
+
+  root.append(el('text', {
+    x: x + w * 0.75, y: cy - 30, 'text-anchor': 'middle',
+    'font-size': '44', 'font-weight': '900', fill: 'var(--accent)', class: 'ill-label'
+  }, rightLbl));
+
+  // Badge trạng thái phía dưới
+  if (d.number_text || d.value !== null && d.value !== undefined) {
+    const numDisplay = String(d.number_text || d.value);
+    root.append(el('text', {
+      x: x + w * 0.75, y: cy + 60, 'text-anchor': 'middle',
+      'font-size': '64', 'font-weight': '900', fill: '#38bdf8', class: 'ill-label'
+    }, numDisplay));
+  }
+}
+
+// 30. TIMELINE_MILESTONES: Trục thời gian mốc sự kiện phát sáng
+function renderTimelineMilestones(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 780;
+  const w = 940, h = 460;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.08)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  // Bảng nền
+  shape(root, 'rect', { x, y, width: w, height: h, rx: 28, fill: '#0d1527ee', stroke: '#1e293b', 'stroke-width': 3 });
+
+  // Trục ngang
+  const lineY = cy + 20;
+  shape(root, 'line', { x1: x + 80, y1: lineY, x2: x + w - 80, y2: lineY, stroke: '#334155', 'stroke-width': 6, 'stroke-linecap': 'round' });
+
+  // Tia sáng chạy dọc trục
+  const pulseP = clamp((t - 0.4) / (duration - 0.8));
+  const lightX = x + 80 + (w - 160) * easeInOutCubic(pulseP);
+  shape(root, 'line', { x1: x + 80, y1: lineY, x2: lightX, y2: lineY, stroke: 'var(--accent)', 'stroke-width': 6, 'stroke-linecap': 'round' });
+
+  const items = (d.items && d.items.length) ? d.items.slice(0, 3) : [d.label || 'Khởi điểm', 'Diễn tiến', d.text || 'Hiện tại'];
+  const stepX = (w - 200) / Math.max(1, items.length - 1);
+
+  items.forEach((item, idx) => {
+    const nodeX = x + 100 + idx * stepX;
+    const nodeAt = 0.3 + idx * 0.4;
+    const nodeP = clamp((t - nodeAt) / 0.3);
+    const nodeScale = overshoot(nodeP, 1.25);
+
+    // Vòng tròn node
+    shape(root, 'circle', {
+      cx: nodeX, cy: lineY, r: 18 * nodeScale,
+      fill: (pulseP >= idx / (items.length - 1)) ? 'var(--accent)' : '#1e293b',
+      stroke: 'var(--accent)', 'stroke-width': 4
+    });
+
+    // Nhãn mốc
+    const lbl = sanitizeSemanticLabel(item, 3);
+    root.append(el('text', {
+      x: nodeX, y: (idx % 2 === 0) ? lineY - 45 : lineY + 65,
+      'text-anchor': 'middle', 'font-size': '36', 'font-weight': '900',
+      fill: (pulseP >= idx / (items.length - 1)) ? '#f4f7ff' : '#94a3b8',
+      class: 'ill-label', opacity: nodeP
+    }, lbl));
+  });
+}
+
+// 31. MAP_LOCATION_PIN: Bản đồ radar định vị địa điểm & ghim tọa độ
+function renderMapLocationPin(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 770;
+  const w = 940, h = 500;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.1)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  shape(root, 'rect', { x, y, width: w, height: h, rx: 28, fill: '#0a101f', stroke: '#1e293b', 'stroke-width': 3 });
+
+  // Lưới radar
+  for (let r = 80; r <= 220; r += 70) {
+    shape(root, 'circle', { cx, cy: cy - 20, r, fill: 'none', stroke: '#38bdf822', 'stroke-width': 2 });
+  }
+  shape(root, 'line', { x1: cx - 220, y1: cy - 20, x2: cx + 220, y2: cy - 20, stroke: '#38bdf822', 'stroke-width': 2 });
+  shape(root, 'line', { x1: cx, y1: cy - 240, x2: cx, y2: cy + 200, stroke: '#38bdf822', 'stroke-width': 2 });
+
+  // Sóng xung kích tỏa ra
+  const waveP = (t * 1.5) % 1;
+  shape(root, 'circle', {
+    cx, cy: cy - 20, r: 40 + waveP * 180, fill: 'none',
+    stroke: '#38bdf8', 'stroke-width': 3 * (1 - waveP), opacity: 1 - waveP
+  });
+
+  // Ghim vị trí (Drop pin)
+  const pinDropP = clamp((t - 0.2) / 0.4);
+  const pinY = (cy - 70) - (1 - overshoot(pinDropP, 1.3)) * 120;
+  const pinGroup = group(root, { transform: `translate(${cx}, ${pinY})` });
+  shape(pinGroup, 'circle', { cx: 0, cy: 0, r: 24, fill: '#f43f5e', stroke: '#fff', 'stroke-width': 4 });
+  shape(pinGroup, 'circle', { cx: 0, cy: 0, r: 8, fill: '#fff' });
+
+  // Nhãn địa danh
+  const locationName = sanitizeSemanticLabel(d.label || d.text || 'Địa điểm', 4);
+  root.append(el('text', {
+    x: cx, y: cy + 140, 'text-anchor': 'middle',
+    'font-size': '44', 'font-weight': '900', fill: '#f4f7ff', class: 'ill-label'
+  }, locationName));
+}
+
+// 32. PROFILE_DOSSIER: Thẻ hồ sơ đối tượng / nhân vật với avatar quét nhận diện
+function renderProfileDossier(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 780;
+  const w = 940, h = 500;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.08)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  shape(root, 'rect', { x, y, width: w, height: h, rx: 24, fill: '#0b1329', stroke: '#3b82f644', 'stroke-width': 3 });
+
+  // Khung ảnh bên trái
+  const imgBoxX = x + 60, imgBoxY = y + 70, imgBoxW = 260, imgBoxH = 340;
+  shape(root, 'rect', { x: imgBoxX, y: imgBoxY, width: imgBoxW, height: imgBoxH, rx: 16, fill: '#1e293b', stroke: '#475569', 'stroke-width': 2 });
+  // Avatar silhouette icon
+  shape(root, 'circle', { cx: imgBoxX + imgBoxW / 2, cy: imgBoxY + 120, r: 65, fill: '#475569' });
+  shape(root, 'ellipse', { cx: imgBoxX + imgBoxW / 2, cy: imgBoxY + 280, rx: 100, ry: 80, fill: '#475569' });
+
+  // Laser quét dọc ảnh
+  const scanP = (t * 0.8) % 1;
+  const scanY = imgBoxY + scanP * imgBoxH;
+  shape(root, 'line', { x1: imgBoxX, y1: scanY, x2: imgBoxX + imgBoxW, y2: scanY, stroke: '#38bdf8', 'stroke-width': 3, opacity: 0.8 });
+
+  // Thông tin hồ sơ bên phải
+  const infoX = imgBoxX + imgBoxW + 60;
+  const nameText = sanitizeSemanticLabel(d.name || d.label || d.text || 'Hồ sơ đối tượng', 4);
+  root.append(el('text', {
+    x: infoX, y: y + 130,
+    'font-size': '44', 'font-weight': '900', fill: '#f4f7ff', class: 'ill-label'
+  }, nameText));
+
+  // Dòng trạng thái (nếu có từ dữ liệu thật)
+  const statusRaw = d.status || (d.number_text ? String(d.number_text) : '');
+  if (statusRaw) {
+    const statusText = sanitizeSemanticLabel(statusRaw, 4);
+    root.append(el('text', {
+      x: infoX, y: y + 210,
+      'font-size': '38', 'font-weight': '800', fill: '#f43f5e', class: 'ill-label'
+    }, statusText));
+  }
+
+  // Dấu mộc đóng xuống nếu có badge từ dữ liệu thật
+  if (d.badge || d.stamp) {
+    const stampAt = 0.8;
+    if (t >= stampAt) {
+      const stampP = clamp((t - stampAt) / 0.25);
+      const stampScale = overshoot(stampP, 1.3);
+      const stampGroup = group(root, {
+        transform: `translate(${x + w - 180}, ${y + h - 120}) rotate(-14) scale(${stampScale})`
+      });
+      shape(stampGroup, 'rect', { x: -110, y: -35, width: 220, height: 70, rx: 12, fill: 'none', stroke: '#ef4444', 'stroke-width': 4 });
+      stampGroup.append(el('text', {
+        x: 0, y: 12, 'text-anchor': 'middle',
+        'font-size': '36', 'font-weight': '900', fill: '#ef4444', class: 'ill-label'
+      }, sanitizeSemanticLabel(d.badge || d.stamp, 3)));
+    }
+  }
+}
+
+// 33. DOCUMENT_PAGE_FLIP: Tài liệu lật trang 3D
+function renderDocumentPageFlip(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 780;
+  const w = 940, h = 480;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.08)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  // Trang dưới
+  shape(root, 'rect', { x: x + 40, y: y + 20, width: w - 80, height: h - 40, rx: 20, fill: '#1e293b', stroke: '#334155', 'stroke-width': 3 });
+
+  // Trang lật phía trên
+  const flipP = clamp((t - 0.6) / 1.8);
+  const flipAngle = easeInOutCubic(flipP) * -45;
+  const pageGroup = group(root, {
+    transform: `translate(${x + 40}, ${y + 20}) rotate(${flipAngle})`
+  });
+  shape(pageGroup, 'rect', { x: 0, y: 0, width: w - 80, height: h - 40, rx: 20, fill: '#0f172a', stroke: 'var(--accent)', 'stroke-width': 3 });
+
+  // Các dòng chữ mô phỏng trên trang
+  const docTitle = sanitizeSemanticLabel(d.title || d.label || d.text || 'Tài liệu', 4);
+  pageGroup.append(el('text', {
+    x: 60, y: 80, 'font-size': '42', 'font-weight': '900', fill: 'var(--accent)', class: 'ill-label'
+  }, docTitle));
+
+  for (let i = 0; i < 4; i++) {
+    shape(pageGroup, 'rect', { x: 60, y: 130 + i * 55, width: (w - 200) * (0.9 - i * 0.1), height: 16, rx: 8, fill: '#334155' });
+  }
+}
+
+// 34. CAMERA_SURVEILLANCE_SCAN: Khung ngắm camera giám sát & tia quét
+function renderCameraSurveillanceScan(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 780;
+  const w = 940, h = 480;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.05)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  shape(root, 'rect', { x, y, width: w, height: h, rx: 24, fill: '#030712ee', stroke: '#1f2937', 'stroke-width': 3 });
+
+  // 4 góc ngắm Viewfinder
+  const bLen = 60, bW = 6;
+  // Góc trên trái
+  shape(root, 'line', { x1: x + 40, y1: y + 40, x2: x + 40 + bLen, y2: y + 40, stroke: 'var(--accent)', 'stroke-width': bW });
+  shape(root, 'line', { x1: x + 40, y1: y + 40, x2: x + 40, y2: y + 40 + bLen, stroke: 'var(--accent)', 'stroke-width': bW });
+  // Góc trên phải
+  shape(root, 'line', { x1: x + w - 40, y1: y + 40, x2: x + w - 40 - bLen, y2: y + 40, stroke: 'var(--accent)', 'stroke-width': bW });
+  shape(root, 'line', { x1: x + w - 40, y1: y + 40, x2: x + w - 40, y2: y + 40 + bLen, stroke: 'var(--accent)', 'stroke-width': bW });
+  // Góc dưới trái
+  shape(root, 'line', { x1: x + 40, y1: y + h - 40, x2: x + 40 + bLen, y2: y + h - 40, stroke: 'var(--accent)', 'stroke-width': bW });
+  shape(root, 'line', { x1: x + 40, y1: y + h - 40, x2: x + 40, y2: y + h - 40 - bLen, stroke: 'var(--accent)', 'stroke-width': bW });
+  // Góc dưới phải
+  shape(root, 'line', { x1: x + w - 40, y1: y + h - 40, x2: x + w - 40 - bLen, y2: y + h - 40, stroke: 'var(--accent)', 'stroke-width': bW });
+  shape(root, 'line', { x1: x + w - 40, y1: y + h - 40, x2: x + w - 40, y2: y + h - 40 - bLen, stroke: 'var(--accent)', 'stroke-width': bW });
+
+  // REC nhấp nháy
+  const recBlink = Math.sin(t * 5) > 0;
+  shape(root, 'circle', { cx: x + 80, cy: y + 80, r: 12, fill: recBlink ? '#ef4444' : '#7f1d1d' });
+  root.append(el('text', {
+    x: x + 110, y: y + 90, 'font-size': '36', 'font-weight': '900', fill: '#ef4444', class: 'ill-label'
+  }, 'REC'));
+
+  // Tia laser quét dọc
+  const laserP = (t * 0.9) % 1;
+  const laserY = y + 50 + laserP * (h - 100);
+  shape(root, 'line', { x1: x + 40, y1: laserY, x2: x + w - 40, y2: laserY, stroke: '#f43f5e', 'stroke-width': 3, opacity: 0.75 });
+
+  // Nhãn đối tượng mục tiêu
+  const targetLbl = sanitizeSemanticLabel(d.label || d.text || 'Camera giám sát', 4);
+  root.append(el('text', {
+    x: cx, y: cy + 30, 'text-anchor': 'middle',
+    'font-size': '44', 'font-weight': '900', fill: '#f4f7ff', class: 'ill-label'
+  }, targetLbl));
+}
+
+// 35. EVIDENCE_BOARD: Bảng chứng cứ điều tra với dây chỉ đỏ liên kết
+function renderEvidenceBoard(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 780;
+  const w = 940, h = 500;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.08)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  shape(root, 'rect', { x, y, width: w, height: h, rx: 24, fill: '#0d1527', stroke: '#334155', 'stroke-width': 3 });
+
+  // 3 thẻ chứng cứ tại 3 góc
+  const pA = { x: x + 180, y: y + 130 };
+  const pB = { x: x + w - 180, y: y + 130 };
+  const pC = { x: cx, y: y + h - 110 };
+
+  const rawItems = (d.items && d.items.length) ? d.items : [d.label, d.text, d.title].filter(Boolean);
+  const lblA = sanitizeSemanticLabel(rawItems[0] || 'Mục A', 3);
+  const lblB = sanitizeSemanticLabel(rawItems[1] || 'Mục B', 3);
+  const lblC = sanitizeSemanticLabel(rawItems[2] || 'Mục C', 3);
+
+  // Dây chỉ đỏ nối
+  const lineP = clamp((t - 0.4) / 1.2);
+  shape(root, 'line', { x1: pA.x, y1: pA.y, x2: pA.x + (pB.x - pA.x) * lineP, y2: pA.y + (pB.y - pA.y) * lineP, stroke: '#ef4444', 'stroke-width': 4 });
+  if (lineP > 0.5) {
+    const p2 = (lineP - 0.5) * 2;
+    shape(root, 'line', { x1: pB.x, y1: pB.y, x2: pB.x + (pC.x - pB.x) * p2, y2: pB.y + (pC.y - pB.y) * p2, stroke: '#ef4444', 'stroke-width': 4 });
+  }
+
+  // Vẽ các thẻ chứng cứ và ghim bấm
+  const renderCard = (pt, lbl, delay) => {
+    const cP = clamp((t - delay) / 0.3);
+    const cScale = overshoot(cP, 1.2);
+    const cg = group(root, { transform: `translate(${pt.x}, ${pt.y}) scale(${cScale})` });
+    shape(cg, 'rect', { x: -130, y: -45, width: 260, height: 90, rx: 14, fill: '#1e293b', stroke: '#475569', 'stroke-width': 2 });
+    shape(cg, 'circle', { cx: 0, cy: -45, r: 10, fill: '#ef4444', stroke: '#fff', 'stroke-width': 2 });
+    cg.append(el('text', {
+      x: 0, y: 12, 'text-anchor': 'middle', 'font-size': '36', 'font-weight': '900', fill: '#f4f7ff', class: 'ill-label'
+    }, lbl));
+  };
+
+  renderCard(pA, lblA, 0.1);
+  renderCard(pB, lblB, 0.4);
+  renderCard(pC, lblC, 0.8);
+}
+
+// 36. NETWORK_GRAPH: Mạng lưới liên kết đa nút & xung điện truyền động
+function renderNetworkGraph(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 780;
+  const w = 940, h = 500;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.08)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  shape(root, 'rect', { x, y, width: w, height: h, rx: 24, fill: '#0a101f', stroke: '#1e293b', 'stroke-width': 3 });
+
+  // 4 nút vệ tinh quanh tâm
+  const satCoords = [
+    { x: cx - 280, y: cy - 110 },
+    { x: cx + 280, y: cy - 110 },
+    { x: cx - 240, y: cy + 120 },
+    { x: cx + 240, y: cy + 120 }
+  ];
+
+  satCoords.forEach((pt, i) => {
+    // Đường liên kết
+    shape(root, 'line', { x1: cx, y1: cy, x2: pt.x, y2: pt.y, stroke: '#38bdf844', 'stroke-width': 3 });
+    // Xung điện chạy dọc
+    const pulseP = (t * 1.2 + i * 0.25) % 1;
+    const px = cx + (pt.x - cx) * pulseP;
+    const py = cy + (pt.y - cy) * pulseP;
+    shape(root, 'circle', { cx: px, cy: py, r: 6, fill: '#38bdf8' });
+
+    // Vệ tinh node
+    shape(root, 'circle', { cx: pt.x, cy: pt.y, r: 35, fill: '#1e293b', stroke: '#38bdf8', 'stroke-width': 3 });
+  });
+
+  // Nút trung tâm lớn
+  shape(root, 'circle', { cx, cy, r: 90, fill: '#0f172a', stroke: 'var(--accent)', 'stroke-width': 5 });
+  const centerLbl = sanitizeSemanticLabel(d.label || d.text || 'Hệ thống', 3);
+  root.append(el('text', {
+    x: cx, y: cy + 12, 'text-anchor': 'middle',
+    'font-size': '38', 'font-weight': '900', fill: 'var(--accent)', class: 'ill-label'
+  }, centerLbl));
+}
+
+// 37. COUNTDOWN_TIMER: Đồng hồ đếm ngược với kim quét & số lật
+function renderCountdownTimer(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 760;
+  const w = 940, h = 480;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.1)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  shape(root, 'rect', { x, y, width: w, height: h, rx: 28, fill: '#0b1329', stroke: '#1e293b', 'stroke-width': 3 });
+
+  // Vòng tròn đồng hồ lớn
+  const r = 140;
+  shape(root, 'circle', { cx, cy: cy - 20, r, fill: '#0f172a', stroke: '#334155', 'stroke-width': 8 });
+
+  // Vòng quét tiến độ
+  const sweepP = clamp(t / duration);
+  const circ = 2 * Math.PI * r;
+  shape(root, 'circle', {
+    cx, cy: cy - 20, r, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 10,
+    'stroke-dasharray': circ, 'stroke-dashoffset': circ * (1 - sweepP),
+    transform: `rotate(-90 ${cx} ${cy - 20})`, 'stroke-linecap': 'round'
+  });
+
+  // Số đếm ngược ở tâm
+  const targetNum = Number(d.value || 30);
+  const currentNum = Math.max(0, Math.round(targetNum * (1 - sweepP * 0.7)));
+  root.append(el('text', {
+    x: cx, y: cy, 'text-anchor': 'middle',
+    'font-size': '72', 'font-weight': '900', fill: '#f4f7ff', class: 'ill-label'
+  }, String(currentNum)));
+
+  // Nhãn thời hạn
+  const timeLbl = sanitizeSemanticLabel(d.label || d.text || 'Thời hạn xem xét', 4);
+  root.append(el('text', {
+    x: cx, y: cy + 170, 'text-anchor': 'middle',
+    'font-size': '40', 'font-weight': '900', fill: 'var(--accent)', class: 'ill-label'
+  }, timeLbl));
+}
+
+// 38. COURTROOM_BALANCE: Tòa án / Cán cân công lý đa lớp & búa quan tòa
+function renderCourtroomBalance(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 780;
+  const w = 940, h = 500;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.08)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  shape(root, 'rect', { x, y, width: w, height: h, rx: 28, fill: '#0a0f1d', stroke: '#334155', 'stroke-width': 3 });
+
+  // Trụ cán cân
+  shape(root, 'line', { x1: cx, y1: cy - 130, x2: cx, y2: cy + 130, stroke: '#e2e8f0', 'stroke-width': 8 });
+  shape(root, 'rect', { x: cx - 60, y: cy + 130, width: 120, height: 20, rx: 6, fill: '#cbd5e1' });
+
+  // Đòn cân nghiêng
+  const tiltAngle = Math.sin(t * 2) * 7;
+  const beamW = 420;
+  const beamGroup = group(root, { transform: `translate(${cx}, ${cy - 120}) rotate(${tiltAngle})` });
+  shape(beamGroup, 'line', { x1: -beamW / 2, y1: 0, x2: beamW / 2, y2: 0, stroke: 'var(--accent)', 'stroke-width': 8, 'stroke-linecap': 'round' });
+
+  // Hai đĩa cân
+  const leftX = cx - (beamW / 2) * Math.cos(tiltAngle * Math.PI / 180);
+  const leftY = (cy - 120) - (beamW / 2) * Math.sin(tiltAngle * Math.PI / 180);
+  shape(root, 'line', { x1: leftX, y1: leftY, x2: leftX, y2: leftY + 110, stroke: '#94a3b8', 'stroke-width': 3 });
+  shape(root, 'ellipse', { cx: leftX, cy: leftY + 110, rx: 80, ry: 16, fill: '#1e293b', stroke: 'var(--accent)', 'stroke-width': 3 });
+
+  const rightX = cx + (beamW / 2) * Math.cos(tiltAngle * Math.PI / 180);
+  const rightY = (cy - 120) + (beamW / 2) * Math.sin(tiltAngle * Math.PI / 180);
+  shape(root, 'line', { x1: rightX, y1: rightY, x2: rightX, y2: rightY + 110, stroke: '#94a3b8', 'stroke-width': 3 });
+  shape(root, 'ellipse', { cx: rightX, cy: rightY + 110, rx: 80, ry: 16, fill: '#1e293b', stroke: 'var(--accent)', 'stroke-width': 3 });
+
+  // Nhãn 2 đĩa cân
+  const leftLbl = sanitizeSemanticLabel(d.left_label || d.label || 'Vế trái', 3);
+  const rightLbl = sanitizeSemanticLabel(d.right_label || d.text || 'Vế phải', 3);
+  root.append(el('text', {
+    x: leftX, y: leftY + 165, 'text-anchor': 'middle',
+    'font-size': '36', 'font-weight': '900', fill: '#f43f5e', class: 'ill-label'
+  }, leftLbl));
+  root.append(el('text', {
+    x: rightX, y: rightY + 165, 'text-anchor': 'middle',
+    'font-size': '36', 'font-weight': '900', fill: '#38bdf8', class: 'ill-label'
+  }, rightLbl));
+}
+
+// 39. CODE_TERMINAL_WINDOW: Cửa sổ lệnh terminal quét dữ liệu / điều tra
+function renderCodeTerminalWindow(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 780;
+  const w = 940, h = 480;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.08)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  // Khung terminal
+  shape(root, 'rect', { x, y, width: w, height: h, rx: 20, fill: '#090d16', stroke: '#1e293b', 'stroke-width': 3 });
+  // Thanh tiêu đề header
+  shape(root, 'rect', { x, y, width: w, height: 60, rx: 20, fill: '#1e293b' });
+  // 3 nút macOS
+  shape(root, 'circle', { cx: x + 40, cy: y + 30, r: 10, fill: '#ef4444' });
+  shape(root, 'circle', { cx: x + 70, cy: y + 30, r: 10, fill: '#f59e0b' });
+  shape(root, 'circle', { cx: x + 100, cy: y + 30, r: 10, fill: '#10b981' });
+
+  // Dòng lệnh gõ
+  const cmdRaw = d.command ? d.command : (d.label ? `inspect --${d.label.toLowerCase().replace(/[^a-z0-9]/g, '')}` : 'run --check');
+  root.append(el('text', {
+    x: x + 45, y: y + 140,
+    'font-size': '38', 'font-weight': '900', fill: 'var(--accent)', font_family: 'monospace', class: 'ill-label'
+  }, `> ${cmdRaw}`));
+
+  // Kết quả quét
+  const resultLines = (d.items && d.items.length) ? d.items.slice(0, 3) : ((d.lines && d.lines.length) ? d.lines.slice(0, 3) : []);
+  resultLines.forEach((line, idx) => {
+    const lineP = clamp((t - (0.6 + idx * 0.4)) / 0.3);
+    if (lineP > 0) {
+      root.append(el('text', {
+        x: x + 45, y: y + 220 + idx * 60,
+        'font-size': '36', 'font-weight': '800', fill: '#34d399', font_family: 'monospace',
+        class: 'ill-label', opacity: lineP
+      }, sanitizeSemanticLabel(line, 5)));
+    }
+  });
+}
+
+// 40. QUOTE_DIALOG_CARD: Thẻ trích dẫn câu hỏi / tuyên bố nổi bật
+function renderQuoteDialogCard(ctx, svg, d, t, duration = 4) {
+  const enterP = clamp(t / 0.5);
+  const cx = 540, cy = 780;
+  const w = 940, h = 460;
+  const x = cx - w / 2, y = cy - h / 2;
+
+  const root = group(svg, {
+    transform: `translate(${cx}, ${cy}) scale(${overshoot(enterP, 1.08)}) translate(${-cx}, ${-cy})`,
+    class: 'motion-element'
+  });
+
+  shape(root, 'rect', { x, y, width: w, height: h, rx: 28, fill: '#0d1527ee', stroke: 'var(--accent)', 'stroke-width': 3 });
+
+  // Dấu ngoặc kép đôi lớn
+  root.append(el('text', {
+    x: x + 70, y: y + 130,
+    'font-size': '120', 'font-weight': '900', fill: 'var(--accent)', opacity: 0.35,
+    font_family: 'Georgia, serif'
+  }, '“'));
+
+  // Nội dung trích dẫn
+  const quoteText = sanitizeSemanticLabel(d.text || d.label || 'Vì sao dấu hiệu cảnh báo bị bỏ quên?', 6);
+  root.append(el('text', {
+    x: cx, y: cy + 15, 'text-anchor': 'middle',
+    'font-size': '44', 'font-weight': '900', fill: '#f4f7ff', class: 'ill-label'
+  }, quoteText));
+
+  // Người phát ngôn / nguồn
+  const speaker = sanitizeSemanticLabel(d.label || 'Tòa án & Luật sư', 3);
+  shape(root, 'line', { x1: cx - 120, y1: cy + 85, x2: cx + 120, y2: cy + 85, stroke: '#475569', 'stroke-width': 3 });
+  root.append(el('text', {
+    x: cx, y: cy + 140, 'text-anchor': 'middle',
+    'font-size': '36', 'font-weight': '800', fill: '#94a3b8', class: 'ill-label'
+  }, `— ${speaker}`));
+}
+
+
 const vocabularyMap = {
   slot_counter: renderSlotCounter,
   strike_replace: renderStrikeReplace,
@@ -3783,7 +4336,19 @@ const vocabularyMap = {
   chat_thread: renderChatThread,
   mock_card_swipe: renderMockCardSwipe,
   form_fill_submit: renderFormFillSubmit,
-  terminal_command_run: renderTerminalCommandRun
+  terminal_command_run: renderTerminalCommandRun,
+  before_after_split: renderBeforeAfterSplit,
+  timeline_milestones: renderTimelineMilestones,
+  map_location_pin: renderMapLocationPin,
+  profile_dossier: renderProfileDossier,
+  document_page_flip: renderDocumentPageFlip,
+  camera_surveillance_scan: renderCameraSurveillanceScan,
+  evidence_board: renderEvidenceBoard,
+  network_graph: renderNetworkGraph,
+  countdown_timer: renderCountdownTimer,
+  courtroom_balance: renderCourtroomBalance,
+  code_terminal_window: renderCodeTerminalWindow,
+  quote_dialog_card: renderQuoteDialogCard,
 };
 
 window.MotionVocabulary = Object.assign(window.MotionVocabulary || {}, vocabularyMap);

@@ -1,0 +1,124 @@
+{
+  "project": "project",
+  "video_hash": "ef308e1ece6d921ce72e77afa67a0aeba827a07da032b64f06129e19ab48e47c",
+  "is_current_hash": true,
+  "total_scenes": 2,
+  "overall_all_passed": false,
+  "scenes": [
+    {
+      "scene_id": 1,
+      "scene_type": "stat_number",
+      "audit_status": "ĐÃ ĐO",
+      "shots": [
+        {
+          "shot_id": 1,
+          "recipe": "stat_number",
+          "start": 0.0,
+          "duration": 2.0,
+          "card_text": "",
+          "data": {}
+        }
+      ],
+      "all_passed": false,
+      "metrics": {
+        "hero_width": 964,
+        "hero_area_ratio": 1.026,
+        "min_font_size": 36,
+        "clipped_rows": 2,
+        "bbox_overlaps": 0,
+        "t0_visible_count": 1,
+        "max_still_interval_sec": 0.4,
+        "empty_space_ratio": 0,
+        "duplicate_labels": 0,
+        "broken_labels": [],
+        "empty_prompts": 0,
+        "caption_collisions": 0,
+        "center_y_drift": 143,
+        "unaccented_vi_text": 0,
+        "numeric_hallucinations": 0,
+        "empty_gap_sec": 0.0,
+        "split_thousand_dot": 0,
+        "trailing_cutoffs": 0,
+        "numeric_regressions": 0
+      },
+      "pass_status": {
+        "hero_width": true,
+        "hero_area_ratio": true,
+        "min_font_size": true,
+        "clipped_rows": false,
+        "bbox_overlaps": true,
+        "t0_visible_count": true,
+        "max_still_interval_sec": true,
+        "empty_space_ratio": true,
+        "duplicate_labels": true,
+        "empty_prompts": true,
+        "caption_collisions": true,
+        "center_y_drift": false,
+        "unaccented_vi_text": true,
+        "numeric_hallucinations": true,
+        "empty_gap_sec": true,
+        "split_thousand_dot": true,
+        "trailing_cutoffs": true,
+        "numeric_regressions": true
+      }
+    },
+    {
+      "scene_id": 8,
+      "scene_type": "stat_number",
+      "audit_status": "ĐÃ ĐO",
+      "shots": [
+        {
+          "shot_id": 1,
+          "recipe": "stat_number",
+          "start": 0.0,
+          "duration": 2.0,
+          "card_text": "",
+          "data": {}
+        }
+      ],
+      "all_passed": true,
+      "metrics": {
+        "hero_width": 940,
+        "hero_area_ratio": 1,
+        "min_font_size": 38,
+        "clipped_rows": 0,
+        "bbox_overlaps": 0,
+        "t0_visible_count": 1,
+        "max_still_interval_sec": 0.4,
+        "empty_space_ratio": 0,
+        "duplicate_labels": 0,
+        "broken_labels": [],
+        "empty_prompts": 0,
+        "caption_collisions": 0,
+        "center_y_drift": 0,
+        "unaccented_vi_text": 0,
+        "numeric_hallucinations": 0,
+        "empty_gap_sec": 0.0,
+        "split_thousand_dot": 0,
+        "trailing_cutoffs": 0,
+        "numeric_regressions": 0
+      },
+      "pass_status": {
+        "hero_width": true,
+        "hero_area_ratio": true,
+        "min_font_size": true,
+        "clipped_rows": true,
+        "bbox_overlaps": true,
+        "t0_visible_count": true,
+        "max_still_interval_sec": true,
+        "empty_space_ratio": true,
+        "duplicate_labels": true,
+        "empty_prompts": true,
+        "caption_collisions": true,
+        "center_y_drift": true,
+        "unaccented_vi_text": true,
+        "numeric_hallucinations": true,
+        "empty_gap_sec": true,
+        "split_thousand_dot": true,
+        "trailing_cutoffs": true,
+        "numeric_regressions": true
+      }
+    }
+  ],
+  "phase8_director": null
+}

@@ -22,17 +22,16 @@ from utils.file_lock import file_lock
 from utils.word_timing import align_words,read_words,timing_source
 
 MOTION_DIR=Path(__file__).resolve().parents[1]/"editor/motion"
-SUPPORTED={"hook_card","steps_list","compare_bars","stat_card","source_card","text_focus",
-    "progress_tracker","ring_percent","line_growth","strike_replace","quote_card","timeline","versus","icon_card","cta_card",
-    "slot_counter","gauge_needle","odometer","bar_race","thermometer","battery_fill",
-    "glass_fill","balance_scale","tug_of_war","vs_flip_cards","before_after_wipe",
-    "conveyor_belt","domino_chain","funnel_filter","pipeline_pipes","dice_roll",
-    "lock_unlock","shield_hit","traffic_light","orbit_system","layered_onion",
-    "stack_pile","puzzle_snap","chat_thread","mock_card_swipe","form_fill_submit",
-    "terminal_command_run","stat_number","bar_compare","container_fill","steps_ladder",
-    "stack_cards","flow_chain","network_nodes","terminal_type","magnifier_check",
-    "versus_scale","versus_split","code_card","timeline_march","mock_ui_window",
-    "checklist","hub_spoke"}
+SUPPORTED = {
+    "hook_card", "steps_list", "compare_bars", "stat_card", "source_card", "text_focus",
+    "progress_tracker", "ring_percent", "line_growth", "strike_replace", "quote_card", "timeline", "versus"
+}
+
+
+def is_motion_supported(template: str) -> bool:
+    from schemas.motion_scene import SceneType
+    from typing import get_args
+    return template in SUPPORTED or template in set(get_args(SceneType))
 
 
 @lru_cache(maxsize=4)
@@ -60,7 +59,7 @@ def scene_payload(scene,size,caption_style,options=None):
     payload={"width":size[0],"height":size[1],"duration":scene.duration,"words":words,"timing_source":origin if origin!="word_boundary" else method,
         "captions":caption_style.model_dump(mode="json"),"shots":[{
             "start":s.start-scene.start,"duration":s.duration,
-            "template":s.spec.visual.template if s.spec.visual else "stock",
+            "template":(getattr(s.spec, 'visual_plan', None).scene_type if getattr(s.spec, 'visual_plan', None) and getattr(s.spec.visual_plan, 'scene_type', None) else (getattr(s, 'visual_plan', None).scene_type if getattr(s, 'visual_plan', None) and getattr(s.visual_plan, 'scene_type', None) else (s.spec.visual.template if s.spec.visual else "stock"))),
             "data":s.spec.visual.data.model_dump(mode="json") if s.spec.visual else {},
             "beats":[b.model_dump(mode="json") for b in s.spec.visual.beats] if s.spec.visual else [],
             "visual_plan":(s.spec.visual_plan.model_dump(mode="json") if hasattr(s.spec, "visual_plan") and s.spec.visual_plan else (s.visual_plan.model_dump(mode="json") if hasattr(s, "visual_plan") and s.visual_plan else getattr(s, "visual_plan", None)))
@@ -77,6 +76,13 @@ def scene_payload(scene,size,caption_style,options=None):
             forced_recipe = force_list[sc_idx]
 
     spec=getattr(scene, 'visual_plan', None) or getattr(scene.spec,'visual_plan',None)
+    if not spec and scene.shots:
+        first_sh = scene.shots[0]
+        sh_tpl = getattr(first_sh.spec, 'visual_plan', None).scene_type if (getattr(first_sh.spec, 'visual_plan', None) and getattr(first_sh.spec.visual_plan, 'scene_type', None)) else (first_sh.spec.visual.template if (first_sh.spec and first_sh.spec.visual) else None)
+        DOM_TEMPLATES = set(SUPPORTED)
+        if sh_tpl and is_motion_supported(sh_tpl) and sh_tpl not in DOM_TEMPLATES:
+            from schemas.motion_scene import MotionScenePlan
+            spec = MotionScenePlan(scene_type=sh_tpl, layout="center_hero")
     notes=list(getattr(spec, 'repair_notes', [])) if spec else []
     if forced_recipe:
         from schemas.visual_v3 import MotionScenePlan
@@ -102,7 +108,7 @@ def scene_payload(scene,size,caption_style,options=None):
     if spec and illustrations_enabled:
         from agents.illustrations import scene_data,enough
         from agents.visual_diversity import values_in
-        rebound=scene_data(scene.spec)
+        rebound=scene_data(scene if hasattr(scene, 'shots') else scene.spec)
         allowed=set(payload.get('allowed_numbers',[]))|values_in(scene.spec.narration)
         for shot in scene.shots:
             v=shot.spec.visual
@@ -342,7 +348,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
     imitation HTML template. Beat seconds/word indexes are scene-local/zero-based.
     """
     payload=scene_payload(scene,size,caption_style,options)
-    if not any(s["template"] in SUPPORTED for s in payload["shots"]): return None
+    if not any(is_motion_supported(s["template"]) for s in payload["shots"]): return None
     sources=[]
     for shot in scene.shots:
         path=shot.path
@@ -462,13 +468,13 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                 # BẮT ĐẦU ENCODE SAU KHI AUDIT / TỰ SỬA HOÀN TẤT
                 process=subprocess.Popen([get_ffmpeg_exe(),"-hide_banner","-loglevel","error","-y",
                     "-f","image2pipe","-vcodec","mjpeg","-framerate",str(fps),"-i","pipe:0","-an",
-                    "-c:v","libx264","-preset","veryfast","-crf","20","-threads","2","-pix_fmt","yuv420p","-movflags","+faststart",str(temporary)],
+                    "-c:v","libx264","-preset","veryfast","-crf","20","-threads","2","-pix_fmt","yuv420p","-color_range","tv","-colorspace","bt709","-color_primaries","bt709","-color_trc","bt709","-x264-params","colorprim=bt709:transfer=bt709:colormatrix=bt709","-movflags","+faststart",str(temporary)],
                     stdin=subprocess.PIPE,stdout=subprocess.DEVNULL,stderr=errors)
                 try:
                     for i in range(count):
                         t=min(i/fps,scene.duration-1e-6)
                         shot=next((s for s in payload["shots"] if s["start"]<=t<s["start"]+s["duration"]),payload["shots"][-1])
-                        if shot["template"] in SUPPORTED:
+                        if is_motion_supported(shot["template"]):
                             state=page.evaluate("t => window.renderAt(t)",t) or {}
                             if state.get('illustrated'):
                                 illustrated_frames+=1;moving_counts.append(state.get('moving_elements',0))
@@ -495,7 +501,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                     if process.poll() is None: process.kill();process.wait(timeout=15)
                 quality=[]
                 for index,shot in enumerate(payload["shots"],1):
-                    if shot["template"] not in SUPPORTED: continue
+                    if not is_motion_supported(shot["template"]): continue
                     cues=[b["at_sec"] for b in shot["beats"] if b.get("at_sec") is not None and (b["action"].startswith("reveal") or b["action"].startswith("count_end") or b["action"]=="replace_value")]
                     sample=min(shot["start"]+shot["duration"]-.23,max(shot["start"]+min(.65,shot["duration"]*.5),max(cues,default=shot["start"])+.17))
                     page.evaluate("t => renderAt(t)",max(shot["start"],sample))

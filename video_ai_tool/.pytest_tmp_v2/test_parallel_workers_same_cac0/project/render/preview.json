@@ -1,0 +1,220 @@
+{
+  "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\render\\dung-video_tiktok_preview.mp4",
+  "filename": "dung-video_tiktok_preview.mp4",
+  "mode": "preview",
+  "duration_sec": 3.2413333333333334,
+  "width": 270,
+  "height": 480,
+  "fps": 5,
+  "size_bytes": 139515,
+  "render_seconds": 1.927,
+  "warnings": [
+    "[visual_quality, nhóm 3] repeated_cards: 1; xem quality_report.json."
+  ],
+  "caption_timing": "Word sidecar nếu hợp lệ; còn lại ước lượng theo số ký tự",
+  "ai_backgrounds_used": 0,
+  "ai_disclosure": "",
+  "ai_scenes": [],
+  "description": "",
+  "motion_enabled": true,
+  "motion_scenes": [
+    {
+      "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\666292f3213c758f7a26401c2ffc35a8e000d8266decf89a5dc23e72e5c2abc4.mp4",
+      "cache_hit": true,
+      "scene_id": 1,
+      "width": 270,
+      "height": 480,
+      "fps": 5,
+      "duration_sec": 1.6206666666666667,
+      "render_seconds": 0.0,
+      "size_bytes": 31842,
+      "sha256": "a5f47a9f9fe4af730122052dfdead7be5acf29079ffd22473eb41ea7b1fd7fa6",
+      "timing_source": "estimated_characters",
+      "illustration": {
+        "scene_type": "balance_scale",
+        "coverage_sec": 1.6206666666666667,
+        "moving_elements_min": 17,
+        "subtitle_only_intervals": []
+      },
+      "layout_audit": {
+        "hero_width": 964,
+        "hero_width_pass": true,
+        "hero_area_ratio": 1.026,
+        "hero_area_pass": true,
+        "min_font_size": 36,
+        "min_font_size_pass": true,
+        "clipped_rows": 2,
+        "clipped_rows_pass": false,
+        "bbox_overlaps": 0,
+        "bbox_overlaps_pass": true,
+        "t0_visible_count": 1,
+        "t0_visible_pass": true,
+        "max_still_interval_sec": 0.4,
+        "max_still_interval_pass": true,
+        "empty_space_ratio": 0,
+        "empty_space_pass": true,
+        "duplicate_labels": 0,
+        "duplicate_labels_pass": true,
+        "empty_prompts": 0,
+        "empty_prompts_pass": true,
+        "caption_collisions": 0,
+        "caption_collisions_pass": true,
+        "center_y": 643,
+        "center_y_drift": 143,
+        "center_y_drift_pass": false
+      },
+      "audit_failed": true,
+      "audit_retries": 2,
+      "quality": [
+        {
+          "issues": [],
+          "occupied": null,
+          "deferred_until_cue": false,
+          "graphic": {
+            "x": 0,
+            "y": 0,
+            "width": 270,
+            "height": 480
+          },
+          "caption": {
+            "x": 17.5,
+            "y": 345,
+            "width": 235,
+            "height": 80
+          },
+          "illustration": {
+            "scene_type": "evidence_board",
+            "moving_elements": 17,
+            "area_ratio": 0.56
+          },
+          "scope": "SVG design region and label bounds; not card ink-area occupancy",
+          "shot_id": 1,
+          "template": "evidence_board",
+          "rule_id": "motion_layout",
+          "group": 3
+        }
+      ],
+      "repair_notes": [
+        "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+        "motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."
+      ],
+      "review_frame": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\666292f3213c758f7a26401c2ffc35a8e000d8266decf89a5dc23e72e5c2abc4.review.png",
+      "ai_background_count": 0,
+      "scene_mode": "motion",
+      "ai_clip_path": null
+    },
+    {
+      "path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\30ad6e2eaf306cac0abb4c913813074a937150a533f75dceab9b84d498c5342c.mp4",
+      "cache_hit": true,
+      "scene_id": 8,
+      "width": 270,
+      "height": 480,
+      "fps": 5,
+      "duration_sec": 1.6206666666666667,
+      "render_seconds": 0.0,
+      "size_bytes": 33374,
+      "sha256": "4ec724e8704f91eb069477c3889d4c0f61ac377093d324250d4ae6dd851595bf",
+      "timing_source": "estimated_characters",
+      "illustration": {
+        "scene_type": "checklist",
+        "coverage_sec": 1.6206666666666667,
+        "moving_elements_min": 9,
+        "subtitle_only_intervals": []
+      },
+      "layout_audit": {
+        "hero_width": 940,
+        "hero_width_pass": true,
+        "hero_area_ratio": 1,
+        "hero_area_pass": true,
+        "min_font_size": 38,
+        "min_font_size_pass": true,
+        "clipped_rows": 0,
+        "clipped_rows_pass": true,
+        "bbox_overlaps": 0,
+        "bbox_overlaps_pass": true,
+        "t0_visible_count": 1,
+        "t0_visible_pass": true,
+        "max_still_interval_sec": 0.4,
+        "max_still_interval_pass": true,
+        "empty_space_ratio": 0,
+        "empty_space_pass": true,
+        "duplicate_labels": 0,
+        "duplicate_labels_pass": true,
+        "empty_prompts": 0,
+        "empty_prompts_pass": true,
+        "caption_collisions": 0,
+        "caption_collisions_pass": true,
+        "center_y": 785,
+        "center_y_drift": 0,
+        "center_y_drift_pass": true
+      },
+      "audit_failed": false,
+      "audit_retries": 0,
+      "quality": [
+        {
+          "issues": [],
+          "occupied": null,
+          "deferred_until_cue": false,
+          "graphic": {
+            "x": 0,
+            "y": 0,
+            "width": 270,
+            "height": 480
+          },
+          "caption": {
+            "x": 17.5,
+            "y": 345,
+            "width": 235,
+            "height": 80
+          },
+          "illustration": {
+            "scene_type": "checklist",
+            "moving_elements": 13,
+            "area_ratio": 0.56
+          },
+          "scope": "SVG design region and label bounds; not card ink-area occupancy",
+          "shot_id": 1,
+          "template": "checklist",
+          "rule_id": "motion_layout",
+          "group": 3
+        }
+      ],
+      "repair_notes": [],
+      "review_frame": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\render\\motion_cache\\30ad6e2eaf306cac0abb4c913813074a937150a533f75dceab9b84d498c5342c.review.png",
+      "ai_background_count": 0,
+      "scene_mode": "motion",
+      "ai_clip_path": null
+    }
+  ],
+  "motion_scale": 0.25,
+  "motion_workers": 1,
+  "illustrations_requested": true,
+  "mascot_enabled": false,
+  "motion_theme": "auto",
+  "fast_motion_mux": true,
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\review_frames\\contact_sheet.png",
+  "review_notes": [
+    "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+    "Cảnh 1: Recipe số 'slot_counter' không có số trong kịch bản; tự động chuyển sang recipe định tính 'balance_scale'.",
+    "Cảnh 1: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.",
+    "Cảnh 2: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.",
+    "Cảnh 1, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 8, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 8: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 1: [unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+    "Cảnh 1: motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."
+  ],
+  "quality_report": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\quality_report.json",
+  "quality_summary": {
+    "template_types": 1,
+    "template_counts": {
+      "text_focus": 2
+    },
+    "warning_count": 1,
+    "deferred_dom_samples": 0,
+    "illustration_coverage_percent": 100.0,
+    "scene_type_count": 2
+  },
+  "total_seconds": 2.367
+}

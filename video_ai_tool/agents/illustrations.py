@@ -140,25 +140,31 @@ def enough(name, data):
 
 
 def scene_data(scene,brief=None):
-    visuals=[s for s in scene.shots if s.visual and s.visual.template not in {'stock','source_card','quote_card'}]
-    data=VisualData(text=concept_card(scene.narration)[0],fact_ids=scene.fact_ids[:])
+    shots=getattr(scene,'shots',None) or (getattr(scene,'spec',None) and getattr(scene.spec,'shots',[])) or []
+    def get_visual(s):
+        return getattr(s,'visual',None) or (getattr(s,'spec',None) and getattr(s.spec,'visual',None))
+    visuals=[s for s in shots if get_visual(s) and get_visual(s).template not in {'stock','source_card','quote_card'}]
+    narr=getattr(scene,'narration',None) or (getattr(scene,'spec',None) and getattr(scene.spec,'narration','')) or ''
+    fact_ids=list(getattr(scene,'fact_ids',None) or (getattr(scene,'spec',None) and getattr(scene.spec,'fact_ids',[])) or [])
+    data=VisualData(text=concept_card(narr)[0],fact_ids=fact_ids)
     items=[]
-    for phrase in concept_labels(scene.narration):
+    for phrase in concept_labels(narr):
         cleaned=clean_semantic_label(phrase)
         if cleaned and not any(labels_are_duplicate(cleaned,x) for x in items):
             items.append(cleaned)
     for shot in visuals:
-        v=shot.visual
-        for label in [shot.card_text or v.data.text,*v.data.items]:
+        v=get_visual(shot)
+        card_t=getattr(shot,'card_text',None) or (getattr(shot,'spec',None) and getattr(shot.spec,'card_text',None))
+        for label in [card_t or v.data.text,*v.data.items]:
             if label and not GENERIC.fullmatch(label.strip()) and not re.search(r'\b(?:nội|xu|dễ|thêm|phương)$|^(?:liệu|dường|lẽ)\b',label,re.I):
                 cleaned=clean_semantic_label(label)
                 if not cleaned: cleaned=concept_card(label,items)[0]
                 cleaned=clean_semantic_label(cleaned)
                 if cleaned and not any(labels_are_duplicate(cleaned,x) for x in items):
                     items.append(cleaned)
-        date_value=bool(v.data.number_text and re.search(r'(?:ngày|tháng)\s+'+re.escape(v.data.number_text.strip())+r'\b',scene.narration,re.I))
+        date_value=bool(v.data.number_text and re.search(r'(?:ngày|tháng)\s+'+re.escape(v.data.number_text.strip())+r'\b',narr,re.I))
         if data.value is None and v.data.value is not None and not date_value and not numeric_mismatches(scene,shot,brief):
-            data.value=v.data.value;data.unit=v.data.unit;data.number_text=v.data.number_text;data.label=v.data.label or shot.card_text or v.data.text
+            data.value=v.data.value;data.unit=v.data.unit;data.number_text=v.data.number_text;data.label=v.data.label or card_t or v.data.text
         if len(v.data.bars)>=2 and not numeric_mismatches(scene,shot,brief): data.bars=[b.model_copy(deep=True) for b in v.data.bars[:4]]
         if not data.source and v.data.source: data.source=v.data.source;data.source_url=v.data.source_url
     # Extract complete semantic clauses from narration without arbitrary word-slicing

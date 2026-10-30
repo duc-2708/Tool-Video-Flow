@@ -1,0 +1,78 @@
+{
+  "checks": [
+    {
+      "issues": [],
+      "occupied": null,
+      "deferred_until_cue": false,
+      "graphic": {
+        "x": 0,
+        "y": 0,
+        "width": 270,
+        "height": 480
+      },
+      "caption": {
+        "x": 17.5,
+        "y": 345,
+        "width": 235,
+        "height": 80
+      },
+      "illustration": {
+        "scene_type": "evidence_board",
+        "moving_elements": 17,
+        "area_ratio": 0.56
+      },
+      "scope": "SVG design region and label bounds; not card ink-area occupancy",
+      "shot_id": 1,
+      "template": "evidence_board",
+      "rule_id": "motion_layout",
+      "group": 3,
+      "scene_id": 1
+    },
+    {
+      "issues": [],
+      "occupied": null,
+      "deferred_until_cue": false,
+      "graphic": {
+        "x": 0,
+        "y": 0,
+        "width": 270,
+        "height": 480
+      },
+      "caption": {
+        "x": 17.5,
+        "y": 345,
+        "width": 235,
+        "height": 80
+      },
+      "illustration": {
+        "scene_type": "checklist",
+        "moving_elements": 13,
+        "area_ratio": 0.56
+      },
+      "scope": "SVG design region and label bounds; not card ink-area occupancy",
+      "shot_id": 1,
+      "template": "checklist",
+      "rule_id": "motion_layout",
+      "group": 3,
+      "scene_id": 8
+    }
+  ],
+  "review_notes": [
+    "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+    "Cảnh 1: Recipe số 'slot_counter' không có số trong kịch bản; tự động chuyển sang recipe định tính 'balance_scale'.",
+    "Cảnh 1: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.",
+    "Cảnh 2: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.",
+    "Cảnh 1, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 1: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 8, shot 1: motion_beats nhóm 2: không khớp từ khóa 'Một ý chính mới'; chia nhịp theo shot.",
+    "Cảnh 8: timing từ estimated_characters/estimated_characters; beats khớp sidecar, chưa chứng minh sai số audio ≤0,2s.",
+    "Cảnh 1: [unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+    "Cảnh 1: motion_layout nhóm 2: fit thẻ theo nội dung, co chữ và dời caption trong một lượt layout."
+  ],
+  "frames": [
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\review_frames\\scene_1.png",
+    "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\review_frames\\scene_8.png"
+  ],
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_v2\\test_parallel_workers_same_cac0\\project\\review_frames\\contact_sheet.png",
+  "scope": "DOM samples after one layout repair; not semantic fact validation or exhaustive per-frame proof"
+}

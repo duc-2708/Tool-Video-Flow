@@ -107,9 +107,9 @@ def values_in(text):
 
 
 def numeric_mismatches(scene,shot,brief=None):
-    v=shot.visual
+    v=getattr(shot,'visual',None) or (getattr(shot,'spec',None) and getattr(shot.spec,'visual',None))
     if not v or v.template not in {'stat_card','ring_percent','line_growth','strike_replace','compare_bars'}: return []
-    base=scene.narration
+    base=getattr(scene,'narration',None) or (getattr(scene,'spec',None) and getattr(scene.spec,'narration','')) or ''
     if brief: base+=' '+' '.join((f.fact_vi or f.claim)+' '+f.claim+' '+(f.evidence_quote or '') for f in brief.facts)
     allowed=values_in(base)
     actual=[]

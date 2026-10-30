@@ -1,0 +1,103 @@
+{
+  "theme": "neon_dark",
+  "central_metaphor": {
+    "name": "Hệ thống vận hành",
+    "anchor_element": "ổ khóa",
+    "states_by_scene": {
+      "1": "Trạng thái cảnh 1",
+      "8": "Trạng thái cảnh 8"
+    }
+  },
+  "scenes": [
+    {
+      "scene_id": 1,
+      "role": "hook",
+      "visual_idea": "Diễn hoạt slot_counter suy luận theo từ khóa cảnh 1",
+      "recipe": "balance_scale",
+      "layout": "center_hero",
+      "metaphor_reason": "Suy luận trực quan theo từ khóa lời đọc cảnh 1",
+      "data": {
+        "text": "Bạn có thể cắt",
+        "highlight": [],
+        "value": 100.0,
+        "number_text": "100",
+        "label": "",
+        "unit": "",
+        "source": "",
+        "source_url": "",
+        "date": "",
+        "title": "Bạn có thể cắt",
+        "items": [],
+        "bars": [],
+        "fact_ids": [],
+        "status": "",
+        "left_label": "",
+        "right_label": ""
+      },
+      "beats": [
+        {
+          "at_sec": 0.3,
+          "action": "enter_balance_scale"
+        },
+        {
+          "at_sec": 0.9,
+          "action": "action_balance_scale_step"
+        },
+        {
+          "at_sec": 1.6,
+          "action": "impact_balance_scale_glow"
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "role": "cta",
+      "visual_idea": "Diễn hoạt checklist suy luận theo từ khóa cảnh 8",
+      "recipe": "checklist",
+      "layout": "stack_3",
+      "metaphor_reason": "Suy luận trực quan theo từ khóa lời đọc cảnh 8",
+      "data": {
+        "text": "Bạn muốn tìm hiểu",
+        "highlight": [],
+        "value": null,
+        "number_text": "",
+        "label": "",
+        "unit": "",
+        "source": "",
+        "source_url": "",
+        "date": "",
+        "title": "Bạn muốn tìm hiểu",
+        "items": [
+          "Bạn muốn tìm hiểu",
+          "Bước thực hiện",
+          "Kết quả"
+        ],
+        "bars": [],
+        "fact_ids": [],
+        "status": "",
+        "left_label": "",
+        "right_label": ""
+      },
+      "beats": [
+        {
+          "at_sec": 0.3,
+          "action": "enter_checklist"
+        },
+        {
+          "at_sec": 0.9,
+          "action": "action_checklist_step"
+        },
+        {
+          "at_sec": 1.6,
+          "action": "impact_checklist_glow"
+        }
+      ]
+    }
+  ],
+  "review_notes": [
+    "[unit_accuracy, nhóm 2] Cảnh 1 phần tử e1_1: gỡ bỏ nhầm '%' vì evidence không chứa phần trăm.",
+    "Cảnh 1: Recipe số 'slot_counter' không có số trong kịch bản; tự động chuyển sang recipe định tính 'balance_scale'.",
+    "Cảnh 1: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện.",
+    "Cảnh 2: Bổ sung nhịp sự kiện trực quan để đạt >= 3 sự kiện."
+  ]
+}
