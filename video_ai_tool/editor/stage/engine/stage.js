@@ -22,24 +22,95 @@
     };
   }
 
-  // Pre-generate isometric grid lines once
+  // World environment definitions and distinct isometric backdrops
   function initGrid() {
     const gridGroup = document.getElementById('grid-lines-group');
     if (!gridGroup) return;
+
+    const catalog = window.STAGE_CATALOG || {};
+    const worldId = SCRIPT.world || 'generic_stage';
+    const worldMeta = (catalog.worlds && catalog.worlds[worldId]) || {
+      palette: {
+        bg_top: '#0d0620',
+        bg_bottom: '#04010a',
+        grid: 'rgba(157, 78, 221, 0.2)',
+        accent: '#00f5d4',
+        alert: '#f72585'
+      },
+      zones: []
+    };
+
+    const palette = worldMeta.palette || {};
+    const gridColor = palette.grid || 'rgba(157, 78, 221, 0.2)';
+    const accentColor = palette.accent || '#00f5d4';
+
+    // Update SVG background radial glow colors if defined
+    const glowStop0 = document.querySelector('#grid-glow stop[offset="0%"]');
+    const glowStop60 = document.querySelector('#grid-glow stop[offset="60%"]');
+    const glowStop100 = document.querySelector('#grid-glow stop[offset="100%"]');
+    if (glowStop0 && palette.accent) glowStop0.setAttribute('stop-color', palette.accent);
+    if (glowStop60 && palette.bg_top) glowStop60.setAttribute('stop-color', palette.bg_top);
+    if (glowStop100 && palette.bg_bottom) glowStop100.setAttribute('stop-color', palette.bg_bottom);
+
     let linesSvg = '';
     const span = 1400;
-    const step = 90;
+    const step = (worldId === 'data_pipeline') ? 70 : ((worldId === 'courtroom') ? 120 : 90);
+
     for (let d = -span; d <= span; d += step) {
       const p1 = toScreen(-span, d, 0);
       const p2 = toScreen(span, d, 0);
-      linesSvg += `<line x1="${p1.x.toFixed(1)}" y1="${p1.y.toFixed(1)}" x2="${p2.x.toFixed(1)}" y2="${p2.y.toFixed(1)}" />`;
+      linesSvg += `<line x1="${p1.x.toFixed(1)}" y1="${p1.y.toFixed(1)}" x2="${p2.x.toFixed(1)}" y2="${p2.y.toFixed(1)}" stroke="${gridColor}" />`;
       const q1 = toScreen(d, -span, 0);
       const q2 = toScreen(d, span, 0);
-      linesSvg += `<line x1="${q1.x.toFixed(1)}" y1="${q1.y.toFixed(1)}" x2="${q2.x.toFixed(1)}" y2="${q2.y.toFixed(1)}" />`;
+      linesSvg += `<line x1="${q1.x.toFixed(1)}" y1="${q1.y.toFixed(1)}" x2="${q2.x.toFixed(1)}" y2="${q2.y.toFixed(1)}" stroke="${gridColor}" />`;
     }
-    gridGroup.innerHTML = linesSvg;
 
-    // Ambient dust particles with deterministic distribution
+    // World-specific floor decorations & thematic elements
+    let decorSvg = '';
+    if (worldId === 'secure_building') {
+      // Perimeter hazard lines & security boundary
+      const b1 = toScreen(-350, -250, 0);
+      const b2 = toScreen(350, -250, 0);
+      const b3 = toScreen(350, 250, 0);
+      const b4 = toScreen(-350, 250, 0);
+      decorSvg += `
+        <polygon points="${b1.x},${b1.y} ${b2.x},${b2.y} ${b3.x},${b3.y} ${b4.x},${b4.y}" fill="none" stroke="${accentColor}" stroke-width="2" stroke-dasharray="16 8" opacity="0.65" />
+        <text x="${b1.x + 20}" y="${b1.y - 10}" font-size="14" font-weight="800" fill="${accentColor}" opacity="0.7">SECURE ZONE LEVEL 4</text>
+      `;
+    } else if (worldId === 'data_pipeline') {
+      // Fiber optic conduits running lengthwise
+      for (let offset = -200; offset <= 200; offset += 100) {
+        const c1 = toScreen(-span, offset, 0);
+        const c2 = toScreen(span, offset, 0);
+        decorSvg += `<line x1="${c1.x}" y1="${c1.y}" x2="${c2.x}" y2="${c2.y}" stroke="${accentColor}" stroke-width="3" opacity="0.5" stroke-dasharray="12 12" />`;
+      }
+    } else if (worldId === 'courtroom') {
+      // Elevated judicial podium floor
+      const d1 = toScreen(-280, -200, 0);
+      const d2 = toScreen(280, -200, 0);
+      const d3 = toScreen(280, 200, 0);
+      const d4 = toScreen(-280, 200, 0);
+      decorSvg += `
+        <polygon points="${d1.x},${d1.y} ${d2.x},${d2.y} ${d3.x},${d3.y} ${d4.x},${d4.y}" fill="rgba(235,179,109,0.06)" stroke="${accentColor}" stroke-width="2" opacity="0.8" />
+        <text x="540" y="520" font-size="16" font-weight="900" fill="${accentColor}" text-anchor="middle" letter-spacing="4" opacity="0.6">KHÁN PHÒNG TƯ PHÁP</text>
+      `;
+    } else if (worldId === 'city_road') {
+      // Highway asphalt runway
+      const r1 = toScreen(-320, -span, 0);
+      const r2 = toScreen(320, -span, 0);
+      const r3 = toScreen(320, span, 0);
+      const r4 = toScreen(-320, span, 0);
+      const m1 = toScreen(0, -span, 0);
+      const m2 = toScreen(0, span, 0);
+      decorSvg += `
+        <polygon points="${r1.x},${r1.y} ${r2.x},${r2.y} ${r3.x},${r3.y} ${r4.x},${r4.y}" fill="rgba(11,16,29,0.7)" stroke="${accentColor}" stroke-width="2.5" opacity="0.75" />
+        <line x1="${m1.x}" y1="${m1.y}" x2="${m2.x}" y2="${m2.y}" stroke="#ffffff" stroke-width="4" stroke-dasharray="24 16" opacity="0.85" />
+      `;
+    }
+
+    gridGroup.innerHTML = linesSvg + decorSvg;
+
+    // Ambient motes / dust particles with thematic tint
     const dustGroup = document.getElementById('grid-dust-group');
     if (dustGroup) {
       let dustSvg = '';
@@ -48,7 +119,7 @@
         const py = 250 + ((i * 229.3) % 1050);
         const r = 1.5 + (i % 3);
         const opacity = 0.15 + (i % 5) * 0.08;
-        dustSvg += `<circle cx="${px}" cy="${py}" r="${r}" fill="#00f5d4" opacity="${opacity}" />`;
+        dustSvg += `<circle cx="${px}" cy="${py}" r="${r}" fill="${accentColor}" opacity="${opacity}" />`;
       }
       dustGroup.innerHTML = dustSvg;
     }
@@ -423,6 +494,371 @@
     `;
   }
 
+
+  // 13. Mascot Robot (trợ lý AI isometric)
+  function renderMascotSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const flt = 5 * Math.sin(t * 3.0);
+    const blink = Math.sin(t * 1.5) > 0.95;
+    const isAlert = state === 'alert';
+    const mainColor = isAlert ? '#f72585' : '#00f5d4';
+    const eyeColor = isAlert ? '#ff0055' : '#00f5d4';
+    const isPointing = state === 'pointing';
+    const isWave = state === 'wave';
+    const armAngle = isPointing ? -35 : (isWave ? 25 * Math.sin(t * 6.0) : 0);
+
+    return `
+      <g transform="translate(${p.x}, ${p.y + flt})">
+        <ellipse cx="0" cy="55" rx="35" ry="14" fill="rgba(3,1,8,0.6)" />
+        <line x1="0" y1="-50" x2="0" y2="-65" stroke="${mainColor}" stroke-width="3" />
+        <circle cx="0" cy="-68" r="5" fill="${mainColor}" />
+        <rect x="-30" y="-50" width="60" height="42" rx="18" fill="#150a30" stroke="${mainColor}" stroke-width="2.5" />
+        <rect x="-22" y="-42" width="44" height="24" rx="8" fill="#080214" stroke="rgba(157,78,221,0.4)" stroke-width="1.5" />
+        ${blink ? `
+          <line x1="-14" y1="-30" x2="-6" y2="-30" stroke="${eyeColor}" stroke-width="2.5" stroke-linecap="round" />
+          <line x1="6" y1="-30" x2="14" y2="-30" stroke="${eyeColor}" stroke-width="2.5" stroke-linecap="round" />
+        ` : `
+          <circle cx="-10" cy="-30" r="4" fill="${eyeColor}" />
+          <circle cx="10" cy="-30" r="4" fill="${eyeColor}" />
+        `}
+        <path d="M -24 -2 L 24 -2 L 18 36 L -18 36 Z" fill="#1e0c45" stroke="${mainColor}" stroke-width="2" />
+        <circle cx="0" cy="16" r="7" fill="${mainColor}" />
+        <g transform="translate(-24, 6) rotate(${armAngle})">
+          <rect x="-6" y="0" width="8" height="22" rx="4" fill="#150a30" stroke="${mainColor}" stroke-width="1.5" />
+          <circle cx="-2" cy="24" r="4" fill="${mainColor}" />
+        </g>
+        <g transform="translate(24, 6)">
+          <rect x="-2" y="0" width="8" height="22" rx="4" fill="#150a30" stroke="${mainColor}" stroke-width="1.5" />
+          <circle cx="2" cy="24" r="4" fill="${mainColor}" />
+        </g>
+      </g>
+    `;
+  }
+
+  // 14. Balance Scale (Cán cân công lý và so sánh)
+  function renderBalanceScaleSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const tiltAngle = state === 'tilt_left' ? -14 : (state === 'tilt_right' ? 14 : 2 * Math.sin(t * 1.5));
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        <polygon points="-60,35 60,35 75,55 -75,55" fill="#1b0c38" stroke="#ebb36d" stroke-width="2" />
+        <rect x="-7" y="-55" width="14" height="95" fill="#281350" stroke="#ebb36d" stroke-width="2" />
+        <circle cx="0" cy="-55" r="9" fill="#ebb36d" />
+        <g transform="rotate(${tiltAngle}, 0, -55)">
+          <line x1="-95" y1="-55" x2="95" y2="-55" stroke="#ebb36d" stroke-width="4.5" stroke-linecap="round" />
+          <g transform="translate(-95, -55)">
+            <line x1="0" y1="0" x2="-22" y2="45" stroke="rgba(235,179,109,0.7)" stroke-width="1.5" />
+            <line x1="0" y1="0" x2="22" y2="45" stroke="rgba(235,179,109,0.7)" stroke-width="1.5" />
+            <ellipse cx="0" cy="46" rx="28" ry="8" fill="#190a32" stroke="#ebb36d" stroke-width="2" />
+          </g>
+          <g transform="translate(95, -55)">
+            <line x1="0" y1="0" x2="-22" y2="45" stroke="rgba(235,179,109,0.7)" stroke-width="1.5" />
+            <line x1="0" y1="0" x2="22" y2="45" stroke="rgba(235,179,109,0.7)" stroke-width="1.5" />
+            <ellipse cx="0" cy="46" rx="28" ry="8" fill="#190a32" stroke="#ebb36d" stroke-width="2" />
+          </g>
+        </g>
+      </g>
+    `;
+  }
+
+  // 15. Pipeline Node (Nút van luồng dữ liệu)
+  function renderPipelineNodeSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isStream = state === 'streaming';
+    const isClogged = state === 'clogged';
+    const flowColor = isClogged ? '#f72585' : '#00f5d4';
+    const pulse = 4 * Math.sin(t * 4.0);
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        <polygon points="-80,-10 80,-10 80,15 -80,15" fill="#14082e" stroke="#9d4edd" stroke-width="2.5" />
+        <line x1="-70" y1="2" x2="70" y2="2" stroke="${flowColor}" stroke-width="5" stroke-dasharray="10 8" stroke-dashoffset="${-t * 30}" />
+        <ellipse cx="0" cy="-15" rx="35" ry="16" fill="#24104d" stroke="${flowColor}" stroke-width="2.5" />
+        <rect x="-35" y="-15" width="70" height="40" fill="#1b0a3b" stroke="${flowColor}" stroke-width="2" />
+        <ellipse cx="0" cy="25" rx="35" ry="16" fill="#14072f" stroke="${flowColor}" stroke-width="2.5" />
+        <circle cx="0" cy="-15" r="${10 + (isStream ? pulse : 0)}" fill="none" stroke="${flowColor}" stroke-width="2" />
+        <circle cx="0" cy="-15" r="4" fill="${flowColor}" />
+      </g>
+    `;
+  }
+
+  // 16. Clock Timer (Đồng hồ đếm thời gian)
+  function renderClockTimerSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isRunning = state === 'running';
+    const isExpired = state === 'expired';
+    const ringColor = isExpired ? '#f72585' : '#00f5d4';
+    const secAngle = isRunning ? (t * 60) % 360 : (isExpired ? 359 : 45);
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        <ellipse cx="0" cy="0" rx="55" ry="46" fill="#14072c" stroke="${ringColor}" stroke-width="3" />
+        <ellipse cx="0" cy="0" rx="46" ry="38" fill="#080214" stroke="rgba(157,78,221,0.5)" stroke-width="1.5" />
+        <circle cx="0" cy="-30" r="3" fill="#ffffff" />
+        <circle cx="36" cy="0" r="3" fill="#ffffff" />
+        <circle cx="0" cy="30" r="3" fill="#ffffff" />
+        <circle cx="-36" cy="0" r="3" fill="#ffffff" />
+        <line x1="0" y1="0" x2="16" y2="-12" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+        <g transform="rotate(${secAngle}, 0, 0)">
+          <line x1="0" y1="0" x2="0" y2="-28" stroke="${ringColor}" stroke-width="2.5" stroke-linecap="round" />
+        </g>
+        <circle cx="0" cy="0" r="4" fill="${ringColor}" />
+      </g>
+    `;
+  }
+
+  // 17. Database Cylinder (Trụ cơ sở dữ liệu nhiều đĩa)
+  function renderDatabaseCylinderSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isQuery = state === 'query' || state === 'syncing';
+    const isAlert = state === 'alert';
+    const color = isAlert ? '#f72585' : (isQuery ? '#00f5d4' : '#9d4edd');
+    const rX = 50, rY = 20, diskH = 26;
+
+    let disks = '';
+    for (let i = 0; i < 3; i++) {
+      const dY = -35 + i * diskH;
+      disks += `
+        <g transform="translate(0, ${dY})">
+          <ellipse cx="0" cy="0" rx="${rX}" ry="${rY}" fill="#220e47" stroke="${color}" stroke-width="2" />
+          <path d="M -${rX} 0 L -${rX} 18 A ${rX} ${rY} 0 0 0 ${rX} 18 L ${rX} 0 Z" fill="#150830" stroke="${color}" stroke-width="2" />
+          <circle cx="${rX - 16}" cy="9" r="3" fill="${isQuery ? '#00f5d4' : (isAlert ? '#f72585' : '#4cc9f0')}" />
+        </g>
+      `;
+    }
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        ${disks}
+      </g>
+    `;
+  }
+
+  // 18. Document Paper (Tài liệu hồ sơ pháp lý)
+  function renderDocumentPaperSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isStamped = state === 'stamped' || state === 'signed';
+    const lev = 3 * Math.sin(t * 2.0);
+
+    return `
+      <g transform="translate(${p.x}, ${p.y + lev})">
+        <polygon points="-45,-55 35,-55 55,-35 55,55 -45,55" fill="#f4f7ff" stroke="#ebb36d" stroke-width="2.5" />
+        <polygon points="35,-55 35,-35 55,-35" fill="#d0d7e5" stroke="#ebb36d" stroke-width="1.5" />
+        <line x1="-32" y1="-30" x2="25" y2="-30" stroke="#4a5568" stroke-width="3" stroke-linecap="round" />
+        <line x1="-32" y1="-15" x2="35" y2="-15" stroke="#718096" stroke-width="2" stroke-linecap="round" />
+        <line x1="-32" y1="-2" x2="35" y2="-2" stroke="#718096" stroke-width="2" stroke-linecap="round" />
+        <line x1="-32" y1="11" x2="15" y2="11" stroke="#718096" stroke-width="2" stroke-linecap="round" />
+        ${isStamped ? `
+          <g transform="translate(20, 32) rotate(-15)">
+            <rect x="-18" y="-10" width="36" height="20" rx="4" fill="rgba(247,37,133,0.15)" stroke="#f72585" stroke-width="2" />
+            <text x="0" y="4" font-size="9" font-weight="900" fill="#f72585" text-anchor="middle">APPROVED</text>
+          </g>
+        ` : ''}
+      </g>
+    `;
+  }
+
+  // 19. Gauge Meter (Đồng hồ đo chỉ số cảnh báo)
+  function renderGaugeMeterSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isCrit = state === 'critical';
+    const isWarn = state === 'warning';
+    const color = isCrit ? '#f72585' : (isWarn ? '#fbb034' : '#00f5d4');
+    const needleDeg = isCrit ? 60 : (isWarn ? 10 : -45 + 10 * Math.sin(t * 3.0));
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        <path d="M -50 20 A 55 55 0 1 1 50 20" fill="#140628" stroke="${color}" stroke-width="3.5" />
+        <line x1="-42" y1="8" x2="-35" y2="6" stroke="#ffffff" stroke-width="2" />
+        <line x1="0" y1="-46" x2="0" y2="-38" stroke="#ffffff" stroke-width="2" />
+        <line x1="42" y1="8" x2="35" y2="6" stroke="#ffffff" stroke-width="2" />
+        <circle cx="0" cy="15" r="7" fill="${color}" />
+        <g transform="rotate(${needleDeg}, 0, 15)">
+          <line x1="0" y1="15" x2="0" y2="-36" stroke="${color}" stroke-width="3" stroke-linecap="round" />
+        </g>
+      </g>
+    `;
+  }
+
+  // 20. Bug Virus (Mã độc con bọ)
+  function renderBugVirusSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isQuarantined = state === 'quarantined';
+    const color = isQuarantined ? '#00f5d4' : '#f72585';
+    const twitch = 3 * Math.sin(t * 8.0);
+
+    return `
+      <g transform="translate(${p.x}, ${p.y + twitch})">
+        ${isQuarantined ? `
+          <circle cx="0" cy="0" r="48" fill="none" stroke="#00f5d4" stroke-width="2" stroke-dasharray="6 4" />
+        ` : ''}
+        <ellipse cx="0" cy="6" rx="22" ry="28" fill="#1c0522" stroke="${color}" stroke-width="2.5" />
+        <ellipse cx="0" cy="-22" rx="14" ry="10" fill="#2d0a36" stroke="${color}" stroke-width="2" />
+        <circle cx="-5" cy="-23" r="2.5" fill="${color}" />
+        <circle cx="5" cy="-23" r="2.5" fill="${color}" />
+        <line x1="-6" y1="-30" x2="-14" y2="-40" stroke="${color}" stroke-width="2" stroke-linecap="round" />
+        <line x1="6" y1="-30" x2="14" y2="-40" stroke="${color}" stroke-width="2" stroke-linecap="round" />
+        <line x1="-18" y1="-6" x2="-34" y2="-12" stroke="${color}" stroke-width="2.5" stroke-linecap="round" />
+        <line x1="18" y1="-6" x2="34" y2="-12" stroke="${color}" stroke-width="2.5" stroke-linecap="round" />
+        <line x1="-22" y1="8" x2="-38" y2="10" stroke="${color}" stroke-width="2.5" stroke-linecap="round" />
+        <line x1="22" y1="8" x2="38" y2="10" stroke="${color}" stroke-width="2.5" stroke-linecap="round" />
+        <line x1="-18" y1="22" x2="-34" y2="28" stroke="${color}" stroke-width="2.5" stroke-linecap="round" />
+        <line x1="18" y1="22" x2="34" y2="28" stroke="${color}" stroke-width="2.5" stroke-linecap="round" />
+      </g>
+    `;
+  }
+
+  // 21. Key Vault (Két sắt & Khóa API)
+  function renderKeyVaultSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isUnlocked = state === 'unlocked';
+    const doorAngle = isUnlocked ? -45 : 0;
+    const ringColor = isUnlocked ? '#00f5d4' : '#ebb36d';
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        <polygon points="-50,-35 40,-35 55,5 -35,5" fill="#281350" stroke="${ringColor}" stroke-width="2" />
+        <polygon points="-35,5 55,5 55,65 -35,65" fill="#180a32" stroke="${ringColor}" stroke-width="2" />
+        <polygon points="-50,-35 -35,5 -35,65 -50,25" fill="#120626" stroke="${ringColor}" stroke-width="2" />
+        <g transform="translate(10, 35) rotate(${doorAngle})">
+          <circle cx="0" cy="0" r="18" fill="#1a0c36" stroke="${ringColor}" stroke-width="3" />
+          <line x1="-18" y1="0" x2="18" y2="0" stroke="${ringColor}" stroke-width="2.5" />
+          <line x1="0" y1="-18" x2="0" y2="18" stroke="${ringColor}" stroke-width="2.5" />
+          <circle cx="0" cy="0" r="6" fill="${ringColor}" />
+        </g>
+      </g>
+    `;
+  }
+
+  // 22. Firewall Wall (Tường lửa phòng thủ)
+  function renderFirewallWallSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isBreached = state === 'breached';
+    const isBlocking = state === 'blocking';
+    const flameColor = isBreached ? '#555566' : (isBlocking ? '#f72585' : '#ff9e00');
+    const pulse = 3 * Math.sin(t * 5.0);
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        <polygon points="-90,-25 90,-25 90,45 -90,45" fill="#220a2e" stroke="${flameColor}" stroke-width="2.5" />
+        <line x1="-90" y1="-2" x2="90" y2="-2" stroke="rgba(247,37,133,0.5)" stroke-width="1.5" />
+        <line x1="-90" y1="21" x2="90" y2="21" stroke="rgba(247,37,133,0.5)" stroke-width="1.5" />
+        <line x1="-40" y1="-25" x2="-40" y2="-2" stroke="rgba(247,37,133,0.5)" stroke-width="1.5" />
+        <line x1="40" y1="-25" x2="40" y2="-2" stroke="rgba(247,37,133,0.5)" stroke-width="1.5" />
+        <line x1="0" y1="-2" x2="0" y2="21" stroke="rgba(247,37,133,0.5)" stroke-width="1.5" />
+        ${!isBreached ? `
+          <path d="M -80 -25 Q -65 ${-45 + pulse} -50 -25 Q -35 ${-52 - pulse} -20 -25 Q -5 ${-48 + pulse} 10 -25 Q 25 ${-55 - pulse} 40 -25 Q 55 ${-46 + pulse} 70 -25 L 80 -25 Z" fill="${flameColor}" opacity="0.85" />
+        ` : `
+          <polygon points="-25,0 25,-10 20,35 -20,30" fill="#090214" stroke="#ff0055" stroke-width="2" />
+        `}
+      </g>
+    `;
+  }
+
+  // 23. Alert Beacon (Còi đèn báo động khẩn cấp)
+  function renderAlertBeaconSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isFlashing = state === 'flashing' || state === 'critical';
+    const lightAngle = (t * 240) % 360;
+    const color = state === 'critical' ? '#ff0055' : '#f72585';
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        <polygon points="-35,25 35,25 45,45 -45,45" fill="#1f0933" stroke="#9d4edd" stroke-width="2" />
+        <path d="M -25 25 L -25 -5 A 25 25 0 0 1 25 -5 L 25 25 Z" fill="#2d0838" stroke="${color}" stroke-width="2.5" />
+        ${isFlashing ? `
+          <g transform="translate(0, 5) rotate(${lightAngle})">
+            <polygon points="0,0 -80,-30 -80,30" opacity="0.6" fill="${color}" />
+            <line x1="0" y1="0" x2="-22" y2="0" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+          </g>
+          <circle cx="0" cy="5" r="10" fill="${color}" />
+        ` : `
+          <circle cx="0" cy="5" r="7" fill="#661133" />
+        `}
+      </g>
+    `;
+  }
+
+  // 24. Folder Stack (Xấp hồ sơ chứng cứ)
+  function renderFolderStackSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isClassified = state === 'classified';
+    const color = isClassified ? '#f72585' : '#ebb36d';
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        <polygon points="-55,18 45,18 60,35 -40,35" fill="#1f1138" stroke="${color}" stroke-width="1.5" />
+        <polygon points="-50,4 50,4 65,21 -35,21" fill="#281545" stroke="${color}" stroke-width="1.5" />
+        <polygon points="-55,-10 10,-10 20,-20 45,-20 50,-10 55,-10 70,7 -30,7" fill="#351a5c" stroke="${color}" stroke-width="2.5" />
+        ${isClassified ? `
+          <circle cx="10" cy="-2" r="8" fill="#f72585" />
+          <text x="10" y="2" font-size="8" font-weight="900" fill="#ffffff" text-anchor="middle">!</text>
+        ` : ''}
+      </g>
+    `;
+  }
+
+  // 25. Magnifier Scan (Kính lúp quét dấu vết)
+  function renderMagnifierScanSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isScanning = state === 'scanning';
+    const isFound = state === 'found';
+    const color = isFound ? '#f72585' : '#00f5d4';
+    const scanOffset = isScanning ? 12 * Math.sin(t * 3.5) : 0;
+
+    return `
+      <g transform="translate(${p.x + scanOffset}, ${p.y + scanOffset * 0.5})">
+        <circle cx="0" cy="0" r="38" fill="rgba(0, 245, 212, 0.12)" stroke="${color}" stroke-width="3.5" />
+        <line x1="-30" y1="0" x2="30" y2="0" stroke="${color}" stroke-width="1" stroke-dasharray="3 3" opacity="0.6" />
+        <line x1="0" y1="-30" x2="0" y2="30" stroke="${color}" stroke-width="1" stroke-dasharray="3 3" opacity="0.6" />
+        <line x1="26" y1="26" x2="62" y2="62" stroke="#241044" stroke-width="9" stroke-linecap="round" />
+        <line x1="26" y1="26" x2="62" y2="62" stroke="${color}" stroke-width="5" stroke-linecap="round" />
+      </g>
+    `;
+  }
+
+  // 26. Gavel Court (Búa thẩm phán tư pháp)
+  function renderGavelCourtSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isStrike = state === 'strike';
+    const strikeAngle = isStrike ? Math.abs(30 * Math.sin(t * 6.0)) : 10;
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        <polygon points="-45,25 45,25 55,42 -35,42" fill="#2b1510" stroke="#ebb36d" stroke-width="2" />
+        <g transform="translate(-10, 15) rotate(${-strikeAngle}, 30, 20)">
+          <line x1="-15" y1="-35" x2="45" y2="25" stroke="#ebb36d" stroke-width="5" stroke-linecap="round" />
+          <g transform="translate(-15, -35) rotate(45)">
+            <rect x="-18" y="-14" width="36" height="28" rx="4" fill="#3d1e14" stroke="#ebb36d" stroke-width="2.5" />
+            <circle cx="-18" cy="0" r="14" fill="#ebb36d" />
+            <circle cx="18" cy="0" r="14" fill="#ebb36d" />
+          </g>
+        </g>
+      </g>
+    `;
+  }
+
+  // 27. Shield Broken (Khiên an ninh vỡ rạn nứt)
+  function renderShieldBrokenSvg(state, t) {
+    const p = toLocal(0, 0, 0);
+    const isShattered = state === 'shattered';
+    const splitX = isShattered ? 6 : 0;
+
+    return `
+      <g transform="translate(${p.x}, ${p.y})">
+        <g transform="translate(${-splitX}, 0)">
+          <path d="M 0 -45 L -35 -30 L -35 10 Q -35 45 0 60 L 0 35 L -10 18 L 4 0 L -8 -20 Z" fill="#20072b" stroke="#f72585" stroke-width="3" />
+        </g>
+        <g transform="translate(${splitX}, 0)">
+          <path d="M 0 -45 L 35 -30 L 35 10 Q 35 45 0 60 L 0 35 L -10 18 L 4 0 L -8 -20 Z" fill="#180422" stroke="#f72585" stroke-width="3" transform="scale(-1, 1)" />
+        </g>
+        <line x1="-6" y1="-10" x2="6" y2="-6" stroke="#ffffff" stroke-width="2.5" />
+        <line x1="-4" y1="12" x2="8" y2="16" stroke="#ffffff" stroke-width="2.5" />
+      </g>
+    `;
+  }
+
   // 12. Road Recap (Morph from station tracker to 3D winding road)
   function renderRoadRecapSvg(progress, t) {
     const numPoints = 5;
@@ -523,7 +959,17 @@
     SCRIPT.actors.forEach(act => {
       actorStates[act.id] = {
         visible: false,
-        pos: Array.isArray(act.pos) ? [...act.pos] : [0, 0, 0],
+        pos: (() => {
+          if (Array.isArray(act.pos)) return [...act.pos];
+          if (typeof act.pos === 'string') {
+            const cat = window.STAGE_CATALOG || {};
+            const wId = SCRIPT.world || 'generic_stage';
+            const wData = (cat.worlds && cat.worlds[wId]) || {};
+            const matchZone = (wData.zones || []).find(z => z.id === act.pos);
+            if (matchZone && Array.isArray(matchZone.pos)) return [...matchZone.pos];
+          }
+          return [0, 0, 0];
+        })(),
         state: act.state || 'default',
         typingText: '',
         isGlow: false,
@@ -727,6 +1173,36 @@
           itemContent = renderDatacenterSvg(st.state, t);
         } else if (act.type === 'note_board') {
           itemContent = renderNoteBoardSvg(st.state, st.label, st.sublabel, t);
+        } else if (act.type === 'mascot') {
+          itemContent = renderMascotSvg(st.state, t);
+        } else if (act.type === 'balance_scale') {
+          itemContent = renderBalanceScaleSvg(st.state, t);
+        } else if (act.type === 'pipeline_node') {
+          itemContent = renderPipelineNodeSvg(st.state, t);
+        } else if (act.type === 'clock_timer') {
+          itemContent = renderClockTimerSvg(st.state, t);
+        } else if (act.type === 'database_cylinder') {
+          itemContent = renderDatabaseCylinderSvg(st.state, t);
+        } else if (act.type === 'document_paper') {
+          itemContent = renderDocumentPaperSvg(st.state, t);
+        } else if (act.type === 'gauge_meter') {
+          itemContent = renderGaugeMeterSvg(st.state, t);
+        } else if (act.type === 'bug_virus') {
+          itemContent = renderBugVirusSvg(st.state, t);
+        } else if (act.type === 'key_vault') {
+          itemContent = renderKeyVaultSvg(st.state, t);
+        } else if (act.type === 'firewall_wall') {
+          itemContent = renderFirewallWallSvg(st.state, t);
+        } else if (act.type === 'alert_beacon') {
+          itemContent = renderAlertBeaconSvg(st.state, t);
+        } else if (act.type === 'folder_stack') {
+          itemContent = renderFolderStackSvg(st.state, t);
+        } else if (act.type === 'magnifier_scan') {
+          itemContent = renderMagnifierScanSvg(st.state, t);
+        } else if (act.type === 'gavel_court') {
+          itemContent = renderGavelCourtSvg(st.state, t);
+        } else if (act.type === 'shield_broken') {
+          itemContent = renderShieldBrokenSvg(st.state, t);
         }
 
         actorsHtml += `

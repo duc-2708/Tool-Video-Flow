@@ -1,6 +1,53 @@
 """Pydantic schemas for Stage Engine DSL (Sân khấu + Diễn viên + Kịch bản chuyển động)."""
+import json
+from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Union
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+_CATALOG_PATH = Path(__file__).resolve().parent / "catalog.json"
+
+def get_stage_catalog() -> Dict[str, Any]:
+    if _CATALOG_PATH.is_file():
+        try:
+            return json.loads(_CATALOG_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {"actors": {}, "worlds": {}}
+
+_CATALOG = get_stage_catalog()
+ALLOWED_STAGE_ACTORS = set(_CATALOG.get("actors", {}).keys())
+# Utility structural pseudo-actors allowed in legacy scripts (e.g. connections, data packets, road morph)
+STRUCTURAL_ACTOR_TYPES = {"connection_path", "data_packet", "road"}
+
+GROUP_FALLBACKS = {
+    "infra": "vps_server",
+    "device": "laptop",
+    "security": "lock_shield",
+    "legal": "document_paper",
+    "data": "database_cylinder",
+    "character": "mascot",
+    "ui": "note_board"
+}
+
+def find_nearest_actor_type(invalid_type: str) -> str:
+    """Find nearest valid actor type by name similarity or group fallback."""
+    lowered = invalid_type.lower()
+    for valid_type in ALLOWED_STAGE_ACTORS:
+        if valid_type in lowered or lowered in valid_type:
+            return valid_type
+    if "server" in lowered or "host" in lowered or "cloud" in lowered:
+        return "vps_server"
+    if "pc" in lowered or "computer" in lowered or "screen" in lowered:
+        return "laptop"
+    if "lock" in lowered or "safe" in lowered or "protect" in lowered or "shield" in lowered:
+        return "lock_shield"
+    if "doc" in lowered or "file" in lowered or "law" in lowered or "court" in lowered:
+        return "document_paper"
+    if "db" in lowered or "data" in lowered or "store" in lowered:
+        return "database_cylinder"
+    if "bot" in lowered or "robot" in lowered or "assistant" in lowered or "char" in lowered:
+        return "mascot"
+    return "note_board"
 
 
 class ThemeDef(BaseModel):
@@ -30,7 +77,7 @@ class HUDDef(BaseModel):
 class ActorDef(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str
-    type: str  # laptop, vps_server, data_packet, connection_path, progress_tracker, etc.
+    type: str  # Validated against catalog.json
     pos: Union[List[float], str] = Field(default_factory=lambda: [0.0, 0.0, 0.0])  # [x, y, z] or zone name
     state: str = "default"  # laptop: closed/open/typing/glow; vps: off/on/busy; file: idle/flying
     label: str = ""
@@ -39,6 +86,24 @@ class ActorDef(BaseModel):
     opacity: float = 1.0
     visible: bool = True
     params: Dict[str, Any] = Field(default_factory=dict)
+    review_notes: List[str] = Field(default_factory=list)
+
+    @field_validator("type", mode="before")
+    @classmethod
+    def validate_actor_type(cls, value: Any, info) -> str:
+        s_val = str(value).strip()
+        all_allowed = ALLOWED_STAGE_ACTORS.union(STRUCTURAL_ACTOR_TYPES)
+        if s_val not in all_allowed:
+            nearest = find_nearest_actor_type(s_val)
+            return nearest
+        return s_val
+
+    def model_post_init(self, __context: Any) -> None:
+        all_allowed = ALLOWED_STAGE_ACTORS.union(STRUCTURAL_ACTOR_TYPES)
+        # Check if type had to be mapped or healed
+        orig_val = getattr(self, "_orig_type", None)
+        if orig_val and orig_val not in all_allowed:
+            self.review_notes.append(f"Actor {self.id}: loại '{orig_val}' không hợp lệ, tự thay bằng '{self.type}'.")
 
 
 class ActionDef(BaseModel):
@@ -86,6 +151,7 @@ class RecapDef(BaseModel):
 
 class StageScript(BaseModel):
     model_config = ConfigDict(extra="ignore")
+    world: str = "generic_stage"
     theme: ThemeDef = Field(default_factory=ThemeDef)
     hud: HUDDef = Field(default_factory=HUDDef)
     actors: List[ActorDef] = Field(default_factory=list)
