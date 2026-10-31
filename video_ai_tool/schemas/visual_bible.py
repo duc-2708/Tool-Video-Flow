@@ -2,22 +2,24 @@
 Giai đoạn 8-W2a: Visual Bible định nghĩa thế giới isometric, vật thể xuyên suốt,
 tiến độ ẩn dụ và cấu trúc chương trước khi phân rã shot motion.
 """
+import json
+from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field
 
-WorldKind = Literal[
-    "secure_building",
-    "data_pipeline",
-    "workshop",
-    "city_road",
-    "courtroom",
-    "lab",
-    "generic_stage",
-]
+_CATALOG_PATH = Path(__file__).resolve().parent.parent / "editor/stage/catalog.json"
 
-ProgressMetaphorType = Literal["none", "glass_fill", "step_bar", "stack_up"]
+def _load_catalog() -> Dict[str, Any]:
+    if _CATALOG_PATH.is_file():
+        try:
+            return json.loads(_CATALOG_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {"actors": {}, "worlds": {}}
 
-ALLOWED_WORLD_KINDS = {
+_CATALOG = _load_catalog()
+
+ALLOWED_WORLD_KINDS = set(_CATALOG.get("worlds", {}).keys()) or {
     "secure_building",
     "data_pipeline",
     "workshop",
@@ -27,7 +29,7 @@ ALLOWED_WORLD_KINDS = {
     "generic_stage",
 }
 
-ALLOWED_ACTOR_TYPES = {
+ALLOWED_ACTOR_TYPES = set(_CATALOG.get("actors", {}).keys()) or {
     "laptop",
     "vps_server",
     "docker_container",
@@ -41,7 +43,34 @@ ALLOWED_ACTOR_TYPES = {
     "user_figure",
     "datacenter",
     "note_board",
+    "mascot",
+    "balance_scale",
+    "pipeline_node",
+    "clock_timer",
+    "database_cylinder",
+    "document_paper",
+    "gauge_meter",
+    "bug_virus",
+    "key_vault",
+    "firewall_wall",
+    "alert_beacon",
+    "folder_stack",
+    "magnifier_scan",
+    "gavel_court",
+    "shield_broken"
 }
+
+WorldKind = Literal[
+    "secure_building",
+    "data_pipeline",
+    "workshop",
+    "city_road",
+    "courtroom",
+    "lab",
+    "generic_stage",
+]
+
+ProgressMetaphorType = Literal["none", "glass_fill", "step_bar", "stack_up"]
 
 
 class WorldDef(BaseModel):

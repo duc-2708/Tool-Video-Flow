@@ -100,11 +100,15 @@ def compile_stage_script(
 
 
 def build_stage_html(script: StageScript) -> str:
-    """Build standalone self-contained HTML for Playwright capture."""
+    """Build standalone self-contained HTML for Playwright capture with embedded catalog."""
     html_template, css, js = load_engine_assets()
     script_json = script.model_dump_json()
 
+    catalog_path = STAGE_DIR / "catalog.json"
+    catalog_json = catalog_path.read_text(encoding="utf-8") if catalog_path.is_file() else "{}"
+
     html = html_template.replace("__STAGE_CSS__", css)
+    html = html.replace("__STAGE_CATALOG__", catalog_json)
     html = html.replace("__STAGE_SCRIPT__", script_json)
     html = html.replace("__STAGE_JS__", js)
     return html

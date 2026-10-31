@@ -1,0 +1,426 @@
+{
+  "actors": {
+    "laptop": {
+      "id": "laptop",
+      "label": "Máy tính cá nhân",
+      "group": "device",
+      "states": ["closed", "open", "typing", "glow"],
+      "ports": ["net_out", "screen", "power"],
+      "default_size": [180, 140, 105],
+      "description": "Máy tính xách tay với màn hình gập và bàn phím"
+    },
+    "vps_server": {
+      "id": "vps_server",
+      "label": "Máy chủ VPS",
+      "group": "infra",
+      "states": ["off", "on", "busy", "alert"],
+      "ports": ["net_in", "net_out", "power"],
+      "default_size": [160, 120, 180],
+      "description": "Tủ rack máy chủ đám mây với đèn trạng thái và quạt tản nhiệt"
+    },
+    "docker_container": {
+      "id": "docker_container",
+      "label": "Docker Container",
+      "group": "infra",
+      "states": ["idle", "stacked", "running"],
+      "ports": ["in", "out"],
+      "default_size": [120, 90, 80],
+      "description": "Khối container chứa ứng dụng độc lập"
+    },
+    "container_box": {
+      "id": "container_box",
+      "label": "Hộp đóng gói Container",
+      "group": "infra",
+      "states": ["idle", "stacked", "running"],
+      "ports": ["in", "out"],
+      "default_size": [120, 90, 80],
+      "description": "Hộp đóng gói dịch vụ phần mềm"
+    },
+    "cloud": {
+      "id": "cloud",
+      "label": "Đám mây dịch vụ",
+      "group": "infra",
+      "states": ["idle", "syncing", "connected"],
+      "ports": ["api_in", "api_out"],
+      "default_size": [200, 120, 40],
+      "description": "Nền tảng đám mây hoặc dịch vụ lưu trữ"
+    },
+    "code_repo": {
+      "id": "code_repo",
+      "label": "Kho lưu trữ Git",
+      "group": "data",
+      "states": ["idle", "commit", "branch"],
+      "ports": ["push", "pull"],
+      "default_size": [130, 100, 90],
+      "description": "Kho mã nguồn Git với các nhánh commit"
+    },
+    "git_repo": {
+      "id": "git_repo",
+      "label": "Kho mã Git",
+      "group": "data",
+      "states": ["idle", "commit", "branch"],
+      "ports": ["push", "pull"],
+      "default_size": [130, 100, 90],
+      "description": "Kho mã nguồn Git"
+    },
+    "terminal_window": {
+      "id": "terminal_window",
+      "label": "Cửa sổ dòng lệnh",
+      "group": "device",
+      "states": ["idle", "typing", "success", "error"],
+      "ports": ["stdin", "stdout"],
+      "default_size": [240, 150, 0],
+      "description": "Cửa sổ terminal hiển thị lệnh và log"
+    },
+    "browser_window": {
+      "id": "browser_window",
+      "label": "Trình duyệt web",
+      "group": "device",
+      "states": ["loading", "rendered", "secure"],
+      "ports": ["url_in", "dom_out"],
+      "default_size": [240, 160, 0],
+      "description": "Trang web với thanh URL và nội dung hiển thị"
+    },
+    "lock_shield": {
+      "id": "lock_shield",
+      "label": "Khiên khóa bảo mật",
+      "group": "security",
+      "states": ["locked", "unlocked", "alert", "glow"],
+      "ports": ["protect_in", "protect_out"],
+      "default_size": [100, 100, 120],
+      "description": "Khiên bảo vệ kiên cố kèm ổ khóa an ninh"
+    },
+    "user_figure": {
+      "id": "user_figure",
+      "label": "Người dùng",
+      "group": "character",
+      "states": ["idle", "active", "alert"],
+      "ports": ["interact"],
+      "default_size": [60, 60, 120],
+      "description": "Hình nhân vật đại diện lập trình viên hoặc người dùng"
+    },
+    "datacenter": {
+      "id": "datacenter",
+      "label": "Trung tâm dữ liệu",
+      "group": "infra",
+      "states": ["idle", "busy", "alert"],
+      "ports": ["gateway_in", "gateway_out"],
+      "default_size": [320, 200, 180],
+      "description": "Cụm nhiều tủ rack trung tâm dữ liệu"
+    },
+    "note_board": {
+      "id": "note_board",
+      "label": "Bảng ghi chú",
+      "group": "ui",
+      "states": ["default", "highlight", "alert"],
+      "ports": ["pin"],
+      "default_size": [220, 130, 0],
+      "description": "Bảng ghim lưu ý quan trọng"
+    },
+    "mascot": {
+      "id": "mascot",
+      "label": "Trợ lý Robot Mascot",
+      "group": "character",
+      "states": ["idle", "pointing", "wave", "alert"],
+      "ports": ["voice", "hand"],
+      "default_size": [110, 110, 140],
+      "description": "Trợ lý robot thông minh isometric dẫn chuyện và tương tác"
+    },
+    "balance_scale": {
+      "id": "balance_scale",
+      "label": "Cán cân so sánh",
+      "group": "legal",
+      "states": ["balanced", "tilt_left", "tilt_right"],
+      "ports": ["pan_left", "pan_right"],
+      "default_size": [220, 120, 180],
+      "description": "Cán cân công lý và so sánh định lượng hai vế"
+    },
+    "pipeline_node": {
+      "id": "pipeline_node",
+      "label": "Nút luồng dữ liệu",
+      "group": "data",
+      "states": ["idle", "streaming", "clogged"],
+      "ports": ["stream_in", "stream_out"],
+      "default_size": [140, 140, 100],
+      "description": "Khối van ống dẫn dữ liệu và phân luồng"
+    },
+    "clock_timer": {
+      "id": "clock_timer",
+      "label": "Đồng hồ đếm thời gian",
+      "group": "data",
+      "states": ["idle", "running", "expired"],
+      "ports": ["tick"],
+      "default_size": [130, 130, 150],
+      "description": "Mặt đồng hồ kim hoặc số isometric kiểm soát thời lượng"
+    },
+    "database_cylinder": {
+      "id": "database_cylinder",
+      "label": "Trụ cơ sở dữ liệu",
+      "group": "data",
+      "states": ["idle", "query", "syncing", "alert"],
+      "ports": ["sql_in", "data_out"],
+      "default_size": [140, 140, 160],
+      "description": "Trụ đĩa từ lưu trữ dữ liệu đa tầng"
+    },
+    "document_paper": {
+      "id": "document_paper",
+      "label": "Tài liệu hồ sơ",
+      "group": "legal",
+      "states": ["idle", "signed", "stamped", "shredded"],
+      "ports": ["read", "sign"],
+      "default_size": [130, 160, 40],
+      "description": "Tập hồ sơ văn bản pháp lý hoặc hợp đồng có đóng dấu"
+    },
+    "gauge_meter": {
+      "id": "gauge_meter",
+      "label": "Đồng hồ đo chỉ số",
+      "group": "data",
+      "states": ["normal", "warning", "critical"],
+      "ports": ["sensor_in"],
+      "default_size": [140, 140, 120],
+      "description": "Đồng hồ mặt cung đo áp suất hoặc phần trăm cảnh báo"
+    },
+    "bug_virus": {
+      "id": "bug_virus",
+      "label": "Mã độc con bọ",
+      "group": "security",
+      "states": ["idle", "infecting", "quarantined", "destroyed"],
+      "ports": ["attack"],
+      "default_size": [110, 110, 80],
+      "description": "Biểu tượng con bọ sâu máy tính phát sáng cảnh báo xâm nhập"
+    },
+    "key_vault": {
+      "id": "key_vault",
+      "label": "Két sắt & Khóa API",
+      "group": "security",
+      "states": ["locked", "unlocked", "cracking"],
+      "ports": ["key_slot", "vault_door"],
+      "default_size": [150, 130, 140],
+      "description": "Két sắt số bảo mật chứa khóa bí mật và token"
+    },
+    "firewall_wall": {
+      "id": "firewall_wall",
+      "label": "Tường lửa phòng thủ",
+      "group": "security",
+      "states": ["active", "blocking", "breached"],
+      "ports": ["filter_in", "filter_out"],
+      "default_size": [220, 60, 160],
+      "description": "Bức tường gạch năng lượng chặn gói tin độc hại"
+    },
+    "alert_beacon": {
+      "id": "alert_beacon",
+      "label": "Còi đèn báo động",
+      "group": "security",
+      "states": ["silent", "flashing", "critical"],
+      "ports": ["trigger"],
+      "default_size": [90, 90, 130],
+      "description": "Đèn xoay báo động khẩn cấp phát tia sáng xoay"
+    },
+    "folder_stack": {
+      "id": "folder_stack",
+      "label": "Xấp hồ sơ chứng cứ",
+      "group": "legal",
+      "states": ["closed", "open", "classified"],
+      "ports": ["archive"],
+      "default_size": [150, 130, 80],
+      "description": "Chồng kẹp hồ sơ phân loại hồ sơ vụ việc"
+    },
+    "magnifier_scan": {
+      "id": "magnifier_scan",
+      "label": "Kính lúp quét dấu vết",
+      "group": "security",
+      "states": ["scanning", "found", "clear"],
+      "ports": ["focus"],
+      "default_size": [130, 130, 110],
+      "description": "Kính lúp quang học quét mã nguồn tìm lỗ hổng"
+    },
+    "gavel_court": {
+      "id": "gavel_court",
+      "label": "Búa thẩm phán tòa án",
+      "group": "legal",
+      "states": ["idle", "strike", "ruling"],
+      "ports": ["verdict"],
+      "default_size": [150, 110, 120],
+      "description": "Búa gỗ tư pháp gõ quyết định phán quyết"
+    },
+    "shield_broken": {
+      "id": "shield_broken",
+      "label": "Khiên vỡ phòng thủ",
+      "group": "security",
+      "states": ["cracked", "shattered", "repairing"],
+      "ports": ["breach"],
+      "default_size": [110, 110, 120],
+      "description": "Khiên an ninh bị rạn nứt biểu thị nguy cơ bị xâm nhập"
+    }
+  },
+  "worlds": {
+    "secure_building": {
+      "id": "secure_building",
+      "label": "Tòa nhà An ninh & Trung tâm Dữ liệu",
+      "background": "dark_cyber_room",
+      "palette": {
+        "bg_top": "#060914",
+        "bg_bottom": "#030408",
+        "grid": "rgba(0, 245, 212, 0.18)",
+        "accent": "#00f5d4",
+        "alert": "#f72585"
+      },
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.0,
+        "tilt": 0
+      },
+      "zones": [
+        {"id": "cong_an_ninh", "name": "Cổng An ninh Tường lửa", "pos": [-240, 120, 0]},
+        {"id": "phong_may_chu", "name": "Phòng Máy chủ Trung tâm", "pos": [0, 0, 0]},
+        {"id": "khu_quan_tri", "name": "Bàn Quản trị SOC", "pos": [240, -120, 0]}
+      ],
+      "decorations": ["security_perimeter_line", "access_card_reader", "warning_floor_hazard"]
+    },
+    "data_pipeline": {
+      "id": "data_pipeline",
+      "label": "Hạ tầng Luồng Dữ liệu & Mạng",
+      "background": "grid_pipeline",
+      "palette": {
+        "bg_top": "#08061a",
+        "bg_bottom": "#020108",
+        "grid": "rgba(157, 78, 221, 0.22)",
+        "accent": "#9d4edd",
+        "alert": "#00f5d4"
+      },
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.0,
+        "tilt": 0
+      },
+      "zones": [
+        {"id": "duong_truyen", "name": "Đường truyền Internet", "pos": [-250, 80, 0]},
+        {"id": "tram_api", "name": "Trạm Cổng API", "pos": [0, 0, 0]},
+        {"id": "luong_du_lieu", "name": "Bể Chứa Dữ liệu", "pos": [250, -80, 0]}
+      ],
+      "decorations": ["fiber_optic_cables", "bus_data_lanes", "signal_repeaters"]
+    },
+    "courtroom": {
+      "id": "courtroom",
+      "label": "Khán phòng Tòa án & Pháp lý",
+      "background": "wood_legal_stage",
+      "palette": {
+        "bg_top": "#140e0b",
+        "bg_bottom": "#070403",
+        "grid": "rgba(235, 179, 109, 0.18)",
+        "accent": "#ebb36d",
+        "alert": "#e63946"
+      },
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.0,
+        "tilt": 0
+      },
+      "zones": [
+        {"id": "vanh_mong_ngua", "name": "Vành móng ngựa Bị cáo", "pos": [-220, 100, 0]},
+        {"id": "ban_tham_phan", "name": "Bàn Hội đồng Xét xử", "pos": [0, -100, 30]},
+        {"id": "khu_tranh_tung", "name": "Bàn Luật sư Tranh tụng", "pos": [220, 80, 0]}
+      ],
+      "decorations": ["wooden_railings", "pedestal_stage", "pillar_relief"]
+    },
+    "city_road": {
+      "id": "city_road",
+      "label": "Đại lộ Đô thị & Giao thông",
+      "background": "asphalt_city_grid",
+      "palette": {
+        "bg_top": "#0b101d",
+        "bg_bottom": "#05070d",
+        "grid": "rgba(100, 149, 237, 0.2)",
+        "accent": "#6495ed",
+        "alert": "#ffaa00"
+      },
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.0,
+        "tilt": 0
+      },
+      "zones": [
+        {"id": "lane_khoi_hanh", "name": "Làn Xe Xuất phát", "pos": [-260, 140, 0]},
+        {"id": "giao_lo_trung_tam", "name": "Giao lộ Trung tâm", "pos": [0, 0, 0]},
+        {"id": "tram_dich_den", "name": "Trạm Đích đến", "pos": [260, -140, 0]}
+      ],
+      "decorations": ["lane_markers", "street_light_poles", "asphalt_texture"]
+    },
+    "generic_stage": {
+      "id": "generic_stage",
+      "label": "Sân khấu Isometric Đa năng",
+      "background": "neon_space_grid",
+      "palette": {
+        "bg_top": "#0d0620",
+        "bg_bottom": "#04010a",
+        "grid": "rgba(157, 78, 221, 0.2)",
+        "accent": "#00f5d4",
+        "alert": "#f72585"
+      },
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.0,
+        "tilt": 0
+      },
+      "zones": [
+        {"id": "zone_trai", "name": "Cánh Sân khấu Trái", "pos": [-240, 80, 0]},
+        {"id": "zone_trung_tam", "name": "Bục Diễn Trung tâm", "pos": [0, 0, 0]},
+        {"id": "zone_phai", "name": "Cánh Sân khấu Phải", "pos": [240, -80, 0]}
+      ],
+      "decorations": ["perspective_ground_ring", "ambient_motes", "corner_framing"]
+    },
+    "workshop": {
+      "id": "workshop",
+      "label": "Xưởng Chế tạo Kỹ thuật",
+      "background": "industrial_workshop",
+      "palette": {
+        "bg_top": "#121417",
+        "bg_bottom": "#07080a",
+        "grid": "rgba(255, 170, 0, 0.18)",
+        "accent": "#ffaa00",
+        "alert": "#ff4444"
+      },
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.0,
+        "tilt": 0
+      },
+      "zones": [
+        {"id": "ban_lap_rap", "name": "Bàn Lắp ráp", "pos": [-220, 80, 0]},
+        {"id": "may_kiem_dinh", "name": "Máy Kiểm định", "pos": [0, 0, 0]},
+        {"id": "ke_linh_kien", "name": "Kệ Linh kiện", "pos": [220, -80, 0]}
+      ],
+      "decorations": ["tool_racks", "hazard_stripes"]
+    },
+    "lab": {
+      "id": "lab",
+      "label": "Phòng Nghiên cứu & Thí nghiệm",
+      "background": "sterile_white_lab",
+      "palette": {
+        "bg_top": "#09151e",
+        "bg_bottom": "#03080c",
+        "grid": "rgba(56, 189, 248, 0.2)",
+        "accent": "#38bdf8",
+        "alert": "#f43f5e"
+      },
+      "camera": {
+        "x": 540,
+        "y": 785,
+        "zoom": 1.0,
+        "tilt": 0
+      },
+      "zones": [
+        {"id": "khu_mau_thu", "name": "Khu Mẫu thử nghiệm", "pos": [-220, 80, 0]},
+        {"id": "kinh_hien_vi", "name": "Kính Hiển vi & Cảm biến", "pos": [0, 0, 0]},
+        {"id": "man_hinh_phan_tich", "name": "Màn hình Phân tích", "pos": [220, -80, 0]}
+      ],
+      "decorations": ["laser_guidance", "measurement_rings"]
+    }
+  }
+}
