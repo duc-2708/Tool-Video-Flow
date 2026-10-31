@@ -13,9 +13,100 @@ const { clamp, easeOutCubic, easeInOutCubic, spring, overshoot, squashAndStretch
   squashAndStretch: (t) => ({ sx: 1 + 0.15 * Math.sin(t * Math.PI), sy: 1 - 0.15 * Math.sin(t * Math.PI) })
 };
 
-const { wrapText, sanitizeSemanticLabel } = window.MotionLayout || {
-  wrapText: (txt, maxChars = 20) => [txt],
-  sanitizeSemanticLabel: (lbl, maxWords = 3) => lbl ? lbl.split(' ').slice(0, maxWords).join(' ') : ''
+const TRAILING_CUTOFF_JS = new Set([
+  'của', 'trong', 'trên', 'dưới', 'và', 'với', 'là', 'mà', 'để', 'cho', 'về',
+  'các', 'những', 'một', 'cái', 'con', 'chiếc', 'bà', 'ông', 'đã', 'đang', 'sẽ',
+  'lại', 'cũng', 'rất', 'hơn', 'nhất', 'ra', 'vào', 'lên', 'xuống', 'đột', 'cá',
+  'vai', 'dàn', 'bối', 'sự', 'vụ', 'điều', 'việc', 'vì', 'do', 'bởi', 'hay',
+  'hoặc', 'nếu', 'khi', 'tuy', 'dẫu', 'dở', 'bị', 'được', 'đóng', 'đặt', 'này',
+  'kia', 'đó', 'đây', 'tới', 'ở', 'gặp', 'gọi', 'như', 'theo', 'hành', 'tạo', 'làm',
+  'khiến', 'giúp', 'sau', 'bày', 'tỏ', 'lên', 'xuống', 'qua', 'lại', 'thường', 'có',
+  'tài', 'đến', 'đi', 'giống', 'ý', 'thì', 'rằng', 'vậy', 'thế', 'nào',
+  'sao', 'gì', 'ai', 'đâu', 'nữa', 'chăng', 'từ'
+]);
+
+const INCOMPLETE_TRAILING_JS = new Set([
+  'thiết', 'ngân', 'an', 'bảo', 'thông', 'kỹ', 'tài', 'hệ', 'dữ', 'kinh',
+  'máy', 'phần', 'tin', 'lỗ', 'thị', 'cơ', 'tổng', 'pháp', 'quốc', 'chính',
+  'trách', 'quy', 'đối', 'kết', 'truy', 'bắt', 'tạm', 'xâm', 'ngăn', 'xét'
+]);
+
+const LEADING_CUTOFF_JS = new Set([
+  'cố', 'việc', 'động', 'giống', 'điều', 'ngột', 'trò', 'nhạc', 'nhân', 'viên',
+  'này', 'kia', 'đó', 'đây', 'thì', 'mà', 'là', 'và', 'của', 'với', 'để', 'cho',
+  'về', 'bà', 'ông', 'bị', 'được', 'ra', 'vào', 'lại', 'cũng', 'hơn', 'nhất',
+  'như', 'bởi', 'do', 'vì', 'đóng', 'đặt', 'tạo', 'làm', 'những', 'các', 'một',
+  'khiến', 'giúp', 'sau', 'sau khi', 'trong khi', 'bởi vì', 'thay vì', 'bày', 'tỏ', 'đã', 'ý'
+]);
+
+function internalSanitizeSemanticLabel(label, maxWords = 6) {
+  if (!label) return '';
+  const str = String(label).trim().replace(/[.,:;!?…()“”"']/g, '');
+  if (/^(?:minh họa|ý tưởng minh họa|minh họa ý tưởng|minh họa nội dung|ý chính cần nhớ)/i.test(str)) return '';
+
+  let allWords = str.split(/\s+/).filter(Boolean);
+  while (allWords.length > 0 && LEADING_CUTOFF_JS.has(allWords[0].toLowerCase())) {
+    allWords.shift();
+  }
+  while (allWords.length > 0 && (TRAILING_CUTOFF_JS.has(allWords[allWords.length - 1].toLowerCase()) || INCOMPLETE_TRAILING_JS.has(allWords[allWords.length - 1].toLowerCase()))) {
+    allWords.pop();
+  }
+  if (allWords.length >= 4 && allWords[2].toLowerCase() === 'từ') {
+    allWords.splice(2, 1);
+  }
+  const COMPOUND_PAIRS_JS = new Set([
+    'thiết bị', 'hoạt động', 'ngân hàng', 'an ninh', 'an toàn',
+    'bảo mật', 'thông tin', 'tài sản', 'tài chính', 'kỹ thuật',
+    'kỹ sư', 'lỗ hổng', 'hệ thống', 'chính sách', 'trách nhiệm',
+    'pháp lý', 'quốc tế', 'dữ liệu', 'máy tính', 'phần mềm',
+    'tin tặc', 'quy định', 'thiết kế', 'khóa cửa', 'khai thác',
+    'nghiêm trọng', 'toàn cầu', 'đăng nhập', 'điểm yếu', 'tấn công',
+    'đột nhập', 'xác thực', 'ngân sách', 'doanh nghiệp', 'phòng thủ', 'rủi ro'
+  ]);
+  const isTrailingWordJs = (wList) => {
+    if (!wList || wList.length === 0) return false;
+    const last = wList[wList.length - 1].toLowerCase();
+    if (wList.length >= 2) {
+      const pair = wList[wList.length - 2].toLowerCase() + ' ' + last;
+      if (COMPOUND_PAIRS_JS.has(pair)) return false;
+    }
+    return TRAILING_CUTOFF_JS.has(last) || INCOMPLETE_TRAILING_JS.has(last);
+  };
+  while (isTrailingWordJs(allWords)) {
+    allWords.pop();
+  }
+  let words = allWords.slice(0, Math.min(allWords.length, maxWords));
+  const lastIsCompound = words.length >= 2 && COMPOUND_PAIRS_JS.has(words[words.length - 2].toLowerCase() + ' ' + words[words.length - 1].toLowerCase());
+  if (words.length > 0 && !lastIsCompound && INCOMPLETE_TRAILING_JS.has(words[words.length - 1].toLowerCase())) {
+    if (words.length < allWords.length && words.length <= 4) {
+      words.push(allWords[words.length]);
+      if (words.length > 4 && words.length > maxWords) {
+        words.pop(); words.pop();
+      }
+    } else {
+      words.pop();
+    }
+  }
+  while (isTrailingWordJs(words)) {
+    words.pop();
+  }
+  if (words.length === 0) return '';
+  const res = words.join(' ');
+  return res.charAt(0).toUpperCase() + res.slice(1);
+}
+
+const sanitizeSemanticLabel = (lbl, maxWords = 6) => {
+  if (window.MotionLayout && typeof window.MotionLayout.sanitizeSemanticLabel === 'function') {
+    return window.MotionLayout.sanitizeSemanticLabel(lbl, maxWords);
+  }
+  return internalSanitizeSemanticLabel(lbl, maxWords);
+};
+
+const wrapText = (txt, maxChars = 20) => {
+  if (window.MotionLayout && typeof window.MotionLayout.wrapText === 'function') {
+    return window.MotionLayout.wrapText(txt, maxChars);
+  }
+  return [txt];
 };
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -69,7 +160,7 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
   const rawVal = Number(d.value ?? 0);
   const unit = d.unit || '';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Khung máy trồi lên
@@ -92,8 +183,8 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
     opacity: enterAlpha
   });
 
-  const boxW = 820;
-  const boxH = 460;
+  const boxW = 880;
+  const boxH = 680;
   const boxX = 540 - boxW / 2;
   const boxY = 780 - boxH / 2;
 
@@ -146,13 +237,12 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
   // Determine target digits
   const valStr = Math.abs(rawVal) >= 1000 ? String(Math.round(rawVal)) : String(rawVal);
   const targetChars = valStr.split('');
-  const numSlots = Math.min(5, Math.max(3, targetChars.length));
-  // If fewer digits than slots, pad with leading spaces or zeros
-  while (targetChars.length < numSlots) {
-    targetChars.unshift('0');
-  }
-
-  const slotW = (boxW - 140 - (numSlots - 1) * 20) / numSlots;
+  const numSlots = Math.max(1, Math.min(6, targetChars.length));
+  const maxSlotW = 160;
+  const availW = boxW - 140;
+  const slotW = Math.min(maxSlotW, (availW - (numSlots - 1) * 20) / numSlots);
+  const totalSlotsW = numSlots * slotW + (numSlots - 1) * 20;
+  const slotStartX = boxX + (boxW - totalSlotsW) / 2;
   const slotH = 260;
   const slotY = boxY + 80;
 
@@ -160,8 +250,10 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
   const defs = el('defs');
   root.append(defs);
 
+  const stopStep = Math.min(0.35, Math.max(0.12, (duration - 1.0) / Math.max(1, numSlots)));
+
   targetChars.forEach((ch, idx) => {
-    const slotX = boxX + 70 + idx * (slotW + 20);
+    const slotX = slotStartX + idx * (slotW + 20);
     const clipId = `slot-clip-${idx}-${Math.floor(t * 100)}`;
     const clip = el('clipPath', { id: clipId });
     clip.append(el('rect', { x: slotX, y: slotY, width: slotW, height: slotH, rx: 16 }));
@@ -174,8 +266,8 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
     });
 
     // Reel spinning calculation
-    // Stop times: 1.0s + idx * 0.35s (so le rõ ràng)
-    const stopTime = 1.0 + idx * 0.35;
+    // Stop times: scale with duration, finishes before shot end
+    const stopTime = Math.min(duration - 0.35, 0.6 + (idx + 1) * stopStep);
     const isStopping = t >= stopTime;
     const gReel = group(root, { 'clip-path': `url(#${clipId})` });
 
@@ -266,16 +358,18 @@ function renderSlotCounter(ctx, svg, d, t, duration = 4) {
 // 2. STRIKE_REPLACE: Số cũ bị gạch đỏ chém qua + ✗ nảy lên, số mới trồi lên
 // =========================================================================
 function renderStrikeReplace(ctx, svg, d, t, duration = 4) {
-  if (!d._is_fixture && (d.value === null || d.value === undefined) && (d.new_value === null || d.new_value === undefined)) {
+  const rawOld = d.old_value !== undefined ? d.old_value : (d.bars && d.bars[0]?.value !== undefined ? d.bars[0].value : null);
+  const rawNew = d.new_value !== undefined ? d.new_value : (d.value !== undefined ? d.value : (d.bars && d.bars[1]?.value !== undefined ? d.bars[1].value : null));
+  if (!d._is_fixture && (rawOld === null || rawNew === null || isNaN(Number(rawOld)) || isNaN(Number(rawNew)))) {
     if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
       return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
     }
   }
-  const oldVal = Number(d.old_value ?? (d.bars && d.bars[0]?.value) ?? 0);
-  const newVal = Number(d.new_value ?? d.value ?? 0);
+  const oldVal = Number(rawOld);
+  const newVal = Number(rawNew);
   const unit = d.unit || '';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.7s]: Thẻ số cũ xám xuất hiện ở trung tâm
@@ -432,7 +526,7 @@ function renderGaugeNeedle(ctx, svg, d, t, duration = 4) {
   const maxVal = Number(d.max_val ?? (targetVal > 100 ? targetVal * 1.2 : 100));
   const unit = d.unit || '%';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.7s]: Đồng hồ bán nguyệt mở rộng
@@ -535,22 +629,25 @@ function renderGaugeNeedle(ctx, svg, d, t, duration = 4) {
     });
   }
 
-  // Action Needle Rotation [0.7s - 2.3s]
+  // Action Needle Rotation dynamically scaled to shot duration
+  const actDuration = Math.min(1.4, Math.max(0.6, duration * 0.55));
+  const actStart = Math.min(0.3, duration * 0.12);
+  const actEnd = actStart + actDuration;
   const targetPct = clamp(targetVal / maxVal);
   let needleAngle = startAngle;
 
-  if (t < 0.7) {
+  if (t < actStart) {
     needleAngle = startAngle;
-  } else if (t < 2.3) {
-    const actP = clamp((t - 0.7) / 1.6);
+  } else if (t < actEnd) {
+    const actP = clamp((t - actStart) / actDuration);
     const curPct = targetPct * easeOutCubic(actP);
     needleAngle = startAngle + totalSweep * curPct;
   } else {
-    // Impact damped spring oscillation
-    const impP = clamp((t - 2.3) / 1.0);
-    const decay = Math.exp(-impP * 4);
-    const wobble = Math.sin((t - 2.3) * 14) * 5 * decay;
-    needleAngle = startAngle + totalSweep * targetPct + wobble;
+    // Impact damped spring oscillation, settling exactly at targetPct
+    const impP = clamp((t - actEnd) / Math.max(0.3, duration - actEnd));
+    const decay = Math.exp(-impP * 5);
+    const wobble = Math.sin((t - actEnd) * 16) * 4 * decay;
+    needleAngle = startAngle + totalSweep * targetPct + (impP >= 0.85 ? 0 : wobble);
   }
 
   // Draw Pointer Needle
@@ -576,9 +673,12 @@ function renderGaugeNeedle(ctx, svg, d, t, duration = 4) {
     fill: 'var(--accent, #00f5d4)'
   });
 
-  // Digital readout counter at bottom of gauge
-  const currentDisplayedVal = t < 0.7 ? 0 : (t < 2.3 ? (targetVal * easeOutCubic((t - 0.7) / 1.6)) : targetVal);
-  const digitalStr = `${formatRawViNum(currentDisplayedVal, 1)} ${unit}`.trim();
+  // Digital readout counter at bottom of gauge - exact integer display at rest
+  const currentDisplayedVal = t < actStart ? 0 : (t < actEnd ? (targetVal * easeOutCubic((t - actStart) / actDuration)) : targetVal);
+  const isTargetInt = Number.isInteger(targetVal);
+  const numDecimals = (t >= actEnd && isTargetInt) ? 0 : (isTargetInt ? 0 : 1);
+  const formattedVal = (t >= actEnd && isTargetInt) ? String(targetVal) : formatRawViNum(currentDisplayedVal, numDecimals);
+  const digitalStr = `${formattedVal} ${unit}`.trim();
 
   shape(root, 'rect', {
     x: cx - 180, y: cy + 120, width: 360, height: 90, rx: 20,
@@ -606,7 +706,7 @@ function renderOdometer(ctx, svg, d, t, duration = 4) {
   const targetVal = Number(d.value ?? 0);
   const unit = d.unit || '';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Hộp công tơ mét xuất hiện
@@ -631,8 +731,8 @@ function renderOdometer(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const boxW = 840;
-  const boxH = 460;
+  const boxW = 880;
+  const boxH = 680;
   const boxX = cx - boxW / 2;
   const boxY = cy - boxH / 2;
 
@@ -652,22 +752,25 @@ function renderOdometer(ctx, svg, d, t, duration = 4) {
 
   // Digits array (e.g. 0 1 2 5 0)
   const valStr = String(Math.round(targetVal));
-  const numDigits = Math.max(4, Math.min(6, valStr.length));
-  const paddedTarget = valStr.padStart(numDigits, '0');
+  const numDigits = Math.max(1, Math.min(6, valStr.length));
+  const paddedTarget = valStr;
 
-  const drumW = (boxW - 120 - (numDigits - 1) * 16) / numDigits;
+  const drumW = Math.min(160, (boxW - 120 - (numDigits - 1) * 16) / numDigits);
+  const totalDrumsW = numDigits * drumW + (numDigits - 1) * 16;
+  const drumStartX = boxX + (boxW - totalDrumsW) / 2;
   const drumH = 220;
   const drumY = boxY + 110;
 
-  // Action progress [0.6s - 2.4s]
-  const actionP = clamp((t - 0.6) / 1.8);
+  // Action progress [0.6s - (duration - 0.4s)]
+  const actDuration = Math.min(1.8, Math.max(0.6, duration - 1.0));
+  const actionP = clamp((t - 0.6) / actDuration);
   const smoothedP = easeInOutCubic(actionP);
 
   const defs = el('defs');
   root.append(defs);
 
   for (let i = 0; i < numDigits; i++) {
-    const drumX = boxX + 60 + i * (drumW + 16);
+    const drumX = drumStartX + i * (drumW + 16);
     const targetDigit = Number(paddedTarget[i]);
 
     // Mechanical gear ratios:
@@ -675,7 +778,7 @@ function renderOdometer(ctx, svg, d, t, duration = 4) {
     const power = numDigits - 1 - i;
     // Continuous rolling value for this drum
     const totalRolls = targetDigit + (power === 0 ? 10 * (1 - smoothedP) : 0);
-    const curContinuousVal = smoothedP >= 1.0 ? targetDigit : (targetDigit * smoothedP + (1 - smoothedP) * ((i * 3 + 1) % 10) + smoothedP * (numDigits - i) * 4) % 10;
+    const curContinuousVal = smoothedP >= 1.0 ? targetDigit : (targetDigit * smoothedP);
 
     const clipId = `odo-clip-${i}-${Math.floor(t * 100)}`;
     const clip = el('clipPath', { id: clipId });
@@ -757,7 +860,7 @@ function renderBarRace(ctx, svg, d, t, duration = 4) {
   ];
   const unit = d.unit || '%';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.7s]: Làn đua và thanh xuất phát
@@ -782,8 +885,8 @@ function renderBarRace(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 580;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -822,7 +925,7 @@ function renderBarRace(ctx, svg, d, t, duration = 4) {
   items.slice(0, 4).forEach((item, idx) => {
     const laneY = startLaneY + idx * laneHeight;
     const isHighlight = Boolean(item.highlight || idx === 1);
-    const itemLabel = sanitizeSemanticLabel(item.label || `Làn ${idx + 1}`, 3);
+    const itemLabel = sanitizeSemanticLabel(item.label || `Làn ${idx + 1}`, 6);
     const targetVal = Number(item.value || 0);
 
     // Track lane background
@@ -904,7 +1007,7 @@ function renderThermometer(ctx, svg, d, t, duration = 4) {
   const maxTemp = Number(d.max_temp ?? 100);
   const unit = d.unit || '°C';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Thân nhiệt kế xuất hiện
@@ -930,7 +1033,7 @@ function renderThermometer(ctx, svg, d, t, duration = 4) {
   });
 
   // Card Container
-  const cardW = 800;
+  const cardW = 880;
   const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
@@ -1055,7 +1158,7 @@ function renderBatteryFill(ctx, svg, d, t, duration = 4) {
   }
   const targetPct = Number(d.percentage ?? d.value ?? 0);
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Thỏi pin rỗng xuất hiện
@@ -1080,8 +1183,8 @@ function renderBatteryFill(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 820;
-  const cardH = 560;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -1198,7 +1301,7 @@ function renderGlassFill(ctx, svg, d, t, duration = 4) {
   }
   const fillPct = Number(d.fill_percentage ?? d.value ?? 0);
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Ly nước thủy tinh xuất hiện
@@ -1223,7 +1326,7 @@ function renderGlassFill(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 800;
+  const cardW = 880;
   const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
@@ -1379,11 +1482,11 @@ function renderGlassFill(ctx, svg, d, t, duration = 4) {
 function renderBalanceScale(ctx, svg, d, t, duration = 4) {
   const leftLabelRaw = d.left_label || (d.bars && d.bars[0]?.label) || (d.items && d.items[0]) || '';
   const rightLabelRaw = d.right_label || (d.bars && d.bars[1]?.label) || (d.items && d.items[1]) || '';
-  const leftLabel = sanitizeSemanticLabel(leftLabelRaw, 3);
-  const rightLabel = sanitizeSemanticLabel(rightLabelRaw, 3);
+  const leftLabel = sanitizeSemanticLabel(leftLabelRaw, 6);
+  const rightLabel = sanitizeSemanticLabel(rightLabelRaw, 6);
   const winner = d.winner || 'right'; // 'left' or 'right'
   const titleRaw = d.label || d.text || '';
-  const title = sanitizeSemanticLabel(titleRaw, 3);
+  const title = sanitizeSemanticLabel(titleRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Cán cân xuất hiện ở trạng thái cân bằng
@@ -1409,7 +1512,7 @@ function renderBalanceScale(ctx, svg, d, t, duration = 4) {
   });
 
   // Housing Card Frame
-  const cardW = 860;
+  const cardW = 880;
   const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
@@ -1550,7 +1653,7 @@ function renderTugOfWar(ctx, svg, d, t, duration = 4) {
   const teamB = sanitizeSemanticLabel(d.team_b || (d.bars && d.bars[1]?.label) || '', 3);
   const winner = d.winner || 'team_a';
   const titleRaw = d.label || d.text || '';
-  const title = sanitizeSemanticLabel(titleRaw, 3);
+  const title = sanitizeSemanticLabel(titleRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Dây thừng và hai đội vào vị trí
@@ -1575,8 +1678,8 @@ function renderTugOfWar(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 560;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -1689,15 +1792,22 @@ function renderTugOfWar(ctx, svg, d, t, duration = 4) {
 // 11. VS_FLIP_CARDS: Hai thẻ bài đối đầu lật 3D trước sau so sánh trực diện
 // =========================================================================
 function renderVsFlipCards(ctx, svg, d, t, duration = 4) {
-  const cardA = d.card_a || { title: 'Truyền thống', stat: '45%' };
-  const cardB = d.card_b || { title: 'Hiện đại hóa', stat: '98%' };
-  const titleA = sanitizeSemanticLabel(cardA.title || (d.bars && d.bars[0]?.label) || '', 3);
-  const titleB = sanitizeSemanticLabel(cardB.title || (d.bars && d.bars[1]?.label) || '', 3);
-  const statA = cardA.stat || (cardA.value !== undefined ? String(cardA.value) : '');
-  const statB = cardB.stat || (cardB.value !== undefined ? String(cardB.value) : '');
-  const winner = d.winner || 'card_b';
+  const cardA = d.card_a || (d.bars && d.bars[0] ? { title: d.bars[0].label, stat: d.bars[0].value !== undefined ? String(d.bars[0].value) : '' } : null);
+  const cardB = d.card_b || (d.bars && d.bars[1] ? { title: d.bars[1].label, stat: d.bars[1].value !== undefined ? String(d.bars[1].value) : '' } : null);
+  if (!d._is_fixture && (!cardA || !cardB || (!cardA.title && !cardA.stat) || (!cardB.title && !cardB.stat))) {
+    if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) {
+      return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0);
+    }
+  }
+  const safeCardA = cardA || { title: '', stat: '' };
+  const safeCardB = cardB || { title: '', stat: '' };
+  const titleA = sanitizeSemanticLabel(safeCardA.title || (d.bars && d.bars[0]?.label) || '', 4);
+  const titleB = sanitizeSemanticLabel(safeCardB.title || (d.bars && d.bars[1]?.label) || '', 4);
+  const statA = safeCardA.stat || (safeCardA.value !== undefined ? String(safeCardA.value) : '');
+  const statB = safeCardB.stat || (safeCardB.value !== undefined ? String(safeCardB.value) : '');
+  const winner = d.winner || (Number(statB) > Number(statA) ? 'card_b' : 'card_a');
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Thẻ bài 3D xuất hiện
@@ -1722,8 +1832,8 @@ function renderVsFlipCards(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 640;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -1829,11 +1939,11 @@ function renderVsFlipCards(ctx, svg, d, t, duration = 4) {
 // 12. BEFORE_AFTER_WIPE: Thanh trượt wipe quét qua, lột xác trước và sau
 // =========================================================================
 function renderBeforeAfterWipe(ctx, svg, d, t, duration = 4) {
-  const beforeLbl = sanitizeSemanticLabel(d.before_label || '', 3);
-  const afterLbl = sanitizeSemanticLabel(d.after_label || '', 3);
+  const beforeLbl = sanitizeSemanticLabel(d.before_label || '', 6);
+  const afterLbl = sanitizeSemanticLabel(d.after_label || '', 6);
   const metric = d.metric_change || (d.value ? String(d.value) : '');
   const titleRaw = d.label || d.text || '';
-  const title = sanitizeSemanticLabel(titleRaw, 3);
+  const title = sanitizeSemanticLabel(titleRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Khung cảnh Before bao trùm
@@ -1841,14 +1951,14 @@ function renderBeforeAfterWipe(ctx, svg, d, t, duration = 4) {
   // Impact [2.4 - 4.0s]: Khung cảnh After hiện ra rực rỡ, chỉ số bừng sáng
 
   const enterP = clamp(t / 0.6);
-  const enterScale = overshoot(enterP, 1.15);
+  const enterScale = overshoot(enterP, 1.05);
 
   const cx = 540;
   const cy = 780;
 
   // Background aura
   shape(svg, 'circle', {
-    cx, cy, r: 330,
+    cx, cy, r: 280,
     fill: 'url(#neon-radial)',
     opacity: 0.15 + 0.1 * Math.sin(t * 2)
   });
@@ -1858,8 +1968,8 @@ function renderBeforeAfterWipe(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 580;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -1955,8 +2065,8 @@ function renderBeforeAfterWipe(ctx, svg, d, t, duration = 4) {
 // =========================================================================
 function renderConveyorBelt(ctx, svg, d, t, duration = 4) {
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
-  const outLabel = sanitizeSemanticLabel(d.output_label || '', 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
+  const outLabel = sanitizeSemanticLabel(d.output_label || '', 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Băng chuyền và cánh tay robot xuất hiện
@@ -1981,8 +2091,8 @@ function renderConveyorBelt(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 580;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -2103,9 +2213,9 @@ function renderConveyorBelt(ctx, svg, d, t, duration = 4) {
 // =========================================================================
 function renderDominoChain(ctx, svg, d, t, duration = 4) {
   const steps = d.steps || d.items || [];
-  const finalImpact = sanitizeSemanticLabel(d.final_impact || '', 3);
+  const finalImpact = sanitizeSemanticLabel(d.final_impact || '', 6);
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: 4-5 quân cờ domino đứng thẳng
@@ -2130,8 +2240,8 @@ function renderDominoChain(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 580;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -2188,7 +2298,7 @@ function renderDominoChain(ctx, svg, d, t, duration = 4) {
       x: tileBaseX, y: floorY + 45, 'text-anchor': 'middle',
       'font-size': '36', 'font-weight': 'bold',
       fill: isTriggered ? 'var(--accent, #00f5d4)' : '#94a3b8', class: 'ill-label'
-    }, sanitizeSemanticLabel(stepText, 2)));
+    }, sanitizeSemanticLabel(stepText, 6)));
   });
 
   function easeInQuad(x) { return x * x; }
@@ -2220,7 +2330,7 @@ function renderFunnelFilter(ctx, svg, d, t, duration = 4) {
   const inCount = Number(d.input_count ?? (d.bars && d.bars[0]?.value) ?? 0);
   const outCount = Number(d.output_count ?? (d.bars && d.bars[1]?.value) ?? 0);
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Phễu thủy tinh đa tầng xuất hiện
@@ -2245,7 +2355,7 @@ function renderFunnelFilter(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 820;
+  const cardW = 880;
   const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
@@ -2329,7 +2439,7 @@ function renderFunnelFilter(ctx, svg, d, t, duration = 4) {
 function renderPipelinePipes(ctx, svg, d, t, duration = 4) {
   const throughput = d.throughput || (d.value ? String(d.value) + (d.unit || '') : '');
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Mạng lưới ống và van xuất hiện
@@ -2354,8 +2464,8 @@ function renderPipelinePipes(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 580;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -2418,11 +2528,13 @@ function renderPipelinePipes(ctx, svg, d, t, duration = 4) {
     cx: p3.x, cy: p3.y, r: 48,
     fill: '#020617', stroke: t >= 2.3 ? '#10b981' : '#64748b', 'stroke-width': 5
   });
-  root.append(el('text', {
-    x: p3.x, y: p3.y + 12, 'text-anchor': 'middle',
-    'font-size': '36', 'font-weight': '900',
-    fill: t >= 2.3 ? '#10b981' : '#94a3b8', class: 'ill-label'
-  }, 'MAX'));
+  if (d.value !== undefined && d.value !== null) {
+    root.append(el('text', {
+      x: p3.x, y: p3.y + 12, 'text-anchor': 'middle',
+      'font-size': '36', 'font-weight': '900',
+      fill: t >= 2.3 ? '#10b981' : '#94a3b8', class: 'ill-label'
+    }, String(d.value)));
+  }
 
   // Throughput Banner
   root.append(el('text', {
@@ -2439,7 +2551,7 @@ function renderDiceRoll(ctx, svg, d, t, duration = 4) {
   const resultNum = Number(d.result_number ?? (d.value ?? 0));
   const prob = d.probability || '';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.5s]: Xúc xắc 3D rơi xoay từ trên cao
@@ -2464,8 +2576,8 @@ function renderDiceRoll(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.3)
   });
 
-  const cardW = 820;
-  const cardH = 580;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -2554,7 +2666,7 @@ function renderDiceRoll(ctx, svg, d, t, duration = 4) {
 function renderLockUnlock(ctx, svg, d, t, duration = 4) {
   const status = d.status || '';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Ổ khóa màu đỏ cam ngậm chặt xuất hiện
@@ -2562,14 +2674,14 @@ function renderLockUnlock(ctx, svg, d, t, duration = 4) {
   // Impact [2.1 - 4.0s]: Khóa chuyển màu xanh ngọc neon, sóng an toàn lan tỏa
 
   const enterP = clamp(t / 0.6);
-  const enterScale = overshoot(enterP, 1.15);
+  const enterScale = overshoot(enterP, 1.05);
 
   const cx = 540;
   const cy = 780;
 
   // Background aura
   shape(svg, 'circle', {
-    cx, cy, r: 330,
+    cx, cy, r: 280,
     fill: 'url(#neon-radial)',
     opacity: 0.15 + 0.1 * Math.sin(t * 2)
   });
@@ -2579,8 +2691,8 @@ function renderLockUnlock(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 820;
-  const cardH = 620;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -2640,12 +2752,15 @@ function renderLockUnlock(ctx, svg, d, t, duration = 4) {
     fill: '#020617'
   });
 
-  // Status readout below
-  root.append(el('text', {
-    x: cx, y: cy + bodyH / 2 + 115, 'text-anchor': 'middle',
-    'font-size': '44', 'font-weight': '900',
-    fill: isUnlocked ? '#34d399' : '#fb7185', class: 'ill-label'
-  }, isUnlocked ? 'MỞ KHÓA THÀNH CÔNG' : 'ĐANG KHÓA CHẶT'));
+  // Status readout below (use grounded status or label if available, no fabricated string)
+  const statusTxt = status ? sanitizeSemanticLabel(status, 6) : '';
+  if (statusTxt) {
+    root.append(el('text', {
+      x: cx, y: cy + bodyH / 2 + 100, 'text-anchor': 'middle',
+      'font-size': '40', 'font-weight': '900',
+      fill: isUnlocked ? '#34d399' : '#fb7185', class: 'ill-label'
+    }, statusTxt));
+  }
 }
 
 // =========================================================================
@@ -2654,7 +2769,7 @@ function renderLockUnlock(ctx, svg, d, t, duration = 4) {
 function renderShieldHit(ctx, svg, d, t, duration = 4) {
   const defense = d.defense_score || (d.value ? String(d.value) + (d.unit || '%') : '');
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Tấm khiên lục giác xuất hiện bảo vệ trung tâm
@@ -2679,8 +2794,8 @@ function renderShieldHit(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 820;
-  const cardH = 640;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -2763,7 +2878,7 @@ function renderShieldHit(ctx, svg, d, t, duration = 4) {
 function renderTrafficLight(ctx, svg, d, t, duration = 4) {
   const actionText = d.action_text || '';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Trụ đèn tín hiệu xuất hiện với đèn đỏ sáng
@@ -2788,7 +2903,7 @@ function renderTrafficLight(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 800;
+  const cardW = 880;
   const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
@@ -2879,10 +2994,10 @@ function renderTrafficLight(ctx, svg, d, t, duration = 4) {
 // 21. ORBIT_SYSTEM: Hạt nhân trung tâm, 3 quỹ đạo elip vệ tinh quay & beacon
 // =========================================================================
 function renderOrbitSystem(ctx, svg, d, t, duration = 4) {
-  const centerNode = sanitizeSemanticLabel(d.center_node || d.text || '', 3);
-  const satellites = (d.satellites || d.items || []).map(s => sanitizeSemanticLabel(s, 2));
+  const centerNode = sanitizeSemanticLabel(d.center_node || d.text || '', 6);
+  const satellites = (d.satellites || d.items || []).map(s => sanitizeSemanticLabel(s, 6));
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Hạt nhân và 3 vòng quỹ đạo mở rộng
@@ -2907,7 +3022,7 @@ function renderOrbitSystem(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
+  const cardW = 880;
   const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
@@ -3005,10 +3120,10 @@ function renderOrbitSystem(ctx, svg, d, t, duration = 4) {
 // 22. LAYERED_ONION: Vòng đồng tâm bóc tách từng tầng hé lộ hạt nhân cốt lõi
 // =========================================================================
 function renderLayeredOnion(ctx, svg, d, t, duration = 4) {
-  const coreText = sanitizeSemanticLabel(d.core_text || d.text || '', 3);
-  const layers = (d.layers || d.items || []).map(l => sanitizeSemanticLabel(l, 2));
+  const coreText = sanitizeSemanticLabel(d.core_text || d.text || '', 6);
+  const layers = (d.layers || d.items || []).map(l => sanitizeSemanticLabel(l, 6));
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Khối cầu đồng tâm xuất hiện
@@ -3033,7 +3148,7 @@ function renderLayeredOnion(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 820;
+  const cardW = 880;
   const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
@@ -3107,9 +3222,9 @@ function renderLayeredOnion(ctx, svg, d, t, duration = 4) {
 // 23. STACK_PILE: Tháp thẻ 3D xếp chồng lên nhau vững chãi, đỉnh phát quang
 // =========================================================================
 function renderStackPile(ctx, svg, d, t, duration = 4) {
-  const layers = (d.layers || d.items || []).map(l => sanitizeSemanticLabel(l, 3));
+  const layers = (d.layers || d.items || []).map(l => sanitizeSemanticLabel(l, 6));
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Tấm đế nền tầng 1 xuất hiện
@@ -3134,7 +3249,7 @@ function renderStackPile(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
+  const cardW = 880;
   const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
@@ -3195,9 +3310,9 @@ function renderStackPile(ctx, svg, d, t, duration = 4) {
 // 24. PUZZLE_SNAP: Mảnh ghép jigsaw trượt vào khớp nối 'khấc' hoàn mỹ
 // =========================================================================
 function renderPuzzleSnap(ctx, svg, d, t, duration = 4) {
-  const solutionText = sanitizeSemanticLabel(d.solution_text || d.text || '', 3);
+  const solutionText = sanitizeSemanticLabel(d.solution_text || d.text || '', 6);
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Bức tranh với ô khuyết xuất hiện
@@ -3222,8 +3337,8 @@ function renderPuzzleSnap(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 640;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -3314,7 +3429,7 @@ function renderChatThread(ctx, svg, d, t, duration = 4) {
   const userMsg = d.user_msg || (d.items && d.items[0]) || '';
   const botReply = d.bot_reply || (d.items && d.items[1]) || '';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Khung chat xuất hiện
@@ -3339,8 +3454,8 @@ function renderChatThread(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 640;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -3434,10 +3549,10 @@ function renderChatThread(ctx, svg, d, t, duration = 4) {
 // 26. MOCK_CARD_SWIPE: Thao tác quẹt thẻ sang phải chấp nhận (APPROVED)
 // =========================================================================
 function renderMockCardSwipe(ctx, svg, d, t, duration = 4) {
-  const cardTitle = sanitizeSemanticLabel(d.card_title || d.text || '', 3);
+  const cardTitle = sanitizeSemanticLabel(d.card_title || d.text || '', 6);
   const decision = d.decision || '';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Thẻ bài trung tâm xuất hiện
@@ -3462,8 +3577,8 @@ function renderMockCardSwipe(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 660;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -3547,9 +3662,9 @@ function renderMockCardSwipe(ctx, svg, d, t, duration = 4) {
 // 27. FORM_FILL_SUBMIT: Form biểu mẫu tự động điền + nút bấm nảy haptic
 // =========================================================================
 function renderFormFillSubmit(ctx, svg, d, t, duration = 4) {
-  const fields = (d.fields || d.items || []).map(f => sanitizeSemanticLabel(f, 2));
+  const fields = (d.fields || d.items || []).map(f => sanitizeSemanticLabel(f, 6));
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Cửa sổ form xuất hiện
@@ -3574,7 +3689,7 @@ function renderFormFillSubmit(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
+  const cardW = 880;
   const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
@@ -3652,7 +3767,7 @@ function renderTerminalCommandRun(ctx, svg, d, t, duration = 4) {
   const cmd = d.command || (d.text ? String(d.text) : '');
   const outLog = d.output || '';
   const labelRaw = d.label || d.text || '';
-  const label = sanitizeSemanticLabel(labelRaw, 3);
+  const label = sanitizeSemanticLabel(labelRaw, 6);
 
   // Stages:
   // Enter [0.0 - 0.6s]: Cửa sổ Terminal đen bóng xuất hiện
@@ -3677,8 +3792,8 @@ function renderTerminalCommandRun(ctx, svg, d, t, duration = 4) {
     opacity: clamp(t / 0.35)
   });
 
-  const cardW = 860;
-  const cardH = 580;
+  const cardW = 880;
+  const cardH = 680;
   const cardX = cx - cardW / 2;
   const cardY = cy - cardH / 2;
 
@@ -3767,8 +3882,8 @@ function renderBeforeAfterSplit(ctx, svg, d, t, duration = 4) {
   const w = 940, h = 480;
   const x = cx - w / 2, y = cy - h / 2;
 
-  const leftLbl = sanitizeSemanticLabel(d.left_label || d.label || 'Trước', 3);
-  const rightLbl = sanitizeSemanticLabel(d.right_label || d.text || 'Sau', 3);
+  const leftLbl = sanitizeSemanticLabel(d.left_label || d.label || '', 6);
+  const rightLbl = sanitizeSemanticLabel(d.right_label || d.text || '', 6);
 
   const root = group(svg, {
     transform: `translate(${cx}, ${cy}) scale(${enterScale}) translate(${-cx}, ${-cy})`,
@@ -3829,7 +3944,7 @@ function renderTimelineMilestones(ctx, svg, d, t, duration = 4) {
   const lightX = x + 80 + (w - 160) * easeInOutCubic(pulseP);
   shape(root, 'line', { x1: x + 80, y1: lineY, x2: lightX, y2: lineY, stroke: 'var(--accent)', 'stroke-width': 6, 'stroke-linecap': 'round' });
 
-  const items = (d.items && d.items.length) ? d.items.slice(0, 3) : [d.label || 'Khởi điểm', 'Diễn tiến', d.text || 'Hiện tại'];
+  const items = (d.items && d.items.length) ? d.items.slice(0, 3) : [d.label, d.text].filter(Boolean);
   const stepX = (w - 200) / Math.max(1, items.length - 1);
 
   items.forEach((item, idx) => {
@@ -3846,7 +3961,7 @@ function renderTimelineMilestones(ctx, svg, d, t, duration = 4) {
     });
 
     // Nhãn mốc
-    const lbl = sanitizeSemanticLabel(item, 3);
+    const lbl = sanitizeSemanticLabel(item, 6);
     root.append(el('text', {
       x: nodeX, y: (idx % 2 === 0) ? lineY - 45 : lineY + 65,
       'text-anchor': 'middle', 'font-size': '36', 'font-weight': '900',
@@ -3892,7 +4007,7 @@ function renderMapLocationPin(ctx, svg, d, t, duration = 4) {
   shape(pinGroup, 'circle', { cx: 0, cy: 0, r: 8, fill: '#fff' });
 
   // Nhãn địa danh
-  const locationName = sanitizeSemanticLabel(d.label || d.text || 'Địa điểm', 4);
+  const locationName = sanitizeSemanticLabel(d.label || d.text || '', 6);
   root.append(el('text', {
     x: cx, y: cy + 140, 'text-anchor': 'middle',
     'font-size': '44', 'font-weight': '900', fill: '#f4f7ff', class: 'ill-label'
@@ -3927,7 +4042,7 @@ function renderProfileDossier(ctx, svg, d, t, duration = 4) {
 
   // Thông tin hồ sơ bên phải
   const infoX = imgBoxX + imgBoxW + 60;
-  const nameText = sanitizeSemanticLabel(d.name || d.label || d.text || 'Hồ sơ đối tượng', 4);
+  const nameText = sanitizeSemanticLabel(d.name || d.label || d.text || '', 6);
   root.append(el('text', {
     x: infoX, y: y + 130,
     'font-size': '44', 'font-weight': '900', fill: '#f4f7ff', class: 'ill-label'
@@ -3936,7 +4051,7 @@ function renderProfileDossier(ctx, svg, d, t, duration = 4) {
   // Dòng trạng thái (nếu có từ dữ liệu thật)
   const statusRaw = d.status || (d.number_text ? String(d.number_text) : '');
   if (statusRaw) {
-    const statusText = sanitizeSemanticLabel(statusRaw, 4);
+    const statusText = sanitizeSemanticLabel(statusRaw, 6);
     root.append(el('text', {
       x: infoX, y: y + 210,
       'font-size': '38', 'font-weight': '800', fill: '#f43f5e', class: 'ill-label'
@@ -3956,7 +4071,7 @@ function renderProfileDossier(ctx, svg, d, t, duration = 4) {
       stampGroup.append(el('text', {
         x: 0, y: 12, 'text-anchor': 'middle',
         'font-size': '36', 'font-weight': '900', fill: '#ef4444', class: 'ill-label'
-      }, sanitizeSemanticLabel(d.badge || d.stamp, 3)));
+      }, sanitizeSemanticLabel(d.badge || d.stamp, 6)));
     }
   }
 }
@@ -3985,7 +4100,7 @@ function renderDocumentPageFlip(ctx, svg, d, t, duration = 4) {
   shape(pageGroup, 'rect', { x: 0, y: 0, width: w - 80, height: h - 40, rx: 20, fill: '#0f172a', stroke: 'var(--accent)', 'stroke-width': 3 });
 
   // Các dòng chữ mô phỏng trên trang
-  const docTitle = sanitizeSemanticLabel(d.title || d.label || d.text || 'Tài liệu', 4);
+  const docTitle = sanitizeSemanticLabel(d.title || d.label || d.text || '', 6);
   pageGroup.append(el('text', {
     x: 60, y: 80, 'font-size': '42', 'font-weight': '900', fill: 'var(--accent)', class: 'ill-label'
   }, docTitle));
@@ -4037,7 +4152,7 @@ function renderCameraSurveillanceScan(ctx, svg, d, t, duration = 4) {
   shape(root, 'line', { x1: x + 40, y1: laserY, x2: x + w - 40, y2: laserY, stroke: '#f43f5e', 'stroke-width': 3, opacity: 0.75 });
 
   // Nhãn đối tượng mục tiêu
-  const targetLbl = sanitizeSemanticLabel(d.label || d.text || 'Camera giám sát', 4);
+  const targetLbl = sanitizeSemanticLabel(d.label || d.text || '', 6);
   root.append(el('text', {
     x: cx, y: cy + 30, 'text-anchor': 'middle',
     'font-size': '44', 'font-weight': '900', fill: '#f4f7ff', class: 'ill-label'
@@ -4064,9 +4179,9 @@ function renderEvidenceBoard(ctx, svg, d, t, duration = 4) {
   const pC = { x: cx, y: y + h - 110 };
 
   const rawItems = (d.items && d.items.length) ? d.items : [d.label, d.text, d.title].filter(Boolean);
-  const lblA = sanitizeSemanticLabel(rawItems[0] || 'Mục A', 3);
-  const lblB = sanitizeSemanticLabel(rawItems[1] || 'Mục B', 3);
-  const lblC = sanitizeSemanticLabel(rawItems[2] || 'Mục C', 3);
+  const lblA = sanitizeSemanticLabel(rawItems[0] || '', 6);
+  const lblB = sanitizeSemanticLabel(rawItems[1] || '', 6);
+  const lblC = sanitizeSemanticLabel(rawItems[2] || '', 6);
 
   // Dây chỉ đỏ nối
   const lineP = clamp((t - 0.4) / 1.2);
@@ -4130,7 +4245,7 @@ function renderNetworkGraph(ctx, svg, d, t, duration = 4) {
 
   // Nút trung tâm lớn
   shape(root, 'circle', { cx, cy, r: 90, fill: '#0f172a', stroke: 'var(--accent)', 'stroke-width': 5 });
-  const centerLbl = sanitizeSemanticLabel(d.label || d.text || 'Hệ thống', 3);
+  const centerLbl = sanitizeSemanticLabel(d.label || d.text || '', 6);
   root.append(el('text', {
     x: cx, y: cy + 12, 'text-anchor': 'middle',
     'font-size': '38', 'font-weight': '900', fill: 'var(--accent)', class: 'ill-label'
@@ -4165,7 +4280,8 @@ function renderCountdownTimer(ctx, svg, d, t, duration = 4) {
   });
 
   // Số đếm ngược ở tâm
-  const targetNum = Number(d.value || 30);
+  if (!d._is_fixture && (d.value === null || d.value === undefined || isNaN(Number(d.value)))) { if (window.MotionRecipes && window.MotionRecipes.renderTextFocus) return window.MotionRecipes.renderTextFocus(ctx, svg, d, t, duration, 0); }
+  const targetNum = Number(d.value);
   const currentNum = Math.max(0, Math.round(targetNum * (1 - sweepP * 0.7)));
   root.append(el('text', {
     x: cx, y: cy, 'text-anchor': 'middle',
@@ -4173,7 +4289,7 @@ function renderCountdownTimer(ctx, svg, d, t, duration = 4) {
   }, String(currentNum)));
 
   // Nhãn thời hạn
-  const timeLbl = sanitizeSemanticLabel(d.label || d.text || 'Thời hạn xem xét', 4);
+  const timeLbl = sanitizeSemanticLabel(d.label || d.text || '', 6);
   root.append(el('text', {
     x: cx, y: cy + 170, 'text-anchor': 'middle',
     'font-size': '40', 'font-weight': '900', fill: 'var(--accent)', class: 'ill-label'
@@ -4216,8 +4332,8 @@ function renderCourtroomBalance(ctx, svg, d, t, duration = 4) {
   shape(root, 'ellipse', { cx: rightX, cy: rightY + 110, rx: 80, ry: 16, fill: '#1e293b', stroke: 'var(--accent)', 'stroke-width': 3 });
 
   // Nhãn 2 đĩa cân
-  const leftLbl = sanitizeSemanticLabel(d.left_label || d.label || 'Vế trái', 3);
-  const rightLbl = sanitizeSemanticLabel(d.right_label || d.text || 'Vế phải', 3);
+  const leftLbl = sanitizeSemanticLabel(d.left_label || d.label || '', 6);
+  const rightLbl = sanitizeSemanticLabel(d.right_label || d.text || '', 6);
   root.append(el('text', {
     x: leftX, y: leftY + 165, 'text-anchor': 'middle',
     'font-size': '36', 'font-weight': '900', fill: '#f43f5e', class: 'ill-label'
@@ -4292,14 +4408,14 @@ function renderQuoteDialogCard(ctx, svg, d, t, duration = 4) {
   }, '“'));
 
   // Nội dung trích dẫn
-  const quoteText = sanitizeSemanticLabel(d.text || d.label || 'Vì sao dấu hiệu cảnh báo bị bỏ quên?', 6);
+  const quoteText = sanitizeSemanticLabel(d.text || d.label || '', 6);
   root.append(el('text', {
     x: cx, y: cy + 15, 'text-anchor': 'middle',
     'font-size': '44', 'font-weight': '900', fill: '#f4f7ff', class: 'ill-label'
   }, quoteText));
 
   // Người phát ngôn / nguồn
-  const speaker = sanitizeSemanticLabel(d.label || 'Tòa án & Luật sư', 3);
+  const speaker = sanitizeSemanticLabel(d.source || d.label || '', 6);
   shape(root, 'line', { x1: cx - 120, y1: cy + 85, x2: cx + 120, y2: cy + 85, stroke: '#475569', 'stroke-width': 3 });
   root.append(el('text', {
     x: cx, y: cy + 140, 'text-anchor': 'middle',

@@ -339,13 +339,13 @@ def audit_project(project_dir: Path | str, force: bool = False) -> dict:
         # 4. Check all visual numbers against allowed evidence
         if data.get("value") is not None and not data.get("no_numbers", False):
             val_str = f"{data['value']:.10f}".rstrip("0").rstrip(".")
-            if not values_in(val_str) <= allowed_nums:
+            if not (val_str in allowed_nums or values_in(val_str) <= allowed_nums):
                 numeric_hallucinations += 1
 
         for b in bars:
             if b.get("value") is not None:
                 bval_str = f"{b['value']:.10f}".rstrip("0").rstrip(".")
-                if not values_in(bval_str) <= allowed_nums:
+                if not (bval_str in allowed_nums or values_in(bval_str) <= allowed_nums):
                     numeric_hallucinations += 1
 
         # Check empty gap
@@ -626,7 +626,11 @@ def print_report_table(report: dict):
 
             mark = "✓" if p else "✗"
 
-            if unit == "%":
+            if val is None:
+
+                display_val = "N/A"
+
+            elif unit == "%":
 
                 display_val = f"{val * 100:.1f}%"
 
@@ -683,7 +687,8 @@ if __name__ == "__main__":
 
     target_dir = sys.argv[1]
 
-    res = audit_project(target_dir)
+    force_flag = ('--force' in sys.argv)
+    res = audit_project(target_dir, force=force_flag)
 
 
 

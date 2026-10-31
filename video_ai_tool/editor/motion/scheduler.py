@@ -476,37 +476,88 @@ NUMERIC_RECIPES = {
 }
 
 
-def extract_shot_brief_and_data(text: str, scene_narration: str = "", is_recap: bool = False) -> dict:
+def extract_shot_brief_and_data(text: str, scene_narration: str = "", is_recap: bool = False, spoken_text: str = "") -> dict:
     """Extract semantic intent and factual data for an individual shot without manufactured text."""
     from editor.format_number import parse_display_number
     from agents.presentation import card_phrase
 
-    combined_text = (text.strip() + " " + scene_narration.strip()).strip()
+    combined_text = (text.strip() + " " + (spoken_text or scene_narration).strip()).strip()
     norm = _normalize_text(combined_text)
 
-    # 1. Parse number (with unit/currency distinction)
-    p_num = parse_display_number(text) or parse_display_number(scene_narration)
+    # 1. Parse number strictly from the shot's spoken audio or shot text (NEVER scene fallback)
+    num_source = spoken_text.strip() if spoken_text.strip() else text.strip()
+    p_num = parse_display_number(num_source) or (parse_display_number(text.strip()) if text.strip() != num_source else None)
     has_number = p_num is not None
     val = p_num.value if p_num else None
     unit = p_num.unit_display if p_num else ""
     num_text = p_num.formatted_number if p_num else ""
 
-    # 2. Extract semantic label strictly from narration
-    clean_lbl = card_phrase(text, scene_narration) if text else ""
-    if not clean_lbl or re.search(r"^(?:minh\s+h[oọ]a|ý\s+t[uư][oợ]ng|y\s+ch[ií]nh\s+c[aầ]n\s+nh[oớ]|chi\s+ti[eế]t)", clean_lbl.strip(), re.I):
-        source_pool = text or scene_narration
-        first_clause = split_clauses_for_shot(source_pool)
-        clean_lbl = first_clause[0] if first_clause else "Nội dung"
+    # Exclude pure calendar date/month/year numbers (e.g. "tháng 10", "năm 2026") from trigger number recipes
+    if p_num and val is not None:
+        val_int = int(val) if val == int(val) else None
+        if val_int is not None:
+            val_str = str(val_int)
+            date_match = re.search(rf"\b(?:tháng|năm|ngày|quý|thế kỷ)\s+{re.escape(val_str)}\b", combined_text, re.I)
+            if date_match:
+                stripped_text = re.sub(r"\b(?:tháng|năm|ngày|quý|thế kỷ)\s+\d+\b", "", combined_text, flags=re.I)
+                p_rem = parse_display_number(stripped_text)
+                if not p_rem or p_rem.value is None:
+                    has_number = False
+                    val = None
+                    unit = ""
+                    num_text = ""
+
+    # 2. Extract semantic label strictly from shot text or spoken narration
+    clean_lbl = ""
+    text_clean = text.strip()
+    text_words = text_clean.split()
+    norm_text = _normalize_text(text_clean)
+    if 2 <= len(text_words) <= 6 and not any(bad in norm_text for bad in ["y chinh", "minh hoa", "chi tiet", "noi dung", "y tuong", "person explaining"]):
+        clean_lbl = text_clean
+    else:
+        clean_lbl = card_phrase(text, scene_narration) if text else ""
+        norm_lbl = _normalize_text(clean_lbl)
+        lbl_words = [w for w in norm_lbl.split() if len(w) >= 2]
+        if (
+            not clean_lbl
+            or not any(w in norm_text for w in lbl_words)
+            or any(bad in norm_lbl for bad in ["y chinh", "minh hoa", "chi tiet", "noi dung", "y tuong", "person explaining"])
+        ):
+            source_pool = spoken_text or text or scene_narration
+            clauses = split_clauses_for_shot(source_pool)
+            clean_lbl = clauses[0] if clauses else source_pool
     words_lbl = clean_lbl.split()
-    if len(words_lbl) > 4:
-        clean_lbl = " ".join(words_lbl[:4])
+    if len(words_lbl) > 6:
+        words_lbl = words_lbl[:6]
+    INCOMPLETE_TAIL = {
+        'thiết', 'ngân', 'của', 'và', 'với', 'trong', 'từ', 'là', 'để', 'cho',
+        'nỗ', 'kẻ', 'các', 'những', 'một', 'đang', 'đã', 'sẽ', 'do', 'bởi',
+        'vì', 'có', 'lại', 'cũng', 'rất', 'hơn', 'nhất', 'toàn', 'nghiêm',
+        'đăng', 'điểm', 'lỗi'
+    }
+    COMPOUND_TAIL_VALID = {
+        'thiết kế', 'thiết bị', 'ngân sách', 'ngân hàng', 'toàn cầu', 'nghiêm trọng',
+        'đăng nhập', 'điểm yếu', 'khóa cửa', 'khai thác', 'tấn công', 'đột nhập',
+        'xác thực', 'bảo mật', 'an ninh', 'rủi ro', 'phòng thủ', 'doanh nghiệp'
+    }
+    while len(words_lbl) >= 2:
+        last = words_lbl[-1].lower()
+        pair = f"{words_lbl[-2].lower()} {last}"
+        if pair in COMPOUND_TAIL_VALID:
+            break
+        if last in INCOMPLETE_TAIL:
+            words_lbl.pop()
+        else:
+            break
+    # If the remaining words don't form a meaningful concept (>=2 words), drop the label completely
+    clean_lbl = " ".join(words_lbl) if len(words_lbl) >= 2 else ""
 
     # 3. Determine semantic intent & domain match
     intent = "concept"
-    if is_recap:
-        intent = "recap"
-    elif has_number:
+    if has_number:
         intent = "number"
+    elif is_recap:
+        intent = "recap"
     elif any(k in norm for k in ["toa an", "phien toa", "xet xu", "cao trang", "toi danh", "cao buoc", "tham phan", "luat su", "can can"]):
         intent = "legal"
     elif any(k in norm for k in ["ho so", "nhan than", "nghi pham", "doi tuong", "danh tinh", "ly lich"]):
@@ -645,6 +696,44 @@ def build_shot_factual_data(recipe: str, brief_info: dict, text: str, scene_narr
         if len(clauses) >= 2:
             data["status"] = " ".join(clauses[1].split()[:3]).upper()
 
+    elif recipe == "orbit_system":
+        data["center_node"] = " ".join(clauses[0].split()[:3]) if clauses else brief_info["label"]
+        if len(clauses) >= 2:
+            data["satellites"] = [" ".join(c.split()[:3]) for c in clauses[1:4]]
+        else:
+            data["satellites"] = [" ".join(w.split()[:2]) for w in clauses[:2]]
+        data["label"] = brief_info["label"]
+
+    elif recipe == "layered_onion":
+        data["core_text"] = " ".join(clauses[0].split()[:3]) if clauses else brief_info["label"]
+        if len(clauses) >= 2:
+            data["layers"] = [" ".join(c.split()[:3]) for c in clauses[1:4]]
+        else:
+            data["layers"] = [" ".join(w.split()[:2]) for w in clauses[:2]]
+        data["label"] = brief_info["label"]
+
+    elif recipe == "stack_pile":
+        data["layers"] = [" ".join(c.split()[:3]) for c in clauses[:4]]
+        data["label"] = brief_info["label"]
+
+    elif recipe == "puzzle_snap":
+        data["solution_text"] = " ".join(clauses[0].split()[:3]) if clauses else brief_info["label"]
+        data["label"] = brief_info["label"]
+
+    elif recipe == "steps_ladder":
+        data["steps"] = [" ".join(c.split()[:3]) for c in clauses[:4]]
+        data["label"] = brief_info["label"]
+
+    elif recipe == "stack_cards":
+        data["items"] = [" ".join(c.split()[:4]) for c in clauses[:3]]
+        data["label"] = brief_info["label"]
+
+    elif recipe == "hub_spoke":
+        data["center_node"] = " ".join(clauses[0].split()[:3]) if clauses else brief_info["label"]
+        if len(clauses) >= 2:
+            data["spokes"] = [" ".join(c.split()[:3]) for c in clauses[1:5]]
+        data["label"] = brief_info["label"]
+
     return data
 
 
@@ -781,28 +870,36 @@ def schedule_shots_no_repeat(
         "recap": ["checklist", "timeline_milestones", "evidence_board", "orbit_system", "lock_unlock"],
     }
 
-    # Central anchor metaphor determined dynamically from script content
+    # Central anchor metaphor determined dynamically from script content via score
     all_text = " ".join((sh.get("narration") or sh.get("text") or "") for sh in shots_data)
     norm_all = _normalize_text(all_text)
-    if any(k in norm_all for k in ["co phieu", "chung khoan", "gia vang", "thi truong", "doanh thu", "loi nhuan", "tai chinh", "dau tu", "ngan hang"]):
-        central_anchor_name = "Chỉ số & Cột mốc Thị trường"
-        anchor_elem = "bar_race"
-    elif any(k in norm_all for k in ["cong nghe", "phan mem", "he thong", "du lieu", "ky thuat", "huong dan", "thiet bi", "chip", "ai", "code"]):
-        central_anchor_name = "Hệ thống & Cấu trúc Kỹ thuật"
-        anchor_elem = "network_graph"
-    elif any(k in norm_all for k in ["phap ly", "toa an", "xet xu", "vu an", "luat", "dieu tra", "cao trang"]):
-        central_anchor_name = "Hồ sơ & Cán cân Pháp lý"
-        anchor_elem = "courtroom_balance"
-    else:
+    domain_scores = {
+        "finance": sum(1 for k in ["co phieu", "chung khoan", "gia vang", "thi truong", "doanh thu", "loi nhuan", "tai chinh", "dau tu", "ngan hang"] if k in norm_all),
+        "tech": sum(1 for k in ["cong nghe", "phan mem", "he thong", "du lieu", "ky thuat", "huong dan", "thiet bi", "chip", "ai", "code", "docker", "python"] if k in norm_all),
+        "legal": sum(1 for k in ["phap ly", "toa an", "xet xu", "vu an", "luat", "dieu tra", "cao trang", "hoi dong", "kiem sat", "bao chua", "nghi an", "ban an"] if k in norm_all),
+    }
+    best_domain = max(domain_scores, key=domain_scores.get)
+    if domain_scores[best_domain] == 0:
         central_anchor_name = "Mô hình & Chuỗi Diễn tiến"
         anchor_elem = "timeline_milestones"
+    elif best_domain == "finance":
+        central_anchor_name = "Chỉ số & Cột mốc Thị trường"
+        anchor_elem = "bar_race"
+    elif best_domain == "legal":
+        central_anchor_name = "Hồ sơ & Cán cân Pháp lý"
+        anchor_elem = "courtroom_balance"
+    elif best_domain == "tech":
+        central_anchor_name = "Hệ thống & Cấu trúc Kỹ thuật"
+        anchor_elem = "network_graph"
 
     for idx, sh in enumerate(shots_data):
-        text = sh.get("narration") or sh.get("card_text") or sh.get("text") or ""
+        card_t = sh.get("card_text") or sh.get("text") or ""
+        spk_t = sh.get("narration") or ""
+        text = card_t or spk_t
         scene_narration = sh.get("scene_narration") or text
         is_recap = bool(sh.get("is_recap") or idx == total_shots - 1)
 
-        brief_info = extract_shot_brief_and_data(text, scene_narration, is_recap=is_recap)
+        brief_info = extract_shot_brief_and_data(text, scene_narration, is_recap=is_recap, spoken_text=spk_t)
         intent = brief_info["intent"]
 
         # Build candidate pool prioritizing intent
@@ -815,30 +912,55 @@ def schedule_shots_no_repeat(
         recent_recipes = [s["recipe"] for s in scheduled[max(0, idx - min_dist):idx]]
 
         chosen_recipe = None
+        # Strict pass 1: Respect candidate priority, min_dist (4) and max_freq (2)
         for cand in candidate_pool:
-            if cand in recent_recipes:
-                continue
-            if used_counts[cand] >= max_freq:
+            if cand in recent_recipes or used_counts[cand] >= max_freq:
                 continue
             if not enough_for_shot(cand, brief_info):
                 continue
-            # Tentative factual data check
             tentative_data = build_shot_factual_data(cand, brief_info, text, scene_narration)
             if not validate_recipe_fit(cand, tentative_data, text, scene_narration):
                 continue
             chosen_recipe = cand
             break
 
+        # Pass 2: Search entire catalog for recipes satisfying min_dist (4) and max_freq (2)
         if not chosen_recipe:
-            # Relax distance from min_dist down to 1 if strictly necessary
-            for cand in candidate_pool:
-                if (not recent_recipes or cand != recent_recipes[-1]) and enough_for_shot(cand, brief_info):
+            for cand in AVAILABLE_SHOT_RECIPES:
+                if cand in recent_recipes or used_counts[cand] >= max_freq:
+                    continue
+                if not enough_for_shot(cand, brief_info):
+                    continue
+                tentative_data = build_shot_factual_data(cand, brief_info, text, scene_narration)
+                if validate_recipe_fit(cand, tentative_data, text, scene_narration):
+                    chosen_recipe = cand
+                    break
+
+        # Pass 3: If candidate_pool exhausted, step-down distance to 3 then 2, but NEVER exceed max_freq (2)!
+        if not chosen_recipe:
+            for d_step in [3, 2, 1]:
+                sub_rec = recent_recipes[max(0, len(recent_recipes) - d_step):]
+                for cand in AVAILABLE_SHOT_RECIPES:
+                    if cand in sub_rec or used_counts[cand] >= max_freq:
+                        continue
+                    if not enough_for_shot(cand, brief_info):
+                        continue
                     tentative_data = build_shot_factual_data(cand, brief_info, text, scene_narration)
                     if validate_recipe_fit(cand, tentative_data, text, scene_narration):
                         chosen_recipe = cand
                         break
+                if chosen_recipe:
+                    break
 
-        chosen_recipe = chosen_recipe or "courtroom_balance"
+        # Ultimate fallback: Pick recipe with absolute minimum usage, not immediate previous
+        if not chosen_recipe:
+            cand_least = min(
+                (r for r in AVAILABLE_SHOT_RECIPES if not recent_recipes or r != recent_recipes[-1]),
+                key=lambda r: used_counts[r],
+                default="pipeline_pipes"
+            )
+            chosen_recipe = cand_least
+
         used_counts[chosen_recipe] += 1
 
         dur = float(sh.get("duration") or sh.get("duration_sec") or 3.0)

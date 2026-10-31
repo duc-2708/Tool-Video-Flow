@@ -251,8 +251,9 @@ def parse_display_number(raw_text: str) -> Optional[ParsedDisplayNumber]:
     time_m = re.search(r"\b(?:tháng|năm|ngày|giờ|phút|giây|tuần|thập kỷ|thế kỷ)\b", text, re.I)
     time_word = time_m.group(0).lower() if time_m else ""
 
+    has_count_noun = bool(re.search(r"\b(?:người|người dùng|lượt|thiết bị|tấn|cổ phiếu|tội danh|cáo buộc|vụ|căn|chiếc|con|bản|nạn nhân)\b", text, re.I))
     has_money_context = bool(currency or re.search(r"\b(?:tiền|giá|vốn|ngân sách|chi phí|doanh thu|đắt|rẻ|đầu tư|tài trợ|khoản)\b", text, re.I))
-    is_explicit_money = bool(currency or (scale in ("tỷ", "triệu") and has_money_context))
+    is_explicit_money = bool(currency or has_money_context or (scale in ("tỷ", "triệu") and not has_count_noun and not time_word))
 
     if has_percent:
         kind = NumberKind.PERCENT

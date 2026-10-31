@@ -28,6 +28,28 @@ def show_result(result,project,diagnostics):
         except Exception:
             pass
 
+    # Hiển thị tóm tắt Visual Bible (Kế hoạch hình ảnh tổng thể)
+    bible_file = project / "visual_bible.json"
+    bible_status_file = project / "visual_bible_status.json"
+    if bible_file.is_file():
+        try:
+            b_data = read_json(bible_file)
+            b_status = read_json(bible_status_file) if bible_status_file.is_file() else {}
+            if b_status.get("fallback_used"):
+                st.warning(f"⚠️ Visual Bible: Đang dùng quy tắc dự phòng ({b_status.get('reason', '')})")
+            with st.expander("🌐 Kế hoạch hình ảnh tổng thể (Visual Bible)"):
+                worlds_txt = "; ".join(f"{w.get('kind')} ({w.get('reason')})" for w in b_data.get("worlds", []))
+                actors_txt = "; ".join(f"{a.get('type')} ({a.get('role')})" for a in b_data.get("persistent_actors", []))
+                chaps_txt = " · ".join(f"{ch.get('kicker')}: {ch.get('title')}" for ch in b_data.get("structure", {}).get("chapters", []))
+                st.markdown(f"- **Thế giới:** {worlds_txt}")
+                st.markdown(f"- **Vật thể xuyên suốt:** {actors_txt}")
+                st.markdown(f"- **Cấu trúc:** {chaps_txt}")
+                pm = b_data.get("progress_metaphor", {})
+                if pm.get("type") != "none":
+                    st.markdown(f"- **Tiến độ ẩn dụ:** `{pm.get('type')}` ({', '.join(pm.get('items', []))})")
+        except Exception:
+            pass
+
     if result.get('audit_failed') or (project / 'layout_report.json').is_file():
         try:
             lr_path = project / 'layout_report.json'

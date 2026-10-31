@@ -115,7 +115,7 @@ function getLayoutAudit() {
     heroHeight = Math.round(maxY - minY);
     heroArea = heroWidth * heroHeight;
   } else {
-    heroWidth = 880; heroHeight = 760; heroArea = 880 * 760;
+    heroWidth = 0; heroHeight = 0; heroArea = 0;
   }
   const centerY = heroHeight > 0 && allShapes.length ? (Math.min(...allShapes.map(el=>el.getBBox().y)) + Math.max(...allShapes.map(el=>el.getBBox().y+el.getBBox().height))) / 2 : 785;
   const centerYDrift = Math.round(Math.abs(centerY - 785));
@@ -128,9 +128,21 @@ function getLayoutAudit() {
   }
 
   const heroAreaRatio = Number((heroArea / CONTENT_ZONE_AREA).toFixed(3));
-  const emptySpaceRatio = Number(Math.max(0, 1 - Math.min(1, heroAreaRatio)).toFixed(3));
+  const emptySpaceRatio = allShapes.length < 2 ? 1.0 : Number(Math.max(0, 1 - Math.min(1, heroAreaRatio)).toFixed(3));
 
-  const textEls = [...illustration.querySelectorAll('text, tspan, .ill-label')];
+  const textEls = [...illustration.querySelectorAll('text, tspan, .ill-label')].filter(el => {
+    if (el.closest('clipPath')) return false;
+    const clipContainer = el.closest('[clip-path]');
+    if (clipContainer) {
+      const cb = getGlobalBBox(clipContainer);
+      const b = getGlobalBBox(el);
+      if (cb.width > 0 && cb.height > 0) {
+        if (b.y + b.height <= cb.y || b.y >= cb.y + cb.height) return false;
+        if (b.x + b.width <= cb.x || b.x >= cb.x + cb.width) return false;
+      }
+    }
+    return true;
+  });
   let minFontSize = 999;
   textEls.forEach(el => {
     const fsAttr = el.getAttribute('font-size');
@@ -143,10 +155,17 @@ function getLayoutAudit() {
   let clippedRows = 0;
   const elementsToCheck = [...illustration.querySelectorAll('rect, text, .ill-label, .motion-element')];
   elementsToCheck.forEach(el => {
+    if (el.closest('clipPath')) return;
+    const clipContainer = el.closest('[clip-path]');
+    if (clipContainer) {
+      const cb = getGlobalBBox(clipContainer);
+      if (cb.width > 0 && cb.height > 0 && cb.x >= 65 && cb.x + cb.width <= 1015 && cb.y >= 235 && cb.y + cb.height <= 1335) {
+        return;
+      }
+    }
     const b = getGlobalBBox(el);
     if (b.width > 0 && b.height > 0) {
       if (b.x + b.width > 1015 || b.x < 65 || b.y + b.height > 1335 || b.y < 235) {
-        // Only count if it's not the background depth circle
         if (!el.classList.contains('depth-background') && !el.closest('.depth-background')) {
           clippedRows++;
         }
@@ -203,11 +222,47 @@ function getLayoutAudit() {
     }
   }
 
+  // Content ink coverage: count visible graphic elements with opacity > 0.1
+  const inkElements = [...illustration.querySelectorAll('text, rect, circle, polyline, path, line')].filter(el => {
+    if (el.closest('clipPath') || el.closest('defs')) return false;
+    if (el.classList.contains('depth-background') || el.closest('.depth-background')) return false;
+    const op = parseFloat(el.getAttribute('opacity') || window.getComputedStyle(el).opacity || '1');
+    const b = getGlobalBBox(el);
+    return op > 0.15 && b.width >= 4 && b.height >= 4;
+  });
+  const inkElementCount = inkElements.length;
+  // Calculate ink area
+  let totalInkArea = 0;
+  inkElements.forEach(el => {
+    const b = getGlobalBBox(el);
+    totalInkArea += Math.min(b.width * b.height, 40000);
+  });
+  const inkAreaRatio = Number((Math.min(CONTENT_ZONE_AREA, totalInkArea) / Math.max(1, heroArea || CONTENT_ZONE_AREA)).toFixed(3));
+  const isEmptyCard = inkElementCount < 3 || (heroArea > 0 && inkAreaRatio < 0.20 && textEls.length === 0);
+
+  // Extract DOM numbers for factual number verification
+  const domNumbers = [];
+  textEls.forEach(el => {
+    const rawTxt = el.textContent || '';
+    const m = rawTxt.match(/\b\d+(?:[.,]\d+)?\b/g);
+    if (m) {
+      m.forEach(n => {
+        const parsed = parseFloat(n.replace(',', '.'));
+        if (!isNaN(parsed) && !domNumbers.includes(parsed)) domNumbers.push(parsed);
+      });
+    }
+  });
+
   return {
     hero_width: heroWidth,
     hero_width_pass: heroWidth >= 880,
     hero_area_ratio: heroAreaRatio,
-    hero_area_pass: heroAreaRatio >= 0.45,
+    hero_area_pass: (heroWidth >= 880 || heroAreaRatio >= 0.55),
+    ink_element_count: inkElementCount,
+    ink_area_ratio: inkAreaRatio,
+    is_empty_card: isEmptyCard,
+    empty_card_pass: !isEmptyCard,
+    dom_numbers: domNumbers,
     min_font_size: minFontSize,
     min_font_size_pass: minFontSize >= 36,
     clipped_rows: clippedRows,
