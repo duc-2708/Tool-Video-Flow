@@ -125,9 +125,11 @@ def enough(name, data):
         return n >= 2 or len(data.bars) >= 2
     if name == 'timeline_march':
         return n >= 2 and sum(bool(re.search(r'\d|ngày|tháng|năm', x, re.I)) for x in data.items) >= 2
-    # 28 Recipes validation rules
-    if name in {'slot_counter', 'strike_replace', 'gauge_needle', 'odometer', 'bar_race', 'thermometer'}:
-        return (data.value is not None and math.isfinite(data.value)) or bool(data.number_text) or bool(data.text)
+    # 28 Recipes validation rules: numeric recipes REQUIRE real numbers, never fallback to text
+    if name in {'slot_counter', 'odometer', 'gauge_needle', 'thermometer', 'bar_race'}:
+        return (data.value is not None and math.isfinite(data.value)) or (bool(data.number_text) and any(c.isdigit() for c in data.number_text))
+    if name == 'strike_replace':
+        return (len(data.bars) >= 2 and all(math.isfinite(b.value) for b in data.bars[:2])) or (data.value is not None and getattr(data, 'new_value', None) is not None)
     if name in {'battery_fill', 'glass_fill', 'container_fill'}:
         return True
     if name in {'balance_scale', 'tug_of_war', 'vs_flip_cards', 'before_after_wipe', 'versus_split'}:
@@ -168,8 +170,8 @@ def scene_data(scene,brief=None):
         if len(v.data.bars)>=2 and not numeric_mismatches(scene,shot,brief): data.bars=[b.model_copy(deep=True) for b in v.data.bars[:4]]
         if not data.source and v.data.source: data.source=v.data.source;data.source_url=v.data.source_url
     # Extract complete semantic clauses from narration without arbitrary word-slicing
-    if len(items)<3:
-        clauses=re.split(r'(?<!\d)\.|\.(?!\d)|[!?;:]|\b(?:nhưng|trong khi|thay vì|bởi vì)\b',scene.narration,flags=re.I)
+    if len(items)<3 and narr:
+        clauses=re.split(r'(?<!\d)\.|\.(?!\d)|[!?;:]|\b(?:nhưng|trong khi|thay vì|bởi vì)\b',narr,flags=re.I)
         for clause in clauses:
             subclauses=re.split(r'[,–—]',clause)
             for sc in subclauses:
@@ -285,6 +287,8 @@ def plan_illustrations(plan,brief=None,*,diagnostics=None,force=False):
     previous=None;used=set()
     for index,scene in enumerate(plan.scenes):
         if not force and getattr(scene, 'visual_plan', None) and getattr(scene.visual_plan, 'scene_type', None):
+            if getattr(scene.visual_plan, 'repair_notes', None):
+                _publish(plan, scene, scene.visual_plan.repair_notes, diagnostics)
             continue
         payload=None;notes=[]
         try:

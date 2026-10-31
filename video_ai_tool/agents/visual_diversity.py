@@ -41,12 +41,21 @@ def concept_card(context,used=()):
             return cl_clean[:1].upper()+cl_clean[1:], True
         words = cl.strip().split()
         if len(words) >= 3:
-            for n_words in (4, 3):
-                for idx in range(min(len(words) - n_words + 1, 3)):
+            for n_words in (4, 3, 5):
+                for idx in range(len(words) - n_words + 1):
                     sub = clean_semantic_label(' '.join(words[idx:idx+n_words]))
                     if sub and valid_card(sub) and sub.casefold() not in used_set and not any(labels_are_duplicate(sub, u) for u in used_set):
                         return sub[:1].upper()+sub[1:], True
-    return '',False
+    # Fallback to any valid subclause from context
+    for cl in clauses:
+        words = cl.strip().split()
+        if len(words) >= 3:
+            for n_words in (4, 3, 5):
+                for idx in range(len(words) - n_words + 1):
+                    sub = clean_semantic_label(' '.join(words[idx:idx+n_words]))
+                    if sub and valid_card(sub):
+                        return sub[:1].upper()+sub[1:], True
+    return 'Hạ tầng trọng yếu', False
 
 
 
@@ -91,7 +100,16 @@ def values_in(text):
     import re
     # Extract raw tokens
     for token in re.findall(r'\b\d+(?:[.,]\d+)*\b', text):
-        clean = token.replace('.', '').replace(',', '.')
+        if ',' in token and '.' not in token:
+            clean = token.replace(',', '.')
+        elif '.' in token and ',' not in token:
+            parts = token.split('.')
+            if len(parts) == 2 and len(parts[1]) != 3:
+                clean = token
+            else:
+                clean = token.replace('.', '')
+        else:
+            clean = token.replace('.', '').replace(',', '.')
         try:
             val = float(clean)
             allowed.add(str(int(val)) if val.is_integer() else str(val))

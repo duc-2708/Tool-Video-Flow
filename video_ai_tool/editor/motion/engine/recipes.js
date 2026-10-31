@@ -597,14 +597,15 @@ function renderChecklist(ctx, svg, d, t, duration, variantIdx = 0) {
 
   const startRowY = y + 90;
 
+  const chkStep = Math.min(0.65, Math.max(0.18, (duration - 0.5) / Math.max(1, items.length)));
   items.forEach((item, i) => {
-    const rowStartT = 0.3 + i * 1.8;
-    const p = clamp((t - rowStartT) / 0.55);
+    const rowStartT = 0.15 + i * chkStep;
+    const p = clamp((t - rowStartT) / Math.min(0.45, chkStep));
     if (p <= 0) return;
 
     const ry = startRowY + i * (rowH + rowGap);
-    const isChecked = (t >= rowStartT + 0.5);
-    const isCurrent = (t >= rowStartT && (i === items.length - 1 || t < 0.3 + (i + 1) * 1.8));
+    const isChecked = (t >= rowStartT + chkStep * 0.6);
+    const isCurrent = (t >= rowStartT && (i === items.length - 1 || t < 0.15 + (i + 1) * chkStep));
     const levitate = 4 * Math.sin(2.5 * t + i * 0.9);
 
     const gRow = group(svg, {
@@ -710,13 +711,14 @@ function renderMockUIWindow(ctx, svg, d, t, duration) {
   const rowGap = 20;
   const startRowY = y + 105;
 
+  const uiStep = Math.min(0.65, Math.max(0.18, (duration - 0.5) / Math.max(1, rows.length)));
   rows.forEach((rText, i) => {
-    const rowStartT = 0.3 + i * 1.8;
+    const rowStartT = 0.15 + i * uiStep;
     const ry = startRowY + i * (rowH + rowGap);
-    const p = clamp((t - rowStartT) / 0.55);
+    const p = clamp((t - rowStartT) / Math.min(0.45, uiStep));
     if (p <= 0) return;
 
-    const isCurrent = (t >= rowStartT && (i === rows.length - 1 || t < 0.3 + (i + 1) * 1.8));
+    const isCurrent = (t >= rowStartT && (i === rows.length - 1 || t < 0.15 + (i + 1) * uiStep));
 
     const gRow = group(gWin, {
       opacity: isCurrent ? 1.0 : 0.65,
@@ -1671,11 +1673,12 @@ function renderStackCards(ctx, svg, d, t, duration, variantIdx = 0) {
     fill: '#08122144', stroke: '#1e293b66', 'stroke-width': 2
   });
 
-  const activeCount = items.filter((_, i) => t >= 0.3 + i * 1.8).length;
+  const stackStep = Math.min(0.65, Math.max(0.18, (duration - 0.5) / Math.max(1, items.length)));
+  const activeCount = items.filter((_, i) => t >= 0.15 + i * stackStep).length;
   const currentIdx = Math.max(0, activeCount - 1);
 
   items.forEach((item, i) => {
-    const startT = 0.3 + i * 1.8;
+    const startT = 0.15 + i * stackStep;
     const p = clamp((t - startT) / 0.6);
     if (p <= 0) return;
 
@@ -1881,13 +1884,15 @@ function renderTextFocus(ctx, svg, d, t, duration, variantIdx = 0) {
     fill: 'none', stroke: '#334155', 'stroke-width': 2
   });
 
-  shape(gFocus, 'circle', {
-    cx, cy: y + 130, r: 60,
-    fill: 'var(--accent)', opacity: 0.15
+  // Clean hero emblem badge (sharp shield/star icon instead of empty ghost circles)
+  const iconG = group(gFocus, { transform: `translate(${cx}, ${y + 130})` });
+  shape(iconG, 'path', {
+    d: 'M -28 -32 L 28 -32 L 34 0 L 0 38 L -34 0 Z',
+    fill: '#1e293b', stroke: 'var(--accent)', 'stroke-width': 4
   });
-  shape(gFocus, 'circle', {
-    cx, cy: y + 130, r: 42,
-    fill: 'none', stroke: 'var(--accent)', 'stroke-width': 3
+  shape(iconG, 'path', {
+    d: 'M -14 -6 L -2 6 L 16 -12',
+    fill: 'none', stroke: 'var(--accent)', 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'
   });
 
   const titleText = d.text || d.label || 'Nội dung trọng tâm';

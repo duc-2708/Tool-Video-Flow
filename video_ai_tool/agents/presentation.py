@@ -9,7 +9,13 @@ TRAILING_CUTOFF = {
     'hoặc', 'nếu', 'khi', 'tuy', 'dẫu', 'dở', 'bị', 'được', 'đóng', 'đặt', 'này',
     'kia', 'đó', 'đây', 'tới', 'ở', 'gặp', 'gọi', 'như', 'theo', 'hành', 'tạo', 'làm',
     'khiến', 'giúp', 'sau', 'bày', 'tỏ', 'lên', 'xuống', 'qua', 'lại', 'thường', 'có',
-    'tài', 'đến', 'đi', 'có thể', 'giống', 'ý', 'thì', 'rằng', 'vậy', 'thế', 'nào', 'sao', 'gì', 'ai', 'đâu', 'nữa', 'chăng'
+    'tài', 'đến', 'đi', 'có thể', 'giống', 'ý', 'thì', 'rằng', 'vậy', 'thế', 'nào', 'sao', 'gì', 'ai', 'đâu', 'nữa', 'chăng', 'từ'
+}
+
+INCOMPLETE_TRAILING = {
+    'thiết', 'ngân', 'an', 'bảo', 'thông', 'kỹ', 'tài', 'hệ', 'dữ', 'kinh',
+    'máy', 'phần', 'tin', 'lỗ', 'thị', 'cơ', 'tổng', 'pháp', 'quốc', 'chính',
+    'trách', 'quy', 'đối', 'kết', 'truy', 'bắt', 'tạm', 'xâm', 'ngăn', 'xét', 'từ'
 }
 
 LEADING_CUTOFF = {
@@ -24,6 +30,22 @@ TRAILING = tuple(TRAILING_CUTOFF)
 
 KNOWN_PHRASE_EXPANSIONS = {}
 
+COMPOUND_PAIRS = {
+    ('thiết', 'bị'), ('thiết', 'kế'), ('hoạt', 'động'), ('ngân', 'hàng'), ('an', 'ninh'), ('an', 'toàn'),
+    ('bảo', 'mật'), ('thông', 'tin'), ('tài', 'sản'), ('tài', 'chính'), ('kỹ', 'thuật'),
+    ('kỹ', 'sư'), ('lỗ', 'hổng'), ('hệ', 'thống'), ('chính', 'sách'), ('trách', 'nhiệm'),
+    ('pháp', 'lý'), ('quốc', 'tế'), ('dữ', 'liệu'), ('máy', 'tính'), ('phần', 'mềm'),
+    ('tin', 'tặc'), ('quy', 'định'), ('khóa', 'cửa'), ('khai', 'thác')
+}
+
+def is_trailing_word(words: list[str]) -> bool:
+    if not words:
+        return False
+    w_last = words[-1].lower()
+    if len(words) >= 2 and (words[-2].lower(), w_last) in COMPOUND_PAIRS:
+        return False
+    return w_last in TRAILING_CUTOFF or w_last in INCOMPLETE_TRAILING
+
 def clean_semantic_label(label: str) -> str:
     """Trim punctuation and eliminate truncated or dangling boundary words."""
     if not label: return ""
@@ -37,14 +59,26 @@ def clean_semantic_label(label: str) -> str:
     words = text.split()
     while words and words[0].lower() in LEADING_CUTOFF:
         words.pop(0)
-    while words and words[-1].lower() in TRAILING_CUTOFF:
+    while is_trailing_word(words):
         words.pop(-1)
 
-    # Max 4 words for clean readable presentation labels
-    if len(words) > 4:
-        words = words[:4]
-        while words and words[-1].lower() in TRAILING_CUTOFF:
-            words.pop(-1)
+    if len(words) >= 4 and words[2].lower() == 'từ':
+        words.pop(2)
+
+    all_words = words[:]
+    words = all_words[:4]
+    last_is_compound = len(words) >= 2 and (words[-2].lower(), words[-1].lower()) in COMPOUND_PAIRS
+    if words and not last_is_compound and words[-1].lower() in INCOMPLETE_TRAILING:
+        if len(words) < len(all_words) and len(words) <= 4:
+            words.append(all_words[len(words)])
+            if len(words) > 4:
+                words.pop()
+                words.pop()
+        else:
+            words.pop()
+
+    while is_trailing_word(words):
+        words.pop(-1)
 
     if not (2 <= len(words) <= 4):
         return ""
@@ -113,7 +147,7 @@ def card_phrase(text,context="",*,used=None):
         "nguy cơ bị thay thế","nhà tuyển dụng cứu cánh","trợ cấp tiền mặt","công việc hữu ích","năng lực quản lý",
         "ngân sách","người lao động","công trình địa phương","thời gian học","công việc","công nghệ",
         "quyền riêng tư","dữ liệu cá nhân","vay","ngân hàng","cách tiếp cận","lựa chọn")
-    expand={"lưới đệm":"Một lưới đệm","chuyển hướng":"Chuyển hướng công việc","ngân sách":"Ngân sách chương trình",
+    expand={"lưới đệm":"Một lưới đệm","chuyển hướng":"Chuyển hướng công việc","ngân sách": ("Ngân sách an ninh mạng" if "an ninh mạng" in context.lower() else "Dự toán ngân sách"),
         "công việc":"Cách tổ chức công việc","công nghệ":"Tác động công nghệ","vay":"Hoạt động cho vay",
         "ngân hàng":"Hoạt động ngân hàng","lựa chọn":"Cân nhắc lựa chọn"}
     for phrase in phrases:

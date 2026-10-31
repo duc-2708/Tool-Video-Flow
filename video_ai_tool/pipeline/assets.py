@@ -79,11 +79,22 @@ def load_assets(plan_path: Path) -> tuple[EditPlan, ResolvedEditPlan, AssetsMani
     manifest = AssetsManifest.model_validate(read_json(plan_path.parent / "assets.json"))
     from pipeline.asset_hashes import detect_plan_changes
     changes = detect_plan_changes(manifest, original)
-    if not changes["audio_changed"] and not changes["clips_changed"]:
+    script_different = False
+    if original.title != resolved.title or original.format != resolved.format or original.voice != resolved.voice:
+        script_different = True
+    elif len(original.scenes) != len(resolved.scenes):
+        script_different = True
+    else:
+        for s_orig, s_res in zip(original.scenes, resolved.scenes):
+            if s_orig.narration.strip() != s_res.narration.strip() or s_orig.role != s_res.role:
+                script_different = True
+                break
+
+    if not script_different and not changes["audio_changed"] and not changes["clips_changed"]:
         # Visual-only changes (recipes, layouts, beats) do not invalidate voice or stock/AI clips
         return original, resolved, manifest
     explanation = "; ".join(changes["explanation"]) if changes["explanation"] else "Kịch bản hoặc giọng đọc đã thay đổi"
-    if source_hash(original) != manifest.source_plan_hash or resolved.source_plan_hash != manifest.source_plan_hash:
+    if script_different or source_hash(original) != manifest.source_plan_hash or resolved.source_plan_hash != manifest.source_plan_hash:
         raise ValueError(f"Edit Plan gốc đã đổi ({explanation}); hãy tạo lại Assets để tránh dùng audio/clip cũ.")
     if cache_key(resolved.model_dump(mode="json")) != manifest.resolved_plan_hash:
         raise ValueError(f"Resolved plan không khớp manifest ({explanation}); hãy tạo lại Assets.")
@@ -307,6 +318,22 @@ def run_assets(plan_path: Path, settings: Settings, *, progress: Callable[[int, 
             scene_audio_hashes=scene_audio_hashes,
             scene_clip_hashes=scene_clip_hashes
         )
+        # Giai đoạn 8-W2a: Visual Bible
+        try:
+            from agents.visual_bible import create_visual_bible, save_visual_bible
+            brief_f = project / "brief.json"
+            brief_obj = None
+            if brief_f.is_file():
+                try:
+                    from schemas.research_brief import ResearchBrief
+                    brief_obj = ResearchBrief.model_validate(read_json(brief_f))
+                except Exception:
+                    brief_obj = read_json(brief_f)
+            v_bible, v_status = create_visual_bible(resolved, brief=brief_obj, settings=settings, diagnostics=diagnostics)
+            save_visual_bible(project, v_bible, v_status)
+        except Exception as exc:
+            diagnostics.record_exception(exc, "Tạo Visual Bible trong assets thất bại")
+
         return persist(project, resolved, manifest, diagnostics,motion_enabled=settings.motion_enabled)
     except Exception as error:
         diagnostics.record_exception(error, "Assets pipeline failed")

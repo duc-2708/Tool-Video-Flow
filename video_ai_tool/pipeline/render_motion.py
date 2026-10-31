@@ -24,7 +24,8 @@ from utils.word_timing import align_words,read_words,timing_source
 MOTION_DIR=Path(__file__).resolve().parents[1]/"editor/motion"
 SUPPORTED = {
     "hook_card", "steps_list", "compare_bars", "stat_card", "source_card", "text_focus",
-    "progress_tracker", "ring_percent", "line_growth", "strike_replace", "quote_card", "timeline", "versus"
+    "progress_tracker", "ring_percent", "line_growth", "strike_replace", "quote_card", "timeline", "versus",
+    "cta_card", "icon_card"
 }
 
 
@@ -190,47 +191,55 @@ def scene_payload(scene,size,caption_style,options=None):
             annots_json = [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in annots]
             payload['visual_plan']={**resolved.model_dump(mode='json'),'beats':beats,'annotations':annots_json}
         else:
-            # Fallback dùng kết quả suggest_metaphor_recipe, chọn recipe theo lời đọc, tránh trùng cảnh liền kề, KHÔNG luôn trả balance_scale
-            from editor.motion.scheduler import suggest_metaphor_recipe
-            prev_r = getattr(scene, 'previous_recipe', None) or (options.get('previous_recipe') if options else None)
-            cand_alt = suggest_metaphor_recipe(scene.spec.narration, previous_recipe=prev_r)
-            NUMERIC_RECIPES = {
-                "slot_counter", "strike_replace", "gauge_needle", "odometer",
-                "thermometer", "stat_number", "bar_race", "gauge_ring", "bar_compare"
-            }
-            if cand_alt in NUMERIC_RECIPES and rebound.value is None:
-                qualitative_pool = ["conveyor_belt", "domino_chain", "stack_pile", "lock_unlock", "orbit_system", "puzzle_snap", "traffic_light", "shield_hit", "balance_scale"]
-                chosen_alt = next((r for r in qualitative_pool if r != spec.scene_type and r != prev_r), "conveyor_belt")
-            else:
-                if cand_alt == spec.scene_type or cand_alt == prev_r:
-                    alt_pool = ["domino_chain", "stack_pile", "conveyor_belt", "orbit_system", "lock_unlock", "shield_hit"]
-                    chosen_alt = next((r for r in alt_pool if r != spec.scene_type and r != prev_r), "conveyor_belt")
+            from editor.motion.scheduler import RECIPE_FAMILY_MAP
+            LEGACY_TEMPLATES = {"line_draw", "ring"}
+            is_real_recipe = spec.scene_type not in LEGACY_TEMPLATES
+            if is_real_recipe:
+                # Fallback dùng kết quả suggest_metaphor_recipe, chọn recipe theo lời đọc, tránh trùng cảnh liền kề, KHÔNG luôn trả balance_scale
+                from editor.motion.scheduler import suggest_metaphor_recipe
+                prev_r = getattr(scene, 'previous_recipe', None) or (options.get('previous_recipe') if options else None)
+                cand_alt = suggest_metaphor_recipe(scene.spec.narration, previous_recipe=prev_r)
+                NUMERIC_RECIPES = {
+                    "slot_counter", "strike_replace", "gauge_needle", "odometer",
+                    "thermometer", "stat_number", "bar_race", "gauge_ring", "bar_compare"
+                }
+                if cand_alt in NUMERIC_RECIPES and rebound.value is None:
+                    qualitative_pool = ["conveyor_belt", "domino_chain", "stack_pile", "lock_unlock", "orbit_system", "puzzle_snap", "traffic_light", "shield_hit", "balance_scale"]
+                    chosen_alt = next((r for r in qualitative_pool if r != spec.scene_type and r != prev_r), "conveyor_belt")
                 else:
-                    chosen_alt = cand_alt
+                    if cand_alt == spec.scene_type or cand_alt == prev_r:
+                        alt_pool = ["domino_chain", "stack_pile", "conveyor_belt", "orbit_system", "lock_unlock", "shield_hit"]
+                        chosen_alt = next((r for r in alt_pool if r != spec.scene_type and r != prev_r), "conveyor_belt")
+                    else:
+                        chosen_alt = cand_alt
 
-            rebound_dict = rebound.model_dump(mode='json') if hasattr(rebound, 'model_dump') else dict(rebound)
-            if not rebound_dict.get('label'):
-                from agents.presentation import card_phrase
-                clean_lbl = card_phrase(rebound.label or rebound.text, scene.spec.narration)
-                rebound_dict['label'] = clean_lbl
+                rebound_dict = rebound.model_dump(mode='json') if hasattr(rebound, 'model_dump') else dict(rebound)
+                if not rebound_dict.get('label'):
+                    from agents.presentation import card_phrase
+                    clean_lbl = card_phrase(rebound.label or rebound.text, scene.spec.narration)
+                    rebound_dict['label'] = clean_lbl
 
-            alt_beats = [
-                {"at_sec": 0.5, "action": f"enter_{chosen_alt}"},
-                {"at_sec": 1.8, "action": f"action_{chosen_alt}_step"},
-                {"at_sec": 3.2, "action": f"impact_{chosen_alt}_glow"},
-            ]
-            annots_json = [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in getattr(spec, 'annotations', [])]
-            payload['visual_plan'] = {
-                'scene_type': chosen_alt,
-                'recipe': chosen_alt,
-                'depth_3d': False,
-                'data': rebound_dict,
-                'beats': alt_beats,
-                'annotations': annots_json
-            }
-            fallback_msg = f"Cảnh {scene.spec.id}: Recipe '{spec.scene_type}' thiếu số liệu (enough=False); tự động dùng recipe thay thế '{chosen_alt}' theo nội dung lời đọc."
-            payload['illustration_fallback'] = fallback_msg
-            notes.append(fallback_msg)
+                alt_beats = [
+                    {"at_sec": 0.5, "action": f"enter_{chosen_alt}"},
+                    {"at_sec": 1.8, "action": f"action_{chosen_alt}_step"},
+                    {"at_sec": 3.2, "action": f"impact_{chosen_alt}_glow"},
+                ]
+                annots_json = [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in getattr(spec, 'annotations', [])]
+                payload['visual_plan'] = {
+                    'scene_type': chosen_alt,
+                    'recipe': chosen_alt,
+                    'depth_3d': False,
+                    'data': rebound_dict,
+                    'beats': alt_beats,
+                    'annotations': annots_json
+                }
+                fallback_msg = f"Cảnh {scene.spec.id}: Recipe '{spec.scene_type}' thiếu số liệu (enough=False); tự động dùng recipe thay thế '{chosen_alt}' theo nội dung lời đọc."
+                payload['recipe_substituted'] = chosen_alt
+                notes.append(fallback_msg)
+            else:
+                payload['visual_plan'] = None
+                payload['illustration_fallback'] = True
+                notes.append(f"Cảnh {scene.spec.id}: Template '{spec.scene_type}' không đủ dữ liệu/số liệu; dùng text_focus.")
     from utils.caption_timing import display_words
     payload['caption_words']=[{'text':text,'start':start,'end':end} for text,start,end in
         display_words([(w['text'],w['start'],w['end']) for w in words],scene.duration)]
@@ -348,7 +357,10 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
     imitation HTML template. Beat seconds/word indexes are scene-local/zero-based.
     """
     payload=scene_payload(scene,size,caption_style,options)
-    if not any(is_motion_supported(s["template"]) for s in payload["shots"]): return None
+    vp = payload.get('visual_plan') or {}
+    vp_type = vp.get('scene_type') or vp.get('recipe')
+    has_scene_motion = bool(vp_type and is_motion_supported(vp_type))
+    if not (has_scene_motion or any(is_motion_supported(s["template"]) for s in payload["shots"])): return None
     sources=[]
     for shot in scene.shots:
         path=shot.path
@@ -400,6 +412,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                                 res.get("bbox_overlaps", 0) > 0,
                                 res.get("caption_collisions", 0) > 0,
                                 res.get("empty_prompts", 0) > 0,
+                                res.get("is_empty_card", False),
                                 res.get("center_y_drift", 0) > 120,
                             ]):
                                 break
@@ -412,6 +425,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                     layout_audit.get("bbox_overlaps", 0) == 0 and
                     layout_audit.get("caption_collisions", 0) == 0 and
                     layout_audit.get("empty_prompts", 0) == 0 and
+                    not layout_audit.get("is_empty_card", False) and
                     layout_audit.get("center_y_drift", 0) <= 120
                 )
                 audit_retries = 0
@@ -422,7 +436,13 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                         page.evaluate(r"""() => {
                             if (window.MOTION_DATA && window.MOTION_DATA.visual_plan && window.MOTION_DATA.visual_plan.data) {
                                 const d = window.MOTION_DATA.visual_plan.data;
-                                if (d.items) {
+                                if (!d.items || d.items.length < 2) {
+                                    const narr = (window.MOTION_DATA.caption_words || []).map(w => w.text).join(' ');
+                                    const rawClauses = narr.split(/[.,;!?]/).map(s => s.trim()).filter(s => s.split(/\s+/).length >= 2);
+                                    if (rawClauses.length >= 2) {
+                                        d.items = rawClauses.slice(0, 3).map(s => s.split(/\s+/).slice(0, 4).join(' '));
+                                    }
+                                } else {
                                     d.items = d.items.map(s => String(s).split(/(?<!\d)[.!?\n]|[.!?\n](?!\d)/)[0].split(/\s+/).slice(0, 5).join(' '));
                                 }
                             }
@@ -433,7 +453,13 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                         page.evaluate(r"""() => {
                             if (window.MOTION_DATA && window.MOTION_DATA.visual_plan && window.MOTION_DATA.visual_plan.data) {
                                 const d = window.MOTION_DATA.visual_plan.data;
-                                if (d.items) {
+                                if (!d.items || d.items.length < 2) {
+                                    const narr = (window.MOTION_DATA.caption_words || []).map(w => w.text).join(' ');
+                                    const rawClauses = narr.split(/[.,;!?]/).map(s => s.trim()).filter(s => s.split(/\s+/).length >= 2);
+                                    if (rawClauses.length >= 2) {
+                                        d.items = rawClauses.slice(0, 3).map(s => s.split(/\s+/).slice(0, 4).join(' '));
+                                    }
+                                } else {
                                     d.items = d.items.map(s => String(s).split(/(?<!\d)[.!?\n]|[.!?\n](?!\d)/)[0].split(/\s+/).slice(0, 4).join(' '));
                                 }
                                 if (d.label) {
@@ -456,6 +482,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                         layout_audit.get("bbox_overlaps", 0) == 0 and
                         layout_audit.get("caption_collisions", 0) == 0 and
                         layout_audit.get("empty_prompts", 0) == 0 and
+                        not layout_audit.get("is_empty_card", False) and
                         layout_audit.get("center_y_drift", 0) <= 120
                     )
 
@@ -474,7 +501,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                     for i in range(count):
                         t=min(i/fps,scene.duration-1e-6)
                         shot=next((s for s in payload["shots"] if s["start"]<=t<s["start"]+s["duration"]),payload["shots"][-1])
-                        if is_motion_supported(shot["template"]):
+                        if has_scene_motion or is_motion_supported(shot["template"]):
                             state=page.evaluate("t => window.renderAt(t)",t) or {}
                             if state.get('illustrated'):
                                 illustrated_frames+=1;moving_counts.append(state.get('moving_elements',0))
@@ -501,7 +528,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                     if process.poll() is None: process.kill();process.wait(timeout=15)
                 quality=[]
                 for index,shot in enumerate(payload["shots"],1):
-                    if not is_motion_supported(shot["template"]): continue
+                    if not (has_scene_motion or is_motion_supported(shot["template"])): continue
                     cues=[b["at_sec"] for b in shot["beats"] if b.get("at_sec") is not None and (b["action"].startswith("reveal") or b["action"].startswith("count_end") or b["action"]=="replace_value")]
                     sample=min(shot["start"]+shot["duration"]-.23,max(shot["start"]+min(.65,shot["duration"]*.5),max(cues,default=shot["start"])+.17))
                     page.evaluate("t => renderAt(t)",max(shot["start"],sample))

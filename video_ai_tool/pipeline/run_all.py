@@ -360,7 +360,7 @@ def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event
                         files = [project/"edit_plan.json"]
                     elif step == "assets":
                         run_assets(project/"edit_plan.json",settings,progress=lambda done,total,message:emit(step,message,done/max(1,total)))
-                        if getattr(settings, "script_v3_enabled", False) or getattr(settings, "motion_recipes_enabled", True):
+                        if (getattr(settings, "script_v3_enabled", False) or (project / "director_state.visual_v3.json").is_file()) and getattr(settings, "motion_recipes_enabled", True):
                             emit(step, "Lập kế hoạch hình ảnh hoạt họa Visual Planner v3...")
                             from agents.visual_planner_v3 import create_visual_plan_v3
                             from utils.atomic_io import read_json_atomic, write_json_atomic
@@ -388,15 +388,8 @@ def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event
                                     for r_sc, p_sc in zip(resolved_data.get("scenes", []), current_plan.scenes):
                                         if p_sc.visual_plan:
                                             r_sc["visual_plan"] = p_sc.visual_plan.model_dump(mode="json")
+
                                     write_json_atomic(project / "edit_plan.resolved.json", resolved_data)
-                                    try:
-                                        ep_data = read_json_atomic(project / "edit_plan.json")
-                                        for e_sc, p_sc in zip(ep_data.get("scenes", []), current_plan.scenes):
-                                            if p_sc.visual_plan:
-                                                e_sc["visual_plan"] = p_sc.visual_plan.model_dump(mode="json")
-                                        write_json_atomic(project / "edit_plan.json", ep_data)
-                                    except Exception:
-                                        pass
                                     if (project / "assets.json").is_file():
                                         from schemas.assets import ResolvedEditPlan
                                         from utils.cache import cache_key
@@ -406,9 +399,28 @@ def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event
                                         write_json_atomic(project / "assets.json", manifest_data)
                                 except Exception:
                                     pass
+
+                            # Giai đoạn 8-W2a: Visual Bible cho video
+                            try:
+                                emit(step, "Khởi tạo Visual Bible kế hoạch hình ảnh tổng thể...")
+                                from agents.visual_bible import create_visual_bible, save_visual_bible
+                                v_bible, v_status = create_visual_bible(
+                                    current_plan,
+                                    brief=brief_obj,
+                                    words_by_scene=words_map,
+                                    settings=settings,
+                                    diagnostics=diagnostics,
+                                )
+                                save_visual_bible(project, v_bible, v_status)
+                            except Exception as exc:
+                                diagnostics.record_exception(exc, "Khởi tạo Visual Bible thất bại")
                         files,warnings = asset_files(project,project/"edit_plan.json")
                         if (project / "director_state.visual_v3.json").is_file():
                             files.append(project / "director_state.visual_v3.json")
+                        if (project / "visual_bible.json").is_file():
+                            files.append(project / "visual_bible.json")
+                        if (project / "visual_bible_status.json").is_file():
+                            files.append(project / "visual_bible_status.json")
                     elif step == "ai_video":
                         require_allowed_model(settings, config.ai_model)
                         VideoRequest(model=config.ai_model,seconds=config.ai_seconds,prompt="Preflight",format=config.video_format)

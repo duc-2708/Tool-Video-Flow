@@ -63,7 +63,8 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
 
     col_btn1, col_btn2 = st.columns([1, 1])
     with col_btn1:
-        if st.button("Tạo lại Assets (giữ kịch bản)", type="primary"):
+        btn_label = "Tạo lại Assets (giữ kịch bản)" if ((project / "assets.json").exists() and plan_changes) else "Tạo Assets"
+        if st.button(btn_label, type="primary"):
             st.session_state.pop("assets_error", None)
             progress = st.progress(0.0, text="Chuẩn bị Assets…")
             try:
@@ -115,6 +116,39 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
                    "Trạng thái giọng": "IM LẶNG — cần thử lại" if scene.audio_silent else "Đã có" if scene.audio_path else "TTS lỗi — cần thử lại",
                    "Số shot": len(scene.shots), "Fallback": sum(shot.fallback for shot in scene.shots)}
                   for scene in manifest.scenes], hide_index=True)
+
+    # Hiển thị tóm tắt Visual Bible (Kế hoạch hình ảnh tổng thể)
+    bible_file = project / "visual_bible.json"
+    bible_status_file = project / "visual_bible_status.json"
+    if bible_file.is_file():
+        try:
+            b_data = read_json(bible_file)
+            b_status = read_json(bible_status_file) if bible_status_file.is_file() else {}
+            with st.expander("🌐 Visual Bible (Thế giới, Vật thể & Cấu trúc)", expanded=False):
+                if b_status.get("fallback_used"):
+                    st.warning(f"⚠️ **Visual Bible:** Đang dùng quy tắc dự phòng (fallback) — {b_status.get('reason', '')}")
+                else:
+                    st.success("✅ **Visual Bible:** Khởi tạo thành công bởi AI Router")
+                
+                col_b1, col_b2 = st.columns(2)
+                with col_b1:
+                    st.markdown("**Thế giới không gian (Worlds):**")
+                    for w in b_data.get("worlds", []):
+                        st.markdown(f"- `{w.get('kind')}`: {w.get('reason')} *(Khu vực: {', '.join(w.get('zones', []))})*")
+                    pm = b_data.get("progress_metaphor", {})
+                    if pm.get("type") != "none":
+                        st.markdown(f"**Ẩn dụ tiến độ ({pm.get('type')}):** {', '.join(pm.get('items', []))}")
+                with col_b2:
+                    st.markdown("**Vật thể xuyên suốt (Persistent Actors):**")
+                    for a in b_data.get("persistent_actors", []):
+                        st.markdown(f"- `{a.get('type')}` ({a.get('id')}): {a.get('role')} *[Trạng thái: {', '.join(a.get('states', []))}]*")
+                    chaps = b_data.get("structure", {}).get("chapters", [])
+                    if chaps:
+                        st.markdown("**Cấu trúc phân đoạn (Chapters):**")
+                        for ch in chaps:
+                            st.markdown(f"- **{ch.get('kicker')}**: {ch.get('title')} *(Cảnh: {', '.join(map(str, ch.get('scene_ids', [])))})*")
+        except Exception as exc:
+            diagnostics.record_exception(exc, "Lỗi đọc visual_bible.json trong UI Assets")
     selected = st.selectbox("Cảnh để nghe và xem b-roll", [scene.scene_id for scene in manifest.scenes],
                             format_func=lambda value: f"Cảnh {value}")
     scene_assets = next(scene for scene in manifest.scenes if scene.scene_id == selected)

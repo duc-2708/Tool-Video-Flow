@@ -129,7 +129,13 @@ const TRAILING_CUTOFF_JS = new Set([
   'kia', 'đó', 'đây', 'tới', 'ở', 'gặp', 'gọi', 'như', 'theo', 'hành', 'tạo', 'làm',
   'khiến', 'giúp', 'sau', 'bày', 'tỏ', 'lên', 'xuống', 'qua', 'lại', 'thường', 'có',
   'tài', 'đến', 'đi', 'giống', 'ý', 'thì', 'rằng', 'vậy', 'thế', 'nào',
-  'sao', 'gì', 'ai', 'đâu', 'nữa', 'chăng'
+  'sao', 'gì', 'ai', 'đâu', 'nữa', 'chăng', 'từ'
+]);
+
+const INCOMPLETE_TRAILING_JS = new Set([
+  'thiết', 'ngân', 'an', 'bảo', 'thông', 'kỹ', 'tài', 'hệ', 'dữ', 'kinh',
+  'máy', 'phần', 'tin', 'lỗ', 'thị', 'cơ', 'tổng', 'pháp', 'quốc', 'chính',
+  'trách', 'quy', 'đối', 'kết', 'truy', 'bắt', 'tạm', 'xâm', 'ngăn', 'xét'
 ]);
 
 const LEADING_CUTOFF_JS = new Set([
@@ -140,23 +146,58 @@ const LEADING_CUTOFF_JS = new Set([
   'khiến', 'giúp', 'sau', 'sau khi', 'trong khi', 'bởi vì', 'thay vì', 'bày', 'tỏ', 'đã', 'ý'
 ]);
 
+const COMPOUND_PAIRS_JS = new Set([
+  'thiết bị', 'hoạt động', 'ngân hàng', 'an ninh', 'an toàn',
+  'bảo mật', 'thông tin', 'tài sản', 'tài chính', 'kỹ thuật',
+  'kỹ sư', 'lỗ hổng', 'hệ thống', 'chính sách', 'trách nhiệm',
+  'pháp lý', 'quốc tế', 'dữ liệu', 'máy tính', 'phần mềm',
+  'tin tặc', 'quy định'
+]);
+
+function isTrailingWordJs(words) {
+  if (!words || words.length === 0) return false;
+  const last = words[words.length - 1].toLowerCase();
+  if (words.length >= 2) {
+    const pair = words[words.length - 2].toLowerCase() + ' ' + last;
+    if (COMPOUND_PAIRS_JS.has(pair)) return false;
+  }
+  return TRAILING_CUTOFF_JS.has(last) || INCOMPLETE_TRAILING_JS.has(last);
+}
+
 function sanitizeSemanticLabel(label, maxWords = 4) {
   if (!label) return '';
   const str = String(label).trim().replace(/[.,:;!?…()“”"']/g, '');
   if (/^(?:minh họa|ý tưởng minh họa|minh họa ý tưởng|minh họa nội dung|ý chính cần nhớ)/i.test(str)) return '';
 
-  let words = str.split(/\s+/).filter(Boolean);
-  while (words.length > 0 && LEADING_CUTOFF_JS.has(words[0].toLowerCase())) {
-    words.shift();
+  let allWords = str.split(/\s+/).filter(Boolean);
+  while (allWords.length > 0 && LEADING_CUTOFF_JS.has(allWords[0].toLowerCase())) {
+    allWords.shift();
   }
-  while (words.length > 0 && TRAILING_CUTOFF_JS.has(words[words.length - 1].toLowerCase())) {
-    words.pop();
+  while (isTrailingWordJs(allWords)) {
+    allWords.pop();
   }
-  if (words.length > maxWords) {
-    words = words.slice(0, maxWords);
-    while (words.length > 0 && TRAILING_CUTOFF_JS.has(words[words.length - 1].toLowerCase())) {
+
+  // Lọc bỏ từ lơ lửng không cần thiết nếu ở giữa cụm danh từ (ví dụ "Lỗ hổng từ thiết bị" -> "Lỗ hổng thiết bị")
+  if (allWords.length >= 4 && allWords[2].toLowerCase() === 'từ') {
+    allWords.splice(2, 1);
+  }
+
+  let words = allWords.slice(0, Math.min(allWords.length, maxWords));
+  const lastIsCompound = words.length >= 2 && COMPOUND_PAIRS_JS.has(words[words.length - 2].toLowerCase() + ' ' + words[words.length - 1].toLowerCase());
+  if (words.length > 0 && !lastIsCompound && INCOMPLETE_TRAILING_JS.has(words[words.length - 1].toLowerCase())) {
+    if (words.length < allWords.length && words.length <= 4) {
+      words.push(allWords[words.length]);
+      if (words.length > 4 && words.length > maxWords) {
+        words.pop();
+        words.pop();
+      }
+    } else {
       words.pop();
     }
+  }
+
+  while (isTrailingWordJs(words)) {
+    words.pop();
   }
   if (words.length === 0) return '';
   const res = words.join(' ');
