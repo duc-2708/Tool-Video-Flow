@@ -189,7 +189,13 @@ def report(project,state,diagnostics):
 
 
 def run_all(config,progress_cb=None,stop_after=None,*,settings=None,cancel_event=None):
-    config = config if isinstance(config,RunConfig) else RunConfig.model_validate(config)
+    if hasattr(config, "model_dump"):
+        if type(config).__name__ == "RunConfig" and isinstance(config, RunConfig):
+            pass
+        else:
+            config = RunConfig.model_validate(config.model_dump())
+    elif not isinstance(config, RunConfig):
+        config = RunConfig.model_validate(config)
     settings = settings or get_settings()
     if "voice" not in config.model_fields_set and config.resume is None:
         config = config.model_copy(update={"voice":settings.default_voice})

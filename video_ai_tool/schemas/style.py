@@ -72,9 +72,10 @@ class CaptionStyle(StyleObservation):
     enabled: bool = True
     mode: Literal["word", "phrase", "sentence"] = "phrase"
     font_description: str = "Chữ đậm dễ đọc"
-    font_scale: float = Field(default=.064, ge=.03, le=.10)
+    font_scale: float = Field(default=.044, ge=.02, le=.10)
     color: str | None = "#FFFFFF"
-    highlight_color: str | None = "#FFD741"
+    highlight_color: str | None = "#FFE14A"
+    standout_color: str | None = "#FF3344"
     stroke_color: str | None = "#000000"
     color_note: str = ""
     stroke_width_ratio: float = Field(default=.006, ge=.001, le=.02)
@@ -93,7 +94,7 @@ class CaptionStyle(StyleObservation):
         if "appearance" in value:
             app_raw = str(value["appearance"] or "").strip().lower()
             value["appearance"] = "pill" if "pill" in app_raw else "classic"
-        for key in ("color","highlight_color","stroke_color"):
+        for key in ("color","highlight_color","standout_color","stroke_color"):
             if key not in value: continue
             original=value[key]
             if original is None: continue

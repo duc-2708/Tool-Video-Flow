@@ -196,7 +196,9 @@ class MasterTimeline {
       span.className = 'caption-text';
       if (activeWord) {
         span.textContent = activeWord.text;
-        span.style.color = 'var(--accent)';
+        const isStandout = /\d|[%$]|tỷ|triệu|kỷ lục|đột phá|nguy hiểm|bùng nổ/i.test(activeWord.text);
+        span.className = 'caption-text active' + (isStandout ? ' standout' : '');
+        span.style.color = isStandout ? '#FF3344' : '#FFE14A';
       }
       this.captionsEl.append(span);
     }

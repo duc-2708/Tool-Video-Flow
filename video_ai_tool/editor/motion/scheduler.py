@@ -965,12 +965,16 @@ def schedule_shots_no_repeat(
 
         dur = float(sh.get("duration") or sh.get("duration_sec") or 3.0)
 
-        # Generate animated beats (>= 3 visible beats per shot)
+        # Generate rich animated beats ensuring continuous lively motion across shot length
         shot_beats = [
-            {"at_sec": round(min(0.3, dur * 0.15), 2), "action": f"enter_{chosen_recipe}"},
-            {"at_sec": round(min(1.5, dur * 0.50), 2), "action": f"action_{chosen_recipe}_step"},
-            {"at_sec": round(min(dur - 0.3, dur * 0.85), 2), "action": f"impact_{chosen_recipe}_glow"}
+            {"at_sec": round(min(0.25, dur * 0.12), 2), "action": f"enter_{chosen_recipe}"},
+            {"at_sec": round(min(1.3, dur * 0.40), 2), "action": f"action_{chosen_recipe}_step"},
         ]
+        if dur >= 3.2:
+            shot_beats.append({"at_sec": round(dur * 0.65, 2), "action": f"micro_stream_{chosen_recipe}"})
+        shot_beats.append({"at_sec": round(min(dur - 0.25, dur * 0.88), 2), "action": f"impact_{chosen_recipe}_glow"})
+        if dur >= 4.5:
+            shot_beats.append({"at_sec": round(dur - 0.15, 2), "action": f"outro_lead_{chosen_recipe}"})
 
         # Extract factual data strictly grounded in narration
         shot_data = build_shot_factual_data(chosen_recipe, brief_info, text, scene_narration)
@@ -989,8 +993,18 @@ def schedule_shots_no_repeat(
         else:
             chosen_trans = trans_candidates[0]
 
-        # Persistent anchor state for this shot
-        anchor_state = f"giai_doan_{idx+1}"
+        # Persistent anchor state for this shot linked strictly to storyline flow
+        if idx == 0:
+            stage_desc = "Mở màn & Bối cảnh"
+        elif is_recap or idx == total_shots - 1:
+            stage_desc = "Tổng kết & Khuyến nghị"
+        elif idx < total_shots * 0.35:
+            stage_desc = "Diễn biến thực tế"
+        elif idx < total_shots * 0.70:
+            stage_desc = "Xung đột & Dữ liệu cốt lõi"
+        else:
+            stage_desc = "Phân tích chiều sâu"
+        anchor_state = f"Phần {idx+1}/{total_shots}: {stage_desc}"
 
         new_sh = dict(sh)
         new_sh["recipe"] = chosen_recipe

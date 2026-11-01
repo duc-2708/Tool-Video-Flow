@@ -270,12 +270,17 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                             valid_vkeys = set(VisualData.model_fields.keys())
                             clean_vdata = {k: v for k, v in sh_data["data"].items() if k in valid_vkeys} if isinstance(sh_data.get("data"), dict) else {}
                             shot_spec_data = VisualData(**clean_vdata) if clean_vdata else (target_sc.spec.visual_plan.data if getattr(target_sc.spec, 'visual_plan', None) and target_sc.spec.visual_plan.data else VisualData())
+                            sh_anchor = sh_data.get("anchor", {})
                             vp_obj = MotionScenePlan(
                                 scene_type=chosen_r,
                                 layout=target_sc.spec.visual_plan.layout if getattr(target_sc.spec, 'visual_plan', None) else "center_hero",
                                 theme=theme_cur,
                                 data=shot_spec_data,
                                 beats=beats,
+                                transition=sh_data.get("transition", "morph_anchor"),
+                                anchor=sh_anchor.get("anchor_element") if isinstance(sh_anchor, dict) else None,
+                                central_metaphor=sh_anchor.get("metaphor_name") if isinstance(sh_anchor, dict) else None,
+                                metaphor_state=sh_anchor.get("state") if isinstance(sh_anchor, dict) else None,
                             )
                             target_sh.spec.visual_plan = vp_obj
                             target_sh.visual_plan = vp_obj

@@ -37,7 +37,6 @@ def compute_scene_clip_hash(scene: Scene) -> str:
             "shot_idx": idx + 1,
             "ai_prompt": getattr(shot, "ai_prompt", None) or "",
             "query": getattr(shot, "query", "") or "",
-            "type": getattr(shot, "type", "") or ""
         })
     return cache_key(clip_data)
 
@@ -96,7 +95,7 @@ def source_script_hash(plan: EditPlan) -> str:
     return cache_key(data)
 
 
-def detect_plan_changes(manifest: AssetsManifest | None, current_plan: EditPlan) -> dict:
+def detect_plan_changes(manifest: AssetsManifest | None, current_plan: Any) -> dict:
     """
     Inspect what changed between manifest and current plan:
     - Audio changes: which scenes had their narration or voice changed.
@@ -109,57 +108,97 @@ def detect_plan_changes(manifest: AssetsManifest | None, current_plan: EditPlan)
         "voice_changed": None,
         "clips_changed": [],
         "visual_only_changed": False,
+        "audio_explanations": [],
+        "clip_explanations": [],
         "explanation": [],
         "cost_estimate": {"estimated_cost_usd": 0.0, "estimated_time_sec": 0}
     }
     if manifest is None:
         res["audio_changed"] = True
-        res["explanation"].append("Chưa có Assets manifest")
+        msg = "Chưa có Assets manifest"
+        res["audio_explanations"].append(msg)
+        res["explanation"].append(msg)
         return res
 
     current_voice = getattr(current_plan, "voice", "vi-VN-HoaiMyNeural")
     current_audio_hash = compute_audio_hash(current_plan)
+    cur_source_hash = source_script_hash(current_plan)
+    is_source_unchanged = bool(
+        manifest.source_plan_hash
+        and (manifest.source_plan_hash == cur_source_hash or manifest.source_plan_hash == "fixture")
+    )
+    is_audio_hash_matched = bool(
+        getattr(manifest, "audio_hash", None)
+        and manifest.audio_hash == current_audio_hash
+    )
 
     # 1. Check voice change
     manifest_voice = None
     if manifest.scenes and manifest.scenes[0].audio_voice:
         manifest_voice = manifest.scenes[0].audio_voice
+
     if manifest_voice and manifest_voice != current_voice:
-        res["audio_changed"] = True
-        res["voice_changed"] = (manifest_voice, current_voice)
-        res["explanation"].append(f"Giọng đọc đổi từ '{manifest_voice}' sang '{current_voice}'")
+        is_fallback = any(
+            getattr(sc, "audio_warnings", None) and any("giọng dự phòng" in w or "fallback" in w for w in sc.audio_warnings)
+            for sc in manifest.scenes
+        ) if manifest.scenes else False
+
+        # Only treat as voice changed if script source actually changed and it was not a legitimate TTS fallback
+        if not is_fallback and not is_source_unchanged and not is_audio_hash_matched:
+            res["audio_changed"] = True
+            res["voice_changed"] = (manifest_voice, current_voice)
+            msg = f"Giọng đọc đổi từ '{manifest_voice}' sang '{current_voice}'"
+            res["audio_explanations"].append(msg)
+            res["explanation"].append(msg)
 
     # 2. Check scene-level narration changes
     old_scene_hashes = getattr(manifest, "scene_audio_hashes", {}) or {}
     if old_scene_hashes:
         for sc in current_plan.scenes:
             cur_sc_hash = compute_scene_audio_hash(sc, current_voice)
-            if str(sc.id) in old_scene_hashes or sc.id in old_scene_hashes:
-                if old_scene_hashes.get(str(sc.id), old_scene_hashes.get(sc.id)) != cur_sc_hash:
+            cur_sc_hash_fallback = compute_scene_audio_hash(sc, manifest_voice) if manifest_voice else cur_sc_hash
+            sc_key = str(sc.id)
+            if sc_key in old_scene_hashes or sc.id in old_scene_hashes:
+                stored_h = old_scene_hashes.get(sc_key, old_scene_hashes.get(sc.id))
+                if stored_h != cur_sc_hash and stored_h != cur_sc_hash_fallback:
                     res["audio_changed"] = True
                     res["changed_audio_scenes"].append(sc.id)
-                    res["explanation"].append(f"Cảnh {sc.id}: Lời đọc kịch bản đã thay đổi")
+                    msg = f"Cảnh {sc.id}: Lời đọc kịch bản đã thay đổi"
+                    res["audio_explanations"].append(msg)
+                    res["explanation"].append(msg)
             else:
                 res["audio_changed"] = True
                 res["changed_audio_scenes"].append(sc.id)
-                res["explanation"].append(f"Cảnh {sc.id}: Kịch bản mới chưa có audio")
+                msg = f"Cảnh {sc.id}: Kịch bản mới chưa có audio"
+                res["audio_explanations"].append(msg)
+                res["explanation"].append(msg)
     else:
-        cur_source_hash = source_script_hash(current_plan)
-        if manifest.source_plan_hash and manifest.source_plan_hash != cur_source_hash and manifest.source_plan_hash != "fixture":
+        if not is_source_unchanged:
             res["audio_changed"] = True
-            res["explanation"].append("Kịch bản hoặc giọng đọc đã thay đổi")
+            msg = "Kịch bản hoặc giọng đọc đã thay đổi"
+            res["audio_explanations"].append(msg)
+            res["explanation"].append(msg)
 
-    # If manifest had aggregate audio_hash
+    # If manifest had aggregate audio_hash and source changed
     if getattr(manifest, "audio_hash", None) and manifest.audio_hash != current_audio_hash:
-        res["audio_changed"] = True
+        # Check if difference is purely due to fallback voice
+        if not is_source_unchanged and not res["audio_changed"]:
+            res["audio_changed"] = True
+            msg = "Tổng thể audio kịch bản đã thay đổi"
+            res["audio_explanations"].append(msg)
+            res["explanation"].append(msg)
 
     # 3. Check AI Clip prompt changes
-    old_clip_hashes = getattr(manifest, "scene_clip_hashes", {}) or {}
-    for sc in current_plan.scenes:
-        cur_c_hash = compute_scene_clip_hash(sc)
-        if (str(sc.id) in old_clip_hashes or sc.id in old_clip_hashes) and old_clip_hashes.get(str(sc.id), old_clip_hashes.get(sc.id)) != cur_c_hash:
-            res["clips_changed"].append(sc.id)
-            res["explanation"].append(f"Cảnh {sc.id}: Prompt clip AI hoặc b-roll đã thay đổi")
+    if not is_source_unchanged:
+        old_clip_hashes = getattr(manifest, "scene_clip_hashes", {}) or {}
+        for sc in current_plan.scenes:
+            cur_c_hash = compute_scene_clip_hash(sc)
+            sc_key = str(sc.id)
+            if (sc_key in old_clip_hashes or sc.id in old_clip_hashes) and old_clip_hashes.get(sc_key, old_clip_hashes.get(sc.id)) != cur_c_hash:
+                res["clips_changed"].append(sc.id)
+                msg = f"Cảnh {sc.id}: Prompt clip AI hoặc b-roll đã thay đổi"
+                res["clip_explanations"].append(msg)
+                res["explanation"].append(msg)
 
     # Calculate cost estimate for changed AI clips
     if res["clips_changed"]:
