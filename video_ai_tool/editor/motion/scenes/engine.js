@@ -104,12 +104,79 @@ function draw(host,spec,t,duration,C){
 
  const svg=holder.querySelector('svg');
  const back=group(svg,{class:'depth-background',transform:`translate(${14*Math.sin(t*.21)} ${18*Math.cos(t*.19)})`});
- for(let i=0;i<4;i++){shape(back,'circle',{cx:180+(i%2)*720,cy:320+Math.floor(i/2)*860,r:110+30*Math.sin(t*.7+i),fill:'var(--accent)',opacity:.06,class:'motion-element'});}
- const defs=el('defs');defs.innerHTML='<clipPath id="content-safe-clip"><rect x="70" y="240" width="940" height="1090" rx="24"/></clipPath>';svg.prepend(defs);
+ for(let i=0;i<8;i++){
+   const px = 140 + (i % 3) * 360 + 20 * Math.sin(t * 0.7 + i);
+   const py = 280 + Math.floor(i / 3) * 420 + 25 * Math.cos(t * 0.6 + i * 1.5);
+   const rad = 80 + 24 * Math.sin(t * 0.8 + i);
+   shape(back,'circle',{cx:px,cy:py,r:rad,fill:'var(--accent)',opacity:0.04 + 0.03 * Math.sin(t * 1.5 + i),class:'motion-element'});
+ }
+ const defs=el('defs');
+ defs.innerHTML='<clipPath id="content-safe-clip"><rect x="70" y="240" width="940" height="1090" rx="24"/></clipPath>' +
+   '<linearGradient id="living-light-sweep" x1="0%" y1="0%" x2="100%" y2="0%">' +
+   '<stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>' +
+   '<stop offset="' + (((t * 35) % 100).toFixed(1)) + '%" stop-color="#ffffff" stop-opacity="0.15"/>' +
+   '<stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>' +
+   '</linearGradient>';
+ svg.prepend(defs);
+
+ // Continuous camera flow & living canvas breathing
  const cam=spec.camera||{},p=clamp(t/Math.max(.1,duration)),amount=Math.min(.05,Math.max(.02,cam.amount||.04));
  const zoom=cam.kind==='pull_out'?1+amount*(1-p):1+amount*p,tx=cam.kind==='pan_left'?-amount*240*p:cam.kind==='pan_right'?amount*240*p:0;
- const mid=group(svg,{class:'depth-middle',transform:`translate(${540+tx} 785) scale(${zoom}) translate(-540 -785)`,'clip-path':'url(#content-safe-clip)'});
- const front=group(svg,{class:'depth-foreground',transform:`translate(${8*Math.sin(t*.45)} ${8*Math.cos(t*.4)})`});
+
+ // Living canvas ambient micro-motion
+ const ambientY = 3.5 * Math.sin(t * 1.8 + (spec.shot_index || 0));
+ const ambientScale = 1.0 + 0.004 * Math.sin(t * 2.2);
+
+ // Shot-to-shot smooth transition
+ const transStyle = spec.transition || 'morph_anchor';
+ const enterDur = 0.35, exitDur = 0.28;
+ const enterP = clamp(t / enterDur);
+ const exitP = clamp((t - (duration - exitDur)) / exitDur);
+ let transX = 0, transY = 0, transScale = 1.0, transAlpha = 1.0;
+
+ if (transStyle === 'directional_wipe') {
+   if (enterP < 1.0) {
+     transX = 75 * (1 - ease(enterP));
+     transAlpha = ease(enterP);
+   }
+   if (exitP > 0.0) {
+     transX = -75 * ease(exitP);
+     transAlpha = Math.min(transAlpha, 1 - 0.4 * ease(exitP));
+   }
+ } else if (transStyle === 'zoom_through') {
+   if (enterP < 1.0) {
+     transScale = 0.92 + 0.08 * ease(enterP);
+     transAlpha = clamp(enterP / 0.85);
+   }
+   if (exitP > 0.0) {
+     transScale = 1.0 + 0.06 * ease(exitP);
+     transAlpha = Math.min(transAlpha, 1 - 0.45 * ease(exitP));
+   }
+ } else if (transStyle === 'morph_anchor') {
+   if (enterP < 1.0) {
+     transScale = 0.95 + 0.05 * ease(enterP);
+     transAlpha = clamp(enterP / 0.8);
+   }
+   if (exitP > 0.0) {
+     transScale = 1.0 - 0.03 * ease(exitP);
+     transAlpha = Math.min(transAlpha, 1 - 0.35 * ease(exitP));
+   }
+ } else {
+   if (enterP < 1.0) {
+     transY = 25 * (1 - ease(enterP));
+     transAlpha = clamp(enterP);
+   }
+   if (exitP > 0.0) {
+     transY = -25 * ease(exitP);
+     transAlpha = Math.min(transAlpha, 1 - 0.4 * ease(exitP));
+   }
+ }
+
+ const finalX = 540 + tx + transX;
+ const finalY = 785 + ambientY + transY;
+ const finalScale = zoom * ambientScale * transScale;
+ const mid=group(svg,{class:'depth-middle',transform:`translate(${finalX} ${finalY}) scale(${finalScale}) translate(-540 -785)`,'clip-path':'url(#content-safe-clip)',opacity:transAlpha});
+ const front=group(svg,{class:'depth-foreground',transform:`translate(${8*Math.sin(t*.45)} ${8*Math.cos(t*.4)})`,opacity:transAlpha});
  const beats=spec.beats||[],at=(action,otherwise)=>beats.find(b=>b.action===action)?.at_sec??otherwise,start=at('count_up',0),finish=at('count_end',start+1.2);
  const context={svg,back,mid,front,d:spec.data,t,p,type:stype,duration,hold:C.min_card_hold_sec||1.2,numberProgress:clamp((t-start)/Math.max(.1,finish-start)),row:i=>ease((t-at('reveal_item_'+i,.15+i*.7))/.35)};
 

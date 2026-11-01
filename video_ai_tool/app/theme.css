@@ -1,0 +1,112 @@
+/* Modern Black - Gold - White Premium Cyber Dark Theme */
+
+/* Global root styling */
+html, body, [data-testid="stAppViewContainer"] {
+  background-color: #09090b !important;
+  color: #ffffff !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+[data-testid="stHeader"] {
+  background-color: rgba(9, 9, 11, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid #27272a !important;
+}
+
+/* Sidebar styling */
+[data-testid="stSidebar"] {
+  background-color: #0d0d11 !important;
+  border-right: 1px solid #27272a !important;
+}
+
+[data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+  color: #ffd60a !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px !important;
+}
+
+/* Header titles */
+h1, h2, h3, h4, h5, h6 {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* Gold Accent text & badges */
+.gold-accent {
+  color: #ffd60a !important;
+  font-weight: 700 !important;
+}
+
+.gold-badge {
+  background: rgba(255, 214, 10, 0.12) !important;
+  color: #ffd60a !important;
+  border: 1px solid rgba(255, 214, 10, 0.3) !important;
+  padding: 4px 10px !important;
+  border-radius: 9999px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  display: inline-block !important;
+}
+
+/* Primary Button (Gold Glow) */
+button[kind="primary"] {
+  background: linear-gradient(135deg, #ffd60a 0%, #ffc300 100%) !important;
+  color: #000000 !important;
+  font-weight: 800 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 14px rgba(255, 214, 10, 0.35) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+button[kind="primary"]:hover {
+  background: linear-gradient(135deg, #ffe033 0%, #ffd60a 100%) !important;
+  box-shadow: 0 6px 20px rgba(255, 214, 10, 0.5) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Secondary Button */
+button[kind="secondary"] {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+  border: 1px solid #3f3f46 !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+button[kind="secondary"]:hover {
+  background-color: #27272a !important;
+  border-color: #ffd60a !important;
+  color: #ffd60a !important;
+}
+
+/* Inputs & Selectboxes */
+div[data-baseweb="input"], div[data-baseweb="select"] {
+  background-color: #18181b !important;
+  border: 1px solid #3f3f46 !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+}
+
+div[data-baseweb="input"]:focus-within, div[data-baseweb="select"]:focus-within {
+  border-color: #ffd60a !important;
+  box-shadow: 0 0 0 1px #ffd60a !important;
+}
+
+/* Progress bar in Gold */
+.stProgress > div > div > div > div {
+  background-color: #ffd60a !important;
+}
+
+/* Cards & Containers */
+.main-card {
+  background: #141417;
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card-gold-border {
+  border-left: 4px solid #ffd60a !important;
+}

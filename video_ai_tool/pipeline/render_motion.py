@@ -63,7 +63,13 @@ def scene_payload(scene,size,caption_style,options=None):
             "template":(getattr(s.spec, 'visual_plan', None).scene_type if getattr(s.spec, 'visual_plan', None) and getattr(s.spec.visual_plan, 'scene_type', None) else (getattr(s, 'visual_plan', None).scene_type if getattr(s, 'visual_plan', None) and getattr(s.visual_plan, 'scene_type', None) else (s.spec.visual.template if s.spec.visual else "stock"))),
             "data":s.spec.visual.data.model_dump(mode="json") if s.spec.visual else {},
             "beats":[b.model_dump(mode="json") for b in s.spec.visual.beats] if s.spec.visual else [],
-            "visual_plan":(s.spec.visual_plan.model_dump(mode="json") if hasattr(s.spec, "visual_plan") and s.spec.visual_plan else (s.visual_plan.model_dump(mode="json") if hasattr(s, "visual_plan") and s.visual_plan else getattr(s, "visual_plan", None)))
+            "visual_plan":(s.spec.visual_plan.model_dump(mode="json") if hasattr(s.spec, "visual_plan") and s.spec.visual_plan else (s.visual_plan.model_dump(mode="json") if hasattr(s, "visual_plan") and s.visual_plan else getattr(s, "visual_plan", None))),
+            "transition": getattr(getattr(s.spec, 'visual_plan', None), 'transition', None) or 'morph_anchor',
+            "anchor": {
+                "anchor_element": getattr(getattr(s.spec, 'visual_plan', None), 'anchor', None),
+                "metaphor_name": getattr(getattr(s.spec, 'visual_plan', None), 'central_metaphor', None),
+                "state": getattr(getattr(s.spec, 'visual_plan', None), 'metaphor_state', None),
+            }
         } for s in scene.shots]}
     payload.update(options or {})
     # Intercept MOTION_FORCE_RECIPES override for recipe path verification

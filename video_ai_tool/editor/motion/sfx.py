@@ -5,13 +5,31 @@ import numpy as np
 
 
 def synthesize(kind, rate=44100):
-    seconds = {"click": 0.045, "pop": 0.12, "whoosh": 0.25, "chime": 0.32, "snap": 0.08}.get(kind, 0.12)
+    seconds = {
+        "click": 0.045, "pop": 0.12, "whoosh": 0.25, "chime": 0.32, "snap": 0.08,
+        "punch": 0.14, "ding": 0.35, "sparkle": 0.28, "swoosh": 0.20,
+    }.get(kind, 0.12)
     t = np.arange(round(seconds * rate)) / rate
     if kind == "whoosh":
         signal = np.random.default_rng(23).normal(0, 0.18, len(t)) * np.sin(np.pi * t / seconds) ** 2
         signal = np.convolve(signal, np.ones(12) / 12, mode="same")
+    elif kind == "swoosh":
+        signal = np.random.default_rng(37).normal(0, 0.22, len(t)) * np.sin(np.pi * t / seconds) ** 3
+        signal = np.convolve(signal, np.ones(8) / 8, mode="same")
     elif kind == "chime":
         signal = (np.sin(2 * np.pi * 880 * t) + 0.35 * np.sin(2 * np.pi * 1320 * t)) * np.exp(-t * 15)
+    elif kind == "ding":
+        signal = (np.sin(2 * np.pi * 1560 * t) + 0.45 * np.sin(2 * np.pi * 2340 * t) + 0.2 * np.sin(2 * np.pi * 3120 * t)) * np.exp(-t * 18)
+    elif kind == "sparkle":
+        shimmer = np.sin(2 * np.pi * (1200 + 1600 * (t / seconds)) * t) * np.sin(2 * np.pi * 40 * t)
+        noise = np.random.default_rng(55).normal(0, 0.08, len(t))
+        signal = (shimmer + noise) * np.exp(-t * 14)
+    elif kind == "punch":
+        # Low frequency punch with quick pitch drop (140Hz down to 55Hz)
+        freq = 140 - 85 * (t / seconds)
+        sub = np.sin(2 * np.pi * freq * t)
+        impact = np.random.default_rng(99).normal(0, 0.25, len(t)) * np.exp(-t * 120)
+        signal = (sub * 0.8 + impact * 0.4) * np.exp(-t * 22)
     elif kind == "click":
         signal = np.sin(2 * np.pi * 1800 * t) * np.exp(-t * 140)
     elif kind == "snap":
@@ -27,7 +45,7 @@ def synthesize(kind, rate=44100):
 def ensure_sfx(folder):
     folder = Path(folder)
     folder.mkdir(parents=True, exist_ok=True)
-    for kind in ("click", "pop", "whoosh", "chime", "snap"):
+    for kind in ("click", "pop", "whoosh", "chime", "snap", "punch", "ding", "sparkle", "swoosh"):
         # A user's own sound of any supported extension takes precedence.
         if any((folder / (kind + ext)).exists() for ext in (".wav", ".mp3", ".ogg")):
             continue

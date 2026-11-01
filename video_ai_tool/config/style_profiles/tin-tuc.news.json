@@ -112,6 +112,7 @@
     "font_scale": 0.064,
     "color": "#FFFFFF",
     "highlight_color": "#FFD741",
+    "standout_color": "#FF3344",
     "stroke_color": "#000000",
     "color_note": "",
     "stroke_width_ratio": 0.006,
@@ -228,7 +229,7 @@
   "video_type": "news",
   "video_count": 2,
   "confidence_label": "đang tích lũy",
-  "source_signature": "ba544f7853d323446e8909b5f8bdb5242444334259827e43f64e47b7b5f028bb",
+  "source_signature": "9af75c717c2c678c0f4bccf822280734e48df5c466376fc7e3203c9cb6a521ce",
   "locked_fields": [],
   "scene_pacing": [
     {
