@@ -1,0 +1,20 @@
+
+[2026-11-02T03:23:37.678749+00:00] run_all step=research
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\run_all.py", line 344, in run_all
+    run_research(config.topic,settings,web_limit=config.web_limit,use_youtube=config.youtube_trends,
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        youtube_days=config.youtube_days,output_dir=project,progress=lambda message:emit(step,message),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        source_languages=config.source_languages,output_language=config.output_language,discovery_hint=config.discovery,content_mode=config.content_mode)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+providers.llm_base.ProviderError: Gemini quota exhausted
+

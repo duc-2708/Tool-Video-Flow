@@ -1,0 +1,331 @@
+{
+  "source_plan_hash": "1ed8cb59614aeb41135925f8586b4803a05d5ab5561934f24a21d61cb2d92db4",
+  "resolved_plan_hash": "3d5fb77ac9e1237a7d8cc27f8437a0de255d8871fff58ea02549bdd5fdf7a40e",
+  "status": "complete",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "audio_path": "audio/scene_1.mp3",
+      "audio_duration_sec": 3.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_1_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "audio_path": "audio/scene_2.mp3",
+      "audio_duration_sec": 3.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_2_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_2_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "audio_path": "audio/scene_3.mp3",
+      "audio_duration_sec": 3.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_3_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_3_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "audio_path": "audio/scene_4.mp3",
+      "audio_duration_sec": 3.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_4_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_4_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 5,
+      "audio_path": "audio/scene_5.mp3",
+      "audio_duration_sec": 3.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_5_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_5_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 6,
+      "audio_path": "audio/scene_6.mp3",
+      "audio_duration_sec": 3.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_6_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_6_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 7,
+      "audio_path": "audio/scene_7.mp3",
+      "audio_duration_sec": 3.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_7_shot_1_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_7_shot_2_fallback_b28ba3dba7.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "audio_path": "audio/scene_8.mp3",
+      "audio_duration_sec": 3.0,
+      "audio_error": null,
+      "audio_silent": false,
+      "audio_voice": "vi-VN-HoaiMyNeural",
+      "audio_warnings": [],
+      "shots": [
+        {
+          "shot_id": 1,
+          "query": "video editing",
+          "media_type": "color",
+          "path": "clips/scene_8_shot_1_fallback_0155de9979.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        },
+        {
+          "shot_id": 2,
+          "query": "video editing aerial",
+          "media_type": "color",
+          "path": "clips/scene_8_shot_2_fallback_0155de9979.png",
+          "provider": "generated",
+          "asset_id": null,
+          "author": null,
+          "source_url": null,
+          "fallback": true,
+          "fallback_reason": "Không có stock phù hợp; dùng nền màu và chữ.",
+          "media_duration_sec": null,
+          "requires_loop": false
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "Chưa có PIXABAY_API_KEY; sẽ dùng stock tùy chọn hoặc nền màu khi không tìm được clip."
+  ],
+  "audio_hash": "9a3c7fcd41b68c76d86081e619f162c8f98f8b06d43bf39f8586a852be7a2bb4",
+  "clip_hash": "946dc47f9369519c15fe1031f528780da3dafed8a0eeb9f84e103dfe99af2df7",
+  "visual_hash": "43bcfeb173c5fd0543dd00cb0f4826880b0bdd74fe52d4ac07ca5029d2f73d78",
+  "scene_audio_hashes": {
+    "1": "c491119e9f8300fff30e7b80ff294e8de2020709fe0bf2b698ed5518a430c851",
+    "2": "43d20abe04591b992fb5c6d2bbe971e4c24d5e8d13da621253ce68722b9638ae",
+    "3": "7e417bc8ea119d3d5855f64ec3059114b805be9f62cd9cbcc7cfdca09764f75f",
+    "4": "59a31282539647286810a21c51c23b0be22f6ba9dfbaa78a45b7c8c18fe56505",
+    "5": "fe40b59f15521e5353a8e7db3b8c65f27fc036a70cf75fd38e1a27241d77b533",
+    "6": "7c7417736844155941526a474b12b381432cf209ddb62ac41057a79492bb9feb",
+    "7": "6f358d2008abeb63a7b69b32851a23f8a8ff7fb568061072aca6946f591d56b0",
+    "8": "9ea4c73e9a71baec3b0d111e5f61da31ef7fa7cadc4c8f97a1316c6574453d88"
+  },
+  "scene_clip_hashes": {
+    "1": "37afceaeca90e9461be0bcc2e914440f798939e1c67dac0b92132ccc54c4e737",
+    "2": "1565c59d4ef0c024b7ab5aa13295274984e8686a65d04d02bd0a4f26c214a6e1",
+    "3": "1565c59d4ef0c024b7ab5aa13295274984e8686a65d04d02bd0a4f26c214a6e1",
+    "4": "1565c59d4ef0c024b7ab5aa13295274984e8686a65d04d02bd0a4f26c214a6e1",
+    "5": "1565c59d4ef0c024b7ab5aa13295274984e8686a65d04d02bd0a4f26c214a6e1",
+    "6": "1565c59d4ef0c024b7ab5aa13295274984e8686a65d04d02bd0a4f26c214a6e1",
+    "7": "1565c59d4ef0c024b7ab5aa13295274984e8686a65d04d02bd0a4f26c214a6e1",
+    "8": "1565c59d4ef0c024b7ab5aa13295274984e8686a65d04d02bd0a4f26c214a6e1"
+  }
+}

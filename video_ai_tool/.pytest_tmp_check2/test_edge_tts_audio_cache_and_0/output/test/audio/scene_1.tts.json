@@ -1,0 +1,15 @@
+{
+  "text_hash": "0ac604fdb44557009ba96e6db60606dff9c809dc016c7e092e0e9f64c31faab8",
+  "audio_silent": false,
+  "audio_error": null,
+  "voice_used": "vi-VN-NamMinhNeural",
+  "warnings": [],
+  "chunks": [
+    {
+      "index": 1,
+      "silent": false,
+      "voice": "vi-VN-NamMinhNeural",
+      "error": null
+    }
+  ]
+}

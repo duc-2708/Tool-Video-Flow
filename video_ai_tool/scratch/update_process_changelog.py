@@ -1,0 +1,15 @@
+from pathlib import Path
+
+p = Path("docs/PROCESS.md")
+content = p.read_text(encoding="utf-8")
+
+header = "| Ngày | Thay đổi | File | Lý do |\n|---|---|---|---|\n"
+if header not in content:
+    header = "| Ngày | Thay đổi | File | Lý do |\r\n|---|---|---|---|\r\n"
+
+new_row = """| 2026-11-02 | Tích hợp hệ thống Slide Script, Code Grounding & Bộ Chấm Điểm Tự Động cho Video Tin Công Nghệ Phong Cách Light Glass: (1) Schema pydantic schemas/slide_script.py: SlideItem (layout trong 6 recipes light_glass, sentence_ids liên tiếp, slots giới hạn chặt chẽ: headline <= 3 dòng x 14 ký tự/dòng, pill <= 28 ký tự, features items <= 40 ký tự x <= 4 ý, compare <= 2 dòng mỗi bên, SourceRef, EmphasisItem); (2) Agent agents/slide_planner.py: tính số slide = round(duration/6.5) clamp [5, 10], gom 1-3 câu/slide phủ 100% câu, slide đầu lg_source_headline/lg_note_card, slide cuối lg_cta_profile, cấm lặp layout liền kề, trích xuất slots & 1-2 emphasis verbatim; fallback heuristic editor/motion/light_glass_slots.py chia đều câu và gán layout theo từ khóa; (3) Bộ kiểm tra code grounding editor/motion/slide_grounding.py: rà soát số liệu/tên riêng không tin LLM, tự động hạ cấp slide chứa số bịa về lg_note_card, sửa headline khuyết từ câu đọc, cắt chữ tại ranh giới từ greedy wrap cấm rớt từ đơn cụt; (4) Timing & Phụ đề nhấn: ranh giới slide khớp ranh giới câu, các phần tử hiện theo word_timing hoàn tất trước 0.6s cuối slide; chữ emphasis đổi màu highlight vàng (#f59e0b / .lg-highlight) đúng nhịp được nói; (5) Công cụ tools/source_capture.py: chụp đầu trang 1280x720 cho source_url trong brief (timeout 15s, tuân thủ robots, không bypass login), fallback source card tự dựng bằng Pillow; (6) Bộ chấm điểm tự động tools/audit_style.py: chấm điểm 0-100 (Pass/Fail) theo 7 tiêu chí cứng (số slide 5-10 & 4-9s, empty frame < 3%, 0 từ debug rò rỉ, 100% số liệu grounded, không tràn chữ, >= 4 layouts không lặp kề, emphasis khớp lời); (7) Công cụ tools/rerender_with_theme.py hỗ trợ --slide-script, --confirm-cost; (8) Tự động kích hoạt Slide Script trong editor/render.py khi motion_theme == 'light_glass'; (9) Toàn bộ 23 tests (16 unit tests mới + 5 light glass tests + 1 rerender dry-run test) passed 100%, ruff F821 sạch lỗi. | APP/schemas/slide_script.py, editor/motion/light_glass_slots.py, agents/slide_planner.py, editor/motion/slide_grounding.py, tools/source_capture.py, tools/audit_style.py, tools/rerender_with_theme.py, editor/render.py, pipeline/render_motion.py, editor/motion/recipes/light_glass.js, editor/motion/themes/themes.css, tests/test_slide_schema.py, tests/test_slide_planner_grounding.py, tests/test_source_capture.py, tests/test_audit_style.py, tests/test_rerender_with_theme.py; ROOT/docs/PROCESS.md | Hoàn thành toàn diện yêu cầu nâng cấp luồng dàn dựng video Light Glass từ kịch bản phân mảnh sang hệ thống Slide Script theo nhịp video chuẩn bám sát lời đọc |\n"""
+
+assert header in content, "Header not found in PROCESS.md"
+content = content.replace(header, header + new_row, 1)
+p.write_text(content, encoding="utf-8")
+print("Successfully inserted changelog row into docs/PROCESS.md!")
