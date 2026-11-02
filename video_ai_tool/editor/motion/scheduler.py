@@ -91,7 +91,23 @@ RECIPE_FAMILY_MAP: Dict[str, MotionFamily] = {
     "countdown_timer": MotionFamily.NUMBER_STAT,
     "code_terminal_window": MotionFamily.MOCK_UI,
     "quote_dialog_card": MotionFamily.MOCK_UI,
+    # Light Glass Recipes
+    "lg_source_headline": MotionFamily.MOCK_UI,
+    "lg_stat_hero": MotionFamily.NUMBER_STAT,
+    "lg_shot_features": MotionFamily.CONCEPT_RELATION,
+    "lg_vs_compare": MotionFamily.COMPARE_VS,
+    "lg_note_card": MotionFamily.MOCK_UI,
+    "lg_cta_profile": MotionFamily.MOCK_UI,
 }
+
+LIGHT_GLASS_RECIPES: List[str] = [
+    "lg_source_headline",
+    "lg_stat_hero",
+    "lg_shot_features",
+    "lg_vs_compare",
+    "lg_note_card",
+    "lg_cta_profile",
+]
 
 # Cross-Family Equivalence Map for Auto-Repair
 FAMILY_ALTERNATIVES: Dict[MotionFamily, List[str]] = {
@@ -225,6 +241,69 @@ def suggest_metaphor_recipe(narration: str, previous_recipe: Optional[str] = Non
             return alt
 
     return "slot_counter"
+
+
+def suggest_light_glass_recipe(
+    narration: str,
+    shot_index: int = 0,
+    total_shots: int = 1,
+    previous_recipe: Optional[str] = None
+) -> str:
+    """Select the best matching light_glass recipe for a sentence, avoiding identical consecutive recipe."""
+    norm = _normalize_text(narration)
+
+    # 1. First shot prioritizes headline
+    if shot_index == 0 and previous_recipe != "lg_source_headline":
+        return "lg_source_headline"
+
+    # 2. Last shot (if >= 3 shots) prioritizes CTA profile
+    if shot_index == total_shots - 1 and total_shots >= 3 and previous_recipe != "lg_cta_profile":
+        return "lg_cta_profile"
+
+    # 3. Detect features
+    has_number = bool(re.search(r'\b\d+(?:[.,]\d+)?\s*(?:%|trieu|ty|usd|x|lan|nghin|k|tram)?\b', norm))
+    has_compare = any(k in norm for k in ["so sanh", "khac biet", "thay vi", "doi thu", "trong khi", "cu", "moi", "vuot troi", "tang truong", "giam"])
+    has_list = any(k in norm for k in ["tinh nang", "bao gom", "diem noi bat", "cac buoc", "ho tro", "dac diem", "ung dung", "he thong"])
+
+    candidates: List[str] = []
+    if has_number:
+        candidates.append("lg_stat_hero")
+    if has_compare:
+        candidates.append("lg_vs_compare")
+    if has_list:
+        candidates.append("lg_shot_features")
+    candidates.extend(["lg_note_card", "lg_shot_features", "lg_vs_compare", "lg_stat_hero", "lg_source_headline"])
+
+    for cand in candidates:
+        if cand != previous_recipe:
+            return cand
+
+    return "lg_note_card" if previous_recipe != "lg_note_card" else "lg_shot_features"
+
+
+def schedule_light_glass_shots(shots: List[Dict[str, Any]]) -> List[str]:
+    """Schedule recipes for a sequence of shots in light_glass theme, strictly forbidding consecutive repetitions."""
+    assigned: List[str] = []
+    total = len(shots)
+    for idx, sh in enumerate(shots):
+        text = (
+            sh.get("narration")
+            or sh.get("text")
+            or (sh.get("spec", {}).get("narration") if isinstance(sh.get("spec"), dict) else getattr(getattr(sh, "spec", None), "narration", ""))
+            or ""
+        )
+        prev = assigned[-1] if assigned else None
+        req = sh.get("template") or sh.get("scene_type") or sh.get("recipe")
+        if req and req in LIGHT_GLASS_RECIPES and req != prev:
+            chosen = req
+        else:
+            chosen = suggest_light_glass_recipe(text, idx, total, prev)
+        # Final strict guard: never same as prev
+        if chosen == prev:
+            fallback_pool = [r for r in LIGHT_GLASS_RECIPES if r != prev]
+            chosen = fallback_pool[0]
+        assigned.append(chosen)
+    return assigned
 
 
 def schedule_recipes_no_repeat(

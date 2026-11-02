@@ -30,6 +30,11 @@ def bundle_engine():
                 content = vocab_path.read_text(encoding="utf-8")
                 js_parts.append(content)
                 hasher.update(vocab_path.read_bytes())
+            lg_path = FOLDER.parent / "recipes" / "light_glass.js"
+            if lg_path.is_file():
+                content = lg_path.read_text(encoding="utf-8")
+                js_parts.append(content)
+                hasher.update(lg_path.read_bytes())
 
         path = FOLDER / name
         if path.is_file():
