@@ -1,0 +1,131 @@
+{
+  "theme_name": "auto",
+  "palette": {
+    "top": "#0a0e1c",
+    "bottom": "#05070f",
+    "card": "#12192e",
+    "foreground": "#f4f7ff",
+    "accent": "#00f0ff",
+    "secondary": "#ff007f"
+  },
+  "worlds": [
+    {
+      "id": "world_ai_lab",
+      "kind": "lab",
+      "reason": "Phòng thí nghiệm phát triển và vận hành các tác nhân trí tuệ nhân tạo.",
+      "zones": [
+        "khu_nghien_cuu",
+        "cum_may_chu_ai",
+        "man_hinh_giam_sat"
+      ]
+    }
+  ],
+  "persistent_actors": [
+    {
+      "id": "agent_console",
+      "type": "terminal_window",
+      "role": "Giao diện điều khiển AI agent",
+      "states": [
+        "typing",
+        "active"
+      ]
+    }
+  ],
+  "structure": {
+    "chapters": [
+      {
+        "id": "chap_1",
+        "title": "Hook",
+        "scene_ids": [
+          1,
+          2
+        ],
+        "kicker": "PHẦN 1/3"
+      },
+      {
+        "id": "chap_2",
+        "title": "Body",
+        "scene_ids": [
+          3,
+          4
+        ],
+        "kicker": "PHẦN 2/3"
+      },
+      {
+        "id": "chap_3",
+        "title": "Body",
+        "scene_ids": [
+          5,
+          6,
+          7,
+          8
+        ],
+        "kicker": "PHẦN 3/3"
+      }
+    ]
+  },
+  "progress_metaphor": {
+    "type": "step_bar",
+    "items": [
+      "Hook",
+      "Body",
+      "Body"
+    ]
+  },
+  "concepts": [
+    {
+      "term": "Bạn có thể",
+      "scene_id": 1,
+      "sentence_index": 1,
+      "world_zone": "cum_may_chu_ai",
+      "actor_id": "agent_console",
+      "evidence_sentence": "Bạn có thể cắt và ghép video."
+    },
+    {
+      "term": "Lời đọc mới",
+      "scene_id": 2,
+      "sentence_index": 1,
+      "world_zone": "cum_may_chu_ai",
+      "actor_id": "agent_console",
+      "evidence_sentence": "Lời đọc mới hoàn toàn cho cảnh 2 để kiểm tra tái sử dụng audio."
+    },
+    {
+      "term": "Lời đọc mới",
+      "scene_id": 2,
+      "sentence_index": 2,
+      "world_zone": "man_hinh_giam_sat",
+      "actor_id": "agent_console",
+      "evidence_sentence": "Lời đọc mới hoàn toàn cho cảnh 2 để kiểm tra tái sử dụng audio."
+    },
+    {
+      "term": "Bạn có thể",
+      "scene_id": 3,
+      "sentence_index": 1,
+      "world_zone": "cum_may_chu_ai",
+      "actor_id": "agent_console",
+      "evidence_sentence": "Bạn có thể cắt và ghép video."
+    },
+    {
+      "term": "Bạn có thể",
+      "scene_id": 3,
+      "sentence_index": 2,
+      "world_zone": "man_hinh_giam_sat",
+      "actor_id": "agent_console",
+      "evidence_sentence": "Bạn có thể cắt và ghép video."
+    },
+    {
+      "term": "Bạn có thể",
+      "scene_id": 4,
+      "sentence_index": 1,
+      "world_zone": "cum_may_chu_ai",
+      "actor_id": "agent_console",
+      "evidence_sentence": "Bạn có thể cắt và ghép video."
+    }
+  ],
+  "numbers_allowed": [
+    2
+  ],
+  "notes": [
+    "Tạo tự động bằng Fallback Rule-based của Visual Bible Agent."
+  ]
+}

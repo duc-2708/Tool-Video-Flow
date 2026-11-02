@@ -1,0 +1,23 @@
+{
+  "category": "công nghệ",
+  "suggestion": {
+    "cluster_id": "group2",
+    "topic": "Sản phẩm thử nghiệm 3 ra mắt",
+    "why_now": "Hai nguồn đang đưa tin.",
+    "angle": "Giải thích tính năng đã kiểm chứng.",
+    "suggested_type": "news",
+    "search_queries": {
+      "vi": [
+        "Gemini 4 tính năng mới"
+      ],
+      "en": [
+        "Gemini 4 new features"
+      ]
+    },
+    "score": 8,
+    "score_reason": "Mới và có hai nguồn độc lập.",
+    "source_urls": [
+      "https://example.test/event2"
+    ]
+  }
+}

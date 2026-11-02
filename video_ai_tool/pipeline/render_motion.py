@@ -36,7 +36,6 @@ SUPPORTED = {
     "progress_tracker", "ring_percent", "line_growth", "strike_replace", "quote_card", "timeline", "versus",
     "cta_card", "icon_card"
 }
-SUPPORTED.update(LIGHT_GLASS_RECIPES)
 
 
 @lru_cache(maxsize=1)
@@ -68,7 +67,7 @@ def get_inter_font_faces() -> str:
 def is_motion_supported(template: str) -> bool:
     from schemas.motion_scene import SceneType
     from typing import get_args
-    return template in SUPPORTED or template in set(get_args(SceneType))
+    return template in SUPPORTED or template in LIGHT_GLASS_RECIPES or template in set(get_args(SceneType))
 
 
 @lru_cache(maxsize=4)

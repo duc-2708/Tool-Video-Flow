@@ -1,112 +1,336 @@
-/* Modern Black - Gold - White Premium Cyber Dark Theme */
+/* Modern Black - Gold - White Design Tokens & Styling */
 
-/* Global root styling */
+:root {
+  --bg: #0A0A0A;
+  --surface: #141414;
+  --surface-hover: #1E1E1E;
+  --border: #2A2A2A;
+  --text: #FFFFFF;
+  --text-muted: #A8A8A8;
+  --gold: #FFD400;
+  --gold-hover: #E6BF00;
+  --card-white: #FFFFFF;
+  --text-on-white: #0A0A0A;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+  --focus-ring: 0 0 0 3px #FFFFFF;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: local('Inter Bold'), local('Inter-Bold');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: local('Inter Regular'), local('Inter-Regular');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Global App Styling */
 html, body, [data-testid="stAppViewContainer"] {
-  background-color: #09090b !important;
-  color: #ffffff !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
 }
 
 [data-testid="stHeader"] {
-  background-color: rgba(9, 9, 11, 0.85) !important;
+  background-color: rgba(10, 10, 10, 0.85) !important;
   backdrop-filter: blur(12px) !important;
-  border-bottom: 1px solid #27272a !important;
+  border-bottom: 1px solid var(--border) !important;
 }
 
-/* Sidebar styling */
+/* Sidebar Navigation */
 [data-testid="stSidebar"] {
-  background-color: #0d0d11 !important;
-  border-right: 1px solid #27272a !important;
+  background-color: #0E0E0E !important;
+  border-right: 1px solid var(--border) !important;
 }
 
-[data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
-  color: #ffd60a !important;
-  font-weight: 800 !important;
-  letter-spacing: -0.5px !important;
+[data-testid="stSidebar"] .stRadio > div {
+  gap: 4px !important;
 }
 
-/* Header titles */
+[data-testid="stSidebar"] .stRadio label {
+  border-radius: var(--radius-md) !important;
+  padding: 8px 14px !important;
+  transition: all 0.15s ease !important;
+}
+
+[data-testid="stSidebar"] .stRadio label:hover {
+  background-color: var(--surface) !important;
+}
+
+/* Active Nav Item */
+[data-testid="stSidebar"] [data-checked="true"] {
+  background-color: var(--gold) !important;
+  color: var(--text-on-white) !important;
+  border-radius: var(--radius-md) !important;
+  font-weight: 700 !important;
+}
+
+[data-testid="stSidebar"] [data-checked="true"] p {
+  color: var(--text-on-white) !important;
+  font-weight: 700 !important;
+}
+
+/* Headings */
 h1, h2, h3, h4, h5, h6 {
-  color: #ffffff !important;
+  color: var(--text) !important;
   font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
 }
 
-/* Gold Accent text & badges */
-.gold-accent {
-  color: #ffd60a !important;
+/* Primary Button (Gold, Black text) */
+button[kind="primary"], .stButton > button[kind="primary"] {
+  background-color: var(--gold) !important;
+  color: var(--text-on-white) !important;
   font-weight: 700 !important;
-}
-
-.gold-badge {
-  background: rgba(255, 214, 10, 0.12) !important;
-  color: #ffd60a !important;
-  border: 1px solid rgba(255, 214, 10, 0.3) !important;
-  padding: 4px 10px !important;
-  border-radius: 9999px !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  display: inline-block !important;
-}
-
-/* Primary Button (Gold Glow) */
-button[kind="primary"] {
-  background: linear-gradient(135deg, #ffd60a 0%, #ffc300 100%) !important;
-  color: #000000 !important;
-  font-weight: 800 !important;
+  font-size: 1rem !important;
   border: none !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 14px rgba(255, 214, 10, 0.35) !important;
-  transition: all 0.2s ease-in-out !important;
+  border-radius: var(--radius-md) !important;
+  min-height: 46px !important;
+  padding: 10px 24px !important;
+  box-shadow: 0 4px 12px rgba(255, 212, 0, 0.25) !important;
+  transition: transform 0.1s ease, background-color 0.15s ease !important;
 }
 
-button[kind="primary"]:hover {
-  background: linear-gradient(135deg, #ffe033 0%, #ffd60a 100%) !important;
-  box-shadow: 0 6px 20px rgba(255, 214, 10, 0.5) !important;
+button[kind="primary"]:hover, .stButton > button[kind="primary"]:hover {
+  background-color: var(--gold-hover) !important;
+  color: var(--text-on-white) !important;
   transform: translateY(-1px) !important;
 }
 
-/* Secondary Button */
-button[kind="secondary"] {
-  background-color: #18181b !important;
-  color: #f4f4f5 !important;
-  border: 1px solid #3f3f46 !important;
-  border-radius: 8px !important;
-  transition: all 0.2s ease !important;
+button[kind="primary"]:focus-visible, .stButton > button[kind="primary"]:focus-visible {
+  outline: 3px solid #FFFFFF !important;
+  outline-offset: 2px !important;
 }
 
-button[kind="secondary"]:hover {
-  background-color: #27272a !important;
-  border-color: #ffd60a !important;
-  color: #ffd60a !important;
+/* Secondary Button (Transparent, White border 2px) */
+button[kind="secondary"], .stButton > button[kind="secondary"] {
+  background-color: transparent !important;
+  color: var(--text) !important;
+  font-weight: 600 !important;
+  border: 2px solid #FFFFFF !important;
+  border-radius: var(--radius-md) !important;
+  min-height: 46px !important;
+  padding: 10px 20px !important;
+  transition: all 0.15s ease !important;
 }
 
-/* Inputs & Selectboxes */
-div[data-baseweb="input"], div[data-baseweb="select"] {
-  background-color: #18181b !important;
-  border: 1px solid #3f3f46 !important;
-  border-radius: 8px !important;
-  color: #ffffff !important;
+button[kind="secondary"]:hover, .stButton > button[kind="secondary"]:hover {
+  background-color: var(--surface) !important;
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
 }
 
-div[data-baseweb="input"]:focus-within, div[data-baseweb="select"]:focus-within {
-  border-color: #ffd60a !important;
-  box-shadow: 0 0 0 1px #ffd60a !important;
+button[kind="secondary"]:focus-visible, .stButton > button[kind="secondary"]:focus-visible {
+  outline: 3px solid #FFFFFF !important;
+  outline-offset: 2px !important;
+}
+
+/* Danger / Cancel button styling */
+.btn-danger button, button.btn-danger {
+  border: 2px solid rgba(255, 69, 58, 0.4) !important;
+  color: #FF453A !important;
+  background-color: transparent !important;
+  border-radius: var(--radius-md) !important;
+  min-height: 44px !important;
+}
+
+.btn-danger button:hover, button.btn-danger:hover {
+  background-color: rgba(255, 69, 58, 0.1) !important;
+  border-color: #FF453A !important;
+}
+
+/* Inputs, Textareas, Selectboxes */
+div[data-baseweb="input"], div[data-baseweb="select"], .stTextArea textarea {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--text) !important;
+  font-size: 0.95rem !important;
+}
+
+div[data-baseweb="input"]:focus-within, div[data-baseweb="select"]:focus-within, .stTextArea textarea:focus {
+  border-color: #FFFFFF !important;
+  box-shadow: var(--focus-ring) !important;
+}
+
+/* Big Topic Input (72px height, 4px gold bottom border) */
+.big-topic-input div[data-baseweb="input"] {
+  min-height: 72px !important;
+  border-bottom: 4px solid var(--gold) !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--radius-md) var(--radius-md) 4px 4px !important;
+  background-color: #171717 !important;
+}
+
+.big-topic-input input {
+  font-size: 1.2rem !important;
+  color: #FFFFFF !important;
+}
+
+/* White Card Components */
+.ui-card-white {
+  background-color: var(--card-white) !important;
+  color: var(--text-on-white) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 18px 20px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.ui-card-white h1, .ui-card-white h2, .ui-card-white h3, .ui-card-white h4, .ui-card-white h5, .ui-card-white strong, .ui-card-white p, .ui-card-white span {
+  color: var(--text-on-white) !important;
+}
+
+.ui-card-white .muted {
+  color: #555555 !important;
+}
+
+/* Dark Card Components */
+.ui-card-dark {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 18px 20px !important;
+}
+
+/* Outline Card */
+.ui-card-outline {
+  background-color: transparent !important;
+  color: var(--text) !important;
+  border: 2px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 18px 20px !important;
+}
+
+/* Chips / Badges (999px pill) */
+.ui-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.ui-chip-gold {
+  background-color: rgba(255, 212, 0, 0.15);
+  color: var(--gold);
+  border: 1px solid rgba(255, 212, 0, 0.35);
+}
+
+.ui-chip-green {
+  background-color: rgba(52, 199, 89, 0.15);
+  color: #34C759;
+  border: 1px solid rgba(52, 199, 89, 0.35);
+}
+
+.ui-chip-red {
+  background-color: rgba(255, 69, 58, 0.15);
+  color: #FF453A;
+  border: 1px solid rgba(255, 69, 58, 0.35);
+}
+
+.ui-chip-neutral {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.ui-chip-white {
+  background-color: #FFFFFF;
+  color: #0A0A0A;
+  font-weight: 700;
+}
+
+/* Stepper Component */
+.ui-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  overflow-x: auto;
+}
+
+.ui-step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ui-step-done {
+  background-color: var(--surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.ui-step-done .check {
+  color: var(--gold);
+}
+
+.ui-step-active {
+  background-color: var(--gold);
+  color: var(--text-on-white);
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(255, 212, 0, 0.3);
+}
+
+.ui-step-pending {
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid #333333;
+}
+
+/* Eyebrow Accent */
+.ui-eyebrow {
+  color: var(--gold);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* Highlighted Accent Word */
+.text-gold-accent {
+  color: var(--gold) !important;
 }
 
 /* Progress bar in Gold */
 .stProgress > div > div > div > div {
-  background-color: #ffd60a !important;
+  background-color: var(--gold) !important;
 }
 
-/* Cards & Containers */
-.main-card {
-  background: #141417;
-  border: 1px solid #27272a;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
+/* Native Container Borders (18px) */
+[data-testid="stVerticalBlockBorderWrapper"] {
+  border-radius: var(--radius-lg) !important;
+  border-color: var(--border) !important;
 }
 
-.card-gold-border {
-  border-left: 4px solid #ffd60a !important;
+/* Segmented Control Styling */
+[data-testid="stSegmentedControl"] {
+  border-radius: var(--radius-md) !important;
+  background-color: var(--surface) !important;
+  padding: 4px !important;
+}
+
+[data-testid="stSegmentedControl"] button {
+  border-radius: 10px !important;
+  font-weight: 600 !important;
 }

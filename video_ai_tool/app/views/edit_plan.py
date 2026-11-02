@@ -1,9 +1,11 @@
 # file: app/views/edit_plan.py
 """Trang Director/Edit Plan: tạo, sửa lời đọc/query và lưu có kiểm tra."""
+import html
 import json
 from pathlib import Path
 import streamlit as st
 from app.style_controls import select_style
+from app.ui_kit import section_header
 from agents.director import run_director, save_edit_plan, review_notes_for
 from app.ui_errors import error_details
 from config.settings import Settings
@@ -25,7 +27,7 @@ def report_error(error: BaseException, diagnostics: Diagnostics, project: Path) 
 
 
 def render(settings: Settings, project: Path | None, topic: str, debug: bool, diagnostics: Diagnostics) -> None:
-    st.title("Edit Plan")
+    section_header("XỬ LÝ", "Kịch bản (Edit Plan)", accent_word="(Edit Plan)")
     st.caption("Director → kế hoạch JSON. Chưa tạo audio, tải media hoặc render video.")
     if project is None or not (project / "brief.json").exists():
         st.info("Chọn project đã có brief.json hoặc chạy Research trước khi tạo Edit Plan.")
@@ -169,87 +171,165 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
             st.dataframe([b.model_dump(mode="json") for b in existing.explainer_outline.beats],hide_index=True)
     from app.visual_review import render_visual_controls
     render_visual_controls(existing,brief,project,diagnostics)
-    with st.form(f"director_edit_{scope}_{revision}"):
-        if existing.render_style:
-            with st.expander("Chỉnh mặc định dựng từ phong cách mẫu"):
-                style=data["render_style"];captions=style["captions"]
-                style["visual_templates"]=st.checkbox("Dùng mẫu đồ họa",value=style.get("visual_templates",True),key=f"style_motion_{scope}_{revision}")
-                themes=["studio","paper"]
-                style["theme"]=st.selectbox("Nền và bảng màu",themes,index=themes.index(style.get("theme","studio")) if style.get("theme","studio") in themes else 0,key=f"style_theme_{scope}_{revision}")
-                style["progress_tracker"]=st.checkbox("Thanh tiến trình ý chính",value=style.get("progress_tracker",False),key=f"style_tracker_{scope}_{revision}")
-                appearances=["classic","pill"]
-                captions["appearance"]=st.selectbox("Kiểu phụ đề",appearances,index=appearances.index(captions.get("appearance","classic")),key=f"style_pill_{scope}_{revision}")
-                captions["enabled"]=st.checkbox("Bật phụ đề",value=captions["enabled"],key=f"style_caps_{scope}_{revision}")
-                modes=["word","phrase","sentence"]
-                captions["mode"]=st.selectbox("Nhóm phụ đề",modes,index=modes.index(captions["mode"]),key=f"style_capmode_{scope}_{revision}")
-                captions["font_scale"]=st.number_input("Cỡ chữ / chiều rộng",min_value=.03,max_value=.10,value=float(captions["font_scale"]),step=.001,key=f"style_font_{scope}_{revision}")
-                for field,label in [("color","Màu chữ"),("highlight_color","Màu từ đang đọc"),("stroke_color","Màu viền")]:
-                    defaults={"color":"#FFFFFF","highlight_color":"#FFD741","stroke_color":"#000000"}
-                    captions[field]=st.color_picker(label,value=captions[field] or defaults[field],key=f"style_{field}_{scope}_{revision}")
-                positions=["lower","center","top"]
-                captions["position"]=st.selectbox("Vị trí phụ đề",positions,index=positions.index(captions["position"]),key=f"style_position_{scope}_{revision}")
-                data["music"]["volume"]=st.slider("Âm lượng nhạc nền",0.,.35,float(data["music"]["volume"]),.01,key=f"style_music_{scope}_{revision}")
-                style["ducking"]=st.checkbox("Hạ nhạc khi có lời đọc",value=style["ducking"],key=f"style_duck_{scope}_{revision}")
-        for scene in data["scenes"]:
-            with st.expander(f"Cảnh {scene['id']} · {role_labels[scene['role']]} · {sum(s['duration_sec'] for s in scene['shots']):.1f}s",
-                             expanded=scene["role"] == "hook"):
-                st.caption("Vai trò: " + scene["role"] + " · Fact tham chiếu: " + (", ".join(map(str, scene["fact_ids"])) or "CTA không nêu fact"))
-                if scene.get("style_purpose"):
-                    st.caption("Mục đích theo hồ sơ: "+scene["style_purpose"])
-                for fact_id in scene["fact_ids"]:
-                    if 1<=fact_id<=len(brief.facts):
-                        fact = brief.facts[fact_id-1]
-                        st.write(f"Fact #{fact_id}: {fact.fact_vi or fact.claim}")
-                if scene.get("sentences"):
-                    st.caption("Loại thông tin: "+str(scene.get("information_kind"))+" · Ý mới: "+scene.get("new_information",""))
-                    for n,sentence in enumerate(scene["sentences"]):
-                        st.caption(f"Câu {n+1} · {sentence['type']} · fact_ids={sentence['fact_ids']}")
-                        sentence["text"]=st.text_area("Câu có nhãn",value=sentence["text"],key=f"sentence_{scope}_{revision}_{scene['id']}_{n}")
-                    scene["narration"]=" ".join(s["text"] for s in scene["sentences"])
-                else:
-                    scene["narration"] = st.text_area("Lời đọc", value=scene["narration"],key=f"narration_{scope}_{revision}_{scene['id']}")
-                if scene.get("pronunciation_hint"):
-                    st.caption("Gợi ý phát âm (ghi chú biên tập): "+scene["pronunciation_hint"])
-                rows = [{field: shot[field] for field in ("type", "query", "duration_sec", "effect", "text_overlay")} for shot in scene["shots"]]
-                for row,shot in zip(rows,scene["shots"]):
-                    row.update(card_text=shot.get("card_text") or "",emphasis=" ".join(shot.get("emphasis") or []))
-                for k,shot in enumerate(scene["shots"],1):
-                    if shot.get("visual"):
-                        with st.expander(f"Mẫu đồ họa shot {k}: {shot['visual']['template']}"):
-                            st.json(shot["visual"])
-                edited = st.data_editor(rows, hide_index=True, num_rows="fixed",
-                    disabled=["type", "duration_sec"],
-                    column_config={"type": "Loại shot", "query": st.column_config.TextColumn("Từ khóa b-roll (sửa tại đây)", required=True),
-                                   "duration_sec": "Giây", "effect": "Hiệu ứng", "text_overlay": "Chữ trên hình",
-                                   "card_text":"Thẻ (3–6 từ)","emphasis":"Nhấn mạnh (1–2 từ)"},
-                    key=f"shots_{scope}_{revision}_{scene['id']}")
-                for shot, row in zip(scene["shots"], edited):
-                    old_overlay=shot["text_overlay"]
-                    shot["query"] = row["query"]
-                    shot["effect"] = row["effect"]
-                    shot["text_overlay"] = row["text_overlay"]
-                    shot["card_text"]=(row["text_overlay"] if row["text_overlay"] and row["text_overlay"]!=old_overlay else row.get("card_text")) or None
-                    shot["emphasis"]=(row.get("emphasis") or "").split()[:2]
-                st.caption(f"Chuyển cảnh: {scene['transition_out']} · SFX: {scene['sfx']} · Pattern interrupt: {'Có' if scene['pattern_interrupt'] else 'Không'}")
-                st.markdown("**Ghi chú kiểm chứng · chỉ dành cho biên tập**")
-                try:
-                    notes = review_notes_for(scene["fact_ids"], brief)
-                    for warning in (scene.get("review_notes") or {}).get("warnings",[]):
-                        st.warning(warning)
-                    if any(fact.source_count == 1 for fact in notes.facts):
-                        st.badge("1 nguồn", color="orange")
-                    st.caption(f"Fact IDs: {notes.fact_ids} · Số nguồn trong cảnh: {notes.source_count} · Confidence: {notes.confidence or 'Không áp dụng'}")
-                    rows = [{"fact_id": fact.fact_id, "source_count": fact.source_count, "confidence": fact.confidence,
-                             "source_name": source.name, "source_url": str(source.url)} for fact in notes.facts for source in fact.sources]
-                    if rows:
-                        st.dataframe(rows, hide_index=True, column_config={"fact_id": "Fact ID", "source_count": "Số nguồn của fact",
-                            "confidence": "Confidence", "source_name": "Nguồn", "source_url": st.column_config.LinkColumn("URL nguồn", display_text="Mở nguồn")})
+
+    # BỐ CỤC 3 CỘT: DANH SÁCH CẢNH - XEM TRƯỚC 9:16 - CHỈNH SỬA CHI TIẾT
+    col_scenes, col_preview, col_editor = st.columns([1.0, 1.2, 1.8])
+
+    scene_ids = [scene["id"] for scene in data["scenes"]]
+    default_sc = scene_ids[0] if scene_ids else 1
+    with col_scenes:
+        st.markdown('<div style="font-size: 0.85rem; font-weight: 800; color: #FFD400; text-transform: uppercase; margin-bottom: 8px;">Danh sách cảnh</div>', unsafe_allow_html=True)
+        selected_sc_id = st.radio(
+            "Chọn cảnh",
+            scene_ids,
+            index=0,
+            format_func=lambda sid: f"Cảnh {sid}",
+            key=f"director_selected_sc_{scope}",
+            label_visibility="collapsed",
+        )
+        for sc in data["scenes"]:
+            sc_dur = sum(s["duration_sec"] for s in sc["shots"])
+            is_active = (sc["id"] == selected_sc_id)
+            if is_active:
+                st.markdown(
+                    f"""
+                    <div style="background: #FFD400; color: #0A0A0A; padding: 12px 14px; border-radius: 14px; margin-bottom: 8px; font-weight: 700;">
+                        <div>Cảnh {sc['id']} · {role_labels.get(sc['role'], sc['role'])}</div>
+                        <div style="font-size: 0.8rem; font-weight: 600; opacity: 0.85;">{sc_dur:.1f}s · {len(sc['shots'])} shots</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    f"""
+                    <div style="background: #141414; border: 1px solid #2A2A2A; color: #FFFFFF; padding: 12px 14px; border-radius: 14px; margin-bottom: 8px;">
+                        <div style="font-weight: 600;">Cảnh {sc['id']} · {role_labels.get(sc['role'], sc['role'])}</div>
+                        <div style="font-size: 0.8rem; color: #888888;">{sc_dur:.1f}s · {len(sc['shots'])} shots</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+    curr_scene = next((sc for sc in data.get("scenes", []) if sc.get("id") == selected_sc_id), data["scenes"][0] if data.get("scenes") else {})
+
+    with col_preview:
+        st.markdown('<div style="font-size: 0.85rem; font-weight: 800; color: #FFD400; text-transform: uppercase; margin-bottom: 8px;">Xem trước 9:16</div>', unsafe_allow_html=True)
+        first_shot = curr_scene.get("shots", [{}])[0] if curr_scene.get("shots") else {}
+        card_t = first_shot.get("card_text") or first_shot.get("text_overlay") or (curr_scene.get("narration", "")[:35] + "..." if curr_scene.get("narration") else "Tiêu đề cảnh")
+        emp_words = first_shot.get("emphasis") or []
+        emp_html = "".join([f"<span style='background: #FFD400; color: #000; font-weight: 800; border-radius: 999px; padding: 2px 8px; margin: 2px; font-size: 0.75rem;'>{html.escape(w)}</span>" for w in emp_words])
+
+        st.markdown(
+            f"""
+            <div style="border: 2px solid #FFFFFF; border-radius: 18px; aspect-ratio: 9/16; background: #0A0A0A; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="background: rgba(255,255,255,0.15); color: #FFF; padding: 4px 8px; border-radius: 999px; font-size: 0.75rem; font-weight: 700;">CẢNH {curr_scene.get('id', 1)}</span>
+                    <span style="color: #FFD400; font-size: 0.8rem; font-weight: 700;">{role_labels.get(curr_scene.get('role', 'body'), curr_scene.get('role', 'body')).upper()}</span>
+                </div>
+                <div style="text-align: center; padding: 12px 6px;">
+                    <div style="font-size: 1.1rem; font-weight: 800; color: #FFFFFF; line-height: 1.3; margin-bottom: 8px;">{html.escape(str(card_t))}</div>
+                    <div>{emp_html}</div>
+                </div>
+                <div style="background: rgba(20,20,20,0.8); border: 1px solid #333; border-radius: 10px; padding: 8px; font-size: 0.75rem; color: #CCC; text-align: center;">
+                    {html.escape(str(curr_scene.get('narration', ''))[:60])}...
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+        st.markdown('<div style="font-size: 0.75rem; font-weight: 700; color: #888; text-transform: uppercase;">Timeline Shot</div>', unsafe_allow_html=True)
+        shots_timeline_html = '<div style="display: flex; gap: 6px; overflow-x: auto; padding: 6px 0;">'
+        for idx_sh, sh in enumerate(curr_scene.get("shots", []), 1):
+            sh_bg = "background: #FFD400; color: #0A0A0A; font-weight: 800;" if idx_sh == 1 else "background: #1C1C1C; color: #FFFFFF; border: 1px solid #333;"
+            shots_timeline_html += f'<div style="{sh_bg} border-radius: 8px; padding: 6px 10px; font-size: 0.75rem; white-space: nowrap;">Shot {idx_sh} ({sh.get("duration_sec", 0):.1f}s)</div>'
+        shots_timeline_html += '</div>'
+        st.markdown(shots_timeline_html, unsafe_allow_html=True)
+
+    with col_editor:
+        with st.form(f"director_edit_{scope}_{revision}"):
+            if existing.render_style:
+                with st.expander("Chỉnh mặc định dựng từ phong cách mẫu"):
+                    style=data["render_style"];captions=style["captions"]
+                    style["visual_templates"]=st.checkbox("Dùng mẫu đồ họa",value=style.get("visual_templates",True),key=f"style_motion_{scope}_{revision}")
+                    themes=["studio","paper"]
+                    style["theme"]=st.selectbox("Nền và bảng màu",themes,index=themes.index(style.get("theme","studio")) if style.get("theme","studio") in themes else 0,key=f"style_theme_{scope}_{revision}")
+                    style["progress_tracker"]=st.checkbox("Thanh tiến trình ý chính",value=style.get("progress_tracker",False),key=f"style_tracker_{scope}_{revision}")
+                    appearances=["classic","pill"]
+                    captions["appearance"]=st.selectbox("Kiểu phụ đề",appearances,index=appearances.index(captions.get("appearance","classic")),key=f"style_pill_{scope}_{revision}")
+                    captions["enabled"]=st.checkbox("Bật phụ đề",value=captions["enabled"],key=f"style_caps_{scope}_{revision}")
+                    modes=["word","phrase","sentence"]
+                    captions["mode"]=st.selectbox("Nhóm phụ đề",modes,index=modes.index(captions["mode"]),key=f"style_capmode_{scope}_{revision}")
+                    captions["font_scale"]=st.number_input("Cỡ chữ / chiều rộng",min_value=.03,max_value=.10,value=float(captions["font_scale"]),step=.001,key=f"style_font_{scope}_{revision}")
+                    for field,label in [("color","Màu chữ"),("highlight_color","Màu từ đang đọc"),("stroke_color","Màu viền")]:
+                        defaults={"color":"#FFFFFF","highlight_color":"#FFD741","stroke_color":"#000000"}
+                        captions[field]=st.color_picker(label,value=captions[field] or defaults[field],key=f"style_{field}_{scope}_{revision}")
+                    positions=["lower","center","top"]
+                    captions["position"]=st.selectbox("Vị trí phụ đề",positions,index=positions.index(captions["position"]),key=f"style_position_{scope}_{revision}")
+                    data["music"]["volume"]=st.slider("Âm lượng nhạc nền",0.,.35,float(data["music"]["volume"]),.01,key=f"style_music_{scope}_{revision}")
+                    style["ducking"]=st.checkbox("Hạ nhạc khi có lời đọc",value=style["ducking"],key=f"style_duck_{scope}_{revision}")
+            for scene in data["scenes"]:
+                with st.expander(f"Cảnh {scene['id']} · {role_labels[scene['role']]} · {sum(s['duration_sec'] for s in scene['shots']):.1f}s",
+                                 expanded=scene["role"] == "hook"):
+                    st.caption("Vai trò: " + scene["role"] + " · Fact tham chiếu: " + (", ".join(map(str, scene["fact_ids"])) or "CTA không nêu fact"))
+                    if scene.get("style_purpose"):
+                        st.caption("Mục đích theo hồ sơ: "+scene["style_purpose"])
+                    for fact_id in scene["fact_ids"]:
+                        if 1<=fact_id<=len(brief.facts):
+                            fact = brief.facts[fact_id-1]
+                            st.write(f"Fact #{fact_id}: {fact.fact_vi or fact.claim}")
+                    if scene.get("sentences"):
+                        st.caption("Loại thông tin: "+str(scene.get("information_kind"))+" · Ý mới: "+scene.get("new_information",""))
+                        for n,sentence in enumerate(scene["sentences"]):
+                            st.caption(f"Câu {n+1} · {sentence['type']} · fact_ids={sentence['fact_ids']}")
+                            sentence["text"]=st.text_area("Câu có nhãn",value=sentence["text"],key=f"sentence_{scope}_{revision}_{scene['id']}_{n}")
+                        scene["narration"]=" ".join(s["text"] for s in scene["sentences"])
                     else:
-                        st.caption("Cảnh không nêu fact; không có nguồn cần đối chiếu.")
-                except ValueError as error:
-                    st.warning(diagnostics.redact(str(error)))
-        st.caption("Lưu sẽ validate lại schema, thời lượng và căn cứ bằng model Director. Có thể dùng quota API; chưa tạo audio/render.")
-        save = st.form_submit_button("Lưu chỉnh sửa", disabled=not model_ready)
+                        scene["narration"] = st.text_area("Lời đọc", value=scene["narration"],key=f"narration_{scope}_{revision}_{scene['id']}")
+                    if scene.get("pronunciation_hint"):
+                        st.caption("Gợi ý phát âm (ghi chú biên tập): "+scene["pronunciation_hint"])
+                    rows = [{field: shot[field] for field in ("type", "query", "duration_sec", "effect", "text_overlay")} for shot in scene["shots"]]
+                    for row,shot in zip(rows,scene["shots"]):
+                        row.update(card_text=shot.get("card_text") or "",emphasis=" ".join(shot.get("emphasis") or []))
+                    for k,shot in enumerate(scene["shots"],1):
+                        if shot.get("visual"):
+                            with st.expander(f"Mẫu đồ họa shot {k}: {shot['visual']['template']}"):
+                                st.json(shot["visual"])
+                    edited = st.data_editor(rows, hide_index=True, num_rows="fixed",
+                        disabled=["type", "duration_sec"],
+                        column_config={"type": "Loại shot", "query": st.column_config.TextColumn("Từ khóa b-roll (sửa tại đây)", required=True),
+                                       "duration_sec": "Giây", "effect": "Hiệu ứng", "text_overlay": "Chữ trên hình",
+                                       "card_text":"Thẻ (3–6 từ)","emphasis":"Nhấn mạnh (1–2 từ)"},
+                        key=f"shots_{scope}_{revision}_{scene['id']}")
+                    for shot, row in zip(scene["shots"], edited):
+                        old_overlay=shot["text_overlay"]
+                        shot["query"] = row["query"]
+                        shot["effect"] = row["effect"]
+                        shot["text_overlay"] = row["text_overlay"]
+                        shot["card_text"]=(row["text_overlay"] if row["text_overlay"] and row["text_overlay"]!=old_overlay else row.get("card_text")) or None
+                        shot["emphasis"]=(row.get("emphasis") or "").split()[:2]
+                    st.caption(f"Chuyển cảnh: {scene['transition_out']} · SFX: {scene['sfx']} · Pattern interrupt: {'Có' if scene['pattern_interrupt'] else 'Không'}")
+                    st.markdown("**Ghi chú kiểm chứng · chỉ dành cho biên tập**")
+                    try:
+                        notes = review_notes_for(scene["fact_ids"], brief)
+                        for warning in (scene.get("review_notes") or {}).get("warnings",[]):
+                            st.warning(warning)
+                        if any(fact.source_count == 1 for fact in notes.facts):
+                            st.badge("1 nguồn", color="orange")
+                        st.caption(f"Fact IDs: {notes.fact_ids} · Số nguồn trong cảnh: {notes.source_count} · Confidence: {notes.confidence or 'Không áp dụng'}")
+                        rows = [{"fact_id": fact.fact_id, "source_count": fact.source_count, "confidence": fact.confidence,
+                                 "source_name": source.name, "source_url": str(source.url)} for fact in notes.facts for source in fact.sources]
+                        if rows:
+                            st.dataframe(rows, hide_index=True, column_config={"fact_id": "Fact ID", "source_count": "Số nguồn của fact",
+                                "confidence": "Confidence", "source_name": "Nguồn", "source_url": st.column_config.LinkColumn("URL nguồn", display_text="Mở nguồn")})
+                        else:
+                            st.caption("Cảnh không nêu fact; không có nguồn cần đối chiếu.")
+                    except ValueError as error:
+                        st.warning(diagnostics.redact(str(error)))
+            st.caption("Lưu sẽ validate lại schema, thời lượng và căn cứ bằng model Director. Có thể dùng quota API; chưa tạo audio/render.")
+            save = st.form_submit_button("Lưu chỉnh sửa", disabled=not model_ready)
     if save:
         st.session_state.pop("director_error", None)
         try:

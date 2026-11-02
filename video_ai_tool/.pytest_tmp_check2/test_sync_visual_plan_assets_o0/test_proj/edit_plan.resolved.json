@@ -1,0 +1,336 @@
+{
+  "title": "Dựng video",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "calm",
+    "volume": 0.1
+  },
+  "scenes": [
+    {
+      "visual_plan": {
+        "scene_type": "terminal_command_run",
+        "theme": null,
+        "layout": "center_hero",
+        "zone": null,
+        "evidence": null,
+        "no_numbers": false,
+        "anchor": null,
+        "central_metaphor": null,
+        "metaphor_state": null,
+        "data": {
+          "text": "echo hello",
+          "highlight": [],
+          "value": null,
+          "number_text": "",
+          "label": "",
+          "unit": "",
+          "source": "",
+          "source_url": "",
+          "date": "",
+          "title": "",
+          "items": [],
+          "bars": [],
+          "fact_ids": [],
+          "status": "",
+          "left_label": "",
+          "right_label": ""
+        },
+        "beats": [],
+        "camera": {
+          "kind": "push_in",
+          "amount": 0.06
+        },
+        "mascot_state": "idle"
+      },
+      "id": 1,
+      "role": "hook",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false
+    },
+    {
+      "id": 2,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        },
+        {
+          "type": "text_card",
+          "query": "video editing aerial",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 3,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        },
+        {
+          "type": "text_card",
+          "query": "video editing aerial",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 4,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        },
+        {
+          "type": "text_card",
+          "query": "video editing aerial",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 5,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        },
+        {
+          "type": "text_card",
+          "query": "video editing aerial",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 6,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        },
+        {
+          "type": "text_card",
+          "query": "video editing aerial",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 7,
+      "role": "body",
+      "narration": "Bạn có thể cắt và ghép video.",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        },
+        {
+          "type": "text_card",
+          "query": "video editing aerial",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn có thể cắt và ghép video."
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [
+          1
+        ],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    },
+    {
+      "id": 8,
+      "role": "cta",
+      "narration": "Bạn muốn tìm hiểu bước nào?",
+      "shots": [
+        {
+          "type": "text_card",
+          "query": "video editing",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn muốn tìm hiểu bước nào?"
+        },
+        {
+          "type": "text_card",
+          "query": "video editing aerial",
+          "duration_sec": 1.5,
+          "effect": "zoom_in",
+          "text_overlay": "Bạn muốn tìm hiểu bước nào?"
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [],
+      "pattern_interrupt": true,
+      "review_notes": {
+        "warnings": [
+          "Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing aerial'"
+        ],
+        "fact_ids": [],
+        "source_count": 0,
+        "confidence": null,
+        "facts": []
+      }
+    }
+  ],
+  "video_type": null,
+  "target_duration_sec": null,
+  "brief_hash": null,
+  "source_plan_hash": "1ed8cb59614aeb41135925f8586b4803a05d5ab5561934f24a21d61cb2d92db4",
+  "timing_basis": "audio",
+  "warnings": [
+    "Chưa có PIXABAY_API_KEY; sẽ dùng stock tùy chọn hoặc nền màu khi không tìm được clip."
+  ]
+}
