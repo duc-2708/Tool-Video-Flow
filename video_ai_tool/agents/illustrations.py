@@ -27,7 +27,12 @@ RECIPE_TYPES=(
     'mock_card_swipe','form_fill_submit','terminal_command_run','stat_number','bar_compare','container_fill','steps_ladder','hub_spoke','mock_ui_window','code_card','versus_split'
 )
 
-ALL_TYPES = TYPES + RECIPE_TYPES
+LIGHT_GLASS_TYPES = (
+    'lg_source_headline', 'lg_stat_hero', 'lg_shot_features',
+    'lg_vs_compare', 'lg_note_card', 'lg_cta_profile'
+)
+
+ALL_TYPES = TYPES + RECIPE_TYPES + LIGHT_GLASS_TYPES
 
 # Complete noun phrases only, matched in the actual narration. This lexicon
 # selects spoken concepts; it never supplies a missing step, number or claim.
@@ -137,6 +142,10 @@ def enough(name, data):
     if name in {'conveyor_belt', 'domino_chain', 'pipeline_pipes', 'stack_pile', 'puzzle_snap'}:
         return n >= 1 or bool(data.text)
     if name in {'dice_roll', 'lock_unlock', 'shield_hit', 'traffic_light', 'orbit_system', 'layered_onion', 'chat_thread', 'mock_card_swipe', 'form_fill_submit', 'terminal_command_run'}:
+        return True
+    if name == 'lg_stat_hero':
+        return (data.value is not None and math.isfinite(data.value)) or (bool(data.number_text) and any(c.isdigit() for c in data.number_text))
+    if name in LIGHT_GLASS_TYPES:
         return True
     return n >= 2 if (name in TYPES or name in RECIPE_TYPES) else False
 

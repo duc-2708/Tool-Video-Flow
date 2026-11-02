@@ -22,11 +22,47 @@ from utils.file_lock import file_lock
 from utils.word_timing import align_words,read_words,timing_source
 
 MOTION_DIR=Path(__file__).resolve().parents[1]/"editor/motion"
+LIGHT_GLASS_RECIPES = {
+    "lg_source_headline",
+    "lg_stat_hero",
+    "lg_shot_features",
+    "lg_vs_compare",
+    "lg_note_card",
+    "lg_cta_profile",
+}
+
 SUPPORTED = {
     "hook_card", "steps_list", "compare_bars", "stat_card", "source_card", "text_focus",
     "progress_tracker", "ring_percent", "line_growth", "strike_replace", "quote_card", "timeline", "versus",
     "cta_card", "icon_card"
 }
+SUPPORTED.update(LIGHT_GLASS_RECIPES)
+
+
+@lru_cache(maxsize=1)
+def get_inter_font_faces() -> str:
+    fonts_dir = Path(__file__).resolve().parents[1] / "assets" / "fonts"
+    faces = []
+    weight_map = {
+        "Inter-Regular.ttf": 400,
+        "Inter-SemiBold.ttf": 600,
+        "Inter-Bold.ttf": 700,
+        "Inter-Black.ttf": 900,
+    }
+    for filename, weight in weight_map.items():
+        fpath = fonts_dir / filename
+        if fpath.is_file():
+            b64 = base64.b64encode(fpath.read_bytes()).decode("ascii")
+            faces.append(
+                f"@font-face {{\n"
+                f"  font-family: 'Inter';\n"
+                f"  font-style: normal;\n"
+                f"  font-weight: {weight};\n"
+                f"  font-display: swap;\n"
+                f"  src: url('data:font/truetype;base64,{b64}') format('truetype');\n"
+                f"}}"
+            )
+    return "\n".join(faces)
 
 
 def is_motion_supported(template: str) -> bool:
@@ -111,6 +147,28 @@ def scene_payload(scene,size,caption_style,options=None):
         }
     from config.settings import get_settings
     settings = get_settings()
+    payload['brand_name'] = getattr(settings, 'brand_name', 'TIN CÔNG NGHỆ')
+    b_path = getattr(settings, 'brand_logo_path', '')
+    payload['brand_logo_path'] = b_path
+    if b_path and Path(b_path).is_file():
+        try:
+            b64_logo = base64.b64encode(Path(b_path).read_bytes()).decode('ascii')
+            ext = Path(b_path).suffix.lstrip('.').lower() or 'png'
+            payload['brand_logo_data_uri'] = f"data:image/{ext};base64,{b64_logo}"
+        except Exception:
+            payload['brand_logo_data_uri'] = ''
+    raw_src = (options.get('source_domain') if options else None) or getattr(scene, 'source_domain', None) or getattr(scene, 'source', None) or (getattr(scene, 'spec', None) and getattr(scene.spec, 'source', None)) or ''
+    extracted_domain = ''
+    if raw_src:
+        m_dom = re.search(r'(?:https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})', str(raw_src))
+        if m_dom:
+            extracted_domain = m_dom.group(1).lower()
+        else:
+            extracted_domain = str(raw_src).split(' · ')[0].strip()
+    payload['source_domain'] = extracted_domain
+    for shot in payload['shots']:
+        if not shot.get('source_domain') and extracted_domain:
+            shot['source_domain'] = extracted_domain
     illustrations_enabled = payload.get('illustrations_enabled', False) or bool(forced_recipe) or getattr(settings, 'motion_recipes_enabled', True)
     if spec and illustrations_enabled:
         from agents.illustrations import scene_data,enough
@@ -182,6 +240,22 @@ def scene_payload(scene,size,caption_style,options=None):
                 'data': rebound_dict,
                 'beats': beats,
                 'annotations': [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in getattr(spec, 'annotations', [])]
+            }
+        elif spec.scene_type in LIGHT_GLASS_RECIPES:
+            rebound_dict = rebound.model_dump(mode='json') if hasattr(rebound, 'model_dump') else dict(rebound)
+            beats = [b.model_dump(mode='json') for b in getattr(spec, 'beats', [])] if getattr(spec, 'beats', None) else [
+                {"at_sec": 0.35, "action": f"enter_{spec.scene_type}"},
+                {"at_sec": 1.5, "action": f"action_{spec.scene_type}_step"},
+            ]
+            annots = getattr(spec, 'annotations', [])
+            annots_json = [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in annots]
+            payload['visual_plan'] = {
+                'scene_type': spec.scene_type,
+                'recipe': spec.scene_type,
+                'depth_3d': False,
+                'data': rebound_dict,
+                'beats': beats,
+                'annotations': annots_json
             }
         elif enough(spec.scene_type,rebound):
             resolved=spec.model_copy(update={'data':rebound})
@@ -312,6 +386,9 @@ def html_document(payload,font):
     css += '\n' + scene_css + '\n' + themes_css + '\n' + engine_css + '\n' + depth_css
     js = depth_js + '\n' + engine_js + '\n' + scene_js + '\n' + js
     t_name = str(theme.get('name', 'studio'))
+    if t_name == "light_glass":
+        inter_css = get_inter_font_faces()
+        css = inter_css + '\n' + css
     depth_enabled = bool(payload.get("depth_3d", False))
     if not depth_enabled:
         try:

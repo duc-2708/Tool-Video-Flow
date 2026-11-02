@@ -25,3 +25,15 @@ themes:
     radius: 24
     shadow: 0.18
     image: ''
+  light_glass:
+    background: gradient
+    top: '#f4f5f8'
+    bottom: '#e8ecf2'
+    card: '#ffffff'
+    foreground: '#1a1446'
+    muted: '#64748b'
+    accent: '#2563eb'
+    secondary: '#3d2bb0'
+    radius: 28
+    shadow: 0.12
+    image: ''

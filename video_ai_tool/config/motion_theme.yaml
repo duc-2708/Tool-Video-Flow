@@ -8,3 +8,4 @@ themes:
   paper_brand: {top: '#f8f6f0', bottom: '#ede8dd', card: '#ffffff', foreground: '#1d2129', accent: '#5e35b1', secondary: '#00695c'}
   whiteboard_sketch: {top: '#f9f9fa', bottom: '#ededf0', card: '#ffffff', foreground: '#1a1a1a', accent: '#c62828', secondary: '#1565c0'}
   clean_white: {top: '#f8fafc', bottom: '#f1f5f9', card: '#ffffff', foreground: '#0f172a', accent: '#0369a1', secondary: '#047857'}
+  light_glass: {top: '#f4f5f8', bottom: '#e8ecf2', card: '#ffffff', foreground: '#1a1446', accent: '#2563eb', secondary: '#3d2bb0'}
