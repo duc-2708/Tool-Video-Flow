@@ -53,11 +53,11 @@ NEW_PROJECT = "__new_project__"
 PAGES = {
     # TẠO VIDEO
     "Tạo video": render_create_video,
-    "Tạo video theo danh mục": render_auto_category,
     "Khám phá chủ đề": render_discover,
     "Trend Scout": render_trend_scout,
     # XỬ LÝ
     "Research": render_research,
+    "Tạo video theo danh mục": render_auto_category,
     "Edit Plan": render_edit_plan,
     "Assets": render_assets,
     "AI Video": render_ai_video,
@@ -72,25 +72,25 @@ PAGES = {
 }
 
 NAV_GROUPS = {
-    "TẠO VIDEO": ["Tạo video", "Tạo video theo danh mục", "Khám phá chủ đề", "Trend Scout"],
-    "XỬ LÝ": ["Research", "Edit Plan", "Assets", "AI Video", "Render"],
+    "TẠO VIDEO": ["Tạo video", "Khám phá chủ đề", "Trend Scout"],
+    "XỬ LÝ": ["Research", "Tạo video theo danh mục", "Edit Plan", "Assets", "AI Video", "Render"],
     "THƯ VIỆN": ["Kho video đã làm", "Phong cách mẫu", "Xem trước mẫu", "Phòng thử hiệu ứng"],
     "HỆ THỐNG": ["Cài đặt Token & AI"],
 }
 
 PAGE_NAMES_VI = {
     "Tạo video": "Tạo video",
-    "Tạo video theo danh mục": "Tự động theo danh mục",
     "Khám phá chủ đề": "Khám phá chủ đề",
     "Trend Scout": "Trend Scout",
     "Research": "Research",
-    "Edit Plan": "Edit Plan",
-    "Assets": "Assets",
+    "Tạo video theo danh mục": "Hàng đợi tạo hàng loạt",
+    "Edit Plan": "Storyboard",
+    "Assets": "Assets & minh họa",
     "AI Video": "AI Video",
-    "Render": "Render",
+    "Render": "Dựng video",
     "Kho video đã làm": "Kho video đã làm",
     "Phong cách mẫu": "Phong cách mẫu",
-    "Xem trước mẫu": "Xem trước mẫu",
+    "Xem trước mẫu": "Kho minh họa",
     "Phòng thử hiệu ứng": "Phòng thử hiệu ứng",
     "Cài đặt Token & AI": "Cài đặt Token & AI",
 }
@@ -185,15 +185,15 @@ def main() -> None:
     # SIDEBAR: Điều hướng gọn gàng, có phân cấp nhóm
     # =========================================================================
     with st.sidebar:
-        # Logo ô vuông bo 12px chữ V nền vàng + tên "VIDEO AI TOOL" (không emoji)
+        # Logo vòng tròn vàng chữ V + 2 dòng chữ trắng to in hoa chuẩn ảnh mockup
         st.markdown("""
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 4px 0;">
-                <div style="width: 38px; height: 38px; background: #FFD400; color: #0A0A0A; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 900; box-shadow: 0 2px 8px rgba(255, 212, 0, 0.3);">
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 22px; padding: 6px 4px;">
+                <div style="width: 44px; height: 44px; background: #FFD400; color: #0A0A0A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.55rem; font-weight: 900; box-shadow: 0 2px 10px rgba(255, 212, 0, 0.35); flex-shrink: 0;">
                     V
                 </div>
-                <div>
-                    <div style="color: #FFFFFF; font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; line-height: 1.1;">VIDEO AI TOOL</div>
-                    <div style="color: #A8A8A8; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;">Studio Edition</div>
+                <div style="color: #FFFFFF; font-weight: 900; font-size: 1.15rem; line-height: 1.1; letter-spacing: 0.03em;">
+                    <div>VIDEO AI</div>
+                    <div>TOOL</div>
                 </div>
             </div>
         """, unsafe_allow_html=True)

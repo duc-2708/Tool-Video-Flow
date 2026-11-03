@@ -437,44 +437,41 @@ select:focus-visible,
     color: #0A0A0A !important;
 }
 
-/* 8. SIDEBAR NAVIGATION - KHÔNG DÙNG TICK BOX, FLAT TAB BUTTON BO 14PX */
+/* 8. SIDEBAR NAVIGATION - CHUẨN 100% MOCKUP FIGMA Y1 (REACT-ARIA STREAMLIT 1.66) */
 
-/* Ẩn triệt để TẤT CẢ các thành phần radio tick box / circle indicator */
-[data-testid="stSidebar"] [role="radiogroup"] input[type="radio"],
-[data-testid="stSidebar"] [role="radiogroup"] label > div:not([data-testid="stMarkdownContainer"]),
-[data-testid="stSidebar"] [role="radiogroup"] label svg,
-[data-testid="stSidebar"] [role="radiogroup"] [class*="StyledRadio"],
-[data-testid="stSidebar"] [role="radiogroup"] [class*="RadioMark"],
-[data-testid="stSidebar"] [role="radiogroup"] [class*="RadioPoint"] {
+/* 1. Ẩn triệt để 100% vòng tròn tick box radio (div con thứ nhất đứng trước stMarkdownContainer) */
+[data-testid="stSidebar"] [data-testid="stRadioOption"] [class*="e1dm8mpf4"],
+[data-testid="stSidebar"] [data-testid="stRadioOption"] [class*="e1dm8mpf5"],
+[data-testid="stSidebar"] [data-testid="stRadioOption"] input[type="radio"],
+[data-testid="stSidebar"] [data-testid="stRadioOption"] svg {
     display: none !important;
     visibility: hidden !important;
-    opacity: 0 !important;
     width: 0 !important;
     height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     border: none !important;
-    position: absolute !important;
+    opacity: 0 !important;
     pointer-events: none !important;
 }
 
-/* Radiogroup layout dạng cột dọc */
-[data-testid="stSidebar"] [role="radiogroup"] {
+/* 2. Container radio dạng cột dọc */
+[data-testid="stSidebar"] [data-testid="stRadioGroup"] {
     display: flex !important;
     flex-direction: column !important;
-    gap: 4px !important;
+    gap: 3px !important;
     width: 100% !important;
     padding: 0 !important;
 }
 
-/* Mỗi label là một nút phẳng dạng tab / pill sang trọng bo 14px */
-[data-testid="stSidebar"] [role="radiogroup"] > label,
-[data-testid="stSidebar"] [role="radiogroup"] label[data-baseweb="radio"] {
-    display: block !important;
+/* 3. Mỗi mục trong menu là một Pill bo tròn 999px chuẩn Figma */
+[data-testid="stSidebar"] [data-testid="stRadioOption"] {
+    display: flex !important;
+    align-items: center !important;
     width: 100% !important;
-    padding: 10px 16px !important;
-    margin: 0 !important;
-    border-radius: 14px !important;
+    padding: 10px 20px !important;
+    margin: 1px 0 !important;
+    border-radius: 999px !important;
     background-color: transparent !important;
     border: 1px solid transparent !important;
     cursor: pointer !important;
@@ -483,216 +480,230 @@ select:focus-visible,
     text-align: left !important;
 }
 
-/* Hover state: sáng nhẹ thanh lịch */
-[data-testid="stSidebar"] [role="radiogroup"] > label:hover,
-[data-testid="stSidebar"] [role="radiogroup"] label[data-baseweb="radio"]:hover {
+/* Hover trên mục chưa chọn */
+[data-testid="stSidebar"] [data-testid="stRadioOption"]:not([data-selected="true"]):hover {
     background-color: rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 /* Text bên trong item navigation */
-[data-testid="stSidebar"] [role="radiogroup"] label [data-testid="stMarkdownContainer"],
-[data-testid="stSidebar"] [role="radiogroup"] label [data-testid="stMarkdownContainer"] p {
-    color: #C0C0C0 !important;
-    font-size: 0.92rem !important;
-    font-weight: 600 !important;
+[data-testid="stSidebar"] [data-testid="stRadioOption"] [data-testid="stMarkdownContainer"],
+[data-testid="stSidebar"] [data-testid="stRadioOption"] [data-testid="stMarkdownContainer"] p {
+    color: #FFFFFF !important;
+    font-size: 0.94rem !important;
+    font-weight: 500 !important;
     line-height: 1.35 !important;
     margin: 0 !important;
     padding: 0 !important;
     letter-spacing: -0.01em !important;
-    transition: color 0.15s ease !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-[data-testid="stSidebar"] [role="radiogroup"] label:hover [data-testid="stMarkdownContainer"] p {
-    color: #FFFFFF !important;
-}
-
-/* MỤC ĐANG CHỌN (ACTIVE ITEM): NỀN VÀNG #FFD400, CHỮ ĐEN #0A0A0A ĐẬM, BO 14PX */
-[data-testid="stSidebar"] [role="radiogroup"] > label:has(input:checked),
-[data-testid="stSidebar"] [role="radiogroup"] label[data-baseweb="radio"]:has(input:checked),
-[data-testid="stSidebar"] [role="radiogroup"] label[aria-checked="true"] {
+/* 4. MỤC ĐANG CHỌN (ACTIVE ITEM): Nền vàng #FFD400, chữ đen #0A0A0A đậm, bo dạng Pill 999px */
+[data-testid="stSidebar"] [data-testid="stRadioOption"][data-selected="true"],
+[data-testid="stSidebar"] [data-testid="stRadioGroup"] > div[data-selected="true"] [data-testid="stRadioOption"] {
     background-color: #FFD400 !important;
     border-color: #FFD400 !important;
-    box-shadow: 0 4px 16px rgba(255, 212, 0, 0.3) !important;
+    border-radius: 999px !important;
+    box-shadow: 0 4px 18px rgba(255, 212, 0, 0.35) !important;
 }
 
-[data-testid="stSidebar"] [role="radiogroup"] > label:has(input:checked) [data-testid="stMarkdownContainer"] p,
-[data-testid="stSidebar"] [role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) [data-testid="stMarkdownContainer"] p,
-[data-testid="stSidebar"] [role="radiogroup"] label[aria-checked="true"] [data-testid="stMarkdownContainer"] p {
+[data-testid="stSidebar"] [data-testid="stRadioOption"][data-selected="true"] [data-testid="stMarkdownContainer"] p,
+[data-testid="stSidebar"] [data-testid="stRadioGroup"] > div[data-selected="true"] [data-testid="stMarkdownContainer"] p {
     color: #0A0A0A !important;
     font-weight: 800 !important;
 }
 
-/* Phân nhóm tiêu đề với ::before */
-[data-testid="stSidebar"] [role="radiogroup"] > label:nth-of-type(1)::before {
+/* 5. Phân nhóm tiêu đề viết hoa xám thanh lịch chuẩn ảnh mockup */
+[data-testid="stSidebar"] [data-testid="stRadioGroup"] > div:nth-child(1)::before {
     content: "TẠO VIDEO";
     display: block;
     width: 100%;
-    color: #7A7A7A;
+    color: #6E6E6E;
     font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    padding: 6px 0 8px 4px;
-    margin-bottom: 4px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 6px 0 8px 18px;
+    margin-bottom: 2px;
     text-transform: uppercase;
     pointer-events: none;
 }
 
-[data-testid="stSidebar"] [role="radiogroup"] > label:nth-of-type(5)::before {
+[data-testid="stSidebar"] [data-testid="stRadioGroup"] > div:nth-child(4)::before {
     content: "XỬ LÝ";
     display: block;
     width: 100%;
-    color: #7A7A7A;
+    color: #6E6E6E;
     font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    padding: 18px 0 8px 4px;
-    margin-bottom: 4px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 18px 0 8px 18px;
+    margin-bottom: 2px;
     margin-top: 6px;
     text-transform: uppercase;
-    border-top: 1px solid #222222;
     pointer-events: none;
 }
 
-[data-testid="stSidebar"] [role="radiogroup"] > label:nth-of-type(10)::before {
+[data-testid="stSidebar"] [data-testid="stRadioGroup"] > div:nth-child(10)::before {
     content: "THƯ VIỆN";
     display: block;
     width: 100%;
-    color: #7A7A7A;
+    color: #6E6E6E;
     font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    padding: 18px 0 8px 4px;
-    margin-bottom: 4px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 18px 0 8px 18px;
+    margin-bottom: 2px;
     margin-top: 6px;
     text-transform: uppercase;
-    border-top: 1px solid #222222;
     pointer-events: none;
 }
 
-[data-testid="stSidebar"] [role="radiogroup"] > label:nth-of-type(14)::before {
+[data-testid="stSidebar"] [data-testid="stRadioGroup"] > div:nth-child(14)::before {
     content: "HỆ THỐNG";
     display: block;
     width: 100%;
-    color: #7A7A7A;
+    color: #6E6E6E;
     font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    padding: 18px 0 8px 4px;
-    margin-bottom: 4px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 18px 0 8px 18px;
+    margin-bottom: 2px;
     margin-top: 6px;
     text-transform: uppercase;
-    border-top: 1px solid #222222;
     pointer-events: none;
 }
 
 /* =========================================================================
-   SPINNER LOAD CHO WEBSITE (ĐEN - VÀNG #FFD400)
+   SPINNER LOAD CHỜ GIỮA WEB (ĐEN - VÀNG #FFD400) - BỎ LOAD CŨ
    ========================================================================= */
 
-/* Top loading bar */
+/* 1. Bỏ thanh top loading bar cũ ở mép trên */
 [data-testid="stDecoration"] {
-    background: linear-gradient(90deg, #FFD400, #FFF5A5, #FFD400) !important;
-    background-size: 200% 100% !important;
-    animation: agyShimmer 2s linear infinite !important;
-    height: 3.5px !important;
-    box-shadow: 0 0 12px rgba(255, 212, 0, 0.7) !important;
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
-@keyframes agyShimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+/* Ẩn status widget khi app ở trạng thái nghỉ (idle / không có running icon) */
+[data-testid="stStatusWidget"]:not(:has([data-testid*="stStatusWidgetRunning"])) {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
-/* Streamlit Native Spinner (.stSpinner / [data-testid="stSpinner"]) */
+/* 2. SPINNER LOAD CHỜ CĂN RA CHÍNH GIỮA MÀN HÌNH (THUẦN VÒNG QUAY VÀNG, KHÔNG HỘP ĐEN, KHÔNG NÚT STOP) */
+[data-testid="stStatusWidget"]:has([data-testid*="stStatusWidgetRunning"]),
 .stSpinner,
 [data-testid="stSpinner"] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 9999999 !important;
     display: flex !important;
+    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 16px 24px !important;
-    margin: 12px 0 !important;
-    background: rgba(20, 20, 20, 0.9) !important;
-    border: 1px solid #2A2A2A !important;
-    border-radius: 16px !important;
-    backdrop-filter: blur(10px) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    width: auto !important;
+    height: auto !important;
+    pointer-events: none !important;
 }
 
+/* Vòng xoay spinner vàng kim quay tròn mượt mà ở chính giữa web */
+[data-testid="stStatusWidget"] [data-testid*="stStatusWidgetRunning"],
 .stSpinner > div:first-child,
 [data-testid="stSpinner"] > div:first-child {
-    border-color: rgba(255, 212, 0, 0.2) !important;
+    display: block !important;
+    visibility: visible !important;
+    border: 5px solid rgba(255, 212, 0, 0.2) !important;
     border-top-color: #FFD400 !important;
-    border-width: 3.5px !important;
     border-radius: 50% !important;
-    width: 28px !important;
-    height: 28px !important;
-    animation: agySpin 0.7s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+    width: 60px !important;
+    height: 60px !important;
+    animation: agyCenterSpin 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+    margin: 0 auto !important;
+    background: transparent !important;
 }
 
+/* Ẩn triệt để nút Stop và mọi button con */
+[data-testid="stStatusWidget"] button,
+[data-testid="stStatusWidget"] [data-testid*="button"],
+[data-testid="stStatusWidget"] [data-testid*="Button"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Ẩn text và các icon con mặc định bên trong, chỉ để lại duy nhất vòng xoay */
+[data-testid="stStatusWidget"] [data-testid*="stStatusWidgetRunning"] *,
+[data-testid="stStatusWidget"] span,
+[data-testid="stStatusWidget"] p,
+[data-testid="stStatusWidget"] a,
 .stSpinner [data-testid="stMarkdownContainer"] p,
 [data-testid="stSpinner"] span {
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    font-size: 0.95rem !important;
-    margin-left: 14px !important;
-    letter-spacing: -0.01em !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
 }
 
-@keyframes agySpin {
+@keyframes agyCenterSpin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* Status Widget (Running indicator ở góc trên bên phải) */
-[data-testid="stStatusWidget"] {
-    background-color: #141414 !important;
-    border: 1.5px solid #FFD400 !important;
-    border-radius: 999px !important;
-    padding: 4px 14px !important;
-    box-shadow: 0 4px 16px rgba(255, 212, 0, 0.25) !important;
-}
-
-[data-testid="stStatusWidget"] * {
-    color: #FFD400 !important;
-    font-weight: 800 !important;
-    font-size: 0.85rem !important;
-}
-
-/* UI Kit Component Loading Spinner */
+/* 3. Custom UI Kit Component Loading Spinner */
 .agy-loader-box {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 32px 24px;
+    padding: 36px 28px;
     background: #141414;
     border: 1px solid #2A2A2A;
-    border-radius: 18px;
-    margin: 16px 0;
+    border-radius: 22px;
+    margin: 16px auto;
     text-align: center;
+    max-width: 420px;
 }
 
 .agy-loader-ring {
-    width: 44px;
-    height: 44px;
-    border: 4px solid rgba(255, 212, 0, 0.15);
+    width: 52px;
+    height: 52px;
+    border: 4.5px solid rgba(255, 212, 0, 0.15);
     border-top-color: #FFD400;
     border-radius: 50%;
-    animation: agySpin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    margin-bottom: 14px;
+    animation: agyCenterSpin 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    margin-bottom: 16px;
 }
 
 .agy-loader-title {
     color: #FFFFFF;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.05rem;
     margin-bottom: 4px;
 }
 
 .agy-loader-sub {
     color: #A8A8A8;
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     font-weight: 500;
 }
 

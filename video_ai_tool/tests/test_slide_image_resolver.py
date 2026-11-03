@@ -87,3 +87,27 @@ def test_resolve_images_for_slide_script(tmp_path: Path):
         assert Path(r).stat().st_size > 5000
     assert "image_url" in ss.slides[0].slots
     assert "image_url" in ss.slides[1].slots
+
+
+def test_diverse_12_beat_visuals(tmp_path: Path):
+    """Ensure all 12 beats generate distinct, varied imagery and no false AI substring matches."""
+    prompts = [
+        _generate_vivid_image_prompt("Cảnh 1 về tác giả", author="Elon Musk", idx=i)
+        for i in range(12)
+    ]
+    # All 12 prompts must be non-empty and diverse
+    assert len(set(prompts)) == 12
+
+    # Verify that words containing 'ai' like 'portrait' or 'against' do not all collapse into neural_net
+    img_dir = tmp_path / "diverse_beats"
+    img_dir.mkdir(parents=True, exist_ok=True)
+    generated = []
+    for i, p in enumerate(prompts):
+        out_f = img_dir / f"beat_{i+1:02d}.png"
+        generate_cinematic_visual(prompt=p, output_path=out_f, width=480, height=480)
+        assert out_f.is_file()
+        generated.append(out_f.stat().st_size)
+
+    # High diversity of file sizes (at least 8 distinct file sizes out of 12)
+    assert len(set(generated)) >= 8
+

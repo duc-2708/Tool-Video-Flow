@@ -154,7 +154,7 @@ def rerender_project_with_theme(
 
         # Synthesize & resolve high-contrast cinematic imagery for all slides
         from pipeline.slide_image_resolver import resolve_images_for_slide_script
-        resolved_imgs = resolve_images_for_slide_script(p_dir, slide_script_obj)
+        resolved_imgs = resolve_images_for_slide_script(p_dir, slide_script_obj, force_refresh=True)
         logger.info("Resolved %d visual graphic assets for slides", len(resolved_imgs))
 
         # Save slide_script.json

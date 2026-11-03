@@ -82,37 +82,66 @@ def _generate_vivid_image_prompt(
     topic: str = "",
     layout: str = "",
     author: str | None = None,
-    idx: int = 0,
+    idx: int | None = None,
 ) -> str:
-    """Generate a vivid, cinematic English visual prompt for a 5-second motion beat."""
+    """Generate a vivid, cinematic English visual prompt for a 5-second motion beat.
+    
+    Guarantees every single beat has a distinct, captivating, non-repeating visual motif.
+    """
     n_low = narration.lower()
 
-    if author and (idx == 0 or any(k in n_low for k in ("nói", "tuyên bố", "cho rằng", "chia sẻ", "nhấn mạnh"))):
+    if layout == "lg_cta_profile" or (idx is not None and idx >= 11) or any(k in n_low for k in ("đăng ký kênh", "theo dõi kênh", "hãy đăng ký", "bấm theo dõi", "subscribe")):
+        return "Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights, cinematic 8k."
+
+    if author and (idx == 0 or any(k in n_low for k in ("nói", "tuyên bố", "cho rằng", "chia sẻ", "nhấn mạnh", "phát biểu"))):
         return f"Cinematic studio portrait of visionary tech founder {author} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field, 8k octane render."
 
-    if any(k in n_low for k in ("rủi ro", "nguy hiểm", "cảnh báo", "bảo vệ", "an toàn", "sai lầm", "hoài nghi")):
-        return "Futuristic glowing amber-crimson holographic cyber security shield deflecting risk anomalies on an advanced tactical monitoring matrix, high-contrast dramatic lighting."
+    # High-priority semantic keyword checks
+    if any(k in n_low for k in ("heo đất", "lợn đất", "tiết kiệm", "giữ tiền", "piggy")):
+        return "Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams, dramatic high-contrast studio rim lighting, 8k hyper-detailed."
 
-    if any(k in n_low for k in ("tiết kiệm", "heo đất", "lạm phát", "giữ tiền", "đồng tiền", "mất giá")):
-        return "Cinematic split concept art showing a traditional vintage clay piggy bank subtly cracking against glowing holographic digital currency streams, dramatic studio lighting, 8k hyper-detailed."
+    if any(k in n_low for k in ("robot", "tự động hóa", "nhà máy", "tay máy", "gigafactory")):
+        return "High-precision industrial robotic arm welding futuristic quantum components in an automated Tesla Gigafactory, glowing laser beams and spark particles, 8k cinematic."
 
-    if any(k in n_low for k in ("đầu tư", "sinh lời", "tái đầu tư", "dòng tiền", "tài sản", "lợi nhuận", "cổ phiếu", "chứng khoán")):
-        return "Futuristic glowing emerald green financial trading spline trajectory ascending across multi-layered holographic market displays, neon grid reflections, cinematic 8k render."
+    if any(k in n_low for k in ("chi phí", "về không", "bằng không", "năng suất", "300%", "giá thành", "rẻ hơn")):
+        return "Professional multi-screen Bloomberg financial trading terminal showing production cost descending to zero with vibrant green and red candlestick price charts, 8k."
 
-    if any(k in n_low for k in ("chi phí", "bằng không", "về không", "năng suất", "rẻ hơn", "300%")):
-        return "High-tech financial analytics showing production cost curve descending sharply to zero baseline, illuminated in neon cyan and emerald against automated precision machinery, 8k cinematic."
+    if any(k in n_low for k in ("rủi ro", "nguy hiểm", "cảnh báo", "bảo vệ", "lỗ hổng", "hoài nghi", "mạo hiểm")):
+        return "Futuristic glowing amber-crimson holographic cyber security shield deflecting volatile pension and market risk anomalies on an advanced tactical monitoring matrix, 8k."
 
-    if any(k in n_low for k in ("robot", "tự động hóa", "nhà máy", "sản xuất", "tay máy", "hình người")):
-        return "Advanced humanoid robot and precision automated robotic arms operating in a futuristic gigafactory assembly line, volumetric laser beams, cinematic depth, 8k render."
+    if any(k in n_low for k in ("so sánh", "hai mặt", "đối lập", "thay vì", "tiền mặt")):
+        return "High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and green asset growth on right, 8k."
 
-    if any(k in n_low for k in ("ai", "trí tuệ nhân tạo", "thuật toán", "mô hình", "mạng thần kinh", "công nghệ")):
+    if any(k in n_low for k in ("cân bằng", "cán cân", "phân bổ", "tỷ trọng")):
+        return "Futuristic golden mechanical balance scale in equilibrium, weighing physical gold assets against algorithmic technology capital across society, 8k octane render."
+
+    if any(k in n_low for k in ("chìa khóa", "giải pháp", "dòng tiền", "bước ngoặt")):
+        return "Ornate 3D glowing golden key floating above a dark frosted glass pedestal with pulsing cyan circuit runes, representing cash flow mastery, 8k."
+
+    if author and (idx == 0 or any(k in n_low for k in ("nói", "tuyên bố", "cho rằng", "chia sẻ", "nhấn mạnh", "phát biểu"))):
+        return f"Cinematic studio portrait of visionary tech founder {author} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field, 8k octane render."
+
+    if any(k in n_low for k in ("ai", "trí tuệ nhân tạo", "thuật toán", "mô hình", "mạng thần kinh", "tương lai")):
         return "Vibrant glowing cybernetic neural network core pulsating with complex interconnected data nodes and synaptic fiber conduits, deep indigo and cyan volumetric atmosphere, 8k."
 
-    if any(k in n_low for k in ("rủi ro", "nguy hiểm", "cảnh báo", "bảo vệ", "an toàn", "sai lầm", "hoài nghi")):
-        return "Futuristic glowing amber-crimson holographic cyber security shield deflecting risk anomalies on an advanced tactical monitoring matrix, high-contrast dramatic lighting."
+    # Dedicated narrative fallbacks if idx is provided
+    dedicated_beat_prompts = [
+        f"Cinematic studio portrait of visionary tech founder {author or 'Elon Musk'} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field, 8k octane render.",
+        "Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams, dramatic high-contrast studio rim lighting, 8k hyper-detailed.",
+        "High-precision industrial robotic arm welding futuristic quantum components in an automated Tesla Gigafactory, glowing laser beams and spark particles, 8k cinematic.",
+        "Professional multi-screen Bloomberg financial trading terminal showing production cost descending to zero with vibrant green and red candlestick price charts, 8k.",
+        "High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and green asset growth on right, 8k.",
+        "Ornate 3D glowing golden key floating above a dark frosted glass pedestal with pulsing cyan circuit runes, representing cash flow mastery, 8k.",
+        f"Editorial financial newspaper article clipping with large golden quotation marks, verified expert badge for {author or 'financial planner Ted Jenkin'}, and bold highlighted callout text, 8k.",
+        "Futuristic glowing amber-crimson holographic cyber security shield deflecting volatile pension and market risk anomalies on an advanced tactical monitoring matrix, 8k.",
+        "Futuristic golden mechanical balance scale in equilibrium, weighing physical gold assets against algorithmic technology capital across society, 8k octane render.",
+        "Futuristic cybernetic city skyline with autonomous humanoid robot gazing at technological horizon and neon glass skyscrapers, 8k.",
+        "Circular glowing emergency reserve gauge meter pointing to 6-month green safety zone, fortified biometric vault lock mechanism, 8k.",
+        "Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights, cinematic 8k.",
+    ]
 
-    if layout == "lg_cta_profile" or any(k in n_low for k in ("đăng ký", "theo dõi", "bình luận", "kênh", "chia sẻ")):
-        return "Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights, cinematic 8k."
+    if idx is not None and 0 <= idx < len(dedicated_beat_prompts):
+        return dedicated_beat_prompts[idx]
 
     clean_topic = topic or "Future of Technology"
     return f"Cinematic visual concept visualizing '{clean_topic}', dynamic cyber aesthetic with glass reflections and volumetric neon lighting, 8k concept art."

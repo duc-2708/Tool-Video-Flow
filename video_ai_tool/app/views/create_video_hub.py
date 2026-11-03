@@ -176,34 +176,55 @@ def render(settings, project, topic, debug, diagnostics):
                 "<div style='color: #FFD400; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;'>SỐ LƯỢNG VIDEO</div>",
                 unsafe_allow_html=True,
             )
+            if "hub_qty" not in st.session_state:
+                st.session_state["hub_qty"] = 1
+
+            def _change_hub_qty(delta: int):
+                curr = st.session_state.get("hub_qty", 1)
+                st.session_state["hub_qty"] = max(1, min(20, curr + delta))
+
+            def _set_hub_qty(val: int):
+                st.session_state["hub_qty"] = max(1, min(20, val))
+
             col_qty, col_presets = st.columns([1.2, 1.8])
             with col_qty:
                 c_minus, c_num, c_plus = st.columns([1, 2, 1])
-                curr_count = st.session_state.get("hub_qty", 1)
-                if c_minus.button("−", key="btn_minus_qty", use_container_width=True):
-                    st.session_state["hub_qty"] = max(1, curr_count - 1)
-                    st.rerun()
+                c_minus.button(
+                    "−",
+                    key="btn_minus_qty",
+                    on_click=_change_hub_qty,
+                    args=(-1,),
+                    use_container_width=True,
+                )
                 video_count = c_num.number_input(
                     "Số lượng",
                     min_value=1,
                     max_value=20,
-                    value=curr_count,
                     step=1,
                     key="hub_qty",
                     label_visibility="collapsed",
                 )
-                if c_plus.button("+", key="btn_plus_qty", use_container_width=True):
-                    st.session_state["hub_qty"] = min(20, curr_count + 1)
-                    st.rerun()
+                c_plus.button(
+                    "+",
+                    key="btn_plus_qty",
+                    on_click=_change_hub_qty,
+                    args=(1,),
+                    use_container_width=True,
+                )
 
             with col_presets:
                 p1, p5, p10, p20 = st.columns(4)
                 for num, btn_col in [(1, p1), (5, p5), (10, p10), (20, p20)]:
                     is_active = (video_count == num)
                     b_type = "primary" if is_active else "secondary"
-                    if btn_col.button(f"{num}", key=f"btn_p_{num}", type=b_type, use_container_width=True):
-                        st.session_state["hub_qty"] = num
-                        st.rerun()
+                    btn_col.button(
+                        f"{num}",
+                        key=f"btn_p_{num}",
+                        on_click=_set_hub_qty,
+                        args=(num,),
+                        type=b_type,
+                        use_container_width=True,
+                    )
 
             st.toggle(
                 "AI tự tìm chủ đề khác nhau",

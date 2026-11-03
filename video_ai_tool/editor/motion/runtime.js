@@ -489,7 +489,19 @@ if(C.captions && C.captions.enabled!==false){
         }
       }
     }
-    caption.style.display='none';
+    // Restore crisp, legible karaoke captions in Light Glass
+    caption.style.display = 'flex';
+    caption.style.top = '74%';
+    caption.style.bottom = 'auto';
+    caption.style.left = '6%';
+    caption.style.width = '88%';
+    caption.style.maxHeight = '180px';
+    caption.style.background = 'rgba(15, 23, 42, 0.85)';
+    caption.style.backdropFilter = 'blur(16px)';
+    caption.style.borderRadius = '24px';
+    caption.style.padding = '14px 28px';
+    caption.style.border = '1.5px solid rgba(255, 255, 255, 0.20)';
+    caption.style.boxShadow = '0 12px 36px rgba(0, 0, 0, 0.45)';
   }
  const ai=(C.ai_backgrounds||[]).find(b=>t>=b.start&&t<b.start+b.duration);
  bgVideo.style.display=ai&&ai.frames.length?'block':'none';

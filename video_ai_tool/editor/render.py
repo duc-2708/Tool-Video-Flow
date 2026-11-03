@@ -273,7 +273,7 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                             timeline.plan.render_style.theme = "light_glass"
                         from editor.timeline import TimelineShot
                         from schemas.motion_scene import MotionScenePlan
-                        from schemas.visual import VisualBeat, VisualData
+                        from schemas.visual import VisualBeat, VisualData, Visual
 
                         for sc_idx, sc in enumerate(timeline.scenes):
                             try:
@@ -314,7 +314,8 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                                         first_vp_obj = vp_obj
 
                                     base_spec = sc.shots[min(m_idx, len(sc.shots) - 1)].spec if sc.shots else sc.spec.shots[0]
-                                    sh_spec = base_spec.model_copy(update={"visual_plan": vp_obj})
+                                    new_vis = Visual(template=m_slide.layout, data=shot_data, beats=beats)
+                                    sh_spec = base_spec.model_copy(update={"visual_plan": vp_obj, "visual": new_vis})
                                     sh_dur = dur_per_shot if m_idx < num_slides - 1 else (sc.duration - dur_per_shot * (num_slides - 1))
                                     sh_start = sc.start + dur_per_shot * m_idx
                                     sh_path = sc.shots[min(m_idx, len(sc.shots) - 1)].path if sc.shots else None

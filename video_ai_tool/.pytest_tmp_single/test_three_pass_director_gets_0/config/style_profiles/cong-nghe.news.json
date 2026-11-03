@@ -1,0 +1,312 @@
+{
+  "version": 1,
+  "name": "công nghệ · news",
+  "slug": "@category:cong-nghe:news",
+  "reference_hashes": [
+    "17f93ebb5d1905a102e7598e692f453c260707cd5ff5ffe22001505b87a69540"
+  ],
+  "reference_files": [
+    "cong-nghe/sample.mp4"
+  ],
+  "reference_texts": [
+    "Một vật thể chuyển động chậm giữa khu rừng yên tĩnh khi ánh nắng bắt đầu lên.",
+    "Tóm tắt một ý quan sát được trong video mẫu."
+  ],
+  "hook_templates": [
+    "Điều gì khiến {topic} khác biệt?"
+  ],
+  "hook_techniques": [
+    "Câu hỏi"
+  ],
+  "structure": [
+    {
+      "name": "hook",
+      "fraction": 0.1
+    },
+    {
+      "name": "body",
+      "fraction": 0.8
+    },
+    {
+      "name": "ending",
+      "fraction": 0.1
+    }
+  ],
+  "shot_seconds": {
+    "mean": 3.0,
+    "minimum": 3.0,
+    "maximum": 3.0
+  },
+  "speech_words_per_sec": {
+    "mean": 2.6,
+    "minimum": 2.6,
+    "maximum": 2.6
+  },
+  "narration_rules": [
+    "Câu hỏi tu từ: Mở đầu bằng câu hỏi",
+    "Cảm xúc giọng: Tò mò",
+    "Mức hài hước: Nhẹ",
+    "Mức thân mật: Gần gũi",
+    "Xưng hô: mình/bạn",
+    "Câu dài trung bình khoảng {number} từ; xen câu ngắn và dài theo ý."
+  ],
+  "broll_patterns": [
+    "stock b-roll"
+  ],
+  "visual_effects": [
+    "zoom_in"
+  ],
+  "transitions": [
+    "fade"
+  ],
+  "captions": {
+    "analysis_warnings": [],
+    "enabled": true,
+    "mode": "word",
+    "font_description": "Chữ đậm dễ đọc",
+    "font_scale": 0.075,
+    "color": "#FFFFFF",
+    "highlight_color": "#FFAA00",
+    "standout_color": "#FF3344",
+    "stroke_color": "#000000",
+    "color_note": "",
+    "stroke_width_ratio": 0.006,
+    "position": "lower",
+    "emphasis": "Tô màu từ đang đọc",
+    "shadow": "Không rõ"
+  },
+  "audio": {
+    "analysis_warnings": [],
+    "mood": "curious",
+    "music_volume": 0.12,
+    "sfx_types": [
+      "pop"
+    ],
+    "sfx_per_10_sec": 1.0,
+    "sfx_positions": [],
+    "ducking": true,
+    "details": "Không đủ dữ liệu"
+  },
+  "ending_techniques": [
+    "Đặt câu hỏi"
+  ],
+  "reusable_rules": [
+    "Dùng ví dụ ngắn",
+    "Giữ shot ngắn",
+    "Hạ nhạc khi nói",
+    "Kết bằng câu hỏi",
+    "Mỗi cảnh một ý",
+    "Mở bằng câu hỏi",
+    "Nhấn từ quan trọng",
+    "Nối ý tự nhiên"
+  ],
+  "rule_frequencies": [
+    {
+      "rule": "Dùng ví dụ ngắn",
+      "video_count": 1
+    },
+    {
+      "rule": "Giữ shot ngắn",
+      "video_count": 1
+    },
+    {
+      "rule": "Hạ nhạc khi nói",
+      "video_count": 1
+    },
+    {
+      "rule": "Kết bằng câu hỏi",
+      "video_count": 1
+    },
+    {
+      "rule": "Mỗi cảnh một ý",
+      "video_count": 1
+    },
+    {
+      "rule": "Mở bằng câu hỏi",
+      "video_count": 1
+    },
+    {
+      "rule": "Nhấn từ quan trọng",
+      "video_count": 1
+    },
+    {
+      "rule": "Nối ý tự nhiên",
+      "video_count": 1
+    }
+  ],
+  "category_id": "cong-nghe",
+  "video_type": "news",
+  "video_count": 1,
+  "confidence_label": "yếu",
+  "source_signature": "8e66c9eb18a7b53201241dbf022502034329ecf407ced117992390d6ca17d0f9",
+  "locked_fields": [],
+  "scene_pacing": [
+    {
+      "duration_sec": 30.0,
+      "scene_count": 3,
+      "min_scene_count": 3,
+      "max_scene_count": 3,
+      "avg_scene_sec": 10.0,
+      "min_scene_sec": 4.05,
+      "max_scene_sec": 21.9,
+      "durations_sec": [
+        4.05,
+        21.9,
+        4.050000000000001
+      ]
+    },
+    {
+      "duration_sec": 60.0,
+      "scene_count": 6,
+      "min_scene_count": 6,
+      "max_scene_count": 6,
+      "avg_scene_sec": 10.0,
+      "min_scene_sec": 4.05,
+      "max_scene_sec": 21.9,
+      "durations_sec": [
+        4.05,
+        4.05,
+        21.9,
+        21.9,
+        4.05,
+        4.050000000000004
+      ]
+    },
+    {
+      "duration_sec": 90.0,
+      "scene_count": 9,
+      "min_scene_count": 9,
+      "max_scene_count": 9,
+      "avg_scene_sec": 10.0,
+      "min_scene_sec": 4.05,
+      "max_scene_sec": 21.9,
+      "durations_sec": [
+        4.05,
+        4.05,
+        4.05,
+        21.9,
+        21.9,
+        21.9,
+        4.05,
+        4.05,
+        4.050000000000011
+      ]
+    },
+    {
+      "duration_sec": 120.0,
+      "scene_count": 12,
+      "min_scene_count": 12,
+      "max_scene_count": 12,
+      "avg_scene_sec": 10.0,
+      "min_scene_sec": 4.05,
+      "max_scene_sec": 21.9,
+      "durations_sec": [
+        4.05,
+        4.05,
+        4.05,
+        4.05,
+        21.9,
+        21.9,
+        21.9,
+        21.9,
+        4.05,
+        4.05,
+        4.05,
+        4.050000000000011
+      ]
+    },
+    {
+      "duration_sec": 180.0,
+      "scene_count": 18,
+      "min_scene_count": 18,
+      "max_scene_count": 18,
+      "avg_scene_sec": 10.0,
+      "min_scene_sec": 4.05,
+      "max_scene_sec": 21.9,
+      "durations_sec": [
+        4.05,
+        4.05,
+        4.05,
+        4.05,
+        4.05,
+        4.05,
+        21.9,
+        21.9,
+        21.9,
+        21.9,
+        21.9,
+        21.9,
+        4.05,
+        4.05,
+        4.05,
+        4.05,
+        4.05,
+        4.050000000000011
+      ]
+    }
+  ],
+  "narrative_flows": [
+    "hook → giải thích → kết"
+  ],
+  "connective_phrases": [
+    "Nhưng điều đáng nói về {topic} là..."
+  ],
+  "connective_frequencies": [
+    {
+      "rule": "Nhưng điều đáng nói về {topic} là...",
+      "video_count": 1
+    }
+  ],
+  "scene_patterns": [
+    {
+      "purpose": "hook",
+      "fraction": 0.1,
+      "shot_count": 1.0,
+      "average_shot_sec": 3.0,
+      "visual_types": [
+        "stock b-roll"
+      ],
+      "effects": [
+        "zoom_in"
+      ],
+      "overlay_styles": [],
+      "sfx": [],
+      "transition": "fade",
+      "connective_template": "Nhưng điều đáng nói về {topic} là..."
+    },
+    {
+      "purpose": "giải thích",
+      "fraction": 0.8,
+      "shot_count": 8.0,
+      "average_shot_sec": 3.0,
+      "visual_types": [
+        "stock b-roll"
+      ],
+      "effects": [
+        "zoom_in"
+      ],
+      "overlay_styles": [],
+      "sfx": [],
+      "transition": "fade",
+      "connective_template": "Nhưng điều đáng nói về {topic} là..."
+    },
+    {
+      "purpose": "kết",
+      "fraction": 0.1,
+      "shot_count": 1.0,
+      "average_shot_sec": 3.0,
+      "visual_types": [
+        "stock b-roll"
+      ],
+      "effects": [
+        "zoom_in"
+      ],
+      "overlay_styles": [],
+      "sfx": [],
+      "transition": "cut",
+      "connective_template": ""
+    }
+  ],
+  "shots_per_10_sec": 3.333333333333333,
+  "warnings": []
+}
