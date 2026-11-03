@@ -120,7 +120,10 @@ def test_submit_uses_shared_research_and_reselects_new_project(ui_settings: Sett
     assert at.tabs and at.success
     assert at.selectbox[0].value != "__new_project__"
     # Tương tác đọc/tải không được gọi pipeline lại.
-    at.checkbox(key="ui_debug").check().run()
+    if hasattr(at, "toggle") and at.toggle(key="ui_debug"):
+        at.toggle(key="ui_debug").set_value(True).run()
+    elif at.checkbox(key="ui_debug"):
+        at.checkbox(key="ui_debug").check().run()
     assert len(calls) == 1
 
 
@@ -138,7 +141,10 @@ def test_debug_root_error_is_visible_and_key_is_redacted(ui_settings: Settings, 
     assert "ValueError" in at.error[0].value and "[REDACTED]" in at.error[0].value
     assert "fixture-ui-private-key" not in at.error[0].value
     assert not any("Traceback" in item.label for item in at.expander)
-    at.checkbox(key="ui_debug").check().run()
+    if hasattr(at, "toggle") and at.toggle(key="ui_debug"):
+        at.toggle(key="ui_debug").set_value(True).run()
+    elif at.checkbox(key="ui_debug"):
+        at.checkbox(key="ui_debug").check().run()
     assert not at.exception
     assert any("Traceback" in item.label for item in at.expander)
     assert "ValueError" in at.code[0].value and "fixture-ui-private-key" not in at.code[0].value

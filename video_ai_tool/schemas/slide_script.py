@@ -177,6 +177,10 @@ class SlideItem(StrictModel):
                     val = data.pop(k)
                     if k not in slots:
                         slots[k] = val
+
+            layout = data.get("layout")
+            if layout and layout in LEGACY_TO_KIT_LAYOUT:
+                data["layout"] = LEGACY_TO_KIT_LAYOUT[layout]
         return data
 
     @field_validator("slots")

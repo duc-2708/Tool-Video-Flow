@@ -162,6 +162,22 @@ def test_audit_kit_project_synthetic(tmp_path):
                 title="Danh sách ưu điểm",
                 bullets=["Tính năng A", "Tính năng B", "Tính năng C"],
             ),
+            SlideScene(
+                scene_idx=4,
+                start_ms=15200,
+                end_ms=20200,
+                layout="kit_compare",
+                narration="So sánh giải pháp cũ và công nghệ mới vượt trội.",
+                title="So sánh giải pháp",
+            ),
+            SlideScene(
+                scene_idx=5,
+                start_ms=20200,
+                end_ms=25200,
+                layout="kit_outro",
+                narration="Theo dõi kênh để nhận thông tin cập nhật công nghệ mới.",
+                title="Đăng ký theo dõi",
+            ),
         ]
     )
 

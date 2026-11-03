@@ -131,23 +131,26 @@ def verify_and_ground_slides(
         slide_norm_narration = normalize_text(slide_narration)
 
         # Grounding Rule A: Numbers in slots
-        if s_layout == "lg_stat_hero":
+        if s_layout in ("lg_stat_hero", "kit_stat"):
             val_raw = s_slots.get("value")
             val_num_tokens = extract_numbers_from_text(str(val_raw)) if val_raw is not None else set()
             is_val_grounded = bool(val_num_tokens and any(nt in slide_numbers for nt in val_num_tokens))
 
             if not is_val_grounded and val_raw is not None:
-                # Fabricated or ungrounded number! Downgrade to lg_note_card
-                note = f"[grounding_unverified_number, nhóm 2] Slide {slide.id}: số liệu '{val_raw}' không có căn cứ trong lời đọc hoặc brief. Hạ cấp về lg_note_card."
+                # Fabricated or ungrounded number! Downgrade to kit_title / lg_note_card
+                target_downgrade = "kit_title" if s_layout == "kit_stat" else "lg_note_card"
+                note = f"[grounding_unverified_number, nhóm 2] Slide {slide.id}: số liệu '{val_raw}' không có căn cứ trong lời đọc hoặc brief. Hạ cấp về {target_downgrade}."
                 repair_notes.append(note)
-                s_layout = "lg_note_card"
+                s_layout = target_downgrade
                 s_slots = {
                     "chip": "THÔNG TIN ĐÁNG CHÚ Ý",
+                    "title": slide_narration[:60] if slide_narration else "Thông tin ghi nhận.",
+                    "subtitle": slide_narration[60:120] if len(slide_narration) > 60 else "",
                     "text": slide_narration[:120] if slide_narration else "Thông tin ghi nhận.",
                 }
 
         # Check all string slots for ungrounded numbers
-        if s_layout != "lg_note_card":
+        if s_layout not in ("lg_note_card", "kit_title"):
             for k, v in list(s_slots.items()):
                 if isinstance(v, str):
                     slot_nums = extract_numbers_from_text(v)
@@ -173,7 +176,7 @@ def verify_and_ground_slides(
                         s_slots["items"] = [slide_narration[:40]] if slide_narration else ["Điểm chính"]
 
         # Grounding Rule B: Headline verification & repair
-        if s_layout == "lg_source_headline":
+        if s_layout in ("lg_source_headline", "kit_title"):
             title_raw = str(s_slots.get("title") or s_slots.get("headline") or "").strip()
             if not title_raw:
                 # Missing headline: extract 3-5 words from narration

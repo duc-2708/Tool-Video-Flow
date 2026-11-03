@@ -1,0 +1,21 @@
+# Root .gitignore
+video_ai_tool/.venv/
+video_ai_tool/.env
+video_ai_tool/.env.*
+!video_ai_tool/.env.example
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pytest_tmp*/
+.pytest_*/
+tmp_*
+tmp_extract/
+tmp_test_images/
+video_ai_tool/tmp_*
+video_ai_tool/tmp_extract/
+video_ai_tool/tmp_test_images/
+video_ai_tool/.pytest_*/
+video_ai_tool/.pytest_tmp*/
+output/
+video_ai_tool/output/*
+!video_ai_tool/output/.gitkeep

@@ -63,14 +63,14 @@ def test_slide_item_slot_limits_clamped():
 
 
 def test_slide_item_layout_validation():
-    # Valid layout
+    # Valid layout (normalizes legacy lg_stat_hero to kit_stat)
     item = SlideItem(
         id="slide_1",
         layout="lg_stat_hero",
         sentence_ids=[1, 2],
         slots={"value": 85, "unit": "%"},
     )
-    assert item.layout == "lg_stat_hero"
+    assert item.layout == "kit_stat"
 
     # Invalid layout should fail
     with pytest.raises(ValidationError):
@@ -106,6 +106,6 @@ def test_slide_script_serialization():
     data = script.model_dump(mode="json")
     assert data["topic"] == "Công nghệ AI"
     assert len(data["slides"]) == 1
-    assert data["slides"][0]["layout"] == "lg_source_headline"
+    assert data["slides"][0]["layout"] == "kit_title"
     assert data["slides"][0]["source_ref"]["domain"] == "vnexpress.net"
     assert data["slides"][0]["emphasis"][0]["phrase"] == "trí tuệ nhân tạo"
