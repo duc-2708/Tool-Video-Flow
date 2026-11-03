@@ -1,0 +1,870 @@
+
+[2026-11-03T03:19:57.698365+00:00] đối tượng=9 [open_loop, nhóm 2, fixed] Đã gán fact #10 có liên quan tới câu hỏi cho cảnh cuối; giữ căn cứ từ brief.
+
+[2026-11-03T03:19:57.717495+00:00] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-11-03T03:19:57.718595+00:00] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-11-03T03:19:57.720404+00:00] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-11-03T03:19:57.721987+00:00] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-11-03T03:19:57.725744+00:00] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-11-03T03:19:57.727149+00:00] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-11-03T03:19:57.728009+00:00] Cảnh 4, shot 3: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-11-03T03:19:57.730012+00:00] Cảnh 4, shot 4: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-11-03T03:19:57.731462+00:00] Cảnh 4, shot 5: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-11-03T03:19:57.732663+00:00] Cảnh 4, shot 6: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-11-03T03:19:57.733689+00:00] Cảnh 4, shot 7: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-11-03T03:19:57.738071+00:00] Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-11-03T03:19:57.739073+00:00] Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-11-03T03:19:57.739740+00:00] Cảnh 5, shot 3: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-11-03T03:19:57.740843+00:00] Cảnh 5, shot 4: sửa b-roll query 'video editing' → 'video editing aerial morning'
+
+[2026-11-03T03:19:57.741991+00:00] Cảnh 5, shot 5: sửa b-roll query 'video editing' → 'video editing aerial evening'
+
+[2026-11-03T03:19:57.743047+00:00] Cảnh 5, shot 6: sửa b-roll query 'video editing' → 'video editing wide night'
+
+[2026-11-03T03:19:57.743794+00:00] Cảnh 5, shot 7: sửa b-roll query 'video editing' → 'video editing wide daylight'
+
+[2026-11-03T03:19:57.750413+00:00] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing wide sunset'
+
+[2026-11-03T03:19:57.752170+00:00] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing wide sunrise'
+
+[2026-11-03T03:19:57.752986+00:00] Cảnh 6, shot 3: sửa b-roll query 'video editing' → 'video editing wide view'
+
+[2026-11-03T03:19:57.754025+00:00] Cảnh 6, shot 4: sửa b-roll query 'video editing' → 'video editing wide daytime'
+
+[2026-11-03T03:19:57.755714+00:00] Cảnh 6, shot 5: sửa b-roll query 'video editing' → 'video editing wide morning'
+
+[2026-11-03T03:19:57.757527+00:00] Cảnh 6, shot 6: sửa b-roll query 'video editing' → 'video editing wide evening'
+
+[2026-11-03T03:19:57.760393+00:00] Cảnh 6, shot 7: sửa b-roll query 'video editing' → 'video editing closeup night'
+
+[2026-11-03T03:19:57.763484+00:00] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daylight'
+
+[2026-11-03T03:19:57.764627+00:00] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing closeup sunset'
+
+[2026-11-03T03:19:57.767009+00:00] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing closeup sunrise'
+
+[2026-11-03T03:19:57.767881+00:00] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing closeup view'
+
+[2026-11-03T03:19:57.770334+00:00] Cảnh 9, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daytime'
+
+[2026-11-03T03:19:57.771625+00:00] Cảnh 9, shot 2: sửa b-roll query 'video editing' → 'video editing closeup morning'
+
+[2026-11-03T03:19:57.875609+00:00] đối tượng=cảnh 1, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:57.877391+00:00] đối tượng=cảnh 2, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:57.878759+00:00] đối tượng=cảnh 3, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:57.880369+00:00] đối tượng=cảnh 4, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:57.882285+00:00] đối tượng=cảnh 5, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:57.885438+00:00] đối tượng=cảnh 6, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:57.888355+00:00] đối tượng=cảnh 7, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:57.891240+00:00] đối tượng=cảnh 8, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:57.894024+00:00] đối tượng=cảnh 9, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:57.915971+00:00] đối tượng=tiêu đề: số=[]; tập số hợp lệ=['2026']; sai=[]
+
+[2026-11-03T03:19:57.934924+00:00] đối tượng=1 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:57.936401+00:00] đối tượng=2 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:57.937381+00:00] đối tượng=3 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:57.938381+00:00] đối tượng=4 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:57.939294+00:00] đối tượng=5 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:57.939845+00:00] đối tượng=6 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:57.940679+00:00] đối tượng=7 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:57.942149+00:00] đối tượng=8 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:57.943528+00:00] đối tượng=9 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:57.947612+00:00] đối tượng=video [scene_target, nhóm 3, warning] Số cảnh 9 dưới mục tiêu 11; không thêm cảnh rỗng.
+
+[2026-11-03T03:19:57.950254+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-11-03T03:19:57.952076+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-11-03T03:19:57.954592+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-11-03T03:19:57.956102+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-11-03T03:19:57.958240+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-11-03T03:19:57.959679+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-11-03T03:19:57.962633+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 3: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-11-03T03:19:57.964594+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 4: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-11-03T03:19:57.966795+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 5: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-11-03T03:19:57.968255+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 6: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-11-03T03:19:57.969679+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 7: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-11-03T03:19:57.972226+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-11-03T03:19:57.973770+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-11-03T03:19:57.975006+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 3: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-11-03T03:19:57.977069+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 4: sửa b-roll query 'video editing' → 'video editing aerial morning'
+
+[2026-11-03T03:19:57.979056+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 5: sửa b-roll query 'video editing' → 'video editing aerial evening'
+
+[2026-11-03T03:19:57.980709+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 6: sửa b-roll query 'video editing' → 'video editing wide night'
+
+[2026-11-03T03:19:57.982281+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 7: sửa b-roll query 'video editing' → 'video editing wide daylight'
+
+[2026-11-03T03:19:57.984214+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing wide sunset'
+
+[2026-11-03T03:19:57.985689+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing wide sunrise'
+
+[2026-11-03T03:19:57.987294+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 3: sửa b-roll query 'video editing' → 'video editing wide view'
+
+[2026-11-03T03:19:57.988659+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 4: sửa b-roll query 'video editing' → 'video editing wide daytime'
+
+[2026-11-03T03:19:57.990526+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 5: sửa b-roll query 'video editing' → 'video editing wide morning'
+
+[2026-11-03T03:19:57.993822+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 6: sửa b-roll query 'video editing' → 'video editing wide evening'
+
+[2026-11-03T03:19:57.995157+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 7: sửa b-roll query 'video editing' → 'video editing closeup night'
+
+[2026-11-03T03:19:57.996525+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daylight'
+
+[2026-11-03T03:19:57.997729+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing closeup sunset'
+
+[2026-11-03T03:19:57.999137+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing closeup sunrise'
+
+[2026-11-03T03:19:58.000260+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing closeup view'
+
+[2026-11-03T03:19:58.002673+00:00] đối tượng=9 [broll_query, nhóm 2, fixed] Cảnh 9, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daytime'
+
+[2026-11-03T03:19:58.004670+00:00] đối tượng=9 [broll_query, nhóm 2, fixed] Cảnh 9, shot 2: sửa b-roll query 'video editing' → 'video editing closeup morning'
+
+[2026-11-03T03:19:58.041145+00:00] đối tượng=cảnh 1, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.043266+00:00] đối tượng=cảnh 2, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.045328+00:00] đối tượng=cảnh 3, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.047195+00:00] đối tượng=cảnh 4, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.048516+00:00] đối tượng=cảnh 5, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.049490+00:00] đối tượng=cảnh 6, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.050788+00:00] đối tượng=cảnh 7, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.052038+00:00] đối tượng=cảnh 8, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.053521+00:00] đối tượng=cảnh 9, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.064876+00:00] đối tượng=tiêu đề: số=[]; tập số hợp lệ=['2026']; sai=[]
+
+[2026-11-03T03:19:58.072806+00:00] đối tượng=video [scene_target, nhóm 3, warning] Số cảnh 9 dưới mục tiêu 11; không thêm cảnh rỗng.
+
+[2026-11-03T03:19:58.075622+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-11-03T03:19:58.076676+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-11-03T03:19:58.078953+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-11-03T03:19:58.080109+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-11-03T03:19:58.082758+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-11-03T03:19:58.084131+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-11-03T03:19:58.085270+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 3: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-11-03T03:19:58.087288+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 4: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-11-03T03:19:58.090183+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 5: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-11-03T03:19:58.093899+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 6: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-11-03T03:19:58.096680+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 7: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-11-03T03:19:58.100355+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-11-03T03:19:58.104569+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-11-03T03:19:58.107093+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 3: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-11-03T03:19:58.110507+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 4: sửa b-roll query 'video editing' → 'video editing aerial morning'
+
+[2026-11-03T03:19:58.112436+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 5: sửa b-roll query 'video editing' → 'video editing aerial evening'
+
+[2026-11-03T03:19:58.114031+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 6: sửa b-roll query 'video editing' → 'video editing wide night'
+
+[2026-11-03T03:19:58.116042+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 7: sửa b-roll query 'video editing' → 'video editing wide daylight'
+
+[2026-11-03T03:19:58.119895+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing wide sunset'
+
+[2026-11-03T03:19:58.122676+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing wide sunrise'
+
+[2026-11-03T03:19:58.124592+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 3: sửa b-roll query 'video editing' → 'video editing wide view'
+
+[2026-11-03T03:19:58.126458+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 4: sửa b-roll query 'video editing' → 'video editing wide daytime'
+
+[2026-11-03T03:19:58.129764+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 5: sửa b-roll query 'video editing' → 'video editing wide morning'
+
+[2026-11-03T03:19:58.132929+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 6: sửa b-roll query 'video editing' → 'video editing wide evening'
+
+[2026-11-03T03:19:58.136465+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 7: sửa b-roll query 'video editing' → 'video editing closeup night'
+
+[2026-11-03T03:19:58.141915+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daylight'
+
+[2026-11-03T03:19:58.144857+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing closeup sunset'
+
+[2026-11-03T03:19:58.148708+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing closeup sunrise'
+
+[2026-11-03T03:19:58.151501+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing closeup view'
+
+[2026-11-03T03:19:58.155388+00:00] đối tượng=9 [broll_query, nhóm 2, fixed] Cảnh 9, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daytime'
+
+[2026-11-03T03:19:58.157871+00:00] đối tượng=9 [broll_query, nhóm 2, fixed] Cảnh 9, shot 2: sửa b-roll query 'video editing' → 'video editing closeup morning'
+
+[2026-11-03T03:19:58.190267+00:00] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-11-03T03:19:58.209189+00:00] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-11-03T03:19:58.214025+00:00] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-11-03T03:19:58.216314+00:00] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-11-03T03:19:58.223685+00:00] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-11-03T03:19:58.225460+00:00] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-11-03T03:19:58.227735+00:00] Cảnh 4, shot 3: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-11-03T03:19:58.229896+00:00] Cảnh 4, shot 4: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-11-03T03:19:58.233715+00:00] Cảnh 4, shot 5: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-11-03T03:19:58.235531+00:00] Cảnh 4, shot 6: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-11-03T03:19:58.237459+00:00] Cảnh 4, shot 7: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-11-03T03:19:58.243384+00:00] Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-11-03T03:19:58.244932+00:00] Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-11-03T03:19:58.246193+00:00] Cảnh 5, shot 3: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-11-03T03:19:58.247620+00:00] Cảnh 5, shot 4: sửa b-roll query 'video editing' → 'video editing aerial morning'
+
+[2026-11-03T03:19:58.248867+00:00] Cảnh 5, shot 5: sửa b-roll query 'video editing' → 'video editing aerial evening'
+
+[2026-11-03T03:19:58.250011+00:00] Cảnh 5, shot 6: sửa b-roll query 'video editing' → 'video editing wide night'
+
+[2026-11-03T03:19:58.251527+00:00] Cảnh 5, shot 7: sửa b-roll query 'video editing' → 'video editing wide daylight'
+
+[2026-11-03T03:19:58.256738+00:00] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing wide sunset'
+
+[2026-11-03T03:19:58.258410+00:00] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing wide sunrise'
+
+[2026-11-03T03:19:58.260015+00:00] Cảnh 6, shot 3: sửa b-roll query 'video editing' → 'video editing wide view'
+
+[2026-11-03T03:19:58.261410+00:00] Cảnh 6, shot 4: sửa b-roll query 'video editing' → 'video editing wide daytime'
+
+[2026-11-03T03:19:58.262967+00:00] Cảnh 6, shot 5: sửa b-roll query 'video editing' → 'video editing wide morning'
+
+[2026-11-03T03:19:58.264611+00:00] Cảnh 6, shot 6: sửa b-roll query 'video editing' → 'video editing wide evening'
+
+[2026-11-03T03:19:58.266431+00:00] Cảnh 6, shot 7: sửa b-roll query 'video editing' → 'video editing closeup night'
+
+[2026-11-03T03:19:58.272984+00:00] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daylight'
+
+[2026-11-03T03:19:58.274719+00:00] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing closeup sunset'
+
+[2026-11-03T03:19:58.277489+00:00] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing closeup sunrise'
+
+[2026-11-03T03:19:58.278376+00:00] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing closeup view'
+
+[2026-11-03T03:19:58.279871+00:00] Cảnh 9, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daytime'
+
+[2026-11-03T03:19:58.281006+00:00] Cảnh 9, shot 2: sửa b-roll query 'video editing' → 'video editing closeup morning'
+
+[2026-11-03T03:19:58.334824+00:00] đối tượng=cảnh 1, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.337181+00:00] đối tượng=cảnh 2, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.339321+00:00] đối tượng=cảnh 3, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.340985+00:00] đối tượng=cảnh 4, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.343243+00:00] đối tượng=cảnh 5, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.345377+00:00] đối tượng=cảnh 6, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.347286+00:00] đối tượng=cảnh 7, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.349620+00:00] đối tượng=cảnh 8, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.353329+00:00] đối tượng=cảnh 9, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.368300+00:00] đối tượng=tiêu đề: số=[]; tập số hợp lệ=['2026']; sai=[]
+
+[2026-11-03T03:19:58.381575+00:00] đối tượng=1 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:58.383273+00:00] đối tượng=2 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:58.384488+00:00] đối tượng=3 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:58.386041+00:00] đối tượng=4 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:58.387707+00:00] đối tượng=5 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:58.389274+00:00] đối tượng=6 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:58.390182+00:00] đối tượng=7 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:58.391354+00:00] đối tượng=8 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:58.392489+00:00] đối tượng=9 [attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.
+
+[2026-11-03T03:19:58.396646+00:00] đối tượng=2 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.399991+00:00] đối tượng=2 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.402819+00:00] đối tượng=3 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.404303+00:00] đối tượng=3 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.405931+00:00] đối tượng=4 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.408038+00:00] đối tượng=4 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.411538+00:00] đối tượng=5 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.414012+00:00] đối tượng=5 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.416548+00:00] đối tượng=6 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.420700+00:00] đối tượng=6 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.423096+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.426005+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.429682+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.431656+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.432656+00:00] đối tượng=9 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.433396+00:00] đối tượng=9 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.434598+00:00] đối tượng=2 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.436107+00:00] đối tượng=2 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.437479+00:00] đối tượng=3 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.438782+00:00] đối tượng=3 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.440244+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.442001+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.443383+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.444619+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.445440+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.446153+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.447102+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.447896+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.449014+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.450169+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.452301+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.455606+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.460657+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.462765+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.464305+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.465983+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.467068+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.468202+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.469290+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.470350+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.471573+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.472425+00:00] đối tượng=7 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.473896+00:00] đối tượng=7 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.475324+00:00] đối tượng=8 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.477223+00:00] đối tượng=8 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.479125+00:00] đối tượng=9 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.481924+00:00] đối tượng=9 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.484976+00:00] đối tượng=1 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.490780+00:00] đối tượng=video [scene_target, nhóm 3, warning] Số cảnh 9 dưới mục tiêu 11; không thêm cảnh rỗng.
+
+[2026-11-03T03:19:58.493041+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-11-03T03:19:58.494655+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-11-03T03:19:58.496366+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-11-03T03:19:58.497618+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-11-03T03:19:58.499152+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-11-03T03:19:58.500219+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-11-03T03:19:58.501901+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 3: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-11-03T03:19:58.503218+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 4: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-11-03T03:19:58.505449+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 5: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-11-03T03:19:58.507474+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 6: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-11-03T03:19:58.509891+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 7: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-11-03T03:19:58.512738+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-11-03T03:19:58.514980+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-11-03T03:19:58.517256+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 3: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-11-03T03:19:58.522075+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 4: sửa b-roll query 'video editing' → 'video editing aerial morning'
+
+[2026-11-03T03:19:58.524225+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 5: sửa b-roll query 'video editing' → 'video editing aerial evening'
+
+[2026-11-03T03:19:58.526355+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 6: sửa b-roll query 'video editing' → 'video editing wide night'
+
+[2026-11-03T03:19:58.528226+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 7: sửa b-roll query 'video editing' → 'video editing wide daylight'
+
+[2026-11-03T03:19:58.530320+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing wide sunset'
+
+[2026-11-03T03:19:58.531828+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing wide sunrise'
+
+[2026-11-03T03:19:58.532938+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 3: sửa b-roll query 'video editing' → 'video editing wide view'
+
+[2026-11-03T03:19:58.534364+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 4: sửa b-roll query 'video editing' → 'video editing wide daytime'
+
+[2026-11-03T03:19:58.535956+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 5: sửa b-roll query 'video editing' → 'video editing wide morning'
+
+[2026-11-03T03:19:58.537448+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 6: sửa b-roll query 'video editing' → 'video editing wide evening'
+
+[2026-11-03T03:19:58.538809+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 7: sửa b-roll query 'video editing' → 'video editing closeup night'
+
+[2026-11-03T03:19:58.541092+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daylight'
+
+[2026-11-03T03:19:58.542066+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing closeup sunset'
+
+[2026-11-03T03:19:58.543472+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing closeup sunrise'
+
+[2026-11-03T03:19:58.544272+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing closeup view'
+
+[2026-11-03T03:19:58.546434+00:00] đối tượng=9 [broll_query, nhóm 2, fixed] Cảnh 9, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daytime'
+
+[2026-11-03T03:19:58.547763+00:00] đối tượng=9 [broll_query, nhóm 2, fixed] Cảnh 9, shot 2: sửa b-roll query 'video editing' → 'video editing closeup morning'
+
+[2026-11-03T03:19:58.566961+00:00] đối tượng=cảnh 1, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.569915+00:00] đối tượng=cảnh 2, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.573688+00:00] đối tượng=cảnh 3, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.576570+00:00] đối tượng=cảnh 4, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.578219+00:00] đối tượng=cảnh 5, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.581159+00:00] đối tượng=cảnh 6, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.583952+00:00] đối tượng=cảnh 7, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.587535+00:00] đối tượng=cảnh 8, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.591002+00:00] đối tượng=cảnh 9, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.607671+00:00] đối tượng=tiêu đề: số=[]; tập số hợp lệ=['2026']; sai=[]
+
+[2026-11-03T03:19:58.616550+00:00] đối tượng=2 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.619179+00:00] đối tượng=2 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.621868+00:00] đối tượng=3 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.624120+00:00] đối tượng=3 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.626414+00:00] đối tượng=4 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.630083+00:00] đối tượng=4 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.632807+00:00] đối tượng=5 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.634714+00:00] đối tượng=5 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.636519+00:00] đối tượng=6 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.638604+00:00] đối tượng=6 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.641293+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.644324+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.646241+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.648570+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.651413+00:00] đối tượng=9 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.653390+00:00] đối tượng=9 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.655109+00:00] đối tượng=2 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.657730+00:00] đối tượng=2 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.660972+00:00] đối tượng=3 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.663761+00:00] đối tượng=3 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.666179+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.667988+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.669290+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.671183+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.673109+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.674401+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.676274+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.678756+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.680677+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.682401+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.684963+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.687319+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.689694+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.693091+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.696025+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.698136+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.699557+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.701492+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.703060+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.704057+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.705153+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.706779+00:00] đối tượng=7 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.710359+00:00] đối tượng=7 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.713589+00:00] đối tượng=8 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.715565+00:00] đối tượng=8 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.717022+00:00] đối tượng=9 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.718470+00:00] đối tượng=9 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.720469+00:00] đối tượng=1 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.725501+00:00] đối tượng=video [scene_target, nhóm 3, warning] Số cảnh 9 dưới mục tiêu 11; không thêm cảnh rỗng.
+
+[2026-11-03T03:19:58.728725+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-11-03T03:19:58.730203+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-11-03T03:19:58.731916+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-11-03T03:19:58.733887+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-11-03T03:19:58.736633+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-11-03T03:19:58.738045+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-11-03T03:19:58.739278+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 3: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-11-03T03:19:58.741491+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 4: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-11-03T03:19:58.743980+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 5: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-11-03T03:19:58.746145+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 6: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-11-03T03:19:58.748769+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 7: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-11-03T03:19:58.752036+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-11-03T03:19:58.754579+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-11-03T03:19:58.756754+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 3: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-11-03T03:19:58.758887+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 4: sửa b-roll query 'video editing' → 'video editing aerial morning'
+
+[2026-11-03T03:19:58.760399+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 5: sửa b-roll query 'video editing' → 'video editing aerial evening'
+
+[2026-11-03T03:19:58.762568+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 6: sửa b-roll query 'video editing' → 'video editing wide night'
+
+[2026-11-03T03:19:58.764570+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 7: sửa b-roll query 'video editing' → 'video editing wide daylight'
+
+[2026-11-03T03:19:58.766610+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing wide sunset'
+
+[2026-11-03T03:19:58.769069+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing wide sunrise'
+
+[2026-11-03T03:19:58.771802+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 3: sửa b-roll query 'video editing' → 'video editing wide view'
+
+[2026-11-03T03:19:58.773522+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 4: sửa b-roll query 'video editing' → 'video editing wide daytime'
+
+[2026-11-03T03:19:58.775076+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 5: sửa b-roll query 'video editing' → 'video editing wide morning'
+
+[2026-11-03T03:19:58.776704+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 6: sửa b-roll query 'video editing' → 'video editing wide evening'
+
+[2026-11-03T03:19:58.778283+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 7: sửa b-roll query 'video editing' → 'video editing closeup night'
+
+[2026-11-03T03:19:58.780639+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daylight'
+
+[2026-11-03T03:19:58.782669+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing closeup sunset'
+
+[2026-11-03T03:19:58.785568+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing closeup sunrise'
+
+[2026-11-03T03:19:58.786734+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing closeup view'
+
+[2026-11-03T03:19:58.788741+00:00] đối tượng=9 [broll_query, nhóm 2, fixed] Cảnh 9, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daytime'
+
+[2026-11-03T03:19:58.789987+00:00] đối tượng=9 [broll_query, nhóm 2, fixed] Cảnh 9, shot 2: sửa b-roll query 'video editing' → 'video editing closeup morning'
+
+[2026-11-03T03:19:58.823799+00:00] đối tượng=cảnh 1, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.826672+00:00] đối tượng=cảnh 2, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.828998+00:00] đối tượng=cảnh 3, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.831965+00:00] đối tượng=cảnh 4, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.834909+00:00] đối tượng=cảnh 5, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.837147+00:00] đối tượng=cảnh 6, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.839598+00:00] đối tượng=cảnh 7, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.842457+00:00] đối tượng=cảnh 8, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.845291+00:00] đối tượng=cảnh 9, luật=grounding_numbers, số=[], tập số brief=[]
+
+[2026-11-03T03:19:58.858778+00:00] đối tượng=tiêu đề: số=[]; tập số hợp lệ=['2026']; sai=[]
+
+[2026-11-03T03:19:58.867614+00:00] đối tượng=2 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.869117+00:00] đối tượng=2 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.870933+00:00] đối tượng=3 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.872694+00:00] đối tượng=3 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.873948+00:00] đối tượng=4 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.875542+00:00] đối tượng=4 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.877439+00:00] đối tượng=5 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.879396+00:00] đối tượng=5 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.881248+00:00] đối tượng=6 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.882381+00:00] đối tượng=6 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.883911+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.884895+00:00] đối tượng=7 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.886117+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.887176+00:00] đối tượng=8 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.888349+00:00] đối tượng=9 [word_budget, nhóm 3, warning] Tổng 160 từ; mục tiêu 234 ±20%, chỉ thêm chi tiết có fact.
+
+[2026-11-03T03:19:58.889824+00:00] đối tượng=9 [word_budget, nhóm 3, warning] Lượng chữ của cảnh lệch thời lượng; phân bổ lại bằng chi tiết từ fact, không lặp ý.
+
+[2026-11-03T03:19:58.891168+00:00] đối tượng=2 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.893192+00:00] đối tượng=2 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.894249+00:00] đối tượng=3 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.895114+00:00] đối tượng=3 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.895864+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.896593+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.897271+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.897799+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.898307+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.898869+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.899697+00:00] đối tượng=4 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.900764+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.902471+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.903475+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.904481+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.905290+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.905923+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.906401+00:00] đối tượng=5 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.906988+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.907771+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.908535+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.909201+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.909868+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.910805+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.911785+00:00] đối tượng=6 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.912487+00:00] đối tượng=7 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.913227+00:00] đối tượng=7 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.914331+00:00] đối tượng=8 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.915321+00:00] đối tượng=8 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.916139+00:00] đối tượng=9 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.916814+00:00] đối tượng=9 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.917520+00:00] đối tượng=1 [overlay_style, nhóm 3, warning] Overlay phải 3–6 từ/số, không lặp nguyên câu lời đọc.
+
+[2026-11-03T03:19:58.919398+00:00] đối tượng=video [scene_target, nhóm 3, warning] Số cảnh 9 dưới mục tiêu 11; không thêm cảnh rỗng.
+
+[2026-11-03T03:19:58.921877+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 1: sửa b-roll query 'video editing' → 'video editing aerial'
+
+[2026-11-03T03:19:58.924026+00:00] đối tượng=2 [broll_query, nhóm 2, fixed] Cảnh 2, shot 2: sửa b-roll query 'video editing' → 'video editing wide'
+
+[2026-11-03T03:19:58.926191+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 1: sửa b-roll query 'video editing' → 'video editing closeup'
+
+[2026-11-03T03:19:58.927861+00:00] đối tượng=3 [broll_query, nhóm 2, fixed] Cảnh 3, shot 2: sửa b-roll query 'video editing' → 'video editing interior'
+
+[2026-11-03T03:19:58.930140+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 1: sửa b-roll query 'video editing' → 'video editing exterior'
+
+[2026-11-03T03:19:58.931184+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 2: sửa b-roll query 'video editing' → 'video editing panoramic'
+
+[2026-11-03T03:19:58.932062+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 3: sửa b-roll query 'video editing' → 'video editing detail'
+
+[2026-11-03T03:19:58.932734+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 4: sửa b-roll query 'video editing' → 'video editing documentary'
+
+[2026-11-03T03:19:58.933371+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 5: sửa b-roll query 'video editing' → 'video editing aerial night'
+
+[2026-11-03T03:19:58.934443+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 6: sửa b-roll query 'video editing' → 'video editing aerial daylight'
+
+[2026-11-03T03:19:58.935806+00:00] đối tượng=4 [broll_query, nhóm 2, fixed] Cảnh 4, shot 7: sửa b-roll query 'video editing' → 'video editing aerial sunset'
+
+[2026-11-03T03:19:58.937548+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 1: sửa b-roll query 'video editing' → 'video editing aerial sunrise'
+
+[2026-11-03T03:19:58.938725+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 2: sửa b-roll query 'video editing' → 'video editing aerial view'
+
+[2026-11-03T03:19:58.939553+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 3: sửa b-roll query 'video editing' → 'video editing aerial daytime'
+
+[2026-11-03T03:19:58.940312+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 4: sửa b-roll query 'video editing' → 'video editing aerial morning'
+
+[2026-11-03T03:19:58.941790+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 5: sửa b-roll query 'video editing' → 'video editing aerial evening'
+
+[2026-11-03T03:19:58.943032+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 6: sửa b-roll query 'video editing' → 'video editing wide night'
+
+[2026-11-03T03:19:58.944359+00:00] đối tượng=5 [broll_query, nhóm 2, fixed] Cảnh 5, shot 7: sửa b-roll query 'video editing' → 'video editing wide daylight'
+
+[2026-11-03T03:19:58.945944+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 1: sửa b-roll query 'video editing' → 'video editing wide sunset'
+
+[2026-11-03T03:19:58.947283+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 2: sửa b-roll query 'video editing' → 'video editing wide sunrise'
+
+[2026-11-03T03:19:58.948910+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 3: sửa b-roll query 'video editing' → 'video editing wide view'
+
+[2026-11-03T03:19:58.950162+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 4: sửa b-roll query 'video editing' → 'video editing wide daytime'
+
+[2026-11-03T03:19:58.951383+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 5: sửa b-roll query 'video editing' → 'video editing wide morning'
+
+[2026-11-03T03:19:58.952282+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 6: sửa b-roll query 'video editing' → 'video editing wide evening'
+
+[2026-11-03T03:19:58.953071+00:00] đối tượng=6 [broll_query, nhóm 2, fixed] Cảnh 6, shot 7: sửa b-roll query 'video editing' → 'video editing closeup night'
+
+[2026-11-03T03:19:58.954238+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daylight'
+
+[2026-11-03T03:19:58.956118+00:00] đối tượng=7 [broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'video editing' → 'video editing closeup sunset'
+
+[2026-11-03T03:19:58.958451+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'video editing' → 'video editing closeup sunrise'
+
+[2026-11-03T03:19:58.959558+00:00] đối tượng=8 [broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'video editing' → 'video editing closeup view'
+
+[2026-11-03T03:19:58.961145+00:00] đối tượng=9 [broll_query, nhóm 2, fixed] Cảnh 9, shot 1: sửa b-roll query 'video editing' → 'video editing closeup daytime'
+
+[2026-11-03T03:19:58.962634+00:00] đối tượng=9 [broll_query, nhóm 2, fixed] Cảnh 9, shot 2: sửa b-roll query 'video editing' → 'video editing closeup morning'

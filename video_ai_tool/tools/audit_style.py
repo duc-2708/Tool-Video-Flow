@@ -16,7 +16,12 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 from typing import Any
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
 from PIL import Image, ImageStat
 
@@ -278,6 +283,8 @@ def audit_light_glass_project(
                     ungrounded_items.append(f"Slide {s.get('id')}: ungrounded stat value '{vn}'")
 
         for k, v in slots.items():
+            if k in ("image_prompt", "image_url", "image_uri", "image_path", "icon_uri"):
+                continue
             if isinstance(v, str):
                 for sn in extract_numbers_from_text(v):
                     if sn not in allowed_nums:

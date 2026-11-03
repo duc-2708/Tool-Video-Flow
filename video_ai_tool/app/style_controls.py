@@ -31,7 +31,7 @@ def select_style(settings, *, key, current=None, category=None, video_type=None,
         profile, automatic, notices = resolve_profile(settings, category, video_type)
         names[automatic] = "Tự động: " + profile.name
         names["@default"] = "Mặc định chung"
-        # Chỉ giữ lại thông báo nghiệp vụ thân thiện cho trang form tự động (auto_category) khi chưa có video mẫu.
+        # Chỉ giữ lại thông báo nghiệp vụ thân thiện cho trang form tự động (auto_category) khi chưa có video mẫu (phục vụ test contract).
         # Tuyệt đối không hiển thị các cảnh báo kỹ thuật phân tích (như hồ sơ, scenes[], transcript_outline) vào ô phong cách.
         if label_visibility != "collapsed":
             for notice in notices:

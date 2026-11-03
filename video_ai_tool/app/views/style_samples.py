@@ -226,8 +226,10 @@ def category_panel(settings,category,project,diagnostics):
             profile=rebuild_category(settings,category,video_type=profile_type)
             st.metric("Số video mẫu làm cơ sở",profile.video_count)
             st.caption("Độ tin cậy: "+profile.confidence_label)
-            for warning in profile.warnings:
-                st.info(diagnostics.redact(warning))
+            if profile.warnings:
+                with st.expander(f"Cảnh báo phân tích ({len(profile.warnings)})", expanded=False):
+                    for warning in profile.warnings:
+                        st.caption(diagnostics.redact(warning))
         except Exception as error:
             st.error(diagnostics.redact(str(error)))
     rows=[]
@@ -256,9 +258,10 @@ def category_panel(settings,category,project,diagnostics):
     analysis_controls(settings,names,scope,diagnostics)
     for name,record in records.items():
         with st.expander(name+" · Phân tích kịch bản/phân cảnh"):
-            st.caption(f"{len(record.analysis.analysis_warnings)} cảnh báo phân tích")
-            for warning in record.warnings:
-                st.warning(diagnostics.redact(warning))
+            if record.warnings:
+                with st.expander(f"Cảnh báo ({len(record.warnings)})", expanded=False):
+                    for warning in record.warnings:
+                        st.caption(diagnostics.redact(warning))
             if record.analysis.scenes:
                 st.dataframe(scene_table(record.analysis),hide_index=True,width="stretch")
             else:

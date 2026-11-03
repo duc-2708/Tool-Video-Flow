@@ -292,4 +292,9 @@ def test_layout_audit_passes_all_recipes():
             assert audit["is_empty_card"] is False, f"Shot {idx+1} ({shots[idx]['template']}) flagged as empty card!"
             assert audit["min_font_size"] >= 24, f"Shot {idx+1} min font size too small: {audit['min_font_size']}"
 
+        # Test near shot end (t=4.8s) to ensure card opacity does NOT blackout to 0.0
+        page.evaluate("() => window.renderAt(4.8)")
+        exit_opacity = page.evaluate("() => { const r = document.querySelector('.lg-recipe'); return r ? parseFloat(getComputedStyle(r).opacity) : 1.0; }")
+        assert exit_opacity >= 0.85, f"Exit opacity dropped too low ({exit_opacity} < 0.85), causing blank void gap!"
+
         browser.close()
