@@ -23,7 +23,20 @@ from schemas.scene_director import (
 from utils.atomic_io import read_json_atomic, write_json_atomic
 from utils.diagnostics import Diagnostics
 from agents.visual_diversity import values_in
-from editor.motion.scheduler import suggest_metaphor_recipe
+
+
+def suggest_metaphor_recipe(narration: str = "", scene_id: int = 1, previous_recipe: str | None = None) -> str:
+    """Heuristic fallback candidate selection based on narration keywords."""
+    n_low = (narration or "").lower()
+    if any(k in n_low for k in ("%", "tỷ", "triệu", "usd", "vnd", "tăng", "giảm")):
+        return "kit_stat" if previous_recipe != "kit_stat" else "kit_chart_bar"
+    if any(k in n_low for k in ("so sánh", "hai mặt", "đối lập")):
+        return "kit_compare"
+    if any(k in n_low for k in ("nói rằng", "chia sẻ", "nhận định", "khẳng định")):
+        return "kit_quote"
+    if any(k in n_low for k in ("đăng ký", "theo dõi")):
+        return "kit_outro"
+    return "kit_title" if previous_recipe != "kit_title" else "kit_list"
 
 
 PROMPT_FILE = "scene_director.md"

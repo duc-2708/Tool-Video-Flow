@@ -1,8 +1,9 @@
-"""Slide Planner Agent for Light Glass theme.
+"""Slide Planner Agent for Motion Kit v2.
 
-Plans 5-10 slides (~6.5s per slide) covering 100% of narration sentences,
-assigning distinct layouts, extracting grounded slots, and falling back
-to deterministic heuristic mapper if LLM fails.
+Plans slides (~5.0s per slide, n = round(duration / 5)) covering 100% of narration sentences,
+assigning distinct kit_* layouts without consecutive duplicates, extracting grounded slots,
+and only assigning photo/chart layouts when real data exists. Falls back to deterministic
+heuristic mapper if LLM fails.
 """
 from __future__ import annotations
 
@@ -18,14 +19,16 @@ from schemas.slide_script import (
     SlideItem,
     SourceRef,
     EmphasisItem,
+    ChartSlot,
+    PhotoSlot,
 )
 from utils.diagnostics import Diagnostics
 
 logger = logging.getLogger(__name__)
 
 
-SLIDE_PLANNER_PROMPT_TEMPLATE = """Bạn là Slide Planner chuyên nghiệp cho video tin tức công nghệ phong cách Light Glass (9:16 vertical).
-Nhiệm vụ của bạn là gom toàn bộ các câu trong lời đọc thành {target_slides} slide (mỗi slide kéo dài khoảng 5-8 giây, gồm 1-3 câu liên tiếp).
+SLIDE_PLANNER_PROMPT_TEMPLATE = """Bạn là Slide Planner chuyên nghiệp cho video trình chiếu Motion Kit v2 (9:16 vertical).
+Nhiệm vụ của bạn là gom toàn bộ các câu trong lời đọc thành {target_slides} slide (mục tiêu ~5.0 giây mỗi slide, gồm 1-2 câu liên tiếp).
 
 THÔNG TIN ĐẦU VÀO:
 - Chủ đề: {topic}
@@ -38,36 +41,39 @@ THÔNG TIN ĐẦU VÀO:
 {sentences_text}
 
 QUY TẮC BẮT BUỘC (TUÂN THỦ 100%):
-1. Phủ kín 100% các câu, không bỏ sót câu nào. Mỗi slide gồm 1-3 câu liên tiếp (sentence_ids liên tục).
-2. Layouts hợp lệ theo kiến trúc Two-Zone Split (Tầng 1 Mockup trực quan, Tầng 2 Card văn bản lớn):
-   - lg_source_headline: Tầng 1 là Card nguồn/repo mockup, Tầng 2 là Headline 3 dòng in hoa cực lớn (BẮT BUỘC cho slide 1).
-   - lg_stat_hero: Tầng 1 là Dark Console Card với các ô chỉ số, Tầng 2 là con số lớn màu xanh dương kèm nhãn giải thích (chỉ dùng khi câu có con số cụ thể).
-   - lg_shot_features: Tầng 1 là Cửa sổ web bảng điều khiển, Tầng 2 là danh sách 2-3 điểm nổi bật (mỗi điểm có chấm tròn xanh).
-   - lg_vs_compare: Thẻ so sánh 2 vế xếp dọc (cũ/thủ công vs mới/tự động) kèm chữ VS ở giữa và badge WINNER.
-   - lg_note_card: Thẻ đơn trung tâm với pill TIẾT KIỆM và nhận định/đúc kết chuyên gia (tối đa 3 dòng).
-   - lg_cta_profile: Thẻ hồ sơ kênh Facebook/MXH với avatar tròn, 2 nút hành động và bong bóng reaction (BẮT BUỘC cho slide cuối cùng).
+1. Phủ kín 100% các câu, không bỏ sót câu nào. Mỗi slide gồm 1-2 câu liên tiếp (sentence_ids liên tục).
+2. Layouts hợp lệ trong Motion Kit v2:
+   - kit_title: Tiêu đề lớn (tối đa 3 dòng x 14 ký tự), câu phụ, pill chủ đề (BẮT BUỘC cho slide 1).
+   - kit_stat: Con số lớn, đơn vị, chú thích, delta tăng/giảm (CHỈ DÙNG KHI CÂU CÓ CON SỐ CỤ THỂ).
+   - kit_chart_bar / kit_chart_line / kit_chart_donut: Biểu đồ trực quan vẽ từ dữ liệu (CHỈ DÙNG KHI CÓ DỮ LIỆU CHUỖI SỐ THẬT: series[{{label, value}}]).
+   - kit_photo: Ảnh chân dung/tư liệu thật kèm chú thích tên/vai trò/nguồn (CHỈ DÙNG KHI CÓ ẢNH THẬT ĐƯỢC CẤP).
+   - kit_list: Danh sách điểm nhấn nổi bật (tối đa 3-4 ý, mỗi ý <= 40 ký tự).
+   - kit_compare: So sánh 2 vế đối chiếu (mỗi bên <= 2 dòng).
+   - kit_quote: Trích dẫn phát biểu trực tiếp của nhân vật/chuyên gia kèm tên và vai trò.
+   - kit_timeline: Tiến trình thời gian hoặc các mốc quan trọng (tối đa 4-5 mốc).
+   - kit_outro: Kêu gọi theo dõi và nhận diện kênh (BẮT BUỘC cho slide cuối cùng).
 3. KHÔNG ĐƯỢC lặp layout ở 2 slide liền kề.
 4. TUYỆT ĐỐI KHÔNG BỊA SỐ LIỆU HOẶC TÊN RIÊNG: Mọi con số trong slot 'value' hoặc slot chữ PHẢI xuất hiện nguyên văn trong câu đọc của slide đó hoặc trong Brief Facts.
 5. Giới hạn độ dài slot:
    - headline / title: tối đa 3 dòng, mỗi dòng <= 14 ký tự (tổng <= 42 ký tự).
    - pill / badge: tối đa 28 ký tự.
-   - features items: tối đa 3-4 ý, mỗi ý <= 40 ký tự.
+   - list items: tối đa 3-4 ý, mỗi ý <= 40 ký tự.
    - compare: mỗi bên <= 2 dòng x 14 ký tự.
 6. Trích xuất 1-2 cụm từ nhấn (emphasis): mỗi cụm <= 3 từ, PHẢI xuất hiện NGUYÊN VĂN trong câu đọc của slide đó.
-7. Với MỖI slide, BẮT BUỘC viết một 'image_prompt' bằng tiếng Anh, mô tả chi tiết hình ảnh 5s trực quan sát ý nghĩa câu đọc, dễ hình dung, lôi cuốn, mang tính điện ảnh/concept art 3D (ví dụ: 'Cinematic hyper-realistic 3D render of futuristic automated humanoid robot in high-tech factory, dramatic lighting, 8k', 'Neon glowing financial spline line descending sharply towards zero in modern digital exchange, dark background, hologram numbers', v.v.).
+7. Với MỖI slide, viết một 'image_prompt' bằng tiếng Anh, mô tả chi tiết hình ảnh trực quan 5s sát ý nghĩa câu đọc.
 
 ĐẦU RA CHỈ LÀ JSON HỢP LỆ VỚI CẤU TRÚC:
 {{
   "slides": [
     {{
       "id": "slide_1",
-      "layout": "lg_source_headline",
+      "layout": "kit_title",
       "sentence_ids": [1],
-      "image_prompt": "Cinematic 3D concept art of...",
+      "image_prompt": "Cinematic visual description...",
       "slots": {{
         "pill": "TIÊU ĐIỂM CÔNG NGHỆ",
         "title": "TIÊU ĐỀ NGẮN",
-        "text": "Tóm tắt lời đọc..."
+        "subtitle": "Tóm tắt lời đọc..."
       }},
       "emphasis": [
         {{"phrase": "từ khóa 1", "kind": "term"}}
@@ -112,9 +118,10 @@ def plan_slides(
     llm_client: Any = None,
     brand_name: str = "TIN CÔNG NGHỆ",
 ) -> SlideScript:
-    """Plan SlideScript with LLM router and verify through code grounding.
+    """Plan SlideScript with target ~5.0s per slide (n = round(duration / 5)).
     
-    Falls back to heuristic mapper if LLM fails or is disabled.
+    Guarantees no consecutive identical layouts and only assigns photo/chart layouts
+    when real slot data exists.
     """
     if not sentences:
         return SlideScript(topic="Chưa có dữ liệu", total_duration=0.0, slides=[])
@@ -125,7 +132,8 @@ def plan_slides(
     if total_duration <= 0.0:
         total_duration = float(sentences[-1].get("end", 0.0))
 
-    target_slides = max(5, min(10, round(total_duration / 6.5)))
+    # Target 5s slides: n = round(duration / 5)
+    target_slides = max(4, round(total_duration / 5.0))
     if len(sentences) < target_slides:
         target_slides = max(1, len(sentences))
 
@@ -153,7 +161,6 @@ def plan_slides(
         sentences_text=_format_sentences_for_prompt(sentences),
     )
 
-    # Estimate tokens
     est_in_tokens = max(100, len(prompt) // 4)
     est_out_tokens = max(100, target_slides * 120)
     est_cost = (est_in_tokens * 0.15 + est_out_tokens * 0.60) / 1_000_000
@@ -165,7 +172,6 @@ def plan_slides(
     try:
         raw_response_text = None
         if llm_client is not None:
-            # For testing with injected mock
             raw_response_text = llm_client.text(prompt)
         else:
             from providers.llm.router import Router, route_ready
@@ -178,10 +184,8 @@ def plan_slides(
                 raw_response_text = router.text(prompt)
 
         if raw_response_text:
-            # Parse JSON
             cleaned_json = raw_response_text.strip()
             if "```" in cleaned_json:
-                # Strip markdown code blocks
                 parts = cleaned_json.split("```")
                 for p in parts:
                     p_strip = p.strip()
@@ -197,66 +201,72 @@ def plan_slides(
 
             for s_idx, rs in enumerate(raw_slides):
                 s_id = str(rs.get("id") or f"slide_{s_idx + 1}")
-                s_layout = str(rs.get("layout") or "lg_note_card")
-                s_sids = [int(x) for x in rs.get("sentence_ids", []) if int(x) in sentences_by_id]
-                if not s_sids:
-                    s_sids = [min(sentences_by_id.keys())]
+                s_layout = str(rs.get("layout") or "kit_title")
+                s_sent_ids = [int(x) for x in rs.get("sentence_ids", []) if int(x) in sentences_by_id]
+                if not s_sent_ids:
+                    continue
 
-                s_start = min(float(sentences_by_id[sid].get("start", 0.0)) for sid in s_sids)
-                s_end = max(float(sentences_by_id[sid].get("end", 0.0)) for sid in s_sids)
-                s_dur = max(0.1, s_end - s_start)
-                s_narration = " ".join(sentences_by_id[sid].get("text", "") for sid in s_sids)
+                t_start = float(sentences_by_id[s_sent_ids[0]].get("start", 0.0))
+                t_end = float(sentences_by_id[s_sent_ids[-1]].get("end", 0.0))
+                s_dur = max(0.1, t_end - t_start)
+                s_narration = " ".join(sentences_by_id[sid].get("text", "") for sid in s_sent_ids)
+
+                slots = rs.get("slots") or {}
+                # Anti-repetition rule: no consecutive identical layouts
+                if parsed_slides and s_layout == parsed_slides[-1].layout:
+                    alt_pool = ["kit_title", "kit_stat", "kit_list", "kit_compare", "kit_quote"]
+                    s_layout = next((l for l in alt_pool if l != parsed_slides[-1].layout), "kit_title")
+
+                # Photo/chart only when real data exists in slots
+                if s_layout == "kit_photo" and not (slots.get("path") or slots.get("image") or slots.get("image_url")):
+                    s_layout = "kit_title"
+                if s_layout.startswith("kit_chart") and not (slots.get("series") or (rs.get("chart") and rs.get("chart", {}).get("series"))):
+                    s_layout = "kit_stat" if slots.get("value") is not None else "kit_list"
 
                 # Parse emphasis
-                raw_emp = rs.get("emphasis", [])
+                raw_emp = rs.get("emphasis") or []
                 emp_items = []
-                for emp in raw_emp:
-                    if isinstance(emp, dict) and emp.get("phrase"):
-                        emp_items.append(
-                            EmphasisItem(
-                                phrase=str(emp["phrase"]).strip(),
-                                kind=emp.get("kind", "term"),
-                            )
-                        )
+                for e in raw_emp[:2]:
+                    phr = str(e.get("phrase") or "").strip()
+                    if phr:
+                        emp_items.append(EmphasisItem(phrase=phr, kind=e.get("kind", "term")))
 
-                slide_item = SlideItem(
-                    id=s_id,
-                    layout=s_layout,  # type: ignore
-                    sentence_ids=s_sids,
-                    slots=rs.get("slots", {}),
-                    emphasis=emp_items,
-                    t_start=round(s_start, 3),
-                    t_end=round(s_end, 3),
-                    duration=round(s_dur, 3),
-                    narration=s_narration,
+                parsed_slides.append(
+                    SlideItem(
+                        id=s_id,
+                        layout=s_layout,
+                        sentence_ids=s_sent_ids,
+                        slots=slots,
+                        emphasis=emp_items,
+                        t_start=t_start,
+                        t_end=t_end,
+                        duration=s_dur,
+                        narration=s_narration,
+                        image_prompt=rs.get("image_prompt", ""),
+                    )
                 )
-                parsed_slides.append(slide_item)
 
             if parsed_slides:
                 slide_script = SlideScript(
                     topic=topic or "Bản tin công nghệ",
-                    total_duration=round(total_duration, 3),
+                    total_duration=total_duration,
                     slides=parsed_slides,
-                    repair_notes=["Sinh bằng LLM Slide Planner."],
                 )
 
-    except Exception as exc:
-        diagnostics.record_exception(exc, "Slide Planner LLM call failed, falling back to heuristic")
-        logger.warning("Slide Planner LLM call failed: %s. Using heuristic fallback.", exc)
+    except Exception as e:
+        logger.warning("LLM Slide Planning failed (%s); using deterministic heuristic mapper", e)
+        if diagnostics:
+            diagnostics.record_exception(e, "Slide Planner LLM failure")
 
-    # Fallback to heuristic mapper if LLM produced nothing valid
-    if slide_script is None or not slide_script.slides:
+    if not slide_script or not slide_script.slides:
+        logger.info("Using deterministic heuristic mapper for SlideScript")
         slide_script = create_heuristic_slide_script(
-            sentences=sentences,
             brief=brief,
+            sentences=sentences,
             total_duration=total_duration,
             brand_name=brand_name,
         )
 
-    # Code-level Grounding & Verification
-    verified_script = verify_and_ground_slides(
-        slide_script=slide_script,
-        sentences_by_id=sentences_by_id,
-        brief=brief,
-    )
-    return verified_script
+    # Verify and ground slides through deterministic code
+    grounded_script = verify_and_ground_slides(slide_script, brief=brief)
+    return grounded_script

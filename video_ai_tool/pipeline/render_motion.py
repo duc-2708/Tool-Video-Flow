@@ -66,6 +66,10 @@ def get_inter_font_faces() -> str:
 
 
 def is_motion_supported(template: str) -> bool:
+    if not template or not isinstance(template, str):
+        return False
+    if template.startswith("kit_"):
+        return True
     from schemas.motion_scene import SceneType
     from typing import get_args
     return template in SUPPORTED or template in LIGHT_GLASS_RECIPES or template in set(get_args(SceneType))
@@ -301,12 +305,12 @@ def scene_payload(scene,size,caption_style,options=None):
             annots_json = [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in annots]
             payload['visual_plan']={**resolved.model_dump(mode='json'),'beats':beats,'annotations':annots_json}
         else:
-            from editor.motion.scheduler import RECIPE_FAMILY_MAP
+            RECIPE_FAMILY_MAP = {}
             LEGACY_TEMPLATES = {"line_draw", "ring"}
             is_real_recipe = spec.scene_type not in LEGACY_TEMPLATES
             if is_real_recipe:
                 # Fallback dùng kết quả suggest_metaphor_recipe, chọn recipe theo lời đọc, tránh trùng cảnh liền kề, KHÔNG luôn trả balance_scale
-                from editor.motion.scheduler import suggest_metaphor_recipe
+                from agents.scene_director import suggest_metaphor_recipe
                 prev_r = getattr(scene, 'previous_recipe', None) or (options.get('previous_recipe') if options else None)
                 cand_alt = suggest_metaphor_recipe(scene.spec.narration, previous_recipe=prev_r)
                 NUMERIC_RECIPES = {
@@ -393,42 +397,10 @@ def scene_payload(scene,size,caption_style,options=None):
 
 
 def html_document(payload,font):
-    # Embed a single local font: no HTTP/file-origin font access, no remote resources.
-    encoded=base64.b64encode(Path(font).read_bytes()).decode("ascii")
-    css=(MOTION_DIR/"base.css").read_text(encoding="utf-8").replace("__FONT__","data:font/otf;base64,"+encoded)
-    theme=payload.get("theme",{})
-    bg,orb=background_images((payload["width"],payload["height"]),theme.get("top","#101b30"),theme.get("bottom","#080c17"))
-    css+=f'#stage{{background-image:url("{bg}");background-size:100% 100%}}.orb{{background-image:url("{orb}");background-size:100% 100%}}.bar-fill{{background:var(--accent)}}'
-    data=json.dumps(payload,ensure_ascii=True).replace("<","\\u003c").replace(">","\\u003e").replace("&","\\u0026")
-    js=(MOTION_DIR/"runtime.js").read_text(encoding="utf-8")
-    from editor.motion.scenes import bundle
-    scene_css,scene_js,_=bundle()
-    themes_css = (MOTION_DIR/"themes/themes.css").read_text(encoding="utf-8") if (MOTION_DIR/"themes/themes.css").is_file() else ""
-    try:
-        from editor.motion.engine import bundle_engine
-        engine_css, engine_js, _ = bundle_engine()
-    except Exception:
-        engine_css, engine_js = "", ""
-    try:
-        from editor.depth import bundle_depth
-        depth_css, depth_js, _ = bundle_depth()
-    except Exception:
-        depth_css, depth_js = "", ""
-    css += '\n' + scene_css + '\n' + themes_css + '\n' + engine_css + '\n' + depth_css
-    js = depth_js + '\n' + engine_js + '\n' + scene_js + '\n' + js
-    t_name = str(theme.get('name', 'studio'))
-    if t_name == "light_glass":
-        inter_css = get_inter_font_faces()
-        css = inter_css + '\n' + css
-    depth_enabled = bool(payload.get("depth_3d", False))
-    if not depth_enabled:
-        try:
-            from config.settings import get_settings
-            depth_enabled = bool(get_settings().depth_3d_enabled)
-        except Exception:
-            depth_enabled = False
-    flag_script = f"window.DEPTH_3D_ENABLED = {'true' if depth_enabled else 'false'};"
-    return f'<!doctype html><meta charset="utf-8"><style>{css}</style><div id="stage" class="theme-{t_name}"></div><script>window.MOTION_DATA={data};{flag_script}</script><script>{js}</script>'
+    from editor.motion.kit import bundle_kit
+    kit_css, kit_js, _ = bundle_kit()
+    data = json.dumps(payload, ensure_ascii=True).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
+    return f'<!doctype html><meta charset="utf-8"><style>{kit_css}</style><div id="stage"></div><script>window.MOTION_DATA={data};</script><script>{kit_js}</script>'
 
 
 @contextmanager
@@ -479,18 +451,11 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
     for shot in scene.shots:
         path=shot.path
         sources.append((str(path),path.stat().st_size,path.stat().st_mtime_ns) if path and path.is_file() else None)
-    dependencies=[Path(__file__),MOTION_DIR/"runtime.js",MOTION_DIR/"base.css",
-        MOTION_DIR.parents[1]/"editor/layout.py",MOTION_DIR.parents[1]/"editor/templates/core.py",
-        MOTION_DIR.parents[1]/"editor/captions.py",MOTION_DIR.parents[1]/"editor/graphics.py",
-        MOTION_DIR.parents[1]/"agents/presentation.py",MOTION_DIR/"theme.py",
-        MOTION_DIR.parents[1]/"agents/motion_beats.py",Path(font)]
-    from editor.motion.scenes import bundle
-    from editor.motion.engine import bundle_engine
-    _,_,scene_digest=bundle()
-    _,_,engine_digest=bundle_engine()
-    identity={"payload":payload,"fps":fps,"sources":sources,"extra":extra_identity,'scene_engine':scene_digest,
-        'engine_motion':engine_digest,
-        "engine":hashlib.sha256(b"".join(p.read_bytes() for p in dependencies)).hexdigest()}
+    dependencies=[Path(__file__),MOTION_DIR/"kit/kit.css",MOTION_DIR/"kit/kit.js",Path(font)]
+    from editor.motion.kit import bundle_kit
+    _,_,kit_digest=bundle_kit()
+    identity={"payload":payload,"fps":fps,"sources":sources,"extra":extra_identity,'kit_digest':kit_digest,
+        "engine":hashlib.sha256(b"".join(p.read_bytes() for p in dependencies if p.is_file())).hexdigest()}
     key=cache_key(identity);folder=Path(cache_dir);destination=folder/(key+".mp4");meta=folder/(key+".json")
     started=time.perf_counter();notify=progress or (lambda value,message:None)
     temporary=None;process=None

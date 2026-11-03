@@ -1,193 +1,129 @@
-"""Motion Gallery UI view for Streamlit: preview, test and override animation recipes."""
+"""Motion Gallery UI view for Streamlit: Motion Kit v2 visual components and demo showcase."""
 from pathlib import Path
 import streamlit as st
 
-GALLERY_DIR = Path(__file__).resolve().parents[2] / "output/motion_gallery"
-THUMBS_DIR = GALLERY_DIR / "thumbs"
-LG_DEMO_DIR = Path(__file__).resolve().parents[2] / "output/light_glass_demo"
+KIT_DEMO_DIR = Path(__file__).resolve().parents[2] / "output/kit_demo"
 
 
 def render(settings, project, topic, debug, diagnostics):
-    st.header("Phòng thử hiệu ứng (Motion Gallery)")
-    st.caption("Xem trước và kiểm định các công thức hoạt họa, biến thể và chú thích chuyển động.")
+    st.header("Phòng thử hiệu ứng — Motion Kit v2")
+    st.caption("Khám phá hệ thống đồ họa Motion Kit v2: seek-based deterministic, bảng màu thanh lịch, typography sắc nét và chuyển cảnh liền mạch.")
 
-    tab_standard, tab_light_glass = st.tabs(["Hiệu ứng Tiêu chuẩn (Engine 4b)", "Phong cách Light Glass (Pastel)"])
+    tab_demo, tab_components = st.tabs(["Video Demo & Kiểm Định (Audit)", "Thư Viện Thành Phần Kit v2"])
 
-    with tab_standard:
-        _render_standard_gallery()
+    with tab_demo:
+        _render_demo_tab()
 
-    with tab_light_glass:
-        _render_light_glass_gallery()
-
-
-def _render_standard_gallery():
-    contact_sheet = GALLERY_DIR / "contact_sheet.png"
-    if contact_sheet.is_file():
-        st.subheader("Bảng mẫu tổng quan (Contact Sheet)")
-        st.image(str(contact_sheet), caption="Khung hình đại diện của toàn bộ các công thức hoạt họa tại t=2.0s", use_container_width=True)
-
-    st.divider()
-
-    clips = sorted(GALLERY_DIR.glob("*.mp4"))
-    if not clips:
-        st.info("Chưa có clip nào được kết xuất trong Phòng thử hiệu ứng tiêu chuẩn. Hãy chạy lệnh: `python tools/motion_gallery.py` để kết xuất toàn bộ.")
-        return
-
-    clip_names = [c.stem for c in clips]
-    selected_name = st.selectbox("Chọn công thức hoạt họa để xem chi tiết", clip_names, key="standard_recipe_select")
-
-    selected_clip = GALLERY_DIR / f"{selected_name}.mp4"
-    selected_thumb = THUMBS_DIR / f"{selected_name}.jpg"
-
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        st.subheader(f"Video Xem thử: {selected_name}")
-        st.video(str(selected_clip))
-        st.download_button("Tải video MP4", selected_clip.read_bytes(), file_name=selected_clip.name, mime="video/mp4", key="btn_down_std")
-
-    with col2:
-        st.subheader("Thông tin kỹ thuật")
-        st.markdown(f"""
-        - **Tên công thức**: `{selected_name}`
-        - **Kích thước mẫu**: 540x960 (scale 0.5), 24 fps
-        - **Thời lượng**: 3.5 giây
-        - **Cơ chế chuyển động**: Pure deterministic seek (anime.js / Mulberry32 / SVG)
-        - **Độ sâu 3D & Parallax**: 3 lớp độc lập (background, content, foreground/annotations)
-        - **An toàn giao diện**: Phủ $\\ge 60\\%$ ngang, $\\ge 35\\%$ dọc, cỡ chữ $\\ge 38$px
-        """)
-
-        if selected_thumb.is_file():
-            st.image(str(selected_thumb), caption=f"Khung hình tại t=2.0s ({selected_name})", width=280)
+    with tab_components:
+        _render_components_tab()
 
 
-def _render_light_glass_gallery():
-    st.subheader("Phong cách Light Glass (Pastel)")
-    st.markdown("""
-    Phong cách giao diện sáng, tối giản, sang trọng cho video tin công nghệ 9:16 (1080x1920) @ 30fps.
-    - **Nền**: `#f4f5f8` với 2 blob mờ trôi chậm (chu kỳ 12s) + lưới chấm 28px (opacity 6%).
-    - **Thương hiệu**: Nhận diện thương hiệu cố định trên top (`y=70px`), pill nguồn tin tức ở đáy (`y=1770px`).
-    - **Khung thẻ**: Nền trắng bo góc 36px, đổ bóng mượt chuẩn Apple/Linear, chuyển động easing `cubic-bezier(.22, 1, .36, 1)`.
-    - **Font**: Typography Inter offline tải tự động, không phụ thuộc Google Fonts / CDN bên ngoài.
-    """)
-
-    # Demo video preview if exists
-    demo_video = LG_DEMO_DIR / "light_glass_demo.mp4"
-    demo_contact_sheet = LG_DEMO_DIR / "contact_sheet.png"
+def _render_demo_tab():
+    st.subheader("Video Trình Diễn Tổng Hợp (Demo ~30s)")
+    demo_video = KIT_DEMO_DIR / "kit_demo.mp4"
+    contact_sheet = KIT_DEMO_DIR / "contact_sheet.jpg"
+    audit_json = KIT_DEMO_DIR / "audit_result.json"
 
     if demo_video.is_file():
-        st.subheader("Video Trình diễn Tổng hợp (Demo 6 Shots)")
-        col_v1, col_v2 = st.columns([1, 1])
-        with col_v1:
+        col1, col2 = st.columns([1, 1])
+        with col1:
             st.video(str(demo_video))
-            st.download_button("Tải video Demo MP4", demo_video.read_bytes(), file_name="light_glass_demo.mp4", mime="video/mp4", key="btn_down_lg")
-        with col_v2:
+            st.download_button("Tải video Demo MP4", demo_video.read_bytes(), file_name="kit_demo.mp4", mime="video/mp4", key="btn_down_kit_demo")
+        with col2:
             st.markdown("""
-            **Kịch bản bản tin mẫu (38s - 6 shots):**
-            1. `lg_source_headline`: Tiêu đề & nguồn tin công nghệ (mở đầu)
-            2. `lg_stat_hero`: Con số thống kê 78% hiệu năng (đếm số mượt)
-            3. `lg_shot_features`: Danh sách 3 tính năng đột phá mới
-            4. `lg_vs_compare`: Bảng so sánh 2 thế hệ vi xử lý
-            5. `lg_note_card`: Nhận định chuyên gia công nghệ
-            6. `lg_cta_profile`: Kêu gọi theo dõi & nhận diện kênh
+            **Các phân cảnh trong video Demo Motion Kit v2:**
+            1. `kit_title`: Tiêu đề lớn & pill nhận diện mở đầu
+            2. `kit_stat`: Con số tăng trưởng 128 tỷ USD (đếm đơn điệu trong 1.2s)
+            3. `kit_chart_bar`: Biểu đồ cột so sánh thị phần công nghệ
+            4. `kit_chart_line`: Biểu đồ đường vẽ mượt tiến trình theo năm
+            5. `kit_photo`: Ảnh tư liệu điện ảnh (Ken Burns 1.00 -> 1.03) kèm chú thích
+            6. `kit_list`: Danh sách 3 điểm nhấn công nghệ nổi bật
+            7. `kit_quote`: Trích dẫn nhận định chuyên gia phân tích
+            8. `kit_outro`: Kêu gọi theo dõi và nhận diện kênh
             """)
-            if demo_contact_sheet.is_file():
-                st.image(str(demo_contact_sheet), caption="Bảng ghép 6 khung hình giữa các shot (Contact Sheet)", use_container_width=True)
+            if contact_sheet.is_file():
+                st.image(str(contact_sheet), caption="Bảng ghép khung hình 0.5s/khung (Contact Sheet)", use_container_width=True)
+
+        if audit_json.is_file():
+            st.divider()
+            st.subheader("Kết Quả Kiểm Định Chất Lượng (Quality Audit)")
+            import json
+            try:
+                audit_data = json.loads(audit_json.read_text(encoding="utf-8"))
+                st.json(audit_data)
+            except Exception:
+                pass
     else:
-        st.info("Chưa có video demo được kết xuất. Bạn có thể kết xuất video test bằng lệnh: `python tools/render_light_glass_demo.py`.")
+        st.info("Chưa có video demo được kết xuất. Bạn có thể kết xuất video test bằng lệnh: `python tools/render_kit_demo.py`.")
 
-    st.divider()
-    st.subheader("Danh mục 6 Công thức Hoạt họa Light Glass")
 
-    lg_recipes_info = [
+def _render_components_tab():
+    st.subheader("Danh Mục Thành Phần Motion Kit v2 (`kit_*`)")
+    st.markdown("""
+    Toàn bộ chuyển động trong Motion Kit v2 là hàm thuần theo thời gian $t$, xác định và tái lập 100%:
+    - **Nền**: `#F6F7FB`, thẻ trắng `#FFFFFF` bo góc mềm viền `#E5E7EB` bóng nhẹ.
+    - **Chữ**: `#0F172A`, điểm nhấn xanh `#2563EB`, tím `#7C3AED`, tăng `#059669`, giảm `#DC2626`.
+    - **Khung cố định**: Brand chip top-left, Source pill bottom-center, 2 blob mờ trôi chậm chu kỳ $\\ge 20$s.
+    """)
+
+    components = [
         {
-            "id": "lg_source_headline",
-            "name": "1. lg_source_headline (Tiêu đề & Nguồn tin)",
-            "role": "Shot mở đầu",
-            "desc": "Header nguồn tin báo + Headline chữ lớn Inter 900 68px + badge/tóm tắt 3 dòng.",
-            "sample_data": {
-                "source": "TECH INSIGHT · MẪU",
-                "title": "KIẾN TRÚC VI XỬ LÝ MỚI ĐẠT HIỆU NĂNG VƯỢT TRỘI",
-                "highlight": ["HIỆU NĂNG", "VƯỢT TRỘI"],
-                "text": "Kiến trúc chip thế hệ mới vừa được công bố với quy trình đóng gói tiên tiến.",
-                "note": "Ghi chú: Dữ liệu mẫu giả định dùng cho kiểm thử thiết kế."
-            }
+            "id": "kit_title",
+            "name": "1. kit_title (Tiêu đề lớn & Câu phụ)",
+            "desc": "Tiêu đề 96-132px đậm (tối đa 3 dòng x 14 ký tự), phụ đề >= 48px, pill và thumbnail tùy chọn.",
         },
         {
-            "id": "lg_stat_hero",
-            "name": "2. lg_stat_hero (Con số Thống kê Khổng lồ)",
-            "role": "Shot số liệu",
-            "desc": "Con số 140px nổi bật, đếm mượt từ 0 đến giá trị đích trong 0.8s, đúng giá trị lời đọc.",
-            "sample_data": {
-                "label": "TĂNG TRƯỞNG HIỆU SUẤT XỬ LÝ AI",
-                "value": 78,
-                "unit": "%",
-                "number_text": "78%",
-                "text": "Tốc độ xử lý tác vụ trí tuệ nhân tạo tăng vọt so với thế hệ tiền nhiệm.",
-                "note": "Ghi chú: Dữ liệu mẫu giả định dùng cho kiểm thử thiết kế."
-            }
+            "id": "kit_stat",
+            "name": "2. kit_stat (Số liệu lớn đếm đơn điệu)",
+            "desc": "Con số chủ đạo đếm tăng một chiều trong <= 1.2s rồi giữ nguyên, đơn vị và delta tăng/giảm.",
         },
         {
-            "id": "lg_shot_features",
-            "name": "3. lg_shot_features (Danh sách Điểm Nổi bật)",
-            "role": "Shot tính năng",
-            "desc": "2-4 hàng tính năng với icon tròn pastel, xuất hiện so-le (stagger 0.08s), trượt êm.",
-            "sample_data": {
-                "title": "3 CẢI TIẾN TRỌNG TÂM",
-                "items": [
-                    "Băng thông bộ nhớ hợp nhất mở rộng gấp đôi",
-                    "Khả năng tiết kiệm điện năng giảm nhiệt lượng 35%",
-                    "Tương thích hoàn toàn mọi framework AI hiện hành"
-                ],
-                "note": "Ghi chú: Dữ liệu mẫu giả định dùng cho kiểm thử thiết kế."
-            }
+            "id": "kit_chart_bar",
+            "name": "3. kit_chart_bar (Biểu đồ cột động)",
+            "desc": "Vẽ dần các cột trong 0.9s từ dữ liệu thật, nhãn và giá trị gắn trực tiếp trên cột.",
         },
         {
-            "id": "lg_vs_compare",
-            "name": "4. lg_vs_compare (Bảng So sánh 2 Đối tượng)",
-            "role": "Shot so sánh",
-            "desc": "2 cột song song (cũ/đối thủ vs mới/nổi bật), badge tương ứng và gạch đầu dòng đối chiếu.",
-            "sample_data": {
-                "title": "SO SÁNH THẾ HỆ TIỀN NHIỆM VÀ MỚI",
-                "bars": [
-                    {"label": "Thế hệ cũ: 14 lõi hiệu năng, tiêu thụ 65W", "value": 45},
-                    {"label": "Thế hệ mới: 24 lõi xử lý, tiêu thụ chỉ 38W", "value": 85}
-                ],
-                "note": "Ghi chú: Dữ liệu mẫu giả định dùng cho kiểm thử thiết kế."
-            }
+            "id": "kit_chart_line",
+            "name": "4. kit_chart_line (Biểu đồ đường động)",
+            "desc": "Đường nối spline vẽ dần qua các mốc thời gian trong 0.9s, các điểm chốt phát sáng.",
         },
         {
-            "id": "lg_note_card",
-            "name": "5. lg_note_card (Nhận định & Phân tích)",
-            "role": "Shot phân tích",
-            "desc": "Thẻ ghi chú với dấu ngoặc kép to mờ mờ, font Inter 600 sang trọng và phần chân thẻ tác giả.",
-            "sample_data": {
-                "label": "GHI CHÚ CHUYÊN GIA",
-                "text": "Bước chuyển dịch kiến trúc này mở ra chu kỳ nâng cấp thiết bị mạnh mẽ nhất trong nửa thập kỷ qua.",
-                "author": "Chuyên gia phân tích phần cứng · Mẫu",
-                "note": "Ghi chú: Dữ liệu mẫu giả định dùng cho kiểm thử thiết kế."
-            }
+            "id": "kit_chart_donut",
+            "name": "5. kit_chart_donut (Biểu đồ tròn phân bổ)",
+            "desc": "Vòng cung phân bổ tỷ lệ phần trăm vẽ dần trong 0.9s kèm bảng chú giải bên phải.",
         },
         {
-            "id": "lg_cta_profile",
-            "name": "6. lg_cta_profile (Kêu gọi Hành động & Kênh)",
-            "role": "Shot kết thúc",
-            "desc": "Khung hồ sơ thương hiệu lớn, logo, tên kênh, handle, nút Follow giả lập viên thuốc nổi bật.",
-            "sample_data": {
-                "text": "BẤM THEO DÕI ĐỂ CẬP NHẬT TIN CÔNG NGHỆ MỚI NHẤT MỖI NGÀY",
-                "channel_name": "TIN CÔNG NGHỆ",
-                "channel_handle": "@tincongnghe_ai",
-                "note": "Ghi chú: Dữ liệu mẫu giả định dùng cho kiểm thử thiết kế."
-            }
-        }
+            "id": "kit_photo",
+            "name": "6. kit_photo (Ảnh tư liệu / Chân dung)",
+            "desc": "Thẻ ảnh 910x1000 bo góc 28px, zoom Ken Burns nhẹ nhàng 1.00 -> 1.03, chú thích tên và nguồn.",
+        },
+        {
+            "id": "kit_list",
+            "name": "7. kit_list (Danh sách điểm nhấn)",
+            "desc": "Tối đa 4 ý ngắn gọn, hiện lần lượt so le trong 0.7s đầu với chữ >= 44px sắc nét.",
+        },
+        {
+            "id": "kit_compare",
+            "name": "8. kit_compare (Bảng đối chiếu 2 vế)",
+            "desc": "2 cột so sánh trực quan (mỗi bên <= 2 dòng) với thẻ nhấn mạnh kết quả vượt trội.",
+        },
+        {
+            "id": "kit_quote",
+            "name": "9. kit_quote (Trích dẫn chuyên gia)",
+            "desc": "Dấu ngoặc kép phong cách editorial, câu nói tâm đắc, tên nhân vật và tổ chức/vai trò.",
+        },
+        {
+            "id": "kit_timeline",
+            "name": "10. kit_timeline (Tiến trình mốc sự kiện)",
+            "desc": "Dòng thời gian tối đa 5 mốc quan trọng với các nút điểm liên kết mượt mà.",
+        },
+        {
+            "id": "kit_outro",
+            "name": "11. kit_outro (Thẻ kết & Kêu gọi theo dõi)",
+            "desc": "Avatar thương hiệu, tên kênh, nút kêu gọi đăng ký và thông điệp kết video.",
+        },
     ]
 
-    for rec in lg_recipes_info:
-        with st.expander(f"**{rec['name']}** — *{rec['role']}*", expanded=False):
-            st.write(rec['desc'])
-            st.json(rec['sample_data'])
-            thumb_file = LG_DEMO_DIR / f"shot_{rec['id']}_mid.png"
-            alt_thumb = LG_DEMO_DIR / f"shot_{lg_recipes_info.index(rec)+1}_mid.png"
-            if thumb_file.is_file():
-                st.image(str(thumb_file), caption=f"Khung giữa ({rec['id']})", width=340)
-            elif alt_thumb.is_file():
-                st.image(str(alt_thumb), caption=f"Khung giữa ({rec['id']})", width=340)
+    for comp in components:
+        with st.expander(comp["name"]):
+            st.markdown(comp["desc"])

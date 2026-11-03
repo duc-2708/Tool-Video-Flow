@@ -1,3 +1,0 @@
-# file: prompts/director_review.txt
-Loại review: nhu cầu → tiêu chí được fact hỗ trợ → điểm mạnh/hạn chế chỉ khi có căn cứ → CTA hỏi ý kiến.
-Không giả vờ đã sử dụng, thử nghiệm hoặc có kết quả thực tế. Không bịa nhược điểm cho đủ bố cục.

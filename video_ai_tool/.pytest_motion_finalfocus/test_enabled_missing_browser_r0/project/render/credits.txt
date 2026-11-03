@@ -1,5 +1,0 @@
-Nguồn fixture; không có stock bên ngoài.
-
---- Render ---
-Font: DTPhudu-Bold.otf
-Nhạc nền: Không sử dụng
