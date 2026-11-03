@@ -545,7 +545,8 @@ def create_visual_plan_v3(
                 planner_reason = str(exc)
                 if progress:
                     progress("Planner AI lỗi: đang dùng recipe suy luận theo từ khóa từng cảnh...")
-                from editor.motion.scheduler import suggest_metaphor_recipe, AVAILABLE_SHOT_RECIPES
+                from agents.scene_director import suggest_metaphor_recipe
+                AVAILABLE_SHOT_RECIPES = ["kit_title", "kit_stat", "kit_chart_bar", "kit_photo", "kit_list"]
                 fallback_scenes = []
                 prev_recipe = None
                 used_recipes = set()
@@ -645,8 +646,12 @@ def create_visual_plan_v3(
     )
 
     # Anti-Repetition Scheduler: enforces no-repeat, diversity >=6, stillness <=2.5s, visual beats >=3
-    if getattr(cfg, "motion_recipes_enabled", True):
-        from editor.motion.scheduler import schedule_recipes_no_repeat, suggest_metaphor_recipe
+    if getattr(cfg, "motion_recipes_enabled", False):
+        try:
+            from editor.motion.scheduler import schedule_recipes_no_repeat, suggest_metaphor_recipe
+        except ImportError:
+            schedule_recipes_no_repeat = None
+            from agents.scene_director import suggest_metaphor_recipe
         scenes_data = []
         for idx, sc in enumerate(plan.scenes):
             v_sc = next((s for s in repaired_resp.scenes if s.scene_id == sc.id), None) or (repaired_resp.scenes[idx] if idx < len(repaired_resp.scenes) else None)
@@ -669,13 +674,16 @@ def create_visual_plan_v3(
                 "beats": [b.model_dump(mode="json") for b in getattr(v_sc, "elements", [])] if v_sc else [],
             })
 
-        scheduled_scenes, sched_notes = schedule_recipes_no_repeat(
-            scenes_data,
-            min_distinct_recipes=min(6, len(plan.scenes)),
-            max_recipe_freq=2,
-            min_recipe_distance=4,
-            min_distinct_families=min(4, len(plan.scenes)),
-        )
+        if schedule_recipes_no_repeat is not None:
+            scheduled_scenes, sched_notes = schedule_recipes_no_repeat(
+                scenes_data,
+                min_distinct_recipes=min(6, len(plan.scenes)),
+                max_recipe_freq=2,
+                min_recipe_distance=4,
+                min_distinct_families=min(4, len(plan.scenes)),
+            )
+        else:
+            scheduled_scenes, sched_notes = scenes_data, []
 
         sched_beats_by_id = {}
         for sched_sc in scheduled_scenes:
@@ -746,7 +754,7 @@ def create_visual_plan_v3(
                 scene.visual_plan = motion_plan
             except Exception as exc:
                 _log_director_error(f"Cảnh {scene.id}: lỗi map MotionScenePlan ({exc}); chọn recipe thay thế", exc, diagnostics)
-                from editor.motion.scheduler import suggest_metaphor_recipe
+                from agents.scene_director import suggest_metaphor_recipe
                 alt_recipe = suggest_metaphor_recipe(scene.narration, previous_recipe=None)
                 fallback_note = f"[visual_fallback, nhóm 2] Cảnh {scene.id}: lỗi map visual_plan ({type(exc).__name__}); dùng recipe thay thế '{alt_recipe}' theo từ khóa."
                 scene.visual_plan = MotionScenePlan(
@@ -756,7 +764,7 @@ def create_visual_plan_v3(
                 if fallback_note not in plan.review_notes:
                     plan.review_notes.append(fallback_note)
         else:
-            from editor.motion.scheduler import suggest_metaphor_recipe
+            from agents.scene_director import suggest_metaphor_recipe
             alt_recipe = suggest_metaphor_recipe(scene.narration, previous_recipe=None)
             fallback_note = f"[visual_fallback, nhóm 2] Cảnh {scene.id}: thiếu kế hoạch hình ảnh; tự động suy luận recipe '{alt_recipe}' theo từ khóa."
             scene.visual_plan = MotionScenePlan(
@@ -769,8 +777,11 @@ def create_visual_plan_v3(
     # Nối lập lịch theo shot: schedule_shots_no_repeat trên toàn bộ các shot của video
     # Đảm bảo mỗi cảnh 11-14s có >= 3 shot 3-5s với recipe khác nhau,
     # không trùng trong 3 shot liền kề, tổng video >= 6 recipe.
-    if getattr(cfg, "motion_recipes_enabled", True):
-        from editor.motion.scheduler import schedule_shots_no_repeat
+    if getattr(cfg, "motion_recipes_enabled", False):
+        try:
+            from editor.motion.scheduler import schedule_shots_no_repeat
+        except ImportError:
+            schedule_shots_no_repeat = None
         from schemas.motion_scene import MotionScenePlan
         from schemas.visual import VisualBeat, VisualData
 
@@ -799,7 +810,7 @@ def create_visual_plan_v3(
                 })
                 shot_map.append((s_idx, sh_idx))
 
-        if all_shots_data:
+        if all_shots_data and schedule_shots_no_repeat is not None:
             target_distinct_shots = min(10, len(all_shots_data))
             scheduled_shots, shot_notes = schedule_shots_no_repeat(
                 all_shots_data,

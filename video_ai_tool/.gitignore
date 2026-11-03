@@ -7,6 +7,10 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .pytest_tmp/
+.pytest_*/
+tmp_*
+tmp_extract/
+tmp_test_images/
 .cache/
 logs/*
 !logs/.gitkeep

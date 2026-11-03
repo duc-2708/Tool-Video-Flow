@@ -1,7 +1,0 @@
-
-[2026-11-02T13:54:13.735157+00:00] Stock media download
-Traceback (most recent call last):
-  File "C:\Users\admin\Desktop\app create video\video_ai_tool\pipeline\stock_assets.py", line 72, in fetch
-    raise ValueError("Chặn chuyển hướng ra ngoài CDN stock cho phép.")
-ValueError: Chặn chuyển hướng ra ngoài CDN stock cho phép.
-

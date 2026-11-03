@@ -1,10 +1,22 @@
-"""Pydantic schema for Slide Script (Light Glass style presentation flow)."""
+"""Pydantic schema for Slide Script (Motion Kit v2 presentation flow)."""
 from typing import Annotated, Any, Literal
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from schemas.base import StrictModel, NonEmptyText
 
 
 ALLOWED_LAYOUTS = (
+    "kit_title",
+    "kit_stat",
+    "kit_chart_bar",
+    "kit_chart_line",
+    "kit_chart_donut",
+    "kit_photo",
+    "kit_list",
+    "kit_compare",
+    "kit_quote",
+    "kit_timeline",
+    "kit_outro",
+    # Legacy aliases mapped to kit equivalents
     "lg_source_headline",
     "lg_stat_hero",
     "lg_shot_features",
@@ -12,7 +24,19 @@ ALLOWED_LAYOUTS = (
     "lg_note_card",
     "lg_cta_profile",
 )
+
 LayoutType = Literal[
+    "kit_title",
+    "kit_stat",
+    "kit_chart_bar",
+    "kit_chart_line",
+    "kit_chart_donut",
+    "kit_photo",
+    "kit_list",
+    "kit_compare",
+    "kit_quote",
+    "kit_timeline",
+    "kit_outro",
     "lg_source_headline",
     "lg_stat_hero",
     "lg_shot_features",
@@ -21,8 +45,40 @@ LayoutType = Literal[
     "lg_cta_profile",
 ]
 
-ImageKindType = Literal["screenshot", "og", "card"]
+ImageKindType = Literal["screenshot", "og", "card", "photo"]
 EmphasisKindType = Literal["term", "number", "name"]
+
+LEGACY_TO_KIT_LAYOUT = {
+    "lg_source_headline": "kit_title",
+    "lg_stat_hero": "kit_stat",
+    "lg_shot_features": "kit_list",
+    "lg_vs_compare": "kit_compare",
+    "lg_note_card": "kit_title",
+    "lg_cta_profile": "kit_outro",
+}
+
+def normalize_kit_layout(layout: str) -> str:
+    return LEGACY_TO_KIT_LAYOUT.get(layout, layout)
+
+
+class ChartSeriesItem(StrictModel):
+    label: NonEmptyText
+    value: float
+    unit: str | None = None
+
+
+class ChartSlot(StrictModel):
+    type: Literal["bar", "line", "donut"] = "bar"
+    series: list[ChartSeriesItem] = Field(default_factory=list, max_length=6)
+    unit: str | None = None
+    title: str | None = None
+
+
+class PhotoSlot(StrictModel):
+    path: str | None = None
+    name: str | None = None
+    role: str | None = None
+    credit: str | None = None
 
 
 class SourceRef(StrictModel):
@@ -81,10 +137,12 @@ def wrap_text_greedy(text: str, max_chars_per_line: int = 14, max_lines: int = 3
 
 
 class SlideItem(StrictModel):
-    id: NonEmptyText
-    layout: LayoutType
-    sentence_ids: list[int] = Field(min_length=1)
+    id: str = "slide_1"
+    layout: LayoutType = "kit_title"
+    sentence_ids: list[int] = Field(default_factory=lambda: [1])
     slots: dict[str, Any] = Field(default_factory=dict)
+    chart: ChartSlot | None = None
+    photo: PhotoSlot | None = None
     source_ref: SourceRef | None = None
     emphasis: list[EmphasisItem] = Field(default_factory=list, max_length=5)
     t_start: float = 0.0
@@ -92,6 +150,34 @@ class SlideItem(StrictModel):
     duration: float = 0.0
     narration: str = ""
     image_prompt: str = ""
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_legacy_layout(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            # Compatibility with scene_idx, start_ms, end_ms
+            if "scene_idx" in data:
+                val = data.pop("scene_idx")
+                if "id" not in data:
+                    data["id"] = f"slide_{val}"
+            if "start_ms" in data:
+                val = data.pop("start_ms")
+                if "t_start" not in data:
+                    data["t_start"] = float(val) / 1000.0
+            if "end_ms" in data:
+                val = data.pop("end_ms")
+                if "t_end" not in data:
+                    data["t_end"] = float(val) / 1000.0
+                    if "duration" not in data:
+                        data["duration"] = data["t_end"] - data.get("t_start", 0.0)
+            # Slot shortcuts: title, subtitle, stat_value, stat_label, bullets, etc.
+            slots = data.setdefault("slots", {})
+            for k in ("title", "subtitle", "stat_value", "stat_label", "value", "unit", "label", "bullets"):
+                if k in data:
+                    val = data.pop(k)
+                    if k not in slots:
+                        slots[k] = val
+        return data
 
     @field_validator("slots")
     @classmethod
@@ -104,7 +190,6 @@ class SlideItem(StrictModel):
             if pill_key in cleaned and cleaned[pill_key]:
                 val = str(cleaned[pill_key]).strip()
                 if len(val) > 28:
-                    # Cut at word boundary if possible
                     wrapped = wrap_text_greedy(val, max_chars_per_line=28, max_lines=1)
                     cleaned[pill_key] = wrapped[0] if wrapped else val[:28]
 
@@ -146,3 +231,18 @@ class SlideScript(StrictModel):
     total_duration: float = 0.0
     slides: list[SlideItem] = Field(default_factory=list)
     repair_notes: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_scenes_field(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            if "scenes" in data and "slides" not in data:
+                data["slides"] = data.pop("scenes")
+        return data
+
+    @property
+    def scenes(self) -> list[SlideItem]:
+        return self.slides
+
+
+SlideScene = SlideItem

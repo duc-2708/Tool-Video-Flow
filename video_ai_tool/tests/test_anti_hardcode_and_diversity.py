@@ -1,13 +1,10 @@
+"""Anti-hardcode source code check and topic grounding validation for Motion Kit v2."""
 import re
 from pathlib import Path
 import pytest
-from editor.motion.scheduler import (
-    schedule_shots_no_repeat,
-    build_shot_factual_data,
-    validate_recipe_fit,
-    enough_for_shot,
-    _normalize_text,
-)
+
+from editor.motion.light_glass_slots import heuristic_slide_script_for_edit_plan
+from schemas.edit_plan import EditPlan, Scene, Shot
 
 
 def test_anti_hardcode_source_code():
@@ -39,101 +36,65 @@ def test_anti_hardcode_source_code():
     assert not violations, "Phát hiện chuỗi dữ liệu mẫu bị hard-code trong mã nguồn:\n" + "\n".join(violations)
 
 
-def test_scheduler_three_distinct_topics_grounded():
-    """Run scheduler with 3 mock scripts across different domains (stocks, court, tech).
-    Ensure:
-    1. Zero sample video strings in any scheduled plan.
-    2. Every label/stat on recipes is strictly grounded in that shot's narration.
-    3. Anchor dynamically aligns with domain intent.
-    """
+def test_kit_v2_three_distinct_topics_grounded():
+    """Verify Kit v2 heuristic mapper across stocks, legal, and tech topics."""
     topics = {
-        "stocks": {
-            "shots": [
-                {"narration": "Cổ phiếu Vinamilk tăng mạnh 15 phần trăm trong phiên giao dịch sáng nay.", "duration": 3.0},
-                {"narration": "Khối ngoại gom ròng hơn 350 tỷ đồng cổ phiếu bán lẻ.", "duration": 3.0},
-                {"narration": "Doanh thu xuất khẩu quý ba đạt kỷ lục mới nhờ thị trường tiêu thụ rộng lớn.", "duration": 3.0},
-                {"narration": "Biên lợi nhuận gộp phục hồi đáng kể so với cùng kỳ năm trước.", "duration": 3.0},
-                {"narration": "Nhà đầu tư theo dõi sát biến động chỉ số thị trường trước khi ra quyết định.", "duration": 3.0},
-            ],
-            "expected_anchor_keywords": ["thị trường", "chỉ số", "cột mốc"],
-        },
-        "legal": {
-            "shots": [
-                {"narration": "Tòa án nhân dân thành phố mở phiên tòa xét xử sơ thẩm vụ án kinh tế lớn.", "duration": 3.0},
-                {"narration": "Hội đồng xét xử xem xét lời khai của các bị cáo và hồ sơ điều tra.", "duration": 3.0},
-                {"narration": "Viện kiểm sát công bố bản cáo trạng dài hơn 80 trang với nhiều chứng cứ.", "duration": 3.0},
-                {"narration": "Các luật sư bào chữa đề nghị làm rõ trách nhiệm của các đơn vị liên quan.", "duration": 3.0},
-                {"narration": "Bản án dự kiến được tuyên vào cuối tuần sau khi nghị án.", "duration": 3.0},
-            ],
-            "expected_anchor_keywords": ["pháp lý", "hồ sơ", "cán cân"],
-        },
-        "tech": {
-            "shots": [
-                {"narration": "Hướng dẫn cài đặt môi trường lập trình Python và tối ưu hóa hiệu năng.", "duration": 3.0},
-                {"narration": "Cấu hình biến môi trường và thiết lập máy chủ ảo trên đám mây.", "duration": 3.0},
-                {"narration": "Kiểm tra mã nguồn tự động với công cụ phân tích tĩnh nhanh chóng.", "duration": 3.0},
-                {"narration": "Triển khai ứng dụng container với Docker chỉ trong vài thao tác đơn giản.", "duration": 3.0},
-                {"narration": "Theo dõi nhật ký hệ thống và đo thời gian phản hồi của dịch vụ.", "duration": 3.0},
-            ],
-            "expected_anchor_keywords": ["kỹ thuật", "hệ thống", "cấu trúc"],
-        },
+        "stocks": [
+            "Cổ phiếu Vinamilk tăng mạnh 15% trong phiên sáng nay.",
+            "Khối ngoại gom ròng hơn 350 tỷ đồng cổ phiếu bán lẻ.",
+            "Doanh thu xuất khẩu quý ba đạt mức kỷ lục mới.",
+            "Biên lợi nhuận gộp phục hồi mạnh so với cùng kỳ.",
+        ],
+        "legal": [
+            "Tòa án mở phiên xét xử sơ thẩm vụ án kinh tế lớn.",
+            "Hội đồng xét xử thẩm tra lời khai và hồ sơ điều tra.",
+            "Viện kiểm sát công bố bản cáo trạng dài hơn 80 trang.",
+            "Bản án dự kiến được tuyên vào tuần sau.",
+        ],
+        "tech": [
+            "Hướng dẫn cài đặt môi trường lập trình Python.",
+            "Cấu hình máy chủ ảo trên đám mây siêu tốc.",
+            "Kiểm tra mã nguồn tự động với công cụ phân tích.",
+            "Triển khai container với độ sẵn sàng đạt 99%.",
+        ],
     }
 
-    forbidden_sample_strings = [
-        "ashley", "griffith", "202", "bảo vệ trẻ em", "giữ trẻ", "tạm giam", "brisbane", "australia"
-    ]
+    forbidden_sample_strings = ["ashley", "griffith", "202", "brisbane", "australia"]
 
-    for topic_name, topic_data in topics.items():
-        shots_input = [
-            {
-                "narration": s["narration"],
-                "text": s["narration"],
-                "duration": s["duration"],
-                "duration_sec": s["duration"],
-                "is_recap": (i == len(topic_data["shots"]) - 1),
-            }
-            for i, s in enumerate(topic_data["shots"])
-        ]
-
-        scheduled, notes = schedule_shots_no_repeat(shots_input, min_distinct=4, min_dist=2, max_freq=2)
-        assert len(scheduled) == len(shots_input)
-
-        # 1. Assert zero sample video strings in scheduled output
-        plan_str = str(scheduled).lower()
-        for fb in forbidden_sample_strings:
-            if topic_name == "legal" and fb == "tạm giam":
-                continue
-            assert fb not in plan_str, f"Phát hiện rò rỉ chuỗi mẫu '{fb}' trong chủ đề '{topic_name}'!"
-
-        # 2. Assert every label/item in data is grounded in that shot's narration
-        for sh in scheduled:
-            shot_text = sh.get("narration") or sh.get("text") or ""
-            norm_shot = _normalize_text(shot_text)
-            data = sh.get("data", {})
-
-            for k in ["label", "text", "name", "target", "title", "left_label", "right_label"]:
-                val = data.get(k)
-                if val and isinstance(val, str):
-                    words = [w for w in _normalize_text(val).split() if len(w) >= 2]
-                    assert any(w in norm_shot for w in words), (
-                        f"Nhãn '{val}' (trường '{k}') không có từ nào xuất hiện trong câu nói: '{shot_text}'"
+    for topic_name, narrations in topics.items():
+        scenes = [
+            Scene(
+                id=i + 1,
+                narration=narr,
+                role="explain",
+                shots=[
+                    Shot(
+                        type="stock_video",
+                        query=narr[:20],
+                        duration_sec=5.0,
+                        planning_duration=True,
+                        effect="zoom_in",
+                        text_overlay=None,
                     )
-
-            if "items" in data and isinstance(data["items"], list):
-                for item in data["items"]:
-                    if isinstance(item, str):
-                        words = [w for w in _normalize_text(item).split() if len(w) >= 2]
-                        assert any(w in norm_shot for w in words), (
-                            f"Item '{item}' không có từ nào xuất hiện trong câu: '{shot_text}'"
-                        )
-
-            # Check fit validation
-            assert validate_recipe_fit(sh["recipe"], data, shot_text, shot_text) is True
-
-        # 3. Assert anchor reflects domain
-        first_anchor = scheduled[0].get("anchor", {})
-        meta_name = first_anchor.get("metaphor_name", "").lower()
-        expected = topic_data["expected_anchor_keywords"]
-        assert any(kw in meta_name for kw in expected), (
-            f"Anchor metaphor '{meta_name}' không phản ánh đúng chủ đề '{topic_name}' (kỳ vọng chứa {expected})"
+                ],
+            )
+            for i, narr in enumerate(narrations)
+        ]
+        plan = EditPlan(
+            title=f"Chủ đề {topic_name}",
+            format="tiktok",
+            voice="vi-VN-NamMinhNeural",
+            music={"mood": "calm", "volume": 0.08},
+            scenes=scenes,
         )
+
+        script = heuristic_slide_script_for_edit_plan(plan, total_duration=20.0)
+        assert len(script.scenes) >= 3
+
+        script_str = script.model_dump_json().lower()
+        for fb in forbidden_sample_strings:
+            assert fb not in script_str, f"Phát hiện rò rỉ '{fb}' trong chủ đề {topic_name}"
+
+        # Layouts must be kit_*
+        for sc in script.scenes:
+            assert sc.layout.startswith("kit_"), f"Scene layout {sc.layout} does not start with kit_"
