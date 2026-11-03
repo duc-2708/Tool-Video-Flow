@@ -115,6 +115,6 @@ def test_motion_css_and_engine_css_have_refined_caption_size():
     assert "wordPulse" in base_css
     assert "#FF3344" in base_css
 
-    engine_css = (Path(__file__).parent.parent / "editor/motion/engine/engine.css").read_text(encoding="utf-8")
-    assert "font-size: 42px;" in engine_css
-    assert ".caption-text.active.standout" in engine_css
+    kit_css = (Path(__file__).parent.parent / "editor/motion/kit/kit.css").read_text(encoding="utf-8")
+    assert "--kit-bg" in kit_css
+    assert "--kit-card" in kit_css

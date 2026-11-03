@@ -287,6 +287,10 @@ def test_ui_openai_only_enables_text_pipeline_but_not_style(settings,monkeypatch
     cfg=settings.model_copy(update={"gemini_api_key":SecretStr(""),"gemini_model":"", "llm_provider_researcher":"openai","llm_provider_director":"openai","llm_provider_trend":"openai"})
     monkeypatch.setattr("config.settings.get_settings",lambda:cfg)
     app=AppTest.from_file(ROOT_DIR/"app/streamlit_app.py",default_timeout=30).run()
+    if any(t.key == "create_topic" for t in app.text_input):
+        app.text_input(key="create_topic").set_value("AI tương lai").run()
+    elif app.text_input:
+        app.text_input[0].set_value("AI tương lai").run()
     assert not app.exception and not app.button(key="auto_start").disabled
     app.sidebar.radio[0].set_value("Research").run()
     assert not next(b for b in app.button if b.label=="Chạy Researcher").disabled

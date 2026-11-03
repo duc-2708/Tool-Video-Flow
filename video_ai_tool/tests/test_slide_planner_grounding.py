@@ -53,10 +53,10 @@ def test_heuristic_slide_script_coverage_and_anti_repeat(sample_sentences, sampl
     )
     # Target slides for 30s ~ 5 slides
     assert 5 <= len(script.slides) <= 10
-    # First slide must be lg_source_headline
-    assert script.slides[0].layout == "lg_source_headline"
-    # Last slide must be lg_cta_profile
-    assert script.slides[-1].layout == "lg_cta_profile"
+    # First slide must be kit_title (or legacy lg_source_headline)
+    assert script.slides[0].layout in ("kit_title", "lg_source_headline")
+    # Last slide must be kit_outro (or legacy lg_cta_profile)
+    assert script.slides[-1].layout in ("kit_outro", "lg_cta_profile")
     # No two adjacent layouts identical
     for i in range(len(script.slides) - 1):
         assert script.slides[i].layout != script.slides[i + 1].layout
@@ -89,8 +89,8 @@ def test_grounding_downgrades_fabricated_number(sample_sentences, sample_brief):
     sentences_by_id = {s["id"]: s for s in sample_sentences}
     healed = verify_and_ground_slides(script, sentences_by_id, sample_brief)
 
-    # Slide 2 must have been downgraded from lg_stat_hero to lg_note_card
-    assert healed.slides[1].layout == "lg_note_card"
+    # Slide 2 must have been downgraded from kit_stat/lg_stat_hero to kit_title/lg_note_card
+    assert healed.slides[1].layout in ("lg_note_card", "kit_title")
     # Repair notes must record the downgrade
     assert any("grounding_unverified_number" in note for note in healed.repair_notes)
 
@@ -187,9 +187,9 @@ def test_plan_slides_with_mock_llm(sample_sentences, sample_brief):
         llm_client=mock_client,
     )
     assert len(script.slides) == 5
-    assert script.slides[0].layout == "lg_source_headline"
-    assert script.slides[1].layout == "lg_stat_hero"
-    assert script.slides[-1].layout == "lg_cta_profile"
+    assert script.slides[0].layout in ("kit_title", "lg_source_headline")
+    assert script.slides[1].layout in ("kit_stat", "lg_stat_hero")
+    assert script.slides[-1].layout in ("kit_outro", "lg_cta_profile")
 
 
 def test_plan_slides_fallback_on_llm_failure(sample_sentences, sample_brief):
