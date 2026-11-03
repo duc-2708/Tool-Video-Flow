@@ -216,9 +216,137 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                 except Exception as vp_err:
                     diagnostics.record_exception(vp_err, "Tự bổ sung visual_plan v3 khi render lỗi")
 
-            # Đảm bảo mọi shot trong timeline đều có visual_plan được lập lịch riêng
+            # Light Glass / Slide Script Resolution
+            is_light_glass = (settings.motion_theme == "light_glass") or (getattr(getattr(timeline.plan, "render_style", None), "theme", None) == "light_glass") or (getattr(getattr(timeline.plan, "style_profile", None), "category_id", None) == "cong-nghe" and settings.motion_theme in ("auto", "light_glass"))
+            slide_script_file = timeline.project / "slide_script.json"
+            if is_light_glass or slide_script_file.is_file():
+                try:
+                    import json
+                    from schemas.slide_script import SlideScript
+                    from schemas.motion_scene import MotionScenePlan
+                    from schemas.visual import VisualBeat, VisualData
+                    slide_script_obj = None
+                    if slide_script_file.is_file():
+                        try:
+                            slide_script_obj = SlideScript.model_validate_json(slide_script_file.read_text(encoding="utf-8"))
+                        except Exception as e:
+                            diagnostics.record_exception(e, "Lỗi đọc slide_script.json")
+                    if not slide_script_obj:
+                        from editor.motion.light_glass_slots import create_heuristic_slide_script
+                        from editor.motion.slide_grounding import verify_and_ground_slides
+                        sentences = []
+                        cur_t = 0.0
+                        for sc in timeline.scenes:
+                            sentences.append({
+                                "id": sc.spec.id,
+                                "text": sc.spec.narration,
+                                "start": cur_t,
+                                "end": cur_t + sc.duration,
+                            })
+                            cur_t += sc.duration
+                        brief_data = {}
+                        if (timeline.project / "brief.json").is_file():
+                            try:
+                                brief_data = json.loads((timeline.project / "brief.json").read_text(encoding="utf-8"))
+                            except Exception:
+                                pass
+                        slide_script_obj = create_heuristic_slide_script(
+                            sentences=sentences,
+                            brief=brief_data,
+                            total_duration=timeline.duration,
+                            brand_name=getattr(settings, "brand_name", "TIN CÔNG NGHỆ"),
+                        )
+                        slide_script_obj = verify_and_ground_slides(slide_script_obj, {s["id"]: s for s in sentences}, brief_data)
+                        try:
+                            slide_script_file.write_text(slide_script_obj.model_dump_json(indent=2), encoding="utf-8")
+                        except Exception:
+                            pass
+
+                    if slide_script_obj and slide_script_obj.slides:
+                        try:
+                            from pipeline.slide_image_resolver import resolve_images_for_slide_script
+                            resolve_images_for_slide_script(timeline.project, slide_script_obj)
+                        except Exception as res_err:
+                            diagnostics.record_exception(res_err, "Lỗi resolve images cho slide_script")
+                        settings = settings.model_copy(update={"motion_enabled": True, "motion_theme": "light_glass"})
+                        if timeline.plan.render_style:
+                            timeline.plan.render_style.theme = "light_glass"
+                        from editor.timeline import TimelineShot
+                        from schemas.motion_scene import MotionScenePlan
+                        from schemas.visual import VisualBeat, VisualData
+
+                        for sc_idx, sc in enumerate(timeline.scenes):
+                            try:
+                                matching_slides = [sl for sl in slide_script_obj.slides if sc.spec.id in sl.sentence_ids]
+                                if not matching_slides and len(slide_script_obj.slides) >= len(timeline.scenes) * 2:
+                                    matching_slides = [
+                                        slide_script_obj.slides[sc_idx * 2],
+                                        slide_script_obj.slides[sc_idx * 2 + 1]
+                                    ]
+                                elif not matching_slides:
+                                    sl_idx = min(len(slide_script_obj.slides) - 1, sc_idx)
+                                    matching_slides = [slide_script_obj.slides[sl_idx]]
+
+                                num_slides = len(matching_slides)
+                                dur_per_shot = sc.duration / num_slides
+                                new_shots = []
+                                first_vp_obj = None
+
+                                for m_idx, m_slide in enumerate(matching_slides):
+                                    clean_slots = m_slide.slots.copy()
+                                    if "winner" in clean_slots and clean_slots["winner"] is not None:
+                                        clean_slots["winner"] = str(clean_slots["winner"])
+                                    valid_vkeys = set(VisualData.model_fields.keys())
+                                    shot_data = VisualData(**{k: v for k, v in clean_slots.items() if k in valid_vkeys and v is not None})
+                                    beats = [
+                                        VisualBeat(at_sec=0.35, action=f"enter_{m_slide.layout}"),
+                                        VisualBeat(at_sec=1.5, action=f"action_{m_slide.layout}_step"),
+                                    ]
+                                    vp_obj = MotionScenePlan(
+                                        scene_type=m_slide.layout,
+                                        layout=m_slide.layout,
+                                        theme="light_glass",
+                                        data=shot_data,
+                                        beats=beats,
+                                        transition="morph_anchor",
+                                    )
+                                    if first_vp_obj is None:
+                                        first_vp_obj = vp_obj
+
+                                    base_spec = sc.shots[min(m_idx, len(sc.shots) - 1)].spec if sc.shots else sc.spec.shots[0]
+                                    sh_spec = base_spec.model_copy(update={"visual_plan": vp_obj})
+                                    sh_dur = dur_per_shot if m_idx < num_slides - 1 else (sc.duration - dur_per_shot * (num_slides - 1))
+                                    sh_start = sc.start + dur_per_shot * m_idx
+                                    sh_path = sc.shots[min(m_idx, len(sc.shots) - 1)].path if sc.shots else None
+
+                                    tl_shot = TimelineShot(
+                                        scene_id=sc.spec.id,
+                                        shot_id=m_idx + 1,
+                                        start=sh_start,
+                                        duration=sh_dur,
+                                        spec=sh_spec,
+                                        path=sh_path,
+                                        fallback=False,
+                                    )
+                                    new_shots.append(tl_shot)
+
+                                sc.shots = new_shots
+                                sc.spec.shots = [s.spec for s in new_shots]
+                                sc.spec.visual_plan = first_vp_obj
+                                sc.visual_plan = first_vp_obj
+                                try:
+                                    timeline.plan.scenes[sc_idx].visual_plan = first_vp_obj
+                                    timeline.plan.scenes[sc_idx].shots = [s.spec for s in new_shots]
+                                except Exception:
+                                    pass
+                            except Exception as sc_err:
+                                diagnostics.record_exception(sc_err, f"Lỗi gắn visual plan cảnh {sc.spec.id}")
+                except Exception as lg_err:
+                    diagnostics.record_exception(lg_err, "Lỗi kích hoạt SlideScript Light Glass khi render")
+
+            # Đảm bảo mọi shot trong timeline đều có visual_plan được lập lịch riêng (chỉ khi không phải light_glass)
             any_shot_missing_vp = any(getattr(sh.spec, 'visual_plan', None) is None for sc in timeline.scenes for sh in sc.shots)
-            if any_shot_missing_vp and (timeline.project / "brief.json").is_file():
+            if not is_light_glass and any_shot_missing_vp and (timeline.project / "brief.json").is_file():
                 try:
                     from editor.motion.scheduler import schedule_shots_no_repeat
                     from schemas.motion_scene import MotionScenePlan

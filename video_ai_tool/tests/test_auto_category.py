@@ -203,7 +203,9 @@ def test_auto_ui_is_first_and_ai_off_by_default(tmp_path,monkeypatch):
     manager=Mock();manager.active.return_value=None;manager.snapshot.return_value=None;manager.submit_auto.return_value="mock"
     monkeypatch.setattr("app.views.auto_category.auto_jobs",lambda:manager)
     app=AppTest.from_file(ROOT_DIR/"app/streamlit_app.py",default_timeout=25).run()
-    assert not app.exception and app.sidebar.radio[0].value=="Tạo video theo danh mục"
+    assert not app.exception and app.sidebar.radio[0].value=="Tạo video"
+    app.sidebar.radio[0].set_value("Tạo video theo danh mục").run()
+    assert not app.exception
     assert not app.checkbox(key="auto_ai").value and app.radio(key="auto_mode").value=="Tự động hoàn toàn"
     app.button(key="auto_start").click().run()
     assert not app.exception

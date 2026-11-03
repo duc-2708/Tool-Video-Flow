@@ -95,6 +95,24 @@ def test_resolver_prefers_orientation_and_long_video(tmp_path: Path, monkeypatch
     assert asset.asset_id == "long" and not asset.fallback
 
 
+def test_resolver_accepts_landscape_video_when_no_vertical(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    landscape = item("video", "landscape").model_copy(update={"width": 1280, "height": 720, "duration_sec": 6.0})
+    provider = Mock()
+    provider.search.return_value = [landscape]
+    file = tmp_path / "fake_landscape.mp4"
+    file.write_bytes(b"fixture")
+    downloader = Mock()
+    downloader.download.return_value = file
+    monkeypatch.setattr("pipeline.stock_assets.probe_media", lambda *args: (1280, 720, 6.0))
+    shot = Shot(type="stock_video", query="artificial intelligence", duration_sec=3.0, effect="none", text_overlay=None)
+    asset = resolve_stock(shot, 1, 1, "Fixture", "tiktok", tmp_path / "project", [provider], downloader, Diagnostics(tmp_path / "logs"))
+    assert asset.asset_id == "landscape"
+    assert asset.media_type == "video"
+    assert asset.fallback is True
+    assert "Video khác tỷ lệ; cần crop khi dựng" in asset.fallback_reason
+    assert "fake_landscape.mp4" in asset.path
+
+
 def test_stock_429_retries_honors_cooldown_and_redacts_key(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     from providers.stock_http import stock_json
     first, second = requests.Response(), requests.Response()

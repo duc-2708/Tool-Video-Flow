@@ -348,8 +348,6 @@ def category_panel(settings,category,project,diagnostics):
 def render(settings,project,topic,debug,diagnostics):
     from config.categories import categories_for
     from pipeline.style_library import list_videos
-    st.title("Phong cách mẫu")
-    st.caption("Video theo danh mục → phân tích kịch bản/phân cảnh → hồ sơ tự áp dụng. Nội dung mới vẫn chỉ dựa trên brief.")
     notice=st.session_state.pop("style_notice",None)
     if notice:
         st.success(diagnostics.redact(notice))

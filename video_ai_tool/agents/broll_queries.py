@@ -24,11 +24,12 @@ POOLS={
     "editing":["video editing","editing software","camera filming studio","editor computer desk","hands keyboard typing","creative studio planning","video timeline closeup"],
     "medical":["healthy lifestyle","doctor hospital","medical laboratory","people exercising park","research scientist laboratory"],
     "travel":["city skyline","travel landscape","mountain sunrise","beach aerial","tourism city street"],
-    "technology":["technology abstract","data center","engineers laboratory","electronic circuit board","computer processor closeup","factory machinery","robotic arm assembly","server equipment interior"],
+    "finance":["stock market trading","money finance investment","financial analysis graph","cash currency economy","wealth investment"],
+    "technology":["technology abstract","data center","engineers laboratory","electronic circuit board","computer processor closeup","factory machinery","robotic arm assembly","server equipment interior","artificial intelligence robotics"],
     "general":["city skyline","news studio","office team meeting","people walking street","industrial factory","globe network","urban traffic aerial","research laboratory"]}
 VOCAB.update(word for pool in POOLS.values() for query in pool for word in query.split())
 TRANSLATE.update({"trung tam du lieu":"data center","nang luong":"energy power","kho han":"drought water",
-    "tri tue nhan tao":"computing technology","may hoc":"machine learning","the thao":"sports training",
+    "tri tue nhan tao":"artificial intelligence","may hoc":"machine learning","the thao":"sports training",
     "thoi trang":"fashion clothing","kinh doanh":"business finance","tro choi":"gaming controller",
     "han han":"drought water","nuoc":"water","dien":"electric power","moi truong":"environment",
     "khi hau":"climate","phat thai":"carbon emissions","nha kinh":"greenhouse emissions",
@@ -36,16 +37,21 @@ TRANSLATE.update({"trung tam du lieu":"data center","nang luong":"energy power",
     "san xuat chip":"semiconductor manufacturing","chip":"semiconductor chip","may tinh":"computer",
     "ky thuat vien":"technician","dan cu":"community","tai nguyen":"natural resources",
     "dong vat":"wildlife animals","cau di bo":"pedestrian bridge","am nhac":"music concert",
-    "dien thoai gap":"smartphone folding","pin":"battery","dau tu":"business investment"})
+    "dien thoai gap":"smartphone folding","pin":"battery","dau tu":"business investment",
+    "robot":"robotics","nguoi may":"humanoid robot","tu dong hoa":"automated factory",
+    "tiet kiem":"money finance","tien":"money finance","tai chinh":"finance investment",
+    "chung khoan":"stock market","tuong lai":"future technology","sieu may tinh":"supercomputer",
+    "khoi nghiep":"startup business","doanh nhan":"entrepreneur working","lam phat":"inflation finance"})
 VOCAB.update("drought electricity bill river carbon emissions greenhouse natural resources investment pedestrian folding animals".split())
 VOCAB.update("aerial wide closeup interior exterior panoramic detail documentary night daylight sunset sunrise view daytime morning evening".split())
-VOCAB.update("machine learning".split())
+VOCAB.update("machine learning artificial intelligence robotics humanoid automated factory supercomputer entrepreneur startup wealth trading".split())
 
 def category(context):
     text=latin(context)
     for name,cues in [("rocket",("rocket","starship","spacex","ten lua","spacecraft")),("editing",("editing","dung video","ghep","cat canh")),
         ("medical",("medical","suc khoe","benh vien","hospital")),("travel",("travel","du lich","tourism")),
-        ("technology",("technology","cong nghe","server","may tinh","data","ai "))]:
+        ("finance",("finance","tai chinh","tien","tiet kiem","chung khoan","ngan hang","co phieu")),
+        ("technology",("technology","cong nghe","server","may tinh","data","ai ","robot","tri tue nhan tao"))]:
         if any(cue in text for cue in cues): return name
     return "general"
 

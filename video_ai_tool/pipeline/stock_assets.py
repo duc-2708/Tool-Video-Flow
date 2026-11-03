@@ -135,8 +135,9 @@ def resolve_stock(shot: Shot, scene_id: int, shot_id: int, narration: str, video
                   project: Path, providers: list[StockProvider], downloader: MediaDownloader,
                   diagnostics: Diagnostics, exclude: tuple[str, str] | None = None) -> ShotAsset:
     failures = []
-    graphic=bool(shot.visual and shot.visual.template!="stock")
-    if shot.type != "text_card" and not graphic:
+    graphic = bool(shot.visual and shot.visual.template != "stock")
+    is_stock = shot.type in {"stock_video", "stock_image", "stock"}
+    if is_stock or (shot.type != "text_card" and not graphic):
         # Duyệt hết video trước khi fallback ảnh; Pixabay luôn đứng trước Pexels.
         for kind in ("video", "image"):
             for provider in providers:
@@ -147,8 +148,8 @@ def resolve_stock(shot: Shot, scene_id: int, shot_id: int, narration: str, video
                     failures.append("Nguồn stock lỗi API hoặc chưa có key")
                     continue
                 matching = [item for item in candidates if orientation_matches(item.width, item.height, video_format)]
-                # Video sai orientation không được tải; ảnh khác tỷ lệ có thể crop ở editor sau.
-                candidates = matching if kind == "video" else matching + [item for item in candidates if item not in matching]
+                # Cả video và ảnh khác tỷ lệ đều có thể crop ở editor sau (bằng cover). Ưu tiên đúng tỷ lệ trước.
+                candidates = matching + [item for item in candidates if item not in matching]
                 candidates = sorted(candidates, key=lambda item: (not orientation_matches(item.width, item.height, video_format),
                     (item.duration_sec or 0) < shot.duration_sec if kind == "video" else False))
                 for item in candidates[:4]:
@@ -157,8 +158,6 @@ def resolve_stock(shot: Shot, scene_id: int, shot_id: int, narration: str, video
                     try:
                         cached = downloader.download(item)
                         width, height, duration = probe_media(cached, kind)
-                        if kind == "video" and not orientation_matches(width, height, video_format):
-                            raise ValueError("Kích thước video thật khác orientation yêu cầu.")
                         destination = project / "clips" / f"scene_{scene_id}_shot_{shot_id}_{cached.name}"
                         destination.parent.mkdir(parents=True, exist_ok=True)
                         temporary = destination.with_name(uuid4().hex + destination.suffix)
@@ -172,7 +171,7 @@ def resolve_stock(shot: Shot, scene_id: int, shot_id: int, narration: str, video
                         if kind == "image":
                             reasons.append("Dùng ảnh thay video")
                         if not orientation_matches(width, height, video_format):
-                            reasons.append("Ảnh khác tỷ lệ; cần crop khi dựng")
+                            reasons.append("Video khác tỷ lệ; cần crop khi dựng" if kind == "video" else "Ảnh khác tỷ lệ; cần crop khi dựng")
                         if loop:
                             reasons.append("Video ngắn hơn shot; cần loop khi dựng")
                         return ShotAsset(shot_id=shot_id, query=shot.query, media_type=kind,

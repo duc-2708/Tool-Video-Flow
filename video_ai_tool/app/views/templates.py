@@ -30,8 +30,6 @@ def export(name,data,duration,size,theme,path):
 
 
 def render(settings,project,topic,debug,diagnostics):
-    st.header("Xem trước mẫu")
-    st.caption("Dữ liệu thử chỉ dùng xem mẫu, không đưa vào fact hay video của project. Không gọi API.")
     name=st.selectbox("Mẫu đồ họa",NAMES)
     theme=st.selectbox("Theme",["studio","paper"])
     portrait=st.selectbox("Khổ",["tiktok","youtube"])=="tiktok"

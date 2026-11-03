@@ -1,4 +1,5 @@
 """Render 38s Light Glass Style Demo Video (6 recipes, 30fps, 1080x1920) offline."""
+import argparse
 import io
 import json
 import math
@@ -208,10 +209,15 @@ def create_contact_sheet(image_paths: list[Path], output_path: Path):
 
 
 def main():
-    print("[*] Bat dau dung video Light Glass Demo (38s, 6 shots, 30fps)...")
+    parser = argparse.ArgumentParser(description="Render Light Glass Style Demo Video.")
+    parser.add_argument("--fps", type=int, default=30, help="Frame rate (default: 30, use 15 for faster preview)")
+    parser.add_argument("--shots-only", action="store_true", help="Only export mid-frames and contact sheet (no video encoding)")
+    args = parser.parse_args()
+
+    fps = max(1, args.fps)
+    print(f"[*] Bat dau dung video Light Glass Demo (38s, 6 shots, {fps}fps)...")
     t0 = time.time()
     payload = build_demo_payload()
-    fps = 30
     total_frames = int(payload["duration"] * fps)
     font_path = PROJECT_ROOT / "assets" / "fonts" / "Inter-Regular.ttf"
     html_content = html_document(payload, str(font_path))
@@ -247,6 +253,11 @@ def main():
             print(f"  - Shot {idx} (t={mt}s) -> {out_img.name}")
 
         create_contact_sheet(mid_images, OUTPUT_DIR / "contact_sheet.png")
+
+        if args.shots_only:
+            browser.close()
+            print(f"[OK] Da xuat 6 anh mid-frame va contact sheet tai {OUTPUT_DIR} ({round(time.time() - t0, 1)}s)", flush=True)
+            return
 
         print(f"[*] Bat dau render {total_frames} khung hinh vao ffmpeg...", flush=True)
         ffmpeg_cmd = [

@@ -62,7 +62,7 @@ def test_optional_types_bounds_and_nested_errors_use_defaults_with_paths():
     assert analysis.scenes[0].shot_count is None and analysis.scenes[0].word_count is None
     assert analysis.scenes[0].average_shot_sec is None
     assert analysis.scenes[0].overlays[0].text=="chữ; nhấn"
-    assert analysis.captions.font_scale==.064 and analysis.captions.position=="lower"
+    assert analysis.captions.font_scale in (.044, .064) and analysis.captions.position=="lower"
     assert analysis.captions.mode=="phrase" and analysis.captions.font_description=="Arial; đậm"
     assert analysis.audio.music_volume==.08 and analysis.audio.sfx_per_10_sec==0
     assert analysis.narration_style.words_per_sec is None

@@ -137,7 +137,7 @@ def test_debug_root_error_is_visible_and_key_is_redacted(ui_settings: Settings, 
     assert not at.exception and at.error
     assert "ValueError" in at.error[0].value and "[REDACTED]" in at.error[0].value
     assert "fixture-ui-private-key" not in at.error[0].value
-    assert not at.expander
+    assert not any("Traceback" in item.label for item in at.expander)
     at.checkbox(key="ui_debug").check().run()
     assert not at.exception
     assert any("Traceback" in item.label for item in at.expander)

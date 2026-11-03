@@ -13,8 +13,6 @@ def scout_jobs():
 
 
 def render(settings, project, topic, debug, diagnostics):
-    st.title("Trend Scout")
-    st.caption("Chỉ học tín hiệu xu hướng từ metadata. Không tải video, không lấy transcript. Researcher sẽ kiểm chứng bằng bài viết gốc.")
     try:
         cfg = load_trends(settings)
         categories = [c.name for c in categories_for(settings).categories if c.enabled]
@@ -36,7 +34,7 @@ def render(settings, project, topic, debug, diagnostics):
     if categories:
         with st.form("trend_scan"):
             category = st.selectbox("Danh mục", categories, key="trend_category")
-            region = st.selectbox("Khu vực", ["vn", "global", "both"], key="trend_region")
+            region = st.selectbox("Khu vực", ["vn", "global", "both"], format_func=lambda x:{"vn":"Việt Nam","global":"Quốc tế","both":"Cả hai"}.get(x,str(x)),key="trend_region")
             count = st.selectbox("Số chủ đề", [5, 10], key="trend_count")
             submitted = st.form_submit_button("Quét xu hướng", type="primary", disabled=not cfg.enabled)
         manager = scout_jobs()

@@ -216,6 +216,10 @@ def verify_and_ground_slides(
                         s_dict[sub_k] = str(s_dict[sub_k])[:28].strip()
                 s_slots[side] = s_dict
 
+        s_image_prompt = getattr(slide, "image_prompt", "") or str(s_slots.get("image_prompt", ""))
+        if s_image_prompt:
+            s_slots["image_prompt"] = s_image_prompt
+
         healed_slide = SlideItem(
             id=slide.id,
             layout=s_layout,
@@ -227,6 +231,7 @@ def verify_and_ground_slides(
             t_end=slide.t_end,
             duration=slide.duration,
             narration=slide_narration,
+            image_prompt=s_image_prompt,
         )
         healed_slides.append(healed_slide)
 

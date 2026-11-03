@@ -91,6 +91,7 @@ class SlideItem(StrictModel):
     t_end: float = 0.0
     duration: float = 0.0
     narration: str = ""
+    image_prompt: str = ""
 
     @field_validator("slots")
     @classmethod

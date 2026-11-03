@@ -210,6 +210,7 @@
     "font_scale": 0.05,
     "color": "#FFFFFF",
     "highlight_color": "#FFFF00",
+    "standout_color": "#FF3344",
     "stroke_color": "#000000",
     "color_note": "color: #ffffff; highlight_color: #00ff00",
     "stroke_width_ratio": 0.006,
@@ -394,7 +395,7 @@
   "video_type": null,
   "video_count": 5,
   "confidence_label": "ổn",
-  "source_signature": "ebfee7a1a5947163437d02b7e82d8bb5461e5efcd6b10d1d022c96a29a028ae0",
+  "source_signature": "c2009b34708f87431add56c2e13464c421948c0657cf3e61282e363ed74745aa",
   "locked_fields": [],
   "scene_pacing": [
     {

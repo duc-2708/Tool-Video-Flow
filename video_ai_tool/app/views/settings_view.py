@@ -52,9 +52,10 @@ def render_card_token(title: str, key_name: str, current_val: str, link_url: str
     has_key = bool(current_val.strip())
     st_chip = chip_html("Đã kết nối", "green") if has_key else chip_html("Chưa có key", "neutral")
 
-    st.markdown(
-        f"""
-        <div class="ui-card-white" style="margin-bottom: 20px;">
+    with st.container(key=f"card_token_{key_name}"):
+
+
+        st.markdown(f"""
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <div style="font-weight: 800; font-size: 1.1rem; color: #0A0A0A;">{html.escape(title)}</div>
                 <div>{st_chip}</div>
@@ -62,9 +63,7 @@ def render_card_token(title: str, key_name: str, current_val: str, link_url: str
             <div style="font-size: 0.8rem; color: #666666; margin-bottom: 12px;">
                 {html.escape(help_text)}
             </div>
-        """,
-        unsafe_allow_html=True,
-    )
+        """, unsafe_allow_html=True)
 
     masked_val = "••••••••••••••••••••••••" if has_key else ""
     user_val = st.text_input(
@@ -89,12 +88,11 @@ def render_card_token(title: str, key_name: str, current_val: str, link_url: str
                 # Không gọi API tính phí; xác nhận cục bộ
                 st.info("Đã xác nhận định dạng key hợp lệ trên máy local.")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+        pass
     return user_val if user_val != "••••••••••••••••••••••••" and user_val.strip() else None
 
 
 def render(settings, project, topic, debug, diagnostics):
-    section_header("HỆ THỐNG", "Cài đặt Token & Mô hình AI", accent_word="Mô hình AI")
 
     st.markdown(
         """

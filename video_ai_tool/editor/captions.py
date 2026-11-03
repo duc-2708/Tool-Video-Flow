@@ -9,12 +9,12 @@ from PIL import Image, ImageDraw, ImageFont
 def find_font(root):
     folder = Path(root) / "assets/fonts"
     priority = [
+        "DTPhudu-Bold.otf",
+        "DTPhudu-Black.otf",
+        "Inter-Bold.ttf",
         "Montserrat-Bold.ttf",
         "Montserrat-ExtraBold.ttf",
-        "Inter-Bold.ttf",
-        "DTPhudu-Bold.otf",
         "SpaceGrotesk-Bold.ttf",
-        "DTPhudu-Black.otf",
         "Montserrat-Black.ttf",
         "Inter-Black.ttf",
     ]

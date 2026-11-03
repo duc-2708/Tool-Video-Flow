@@ -52,7 +52,7 @@ def test_first_page_and_new_run_ai_off_by_default(tmp_path,monkeypatch):
     project = create_project(settings.output_dir,"Project cũ")
     manager = setup_manager(monkeypatch)
     at = app()
-    assert not at.exception and at.sidebar.radio[0].options[0] == "Tạo video theo danh mục"
+    assert not at.exception and at.sidebar.radio[0].options[0] == "Tạo video"
     assert at.sidebar.radio[0].value == "Tạo video"
     assert not at.checkbox(key="create_ai").value
     next(button for button in at.button if button.label == "Tạo video").click().run()

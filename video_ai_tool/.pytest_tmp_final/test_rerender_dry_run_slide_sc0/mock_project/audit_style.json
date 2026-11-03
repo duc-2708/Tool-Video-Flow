@@ -1,0 +1,67 @@
+{
+  "project": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_final\\test_rerender_dry_run_slide_sc0\\mock_project",
+  "checks": {
+    "slide_count_and_duration": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "num_slides": 5,
+      "durations": [
+        5.0,
+        5.0,
+        5.0,
+        5.0,
+        5.0
+      ],
+      "violations": []
+    },
+    "empty_frame_ratio": {
+      "passed": "unknown",
+      "score": 0,
+      "max_score": 15,
+      "empty_ratio": "unknown",
+      "reason": "Could not extract video frames"
+    },
+    "internal_tokens_leak": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "leaked_count": 0,
+      "leaked": []
+    },
+    "grounding": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "ungrounded_count": 0,
+      "ungrounded_items": []
+    },
+    "slot_overflow": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "overflow_count": 0,
+      "overflow_errors": []
+    },
+    "layout_diversity": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "distinct_layouts": 4,
+      "consecutive_duplicates": []
+    },
+    "emphasis_matching": {
+      "passed": true,
+      "score": 10,
+      "max_score": 10,
+      "unmatched_emphasis_count": 0,
+      "mismatches": []
+    }
+  },
+  "total_score": 100,
+  "max_score": 100,
+  "passed": true,
+  "violations": [],
+  "raw_score": 85,
+  "contact_sheet": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_final\\test_rerender_dry_run_slide_sc0\\mock_project\\contact_sheet_audit.png"
+}

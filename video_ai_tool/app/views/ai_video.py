@@ -154,9 +154,6 @@ def render_scene_director_approval(project: Path, settings, diagnostics):
 
 
 def render(settings,project,topic,debug,diagnostics):
-    st.header("AI Video · Veo / Seedance")
-    st.caption("generation_failed sẽ tự thử lại tối đa 1 job bằng prompt an toàn; có thể phát sinh thêm chi phí. Timeout/thiếu ID không tự tạo lại.")
-    st.caption("Tạo clip từ mô tả qua api.buihuuthang.com. Clip được lưu trong clips/, thông tin job trong ai_video/.")
     if project:
         render_scene_director_approval(project, settings, diagnostics or diagnostics_for(settings))
     if project is None:

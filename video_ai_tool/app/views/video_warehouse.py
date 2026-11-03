@@ -52,7 +52,6 @@ if hasattr(st, "dialog"):
 
 
 def render(settings, project, topic, debug, diagnostics):
-    section_header("THƯ VIỆN", "Kho video đã sản xuất", accent_word="sản xuất")
 
     projects = list_projects(settings.output_dir)
     video_items = []
@@ -174,9 +173,9 @@ def render(settings, project, topic, debug, diagnostics):
             filename_escaped = html.escape(item["filename"])
 
             # Thẻ trắng bo tròn 18px
-            st.markdown(
-                f"""
-                <div class="ui-card-white" style="margin-bottom: 18px; display: flex; flex-direction: column; justify-content: space-between; min-height: 280px;">
+            with st.container(key=f"wh_card_{idx}"):
+
+                st.markdown(f"""
                     <div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <span style="font-size: 0.75rem; color: #666666;">{date_str}</span>
@@ -189,9 +188,7 @@ def render(settings, project, topic, debug, diagnostics):
                             {filename_escaped} · {item['size_mb']} MB
                         </div>
                     </div>
-                """,
-                unsafe_allow_html=True,
-            )
+                """, unsafe_allow_html=True)
 
             # Lazy thumbnail
             if item["file_path"] and item["file_path"].is_file():
@@ -245,7 +242,7 @@ def render(settings, project, topic, debug, diagnostics):
                 st.session_state["ui_page"] = "Render"
                 st.rerun()
 
-            st.markdown("</div>", unsafe_allow_html=True)
+                pass
 
     # Thanh điều hướng phân trang
     if total_pages > 1:

@@ -151,7 +151,7 @@ def test_first_ui_page_and_manual_handoff(tmp_path,monkeypatch):
     from streamlit.testing.v1 import AppTest
     monkeypatch.setattr("config.settings.get_settings",lambda:Settings(root_dir=tmp_path))
     app=AppTest.from_file(ROOT_DIR/"app/streamlit_app.py",default_timeout=25).run()
-    assert not app.exception and app.sidebar.radio[0].value=="Tạo video theo danh mục"
+    assert not app.exception and app.sidebar.radio[0].value=="Tạo video"
     app.sidebar.radio[0].set_value("Khám phá chủ đề").run()
     app.text_input(key="discovery_manual").set_value("Sự kiện cụ thể của tôi").run()
     next(b for b in app.button if b.label=="Dùng chủ đề tự nhập").click().run()
