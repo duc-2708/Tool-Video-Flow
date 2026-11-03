@@ -1,0 +1,3146 @@
+{
+  "version": 1,
+  "input_hash": "af1708db833cd7156d286073f44fb86a5641ea610b357f40b6f7f39cc285dba2",
+  "stages": {
+    "outline": {
+      "status": "done",
+      "data": {
+        "angle_index": 1,
+        "hook": "Bạn dựng video có đúng nhịp?",
+        "open_loop": "Chọn đoạn trước hay ghép trước?",
+        "payoff": "Chọn đoạn trước khi ghép.",
+        "payoff_fact_ids": [
+          1
+        ],
+        "main_points": [
+          {
+            "id": 1,
+            "idea": "Bối cảnh",
+            "fact_ids": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16
+            ]
+          },
+          {
+            "id": 2,
+            "idea": "Diễn biến",
+            "fact_ids": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16
+            ]
+          },
+          {
+            "id": 3,
+            "idea": "Điểm khác",
+            "fact_ids": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16
+            ]
+          },
+          {
+            "id": 4,
+            "idea": "Ý nghĩa",
+            "fact_ids": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16
+            ]
+          }
+        ],
+        "scenes": [
+          {
+            "scene_id": 1,
+            "point_id": 1,
+            "fact_ids": [
+              1
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 2,
+            "point_id": 1,
+            "fact_ids": [
+              2
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 3,
+            "point_id": 1,
+            "fact_ids": [
+              3
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 4,
+            "point_id": 2,
+            "fact_ids": [
+              4
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 5,
+            "point_id": 2,
+            "fact_ids": [
+              5
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 6,
+            "point_id": 2,
+            "fact_ids": [
+              6
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 7,
+            "point_id": 3,
+            "fact_ids": [
+              7
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 8,
+            "point_id": 3,
+            "fact_ids": [
+              8
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 9,
+            "point_id": 3,
+            "fact_ids": [
+              9
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 10,
+            "point_id": 4,
+            "fact_ids": [
+              10
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 11,
+            "point_id": 4,
+            "fact_ids": [
+              11
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 12,
+            "point_id": 4,
+            "fact_ids": [
+              12
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          },
+          {
+            "scene_id": 13,
+            "point_id": 4,
+            "fact_ids": [
+              1
+            ],
+            "purpose": "Khai thác một chi tiết có căn cứ."
+          }
+        ]
+      },
+      "hash": "be1cc031d4d97bb2b780e4df14da4208a55aa68a8f0fdbd9057364538ad65226",
+      "completed_at": "2026-11-02T13:54:17.538626+00:00"
+    },
+    "written": {
+      "status": "done",
+      "data": {
+        "title": "Nhịp dựng video",
+        "scenes": [
+          {
+            "structure_warnings": [
+              "Cảnh 1, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch engineers control'"
+            ],
+            "shot_queries": [
+              "rocket launch engineers control"
+            ],
+            "scene_id": 1,
+            "narration": "Bạn dựng video có đúng nhịp?",
+            "overlays": [
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch engineers control"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 2, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial'",
+              "Cảnh 2, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide'",
+              "Cảnh 2, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup'"
+            ],
+            "shot_queries": [
+              "rocket launch aerial",
+              "rocket launch wide",
+              "rocket launch closeup"
+            ],
+            "scene_id": 2,
+            "narration": "Đầu tiên, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch aerial"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 3, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior'",
+              "Cảnh 3, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch exterior'",
+              "Cảnh 3, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch panoramic'"
+            ],
+            "shot_queries": [
+              "rocket launch interior",
+              "rocket launch exterior",
+              "rocket launch panoramic"
+            ],
+            "scene_id": 3,
+            "narration": "Sau đó, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch interior"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 4, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch detail'",
+              "Cảnh 4, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch documentary'",
+              "Cảnh 4, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial night'"
+            ],
+            "shot_queries": [
+              "rocket launch detail",
+              "rocket launch documentary",
+              "rocket launch aerial night"
+            ],
+            "scene_id": 4,
+            "narration": "Riêng đoạn, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch detail"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 5, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial daylight'",
+              "Cảnh 5, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial sunset'",
+              "Cảnh 5, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial sunrise'"
+            ],
+            "shot_queries": [
+              "rocket launch aerial daylight",
+              "rocket launch aerial sunset",
+              "rocket launch aerial sunrise"
+            ],
+            "scene_id": 5,
+            "narration": "Còn nhịp, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch aerial daylight"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 6, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial view'",
+              "Cảnh 6, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial daytime'",
+              "Cảnh 6, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial morning'"
+            ],
+            "shot_queries": [
+              "rocket launch aerial view",
+              "rocket launch aerial daytime",
+              "rocket launch aerial morning"
+            ],
+            "scene_id": 6,
+            "narration": "Phần ghép, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch aerial view"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 7, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial evening'",
+              "Cảnh 7, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide night'",
+              "Cảnh 7, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide daylight'"
+            ],
+            "shot_queries": [
+              "rocket launch aerial evening",
+              "rocket launch wide night",
+              "rocket launch wide daylight"
+            ],
+            "scene_id": 7,
+            "narration": "Ở đây, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch aerial evening"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 8, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide sunset'",
+              "Cảnh 8, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide sunrise'",
+              "Cảnh 8, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide view'"
+            ],
+            "shot_queries": [
+              "rocket launch wide sunset",
+              "rocket launch wide sunrise",
+              "rocket launch wide view"
+            ],
+            "scene_id": 8,
+            "narration": "Chỗ này, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch wide sunset"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 9, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide daytime'",
+              "Cảnh 9, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide morning'",
+              "Cảnh 9, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide evening'"
+            ],
+            "shot_queries": [
+              "rocket launch wide daytime",
+              "rocket launch wide morning",
+              "rocket launch wide evening"
+            ],
+            "scene_id": 9,
+            "narration": "Điểm khác, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch wide daytime"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 10, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup night'",
+              "Cảnh 10, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup daylight'",
+              "Cảnh 10, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup sunset'"
+            ],
+            "shot_queries": [
+              "rocket launch closeup night",
+              "rocket launch closeup daylight",
+              "rocket launch closeup sunset"
+            ],
+            "scene_id": 10,
+            "narration": "Với cảnh, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch closeup night"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 11, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup sunrise'",
+              "Cảnh 11, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup view'",
+              "Cảnh 11, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup daytime'"
+            ],
+            "shot_queries": [
+              "rocket launch closeup sunrise",
+              "rocket launch closeup view",
+              "rocket launch closeup daytime"
+            ],
+            "scene_id": 11,
+            "narration": "Đến đoạn, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch closeup sunrise"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 12, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup morning'",
+              "Cảnh 12, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup evening'",
+              "Cảnh 12, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior night'"
+            ],
+            "shot_queries": [
+              "rocket launch closeup morning",
+              "rocket launch closeup evening",
+              "rocket launch interior night"
+            ],
+            "scene_id": 12,
+            "narration": "Nhìn lại, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch closeup morning"
+          },
+          {
+            "structure_warnings": [
+              "Cảnh 13, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior daylight'",
+              "Cảnh 13, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior sunset'",
+              "Cảnh 13, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior sunrise'"
+            ],
+            "shot_queries": [
+              "rocket launch interior daylight",
+              "rocket launch interior sunset",
+              "rocket launch interior sunrise"
+            ],
+            "scene_id": 13,
+            "narration": "Mạch dựng bắt đầu từ chọn đoạn. Bạn muốn thử cách làm này chứ?",
+            "overlays": [
+              "Chọn đoạn trước",
+              "Chọn đoạn trước",
+              "Chọn đoạn trước"
+            ],
+            "broll_query": "rocket launch interior daylight"
+          }
+        ]
+      },
+      "hash": "54e5c94e3482321903746a64b1e02644ff8d6e43cf880bcc59a58021d3ffb8ed",
+      "completed_at": "2026-11-02T13:54:18.090187+00:00"
+    },
+    "humanized": {
+      "status": "done",
+      "data": {
+        "validation_events": [
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 1,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 2,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 3,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 7,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 8,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 9,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 10,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 11,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 12,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "attribution",
+            "group": 2,
+            "scene_id": 13,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim."
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 1,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 1, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch engineers control'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 2,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 2, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 2,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 2, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 2,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 2, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 3,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 3, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 3,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 3, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch exterior'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 3,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 3, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch panoramic'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 4, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch detail'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 4, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch documentary'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 4,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 4, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial night'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 5, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial daylight'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 5, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial sunset'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 5,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 5, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial sunrise'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 6, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial view'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 6, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial daytime'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 6,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 6, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial morning'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 7,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 7, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial evening'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 7,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 7, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide night'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 7,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 7, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide daylight'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 8,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 8, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide sunset'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 8,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 8, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide sunrise'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 8,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 8, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide view'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 9,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 9, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide daytime'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 9,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 9, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide morning'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 9,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 9, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide evening'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 10,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 10, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup night'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 10,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 10, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup daylight'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 10,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 10, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup sunset'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 11,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 11, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup sunrise'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 11,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 11, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup view'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 11,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 11, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup daytime'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 12,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 12, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup morning'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 12,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 12, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup evening'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 12,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 12, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior night'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 13,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 13, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior daylight'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 13,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 13, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior sunset'"
+          },
+          {
+            "rule_id": "broll_query",
+            "group": 2,
+            "scene_id": 13,
+            "phase": "plan",
+            "action": "fixed",
+            "message": "Cảnh 13, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior sunrise'"
+          }
+        ],
+        "review_notes": [
+          "Cảnh 1, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch engineers control'",
+          "Cảnh 2, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial'",
+          "Cảnh 2, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide'",
+          "Cảnh 2, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup'",
+          "Cảnh 3, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior'",
+          "Cảnh 3, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch exterior'",
+          "Cảnh 3, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch panoramic'",
+          "Cảnh 4, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch detail'",
+          "Cảnh 4, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch documentary'",
+          "Cảnh 4, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial night'",
+          "Cảnh 5, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial daylight'",
+          "Cảnh 5, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial sunset'",
+          "Cảnh 5, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial sunrise'",
+          "Cảnh 6, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial view'",
+          "Cảnh 6, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial daytime'",
+          "Cảnh 6, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial morning'",
+          "Cảnh 7, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial evening'",
+          "Cảnh 7, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide night'",
+          "Cảnh 7, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide daylight'",
+          "Cảnh 8, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide sunset'",
+          "Cảnh 8, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide sunrise'",
+          "Cảnh 8, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide view'",
+          "Cảnh 9, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide daytime'",
+          "Cảnh 9, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide morning'",
+          "Cảnh 9, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide evening'",
+          "Cảnh 10, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup night'",
+          "Cảnh 10, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup daylight'",
+          "Cảnh 10, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup sunset'",
+          "Cảnh 11, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup sunrise'",
+          "Cảnh 11, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup view'",
+          "Cảnh 11, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup daytime'",
+          "Cảnh 12, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup morning'",
+          "Cảnh 12, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup evening'",
+          "Cảnh 12, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior night'",
+          "Cảnh 13, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior daylight'",
+          "Cảnh 13, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior sunset'",
+          "Cảnh 13, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior sunrise'"
+        ],
+        "adaptive": true,
+        "requested_duration_sec": 90.0,
+        "script_style": "storytelling",
+        "story_outline": {
+          "angle_index": 1,
+          "hook": "Bạn dựng video có đúng nhịp?",
+          "open_loop": "Chọn đoạn trước hay ghép trước?",
+          "payoff": "Chọn đoạn trước khi ghép.",
+          "payoff_fact_ids": [
+            1
+          ],
+          "main_points": [
+            {
+              "id": 1,
+              "idea": "Bối cảnh",
+              "fact_ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16
+              ]
+            },
+            {
+              "id": 2,
+              "idea": "Diễn biến",
+              "fact_ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16
+              ]
+            },
+            {
+              "id": 3,
+              "idea": "Điểm khác",
+              "fact_ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16
+              ]
+            },
+            {
+              "id": 4,
+              "idea": "Ý nghĩa",
+              "fact_ids": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16
+              ]
+            }
+          ],
+          "scenes": [
+            {
+              "scene_id": 1,
+              "point_id": 1,
+              "fact_ids": [
+                1
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 2,
+              "point_id": 1,
+              "fact_ids": [
+                2
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 3,
+              "point_id": 1,
+              "fact_ids": [
+                3
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 4,
+              "point_id": 2,
+              "fact_ids": [
+                4
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 5,
+              "point_id": 2,
+              "fact_ids": [
+                5
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 6,
+              "point_id": 2,
+              "fact_ids": [
+                6
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 7,
+              "point_id": 3,
+              "fact_ids": [
+                7
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 8,
+              "point_id": 3,
+              "fact_ids": [
+                8
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 9,
+              "point_id": 3,
+              "fact_ids": [
+                9
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 10,
+              "point_id": 4,
+              "fact_ids": [
+                10
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 11,
+              "point_id": 4,
+              "fact_ids": [
+                11
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 12,
+              "point_id": 4,
+              "fact_ids": [
+                12
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            },
+            {
+              "scene_id": 13,
+              "point_id": 4,
+              "fact_ids": [
+                1
+              ],
+              "purpose": "Khai thác một chi tiết có căn cứ."
+            }
+          ]
+        },
+        "title": "Nhịp dựng video",
+        "format": "tiktok",
+        "voice": "vi-VN-HoaiMyNeural",
+        "music": {
+          "mood": "calm",
+          "volume": 0.08
+        },
+        "scenes": [
+          {
+            "id": 1,
+            "role": "hook",
+            "narration": "Theo Fixture, Bạn dựng video có đúng nhịp?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch engineers control",
+                "duration_sec": 3.0,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "cut",
+            "sfx": "none",
+            "fact_ids": [
+              1
+            ],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 1, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch engineers control'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 1, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch engineers control'"
+              ],
+              "fact_ids": [
+                1
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 1,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 2,
+            "role": "body",
+            "narration": "Theo Fixture, Đầu tiên, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch aerial",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch wide",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch closeup",
+                "duration_sec": 2.4454545454545453,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "cut",
+            "sfx": "none",
+            "fact_ids": [
+              2
+            ],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 2, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial'",
+                "Cảnh 2, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide'",
+                "Cảnh 2, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 2, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial'",
+                "[broll_query, nhóm 2, fixed] Cảnh 2, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide'",
+                "[broll_query, nhóm 2, fixed] Cảnh 2, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup'"
+              ],
+              "fact_ids": [
+                2
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 2,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 3,
+            "role": "body",
+            "narration": "Theo Fixture, Sau đó, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch interior",
+                "duration_sec": 2.4454545454545458,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch exterior",
+                "duration_sec": 2.4454545454545458,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch panoramic",
+                "duration_sec": 2.4454545454545453,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "zoom",
+            "sfx": "none",
+            "fact_ids": [
+              3
+            ],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 3, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior'",
+                "Cảnh 3, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch exterior'",
+                "Cảnh 3, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch panoramic'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 3, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior'",
+                "[broll_query, nhóm 2, fixed] Cảnh 3, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch exterior'",
+                "[broll_query, nhóm 2, fixed] Cảnh 3, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch panoramic'"
+              ],
+              "fact_ids": [
+                3
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 3,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 4,
+            "role": "body",
+            "narration": "Theo Fixture, Riêng đoạn, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch detail",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch documentary",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch aerial night",
+                "duration_sec": 2.4454545454545453,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "cut",
+            "sfx": "none",
+            "fact_ids": [
+              4
+            ],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 4, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch detail'",
+                "Cảnh 4, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch documentary'",
+                "Cảnh 4, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial night'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 4, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch detail'",
+                "[broll_query, nhóm 2, fixed] Cảnh 4, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch documentary'",
+                "[broll_query, nhóm 2, fixed] Cảnh 4, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial night'"
+              ],
+              "fact_ids": [
+                4
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 4,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 5,
+            "role": "body",
+            "narration": "Theo Fixture, Còn nhịp, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch aerial daylight",
+                "duration_sec": 2.4454545454545458,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch aerial sunset",
+                "duration_sec": 2.4454545454545458,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch aerial sunrise",
+                "duration_sec": 2.4454545454545453,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "zoom",
+            "sfx": "none",
+            "fact_ids": [
+              5
+            ],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 5, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial daylight'",
+                "Cảnh 5, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial sunset'",
+                "Cảnh 5, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial sunrise'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 5, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial daylight'",
+                "[broll_query, nhóm 2, fixed] Cảnh 5, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial sunset'",
+                "[broll_query, nhóm 2, fixed] Cảnh 5, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial sunrise'"
+              ],
+              "fact_ids": [
+                5
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 5,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 6,
+            "role": "body",
+            "narration": "Theo Fixture, Phần ghép, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch aerial view",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch aerial daytime",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch aerial morning",
+                "duration_sec": 2.4454545454545453,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "cut",
+            "sfx": "none",
+            "fact_ids": [
+              6
+            ],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 6, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial view'",
+                "Cảnh 6, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial daytime'",
+                "Cảnh 6, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial morning'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 6, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial view'",
+                "[broll_query, nhóm 2, fixed] Cảnh 6, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial daytime'",
+                "[broll_query, nhóm 2, fixed] Cảnh 6, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial morning'"
+              ],
+              "fact_ids": [
+                6
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 6,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 7,
+            "role": "body",
+            "narration": "Theo Fixture, Ở đây, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch aerial evening",
+                "duration_sec": 2.4454545454545458,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch wide night",
+                "duration_sec": 2.4454545454545458,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch wide daylight",
+                "duration_sec": 2.4454545454545453,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "zoom",
+            "sfx": "none",
+            "fact_ids": [
+              7
+            ],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 7, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial evening'",
+                "Cảnh 7, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide night'",
+                "Cảnh 7, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide daylight'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 7, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch aerial evening'",
+                "[broll_query, nhóm 2, fixed] Cảnh 7, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide night'",
+                "[broll_query, nhóm 2, fixed] Cảnh 7, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide daylight'"
+              ],
+              "fact_ids": [
+                7
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 7,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 8,
+            "role": "body",
+            "narration": "Theo Fixture, Chỗ này, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch wide sunset",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch wide sunrise",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch wide view",
+                "duration_sec": 2.4454545454545453,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "cut",
+            "sfx": "none",
+            "fact_ids": [
+              8
+            ],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 8, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide sunset'",
+                "Cảnh 8, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide sunrise'",
+                "Cảnh 8, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide view'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 8, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide sunset'",
+                "[broll_query, nhóm 2, fixed] Cảnh 8, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide sunrise'",
+                "[broll_query, nhóm 2, fixed] Cảnh 8, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide view'"
+              ],
+              "fact_ids": [
+                8
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 8,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 9,
+            "role": "body",
+            "narration": "Theo Fixture, Điểm khác, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch wide daytime",
+                "duration_sec": 2.4454545454545458,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch wide morning",
+                "duration_sec": 2.4454545454545458,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch wide evening",
+                "duration_sec": 2.4454545454545453,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "zoom",
+            "sfx": "none",
+            "fact_ids": [
+              9
+            ],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 9, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide daytime'",
+                "Cảnh 9, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide morning'",
+                "Cảnh 9, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide evening'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 9, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide daytime'",
+                "[broll_query, nhóm 2, fixed] Cảnh 9, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide morning'",
+                "[broll_query, nhóm 2, fixed] Cảnh 9, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch wide evening'"
+              ],
+              "fact_ids": [
+                9
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 9,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 10,
+            "role": "body",
+            "narration": "Theo Fixture, Với cảnh, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch closeup night",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch closeup daylight",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch closeup sunset",
+                "duration_sec": 2.4454545454545453,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "cut",
+            "sfx": "none",
+            "fact_ids": [
+              10
+            ],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 10, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup night'",
+                "Cảnh 10, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup daylight'",
+                "Cảnh 10, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup sunset'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 10, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup night'",
+                "[broll_query, nhóm 2, fixed] Cảnh 10, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup daylight'",
+                "[broll_query, nhóm 2, fixed] Cảnh 10, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup sunset'"
+              ],
+              "fact_ids": [
+                10
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 10,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 11,
+            "role": "body",
+            "narration": "Theo Fixture, Đến đoạn, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch closeup sunrise",
+                "duration_sec": 2.4454545454545458,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch closeup view",
+                "duration_sec": 2.4454545454545458,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch closeup daytime",
+                "duration_sec": 2.4454545454545453,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "zoom",
+            "sfx": "none",
+            "fact_ids": [
+              11
+            ],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 11, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup sunrise'",
+                "Cảnh 11, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup view'",
+                "Cảnh 11, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup daytime'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 11, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup sunrise'",
+                "[broll_query, nhóm 2, fixed] Cảnh 11, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup view'",
+                "[broll_query, nhóm 2, fixed] Cảnh 11, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup daytime'"
+              ],
+              "fact_ids": [
+                11
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 11,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 12,
+            "role": "body",
+            "narration": "Theo Fixture, Nhìn lại, bạn chọn đoạn cần giữ trước khi ghép. Bạn muốn xem bước tiếp theo chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch closeup morning",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch closeup evening",
+                "duration_sec": 2.4454545454545458,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch interior night",
+                "duration_sec": 2.4454545454545453,
+                "effect": "pan_left",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "cut",
+            "sfx": "none",
+            "fact_ids": [
+              12
+            ],
+            "pattern_interrupt": false,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 12, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup morning'",
+                "Cảnh 12, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup evening'",
+                "Cảnh 12, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior night'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 12, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup morning'",
+                "[broll_query, nhóm 2, fixed] Cảnh 12, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch closeup evening'",
+                "[broll_query, nhóm 2, fixed] Cảnh 12, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior night'"
+              ],
+              "fact_ids": [
+                12
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 12,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": 13,
+            "role": "cta",
+            "narration": "Theo Fixture, Mạch dựng bắt đầu từ chọn đoạn. Bạn muốn thử cách làm này chứ?",
+            "shots": [
+              {
+                "type": "stock_video",
+                "query": "rocket launch interior daylight",
+                "duration_sec": 2.1,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch interior sunset",
+                "duration_sec": 2.1,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              },
+              {
+                "type": "stock_video",
+                "query": "rocket launch interior sunrise",
+                "duration_sec": 2.1000000000000005,
+                "effect": "zoom_in",
+                "text_overlay": "Chọn đoạn trước"
+              }
+            ],
+            "transition_out": "zoom",
+            "sfx": "none",
+            "fact_ids": [
+              1
+            ],
+            "pattern_interrupt": true,
+            "review_notes": {
+              "warnings": [
+                "Cảnh 13, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior daylight'",
+                "Cảnh 13, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior sunset'",
+                "Cảnh 13, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior sunrise'",
+                "[attribution, nhóm 2, fixed] Đã đồng bộ cách nêu nguồn với metadata brief, không thêm claim.",
+                "[broll_query, nhóm 2, fixed] Cảnh 13, shot 1: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior daylight'",
+                "[broll_query, nhóm 2, fixed] Cảnh 13, shot 2: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior sunset'",
+                "[broll_query, nhóm 2, fixed] Cảnh 13, shot 3: sửa b-roll query 'SpaceX Starship rocket launch engineers control room technology system catch' → 'rocket launch interior sunrise'"
+              ],
+              "fact_ids": [
+                1
+              ],
+              "source_count": 1,
+              "confidence": "medium",
+              "facts": [
+                {
+                  "fact_id": 1,
+                  "source_count": 1,
+                  "confidence": "medium",
+                  "sources": [
+                    {
+                      "fact_id": 1,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 2,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 3,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 4,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 5,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 6,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 7,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 8,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 9,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 10,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 11,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 12,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 13,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 14,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 15,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    },
+                    {
+                      "fact_id": 16,
+                      "name": "Fixture",
+                      "url": "https://example.com/",
+                      "confidence": "medium"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "video_type": "story",
+        "target_duration_sec": 90.0,
+        "brief_hash": "983a56118099f4370ebcc21d291b57d9e0ac49d2a0720bf4ab61e22b1bef3587"
+      },
+      "hash": "7af9ff2f52fdc26714ad1ae6efc854f764117703fa6c76511eb5f83c074a5095",
+      "completed_at": "2026-11-02T13:54:23.286047+00:00"
+    }
+  },
+  "current_stage": "humanized"
+}

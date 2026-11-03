@@ -39,13 +39,13 @@ THÔNG TIN ĐẦU VÀO:
 
 QUY TẮC BẮT BUỘC (TUÂN THỦ 100%):
 1. Phủ kín 100% các câu, không bỏ sót câu nào. Mỗi slide gồm 1-3 câu liên tiếp (sentence_ids liên tục).
-2. Layouts hợp lệ gồm:
-   - lg_source_headline: Thẻ ảnh nguồn & tiêu đề lớn (BẮT BUỘC cho slide 1).
-   - lg_stat_hero: Thẻ số liệu lớn nổi bật (chỉ dùng khi câu có con số cụ thể).
-   - lg_shot_features: Thẻ danh sách 2-3 điểm nổi bật.
-   - lg_vs_compare: Thẻ so sánh 2 vế đối chiếu.
-   - lg_note_card: Thẻ ghi chú/nhận định chuyên gia (tối đa 3 dòng).
-   - lg_cta_profile: Thẻ kêu gọi hành động & hồ sơ kênh (BẮT BUỘC cho slide cuối cùng).
+2. Layouts hợp lệ theo kiến trúc Two-Zone Split (Tầng 1 Mockup trực quan, Tầng 2 Card văn bản lớn):
+   - lg_source_headline: Tầng 1 là Card nguồn/repo mockup, Tầng 2 là Headline 3 dòng in hoa cực lớn (BẮT BUỘC cho slide 1).
+   - lg_stat_hero: Tầng 1 là Dark Console Card với các ô chỉ số, Tầng 2 là con số lớn màu xanh dương kèm nhãn giải thích (chỉ dùng khi câu có con số cụ thể).
+   - lg_shot_features: Tầng 1 là Cửa sổ web bảng điều khiển, Tầng 2 là danh sách 2-3 điểm nổi bật (mỗi điểm có chấm tròn xanh).
+   - lg_vs_compare: Thẻ so sánh 2 vế xếp dọc (cũ/thủ công vs mới/tự động) kèm chữ VS ở giữa và badge WINNER.
+   - lg_note_card: Thẻ đơn trung tâm với pill TIẾT KIỆM và nhận định/đúc kết chuyên gia (tối đa 3 dòng).
+   - lg_cta_profile: Thẻ hồ sơ kênh Facebook/MXH với avatar tròn, 2 nút hành động và bong bóng reaction (BẮT BUỘC cho slide cuối cùng).
 3. KHÔNG ĐƯỢC lặp layout ở 2 slide liền kề.
 4. TUYỆT ĐỐI KHÔNG BỊA SỐ LIỆU HOẶC TÊN RIÊNG: Mọi con số trong slot 'value' hoặc slot chữ PHẢI xuất hiện nguyên văn trong câu đọc của slide đó hoặc trong Brief Facts.
 5. Giới hạn độ dài slot:
@@ -54,6 +54,7 @@ QUY TẮC BẮT BUỘC (TUÂN THỦ 100%):
    - features items: tối đa 3-4 ý, mỗi ý <= 40 ký tự.
    - compare: mỗi bên <= 2 dòng x 14 ký tự.
 6. Trích xuất 1-2 cụm từ nhấn (emphasis): mỗi cụm <= 3 từ, PHẢI xuất hiện NGUYÊN VĂN trong câu đọc của slide đó.
+7. Với MỖI slide, BẮT BUỘC viết một 'image_prompt' bằng tiếng Anh, mô tả chi tiết hình ảnh 5s trực quan sát ý nghĩa câu đọc, dễ hình dung, lôi cuốn, mang tính điện ảnh/concept art 3D (ví dụ: 'Cinematic hyper-realistic 3D render of futuristic automated humanoid robot in high-tech factory, dramatic lighting, 8k', 'Neon glowing financial spline line descending sharply towards zero in modern digital exchange, dark background, hologram numbers', v.v.).
 
 ĐẦU RA CHỈ LÀ JSON HỢP LỆ VỚI CẤU TRÚC:
 {{
@@ -62,6 +63,7 @@ QUY TẮC BẮT BUỘC (TUÂN THỦ 100%):
       "id": "slide_1",
       "layout": "lg_source_headline",
       "sentence_ids": [1],
+      "image_prompt": "Cinematic 3D concept art of...",
       "slots": {{
         "pill": "TIÊU ĐIỂM CÔNG NGHỆ",
         "title": "TIÊU ĐỀ NGẮN",

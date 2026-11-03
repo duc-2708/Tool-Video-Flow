@@ -1,6 +1,7 @@
 """Bộ thành phần UI dùng chung theo phong cách Đen - Vàng - Trắng (Black - Gold - White).
 
 An toàn XSS: mọi nội dung chuỗi đầu vào đều được escape bằng html.escape.
+Tuân thủ nghiêm ngặt Streamlit: Không dùng split HTML markdown để bao bọc widget.
 """
 from collections.abc import Callable
 import html
@@ -8,22 +9,20 @@ import streamlit as st
 
 
 def section_header(eyebrow: str, title: str, accent_word: str = "") -> None:
-    """Render tiêu đề phần với eyebrow viết hoa màu vàng và chữ nhấn màu vàng."""
-    e_safe = html.escape(eyebrow)
-    t_safe = html.escape(title)
-    if accent_word:
-        a_safe = html.escape(accent_word)
-        if a_safe in t_safe:
-            t_safe = t_safe.replace(a_safe, f'<span class="text-gold-accent">{a_safe}</span>')
-    st.markdown(
-        f"""
-        <div style="margin-bottom: 20px;">
-            <div class="ui-eyebrow">{e_safe}</div>
-            <h1 style="margin: 0; font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em;">{t_safe}</h1>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """Render tiêu đề phần với eyebrow viết hoa màu vàng và chữ nhấn màu vàng.
+    
+    Tạo đúng 1 thẻ h1 (thông qua st.title) để thỏa mãn AppTest và DOM checks.
+    """
+    e_safe = html.escape(str(eyebrow or "")).strip()
+    if e_safe:
+        st.markdown(f'<div class="ui-eyebrow">{e_safe}</div>', unsafe_allow_html=True)
+    
+    clean_title = str(title or "")
+    if accent_word and accent_word in clean_title:
+        rendered_title = clean_title.replace(accent_word, f":orange[{accent_word}]")
+    else:
+        rendered_title = clean_title
+    st.title(rendered_title)
 
 
 def chip_html(text: str, tone: str = "neutral") -> str:
@@ -46,18 +45,14 @@ def chip(text: str, tone: str = "neutral") -> None:
 
 
 def card(title: str, body_fn: Callable[[], None] | None = None, tone: str = "dark") -> None:
-    """Card container bo góc 18px với 3 loại tone: dark (bề mặt #141414), white (#FFFFFF), outline."""
-    css_class = "ui-card-white" if tone == "white" else "ui-card-outline" if tone == "outline" else "ui-card-dark"
-    t_safe = html.escape(title) if title else ""
-    with st.container():
-        if title:
-            header_html = f'<div style="font-weight: 700; font-size: 1.15rem; margin-bottom: 12px;">{t_safe}</div>'
-        else:
-            header_html = ""
-        st.markdown(f'<div class="{css_class}">{header_html}', unsafe_allow_html=True)
+    """Card container bo góc 18px dùng st.container(border=True)."""
+    t_safe = html.escape(str(title)) if title else ""
+    with st.container(border=True):
+        if t_safe:
+            title_color = "#0A0A0A" if tone == "white" else "#FFFFFF"
+            st.markdown(f'<div style="font-weight: 700; font-size: 1.15rem; margin-bottom: 12px; color: {title_color};">{t_safe}</div>', unsafe_allow_html=True)
         if body_fn:
             body_fn()
-        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def stat_html(label: str, value: str, sub: str = "") -> str:
@@ -80,7 +75,7 @@ def stat(label: str, value: str, sub: str = "") -> None:
 
 
 def stepper_html(steps: list[str], active_index: int, times: list[str] | None = None) -> str:
-    """Trả về thanh tiến trình ngang 5 bước: hoàn thành (xong + tick), đang chạy (vàng), chờ (viền)."""
+    """Trả về thanh tiến trình ngang 5 bước: hoàn thành (xong + tick), đang chạy (vàng), chờ (viền). Bỏ emoji."""
     items = []
     times = times or []
     for idx, s in enumerate(steps):
@@ -89,7 +84,7 @@ def stepper_html(steps: list[str], active_index: int, times: list[str] | None = 
         if idx < active_index:
             items.append(f'<div class="ui-step-item ui-step-done"><span class="check">✓</span> {s_safe}{time_safe}</div>')
         elif idx == active_index:
-            items.append(f'<div class="ui-step-item ui-step-active">⚡ {s_safe}</div>')
+            items.append(f'<div class="ui-step-item ui-step-active"><span class="active-dot">●</span> {s_safe}</div>')
         else:
             items.append(f'<div class="ui-step-item ui-step-pending">! {s_safe}</div>')
     return f'<div class="ui-stepper">{" ".join(items)}</div>'
@@ -113,3 +108,21 @@ def empty_state(message: str, sub: str = "") -> None:
         """,
         unsafe_allow_html=True,
     )
+
+
+def loading_spinner_html(message: str = "Đang xử lý dữ liệu...", sub: str = "Vui lòng đợi trong giây lát") -> str:
+    """Trả về HTML spinner load sang trọng chuẩn Đen - Vàng (#FFD400)."""
+    m_safe = html.escape(str(message))
+    s_safe = f'<div class="agy-loader-sub">{html.escape(str(sub))}</div>' if sub else ""
+    return f"""
+    <div class="agy-loader-box">
+        <div class="agy-loader-ring"></div>
+        <div class="agy-loader-title">{m_safe}</div>
+        {s_safe}
+    </div>
+    """
+
+
+def loading_spinner(message: str = "Đang xử lý dữ liệu...", sub: str = "Vui lòng đợi trong giây lát") -> None:
+    """Hiển thị spinner load trực tiếp trên trang."""
+    st.markdown(loading_spinner_html(message, sub), unsafe_allow_html=True)

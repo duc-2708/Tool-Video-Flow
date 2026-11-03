@@ -1,6 +1,7 @@
 """Unit tests for the Black-Gold-White modern Streamlit UI design tokens, ui_kit, XSS escaping, and AppTest."""
 import html
 from pathlib import Path
+import re
 import pytest
 from streamlit.testing.v1 import AppTest
 from config.settings import ROOT_DIR, Settings
@@ -34,20 +35,45 @@ def test_ui_kit_escapes_html():
     assert "<script>" not in s_html
     assert safe_pattern in s_html or safe_alt_pattern in s_html
 
-    # 3. stepper_html
+    # 3. stepper_html (no emoji, escapes text)
     st_html = stepper_html(["Step 1", malicious_text], active_index=1)
     assert "<script>" not in st_html
     assert safe_pattern in st_html or safe_alt_pattern in st_html
+    assert "⚡" not in st_html
 
 
-@pytest.mark.parametrize("page_name", [
-    "Tạo video theo danh mục",
+def test_no_split_html_tags_wrapping_widgets():
+    """Verify that no view file opens an HTML tag in st.markdown and leaves it unclosed to wrap widgets."""
+    views_dir = ROOT_DIR / "app/views"
+    # Find any st.markdown with an open <div that does not contain a matching </div> inside the same call
+    pattern = re.compile(r'st\.markdown\(\s*f?["\']<div\b[^>]*>(?!.*?</div>)', re.DOTALL)
+    for py_file in views_dir.glob("*.py"):
+        content = py_file.read_text(encoding="utf-8")
+        matches = pattern.findall(content)
+        assert len(matches) == 0, f"Found open unclosed div tag in {py_file.name}: {matches}"
+
+
+ALL_PAGES = [
     "Tạo video",
+    "Tạo video theo danh mục",
+    "Khám phá chủ đề",
+    "Trend Scout",
+    "Research",
+    "Edit Plan",
+    "Assets",
+    "AI Video",
+    "Render",
     "Kho video đã làm",
+    "Phong cách mẫu",
+    "Xem trước mẫu",
+    "Phòng thử hiệu ứng",
     "Cài đặt Token & AI",
-])
-def test_apptest_pages_render_without_exception(tmp_path, monkeypatch, page_name):
-    """Every major page rendered by AppTest should load without raising an unhandled exception."""
+]
+
+
+@pytest.mark.parametrize("page_name", ALL_PAGES)
+def test_all_pages_render_without_exception(tmp_path, monkeypatch, page_name):
+    """Every page in PAGES must render without exception using AppTest."""
     settings = Settings(root_dir=tmp_path)
     monkeypatch.setattr("config.settings.get_settings", lambda: settings)
 
@@ -57,7 +83,7 @@ def test_apptest_pages_render_without_exception(tmp_path, monkeypatch, page_name
     app = AppTest.from_file(ROOT_DIR / "app/streamlit_app.py", default_timeout=45).run()
     assert not app.exception
 
-    if page_name != "Tạo video theo danh mục":
+    if page_name != "Tạo video":
         app.sidebar.radio[0].set_value(page_name).run()
         assert not app.exception, f"Exception occurred while rendering page: {page_name}"
 
@@ -74,6 +100,5 @@ def test_topic_with_script_tag_escaped(tmp_path, monkeypatch):
     app.sidebar.radio[0].set_value("Kho video đã làm").run()
     assert not app.exception
 
-    # Assert no raw unescaped script tag is in markdown elements
     for md in app.markdown:
         assert "<script>alert(1)</script>" not in str(md.value)

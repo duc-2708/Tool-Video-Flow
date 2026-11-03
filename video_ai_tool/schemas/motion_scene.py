@@ -81,7 +81,13 @@ SceneType=Literal[
     'countdown_timer',
     'courtroom_balance',
     'code_terminal_window',
-    'quote_dialog_card'
+    'quote_dialog_card',
+    'lg_source_headline',
+    'lg_stat_hero',
+    'lg_shot_features',
+    'lg_vs_compare',
+    'lg_note_card',
+    'lg_cta_profile'
 ]
 
 
@@ -192,7 +198,7 @@ class MotionScenePlan(StrictModel):
 
     scene_type: SceneType='text_focus'
 
-    theme: Literal['neon_dark','paper_brand','whiteboard_sketch','studio','cong-nghe','tin-tuc','kinh-doanh'] | None = None
+    theme: Literal['neon_dark','paper_brand','whiteboard_sketch','studio','cong-nghe','tin-tuc','kinh-doanh','clean_white','light_glass'] | None = None
 
     layout: Literal['center_hero','split_2','stack_3','grid_4','timeline_h','text_focus'] | None = None
 

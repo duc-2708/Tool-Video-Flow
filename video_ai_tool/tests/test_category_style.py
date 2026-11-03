@@ -284,6 +284,7 @@ def test_auto_category_ui_loads_category_then_default_without_api(category_setti
     manager=Mock();manager.active.return_value=None;manager.snapshot.return_value=None;manager.submit_auto.return_value="worker"
     monkeypatch.setattr("app.views.auto_category.auto_jobs",lambda:manager)
     at=AppTest.from_file(ROOT_DIR/"app/streamlit_app.py",default_timeout=30).run()
+    at.sidebar.radio[0].set_value("Tạo video theo danh mục").run()
     assert not at.exception and at.selectbox(key="auto_style_preset").value=="@category:cong-nghe"
     at.button(key="auto_start").click().run()
     assert manager.submit_auto.call_args.args[0]["style_preset"]=="@category:cong-nghe"

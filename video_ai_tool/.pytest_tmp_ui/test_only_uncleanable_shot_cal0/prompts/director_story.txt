@@ -1,0 +1,3 @@
+# file: prompts/director_story.txt
+Loại story: câu hỏi mở → diễn biến giữa các fact đã có → thông điệp giới hạn trong fact → CTA.
+Không hư cấu nhân vật, lời nói, trải nghiệm hoặc mốc thời gian để làm câu chuyện hấp dẫn hơn.

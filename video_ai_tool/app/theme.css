@@ -1,336 +1,884 @@
-/* Modern Black - Gold - White Design Tokens & Styling */
+/* ==========================================================================
+   VIDEO AI TOOL - MODERN DESIGN SYSTEM (BLACK - GOLD - WHITE)
+   Design Tokens & Unified Styling (100% Offline, Zero external CDN/HTTP URLs)
+   ========================================================================== */
+
+/* 1. TYPOGRAPHY: Offline Inter Fonts */
+@font-face {
+    font-family: 'Inter';
+    src: url('app/static/Inter-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Inter';
+    src: url('app/static/Inter-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Inter';
+    src: url('app/static/Inter-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Inter';
+    src: url('app/static/Inter-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
 
 :root {
-  --bg: #0A0A0A;
-  --surface: #141414;
-  --surface-hover: #1E1E1E;
-  --border: #2A2A2A;
-  --text: #FFFFFF;
-  --text-muted: #A8A8A8;
-  --gold: #FFD400;
-  --gold-hover: #E6BF00;
-  --card-white: #FFFFFF;
-  --text-on-white: #0A0A0A;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-pill: 999px;
-  --focus-ring: 0 0 0 3px #FFFFFF;
+    --bg-dark: #0A0A0A;
+    --surface-dark: #141414;
+    --border-dark: #2A2A2A;
+    --text-white: #FFFFFF;
+    --text-muted: #A8A8A8;
+    --gold: #FFD400;
+    --card-white: #FFFFFF;
+    --text-card-white: #0A0A0A;
+    
+    --radius-sm: 14px;
+    --radius-lg: 18px;
+    --radius-pill: 999px;
+    
+    --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-@font-face {
-  font-family: 'Inter';
-  src: local('Inter Bold'), local('Inter-Bold');
-  font-weight: 700;
-  font-style: normal;
+/* Global Font Apply */
+body, [data-testid="stAppViewContainer"], .stApp, input, button, select, textarea {
+    font-family: var(--font-stack) !important;
 }
 
-@font-face {
-  font-family: 'Inter';
-  src: local('Inter Regular'), local('Inter-Regular');
-  font-weight: 400;
-  font-style: normal;
+/* 2. BASE APPLICATION LAYOUT & BACKGROUND */
+.stApp {
+    background-color: var(--bg-dark) !important;
+    color: var(--text-white) !important;
 }
 
-/* Global App Styling */
-html, body, [data-testid="stAppViewContainer"] {
-  background-color: var(--bg) !important;
-  color: var(--text) !important;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-}
-
-[data-testid="stHeader"] {
-  background-color: rgba(10, 10, 10, 0.85) !important;
-  backdrop-filter: blur(12px) !important;
-  border-bottom: 1px solid var(--border) !important;
-}
-
-/* Sidebar Navigation */
 [data-testid="stSidebar"] {
-  background-color: #0E0E0E !important;
-  border-right: 1px solid var(--border) !important;
+    background-color: #0E0E0E !important;
+    border-right: 1px solid var(--border-dark) !important;
+    padding-top: 1rem !important;
 }
 
-[data-testid="stSidebar"] .stRadio > div {
-  gap: 4px !important;
+/* 3. HEADINGS & ACCENTS */
+h1 {
+    font-size: 2.8rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.03em !important;
+    color: var(--text-white) !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.5rem !important;
 }
 
-[data-testid="stSidebar"] .stRadio label {
-  border-radius: var(--radius-md) !important;
-  padding: 8px 14px !important;
-  transition: all 0.15s ease !important;
+h2, h3, h4 {
+    color: var(--text-white) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
 }
 
-[data-testid="stSidebar"] .stRadio label:hover {
-  background-color: var(--surface) !important;
+/* Accent text highlight inside h1 */
+h1 span[style*="color"],
+h1 span[style*="rgb(255, 170, 0)"],
+h1 span[style*="orange"],
+.text-gold-accent {
+    color: var(--gold) !important;
 }
 
-/* Active Nav Item */
-[data-testid="stSidebar"] [data-checked="true"] {
-  background-color: var(--gold) !important;
-  color: var(--text-on-white) !important;
-  border-radius: var(--radius-md) !important;
-  font-weight: 700 !important;
+.ui-eyebrow {
+    color: var(--gold);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
 }
 
-[data-testid="stSidebar"] [data-checked="true"] p {
-  color: var(--text-on-white) !important;
-  font-weight: 700 !important;
+/* 4. BUTTONS */
+/* Primary: Nền vàng #FFD400, chữ đen #0A0A0A, đậm, cao >= 44px, bo 14px */
+button[kind="primary"],
+.stButton > button[data-testid="stBaseButton-primary"],
+.stButton > button[kind="primary"] {
+    background-color: var(--gold) !important;
+    color: #0A0A0A !important;
+    border: none !important;
+    border-radius: var(--radius-sm) !important;
+    font-weight: 800 !important;
+    min-height: 44px !important;
+    font-size: 0.95rem !important;
+    letter-spacing: -0.01em !important;
+    transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    box-shadow: 0 4px 14px rgba(255, 212, 0, 0.22) !important;
 }
 
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
-  color: var(--text) !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.02em !important;
+button[kind="primary"]:hover,
+.stButton > button[kind="primary"]:hover {
+    background-color: #FFE033 !important;
+    color: #000000 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(255, 212, 0, 0.35) !important;
 }
 
-/* Primary Button (Gold, Black text) */
-button[kind="primary"], .stButton > button[kind="primary"] {
-  background-color: var(--gold) !important;
-  color: var(--text-on-white) !important;
-  font-weight: 700 !important;
-  font-size: 1rem !important;
-  border: none !important;
-  border-radius: var(--radius-md) !important;
-  min-height: 46px !important;
-  padding: 10px 24px !important;
-  box-shadow: 0 4px 12px rgba(255, 212, 0, 0.25) !important;
-  transition: transform 0.1s ease, background-color 0.15s ease !important;
+/* Secondary: Nền trong suốt, viền trắng 2px, chữ trắng, cao >= 44px, bo 14px */
+button[kind="secondary"],
+.stButton > button[data-testid="stBaseButton-secondary"],
+.stButton > button[kind="secondary"] {
+    background-color: transparent !important;
+    color: var(--text-white) !important;
+    border: 2px solid rgba(255, 255, 255, 0.85) !important;
+    border-radius: var(--radius-sm) !important;
+    font-weight: 700 !important;
+    min-height: 44px !important;
+    font-size: 0.92rem !important;
+    transition: all 0.18s ease !important;
 }
 
-button[kind="primary"]:hover, .stButton > button[kind="primary"]:hover {
-  background-color: var(--gold-hover) !important;
-  color: var(--text-on-white) !important;
-  transform: translateY(-1px) !important;
+button[kind="secondary"]:hover,
+.stButton > button[kind="secondary"]:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: #FFFFFF !important;
+    color: #FFFFFF !important;
 }
 
-button[kind="primary"]:focus-visible, .stButton > button[kind="primary"]:focus-visible {
-  outline: 3px solid #FFFFFF !important;
-  outline-offset: 2px !important;
+/* Focus ring: Trắng 3px */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[data-baseweb="input"]:focus-within,
+[data-baseweb="select"]:focus-within {
+    outline: 3px solid #FFFFFF !important;
+    outline-offset: 2px !important;
 }
 
-/* Secondary Button (Transparent, White border 2px) */
-button[kind="secondary"], .stButton > button[kind="secondary"] {
-  background-color: transparent !important;
-  color: var(--text) !important;
-  font-weight: 600 !important;
-  border: 2px solid #FFFFFF !important;
-  border-radius: var(--radius-md) !important;
-  min-height: 46px !important;
-  padding: 10px 20px !important;
-  transition: all 0.15s ease !important;
+/* 5. FORM CONTROLS & INPUTS */
+[data-baseweb="input"] {
+    background-color: var(--surface-dark) !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--text-white) !important;
 }
 
-button[kind="secondary"]:hover, .stButton > button[kind="secondary"]:hover {
-  background-color: var(--surface) !important;
-  border-color: var(--gold) !important;
-  color: var(--gold) !important;
+[data-baseweb="input"] input {
+    color: var(--text-white) !important;
 }
 
-button[kind="secondary"]:focus-visible, .stButton > button[kind="secondary"]:focus-visible {
-  outline: 3px solid #FFFFFF !important;
-  outline-offset: 2px !important;
+/* Ô nhập chủ đề cao 72px với viền dưới vàng 4px bo 18px */
+.st-key-topic_input_card [data-baseweb="input"],
+.big-topic-input [data-baseweb="input"] {
+    height: 72px !important;
+    min-height: 72px !important;
+    background: var(--surface-dark) !important;
+    border: 1px solid var(--border-dark) !important;
+    border-bottom: 4px solid var(--gold) !important;
+    border-radius: var(--radius-lg) !important;
+    font-size: 1.15rem !important;
+    font-weight: 600 !important;
+    padding-left: 18px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Danger / Cancel button styling */
-.btn-danger button, button.btn-danger {
-  border: 2px solid rgba(255, 69, 58, 0.4) !important;
-  color: #FF453A !important;
-  background-color: transparent !important;
-  border-radius: var(--radius-md) !important;
-  min-height: 44px !important;
+.st-key-topic_input_card [data-baseweb="input"]:focus-within,
+.big-topic-input [data-baseweb="input"]:focus-within {
+    border-bottom: 4px solid var(--gold) !important;
+    outline: 3px solid #FFFFFF !important;
 }
 
-.btn-danger button:hover, button.btn-danger:hover {
-  background-color: rgba(255, 69, 58, 0.1) !important;
-  border-color: #FF453A !important;
+/* 6. ALERTS (stAlert: info, warning, success, error) */
+/* Cấm nền xanh mặc định: Nền #141414, chữ trắng, bo 14px, viền trái 4px */
+[data-testid="stAlert"] {
+    background-color: #141414 !important;
+    border: 1px solid #2A2A2A !important;
+    border-radius: var(--radius-sm) !important;
+    color: #FFFFFF !important;
+    padding: 14px 18px !important;
 }
 
-/* Inputs, Textareas, Selectboxes */
-div[data-baseweb="input"], div[data-baseweb="select"], .stTextArea textarea {
-  background-color: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: var(--radius-md) !important;
-  color: var(--text) !important;
-  font-size: 0.95rem !important;
+[data-testid="stAlert"] * {
+    color: #FFFFFF !important;
 }
 
-div[data-baseweb="input"]:focus-within, div[data-baseweb="select"]:focus-within, .stTextArea textarea:focus {
-  border-color: #FFFFFF !important;
-  box-shadow: var(--focus-ring) !important;
+/* Viền trái 4px cho các loại thông báo */
+[data-testid="stAlert"]:has([aria-label="info"]),
+[data-testid="stAlert"]:has([data-testid="stNotificationIconInfo"]) {
+    border-left: 4px solid var(--gold) !important;
 }
 
-/* Big Topic Input (72px height, 4px gold bottom border) */
-.big-topic-input div[data-baseweb="input"] {
-  min-height: 72px !important;
-  border-bottom: 4px solid var(--gold) !important;
-  font-size: 1.25rem !important;
-  font-weight: 600 !important;
-  border-radius: var(--radius-md) var(--radius-md) 4px 4px !important;
-  background-color: #171717 !important;
+[data-testid="stAlert"]:has([aria-label="warning"]),
+[data-testid="stAlert"]:has([data-testid="stNotificationIconWarning"]) {
+    border-left: 4px solid var(--gold) !important;
 }
 
-.big-topic-input input {
-  font-size: 1.2rem !important;
-  color: #FFFFFF !important;
+[data-testid="stAlert"]:has([aria-label="success"]),
+[data-testid="stAlert"]:has([data-testid="stNotificationIconSuccess"]) {
+    border-left: 4px solid #4ADE80 !important;
 }
 
-/* White Card Components */
-.ui-card-white {
-  background-color: var(--card-white) !important;
-  color: var(--text-on-white) !important;
-  border-radius: var(--radius-lg) !important;
-  padding: 18px 20px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+[data-testid="stAlert"]:has([aria-label="error"]),
+[data-testid="stAlert"]:has([data-testid="stNotificationIconError"]) {
+    border-left: 4px solid #F87171 !important;
 }
 
-.ui-card-white h1, .ui-card-white h2, .ui-card-white h3, .ui-card-white h4, .ui-card-white h5, .ui-card-white strong, .ui-card-white p, .ui-card-white span {
-  color: var(--text-on-white) !important;
+/* 7. KEYED CONTAINERS (THE CORE UX ARCHITECTURE) */
+/* Khối SỐ LƯỢNG VIDEO */
+.st-key-qty_card {
+    background: #141414 !important;
+    border: 2px solid var(--gold) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 20px 22px !important;
+    margin-bottom: 20px !important;
 }
 
-.ui-card-white .muted {
-  color: #555555 !important;
+
+/* Triệt tiêu hoàn toàn mọi alert, caption, notice lọt vào trong 4 thẻ tùy chọn */
+.st-key-opt_dur [data-testid="stAlert"],
+.st-key-opt_style [data-testid="stAlert"],
+.st-key-opt_ill [data-testid="stAlert"],
+.st-key-opt_voice [data-testid="stAlert"],
+.st-key-opt_dur .stAlert,
+.st-key-opt_style .stAlert,
+.st-key-opt_ill .stAlert,
+.st-key-opt_voice .stAlert,
+.st-key-opt_dur [data-testid="stCaptionContainer"],
+.st-key-opt_style [data-testid="stCaptionContainer"],
+.st-key-opt_ill [data-testid="stCaptionContainer"],
+.st-key-opt_voice [data-testid="stCaptionContainer"],
+.st-key-opt_style div[role="alert"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
 }
 
-/* Dark Card Components */
-.ui-card-dark {
-  background-color: var(--surface) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: var(--radius-lg) !important;
-  padding: 18px 20px !important;
+/* Hàng 4 thẻ trắng: Thời lượng, Phong cách, Minh họa, Giọng đọc */
+.st-key-opt_dur,
+.st-key-opt_style,
+.st-key-opt_ill,
+.st-key-opt_voice {
+    background: #FFFFFF !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 16px 12px !important;
+    color: #0A0A0A !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45) !important;
+    min-height: 110px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    transition: all 0.2s ease !important;
 }
 
-/* Outline Card */
-.ui-card-outline {
-  background-color: transparent !important;
-  color: var(--text) !important;
-  border: 2px solid var(--border) !important;
-  border-radius: var(--radius-lg) !important;
-  padding: 18px 20px !important;
+.st-key-opt_dur:hover,
+.st-key-opt_style:hover,
+.st-key-opt_ill:hover,
+.st-key-opt_voice:hover {
+    box-shadow: 0 6px 20px rgba(255, 212, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.45) !important;
+    transform: translateY(-2px) !important;
 }
 
-/* Chips / Badges (999px pill) */
+.st-key-opt_dur *,
+.st-key-opt_style *,
+.st-key-opt_ill *,
+.st-key-opt_voice * {
+    color: #0A0A0A !important;
+}
+
+.st-key-opt_dur p,
+.st-key-opt_style p,
+.st-key-opt_ill p,
+.st-key-opt_voice p,
+.st-key-opt_dur label,
+.st-key-opt_style label,
+.st-key-opt_ill label,
+.st-key-opt_voice label {
+    color: #0A0A0A !important;
+    font-weight: 800 !important;
+    font-size: 0.78rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    margin-bottom: 8px !important;
+}
+
+/* Khung ngoài ô chọn (Combobox / Select) trong 4 thẻ trắng */
+.st-key-opt_dur [data-testid="stSelectbox"] div[role="group"],
+.st-key-opt_style [data-testid="stSelectbox"] div[role="group"],
+.st-key-opt_ill [data-testid="stSelectbox"] div[role="group"],
+.st-key-opt_voice [data-testid="stSelectbox"] div[role="group"],
+.st-key-opt_dur [data-baseweb="select"] > div,
+.st-key-opt_style [data-baseweb="select"] > div,
+.st-key-opt_ill [data-baseweb="select"] > div,
+.st-key-opt_voice [data-baseweb="select"] > div {
+    background-color: #F4F4F5 !important;
+    background: #F4F4F5 !important;
+    border: 1.5px solid #D4D4D8 !important;
+    border-radius: 12px !important;
+    min-height: 44px !important;
+    height: 44px !important;
+    box-shadow: none !important;
+    padding: 0 4px 0 8px !important;
+    transition: all 0.15s ease !important;
+}
+
+/* Hover & Focus state cho ô chọn trong 4 thẻ trắng */
+.st-key-opt_dur [data-testid="stSelectbox"] div[role="group"]:hover,
+.st-key-opt_style [data-testid="stSelectbox"] div[role="group"]:hover,
+.st-key-opt_ill [data-testid="stSelectbox"] div[role="group"]:hover,
+.st-key-opt_voice [data-testid="stSelectbox"] div[role="group"]:hover,
+.st-key-opt_dur [data-testid="stSelectbox"] div[role="group"]:focus-within,
+.st-key-opt_style [data-testid="stSelectbox"] div[role="group"]:focus-within,
+.st-key-opt_ill [data-testid="stSelectbox"] div[role="group"]:focus-within,
+.st-key-opt_voice [data-testid="stSelectbox"] div[role="group"]:focus-within,
+.st-key-opt_dur [data-baseweb="select"] > div:hover,
+.st-key-opt_style [data-baseweb="select"] > div:hover,
+.st-key-opt_ill [data-baseweb="select"] > div:hover,
+.st-key-opt_voice [data-baseweb="select"] > div:hover {
+    background-color: #FFFFFF !important;
+    background: #FFFFFF !important;
+    border-color: #FFD400 !important;
+    box-shadow: 0 0 0 2px rgba(255, 212, 0, 0.45) !important;
+}
+
+/* Chữ hiển thị bên trong ô chọn */
+.st-key-opt_dur [data-testid="stSelectbox"] input,
+.st-key-opt_style [data-testid="stSelectbox"] input,
+.st-key-opt_ill [data-testid="stSelectbox"] input,
+.st-key-opt_voice [data-testid="stSelectbox"] input,
+.st-key-opt_dur [data-baseweb="select"] input,
+.st-key-opt_style [data-baseweb="select"] input,
+.st-key-opt_ill [data-baseweb="select"] input,
+.st-key-opt_voice [data-baseweb="select"] input {
+    color: #0A0A0A !important;
+    -webkit-text-fill-color: #0A0A0A !important;
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    letter-spacing: -0.01em !important;
+    background: transparent !important;
+}
+
+/* Text placeholder / selected value */
+.st-key-opt_dur [data-testid="stSelectbox"] span,
+.st-key-opt_style [data-testid="stSelectbox"] span,
+.st-key-opt_ill [data-testid="stSelectbox"] span,
+.st-key-opt_voice [data-testid="stSelectbox"] span,
+.st-key-opt_dur [data-baseweb="select"] span,
+.st-key-opt_style [data-baseweb="select"] span,
+.st-key-opt_ill [data-baseweb="select"] span,
+.st-key-opt_voice [data-baseweb="select"] span {
+    color: #0A0A0A !important;
+    -webkit-text-fill-color: #0A0A0A !important;
+    font-weight: 700 !important;
+}
+
+/* Mũi tên dropdown bên phải */
+.st-key-opt_dur [data-testid="stSelectbox"] button,
+.st-key-opt_style [data-testid="stSelectbox"] button,
+.st-key-opt_ill [data-testid="stSelectbox"] button,
+.st-key-opt_voice [data-testid="stSelectbox"] button,
+.st-key-opt_dur [data-baseweb="select"] button,
+.st-key-opt_style [data-baseweb="select"] button,
+.st-key-opt_ill [data-baseweb="select"] button,
+.st-key-opt_voice [data-baseweb="select"] button {
+    background: transparent !important;
+    color: #0A0A0A !important;
+}
+
+.st-key-opt_dur [data-testid="stSelectbox"] svg,
+.st-key-opt_style [data-testid="stSelectbox"] svg,
+.st-key-opt_ill [data-testid="stSelectbox"] svg,
+.st-key-opt_voice [data-testid="stSelectbox"] svg,
+.st-key-opt_dur [data-baseweb="select"] svg,
+.st-key-opt_style [data-baseweb="select"] svg,
+.st-key-opt_ill [data-baseweb="select"] svg,
+.st-key-opt_voice [data-baseweb="select"] svg {
+    fill: #0A0A0A !important;
+    color: #0A0A0A !important;
+}
+
+/* Thanh CTA bar */
+.st-key-cta_bar {
+    border: 2px solid #FFFFFF !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 20px 24px !important;
+    background: #141414 !important;
+    margin-top: 18px !important;
+}
+
+/* Khung trắng cột bên (side_panel) */
+.st-key-side_panel {
+    background: #FFFFFF !important;
+    color: #0A0A0A !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 24px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+.st-key-side_panel h1,
+.st-key-side_panel h2,
+.st-key-side_panel h3,
+.st-key-side_panel p,
+.st-key-side_panel span,
+.st-key-side_panel div {
+    color: #0A0A0A !important;
+}
+
+.st-key-side_panel button {
+    background: #FFFFFF !important;
+    color: #0A0A0A !important;
+    border: 2px solid #0A0A0A !important;
+    border-radius: var(--radius-sm) !important;
+    font-weight: 700 !important;
+}
+
+.st-key-side_panel button:hover {
+    background: var(--gold) !important;
+    border-color: var(--gold) !important;
+    color: #0A0A0A !important;
+}
+
+/* 8. SIDEBAR NAVIGATION - KHÔNG DÙNG TICK BOX, FLAT TAB BUTTON BO 14PX */
+
+/* Ẩn triệt để TẤT CẢ các thành phần radio tick box / circle indicator */
+[data-testid="stSidebar"] [role="radiogroup"] input[type="radio"],
+[data-testid="stSidebar"] [role="radiogroup"] label > div:not([data-testid="stMarkdownContainer"]),
+[data-testid="stSidebar"] [role="radiogroup"] label svg,
+[data-testid="stSidebar"] [role="radiogroup"] [class*="StyledRadio"],
+[data-testid="stSidebar"] [role="radiogroup"] [class*="RadioMark"],
+[data-testid="stSidebar"] [role="radiogroup"] [class*="RadioPoint"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    position: absolute !important;
+    pointer-events: none !important;
+}
+
+/* Radiogroup layout dạng cột dọc */
+[data-testid="stSidebar"] [role="radiogroup"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    width: 100% !important;
+    padding: 0 !important;
+}
+
+/* Mỗi label là một nút phẳng dạng tab / pill sang trọng bo 14px */
+[data-testid="stSidebar"] [role="radiogroup"] > label,
+[data-testid="stSidebar"] [role="radiogroup"] label[data-baseweb="radio"] {
+    display: block !important;
+    width: 100% !important;
+    padding: 10px 16px !important;
+    margin: 0 !important;
+    border-radius: 14px !important;
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-sizing: border-box !important;
+    text-align: left !important;
+}
+
+/* Hover state: sáng nhẹ thanh lịch */
+[data-testid="stSidebar"] [role="radiogroup"] > label:hover,
+[data-testid="stSidebar"] [role="radiogroup"] label[data-baseweb="radio"]:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Text bên trong item navigation */
+[data-testid="stSidebar"] [role="radiogroup"] label [data-testid="stMarkdownContainer"],
+[data-testid="stSidebar"] [role="radiogroup"] label [data-testid="stMarkdownContainer"] p {
+    color: #C0C0C0 !important;
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    letter-spacing: -0.01em !important;
+    transition: color 0.15s ease !important;
+}
+
+[data-testid="stSidebar"] [role="radiogroup"] label:hover [data-testid="stMarkdownContainer"] p {
+    color: #FFFFFF !important;
+}
+
+/* MỤC ĐANG CHỌN (ACTIVE ITEM): NỀN VÀNG #FFD400, CHỮ ĐEN #0A0A0A ĐẬM, BO 14PX */
+[data-testid="stSidebar"] [role="radiogroup"] > label:has(input:checked),
+[data-testid="stSidebar"] [role="radiogroup"] label[data-baseweb="radio"]:has(input:checked),
+[data-testid="stSidebar"] [role="radiogroup"] label[aria-checked="true"] {
+    background-color: #FFD400 !important;
+    border-color: #FFD400 !important;
+    box-shadow: 0 4px 16px rgba(255, 212, 0, 0.3) !important;
+}
+
+[data-testid="stSidebar"] [role="radiogroup"] > label:has(input:checked) [data-testid="stMarkdownContainer"] p,
+[data-testid="stSidebar"] [role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) [data-testid="stMarkdownContainer"] p,
+[data-testid="stSidebar"] [role="radiogroup"] label[aria-checked="true"] [data-testid="stMarkdownContainer"] p {
+    color: #0A0A0A !important;
+    font-weight: 800 !important;
+}
+
+/* Phân nhóm tiêu đề với ::before */
+[data-testid="stSidebar"] [role="radiogroup"] > label:nth-of-type(1)::before {
+    content: "TẠO VIDEO";
+    display: block;
+    width: 100%;
+    color: #7A7A7A;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    padding: 6px 0 8px 4px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+[data-testid="stSidebar"] [role="radiogroup"] > label:nth-of-type(5)::before {
+    content: "XỬ LÝ";
+    display: block;
+    width: 100%;
+    color: #7A7A7A;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    padding: 18px 0 8px 4px;
+    margin-bottom: 4px;
+    margin-top: 6px;
+    text-transform: uppercase;
+    border-top: 1px solid #222222;
+    pointer-events: none;
+}
+
+[data-testid="stSidebar"] [role="radiogroup"] > label:nth-of-type(10)::before {
+    content: "THƯ VIỆN";
+    display: block;
+    width: 100%;
+    color: #7A7A7A;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    padding: 18px 0 8px 4px;
+    margin-bottom: 4px;
+    margin-top: 6px;
+    text-transform: uppercase;
+    border-top: 1px solid #222222;
+    pointer-events: none;
+}
+
+[data-testid="stSidebar"] [role="radiogroup"] > label:nth-of-type(14)::before {
+    content: "HỆ THỐNG";
+    display: block;
+    width: 100%;
+    color: #7A7A7A;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    padding: 18px 0 8px 4px;
+    margin-bottom: 4px;
+    margin-top: 6px;
+    text-transform: uppercase;
+    border-top: 1px solid #222222;
+    pointer-events: none;
+}
+
+/* =========================================================================
+   SPINNER LOAD CHO WEBSITE (ĐEN - VÀNG #FFD400)
+   ========================================================================= */
+
+/* Top loading bar */
+[data-testid="stDecoration"] {
+    background: linear-gradient(90deg, #FFD400, #FFF5A5, #FFD400) !important;
+    background-size: 200% 100% !important;
+    animation: agyShimmer 2s linear infinite !important;
+    height: 3.5px !important;
+    box-shadow: 0 0 12px rgba(255, 212, 0, 0.7) !important;
+}
+
+@keyframes agyShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Streamlit Native Spinner (.stSpinner / [data-testid="stSpinner"]) */
+.stSpinner,
+[data-testid="stSpinner"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 16px 24px !important;
+    margin: 12px 0 !important;
+    background: rgba(20, 20, 20, 0.9) !important;
+    border: 1px solid #2A2A2A !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+.stSpinner > div:first-child,
+[data-testid="stSpinner"] > div:first-child {
+    border-color: rgba(255, 212, 0, 0.2) !important;
+    border-top-color: #FFD400 !important;
+    border-width: 3.5px !important;
+    border-radius: 50% !important;
+    width: 28px !important;
+    height: 28px !important;
+    animation: agySpin 0.7s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+}
+
+.stSpinner [data-testid="stMarkdownContainer"] p,
+[data-testid="stSpinner"] span {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    margin-left: 14px !important;
+    letter-spacing: -0.01em !important;
+}
+
+@keyframes agySpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Status Widget (Running indicator ở góc trên bên phải) */
+[data-testid="stStatusWidget"] {
+    background-color: #141414 !important;
+    border: 1.5px solid #FFD400 !important;
+    border-radius: 999px !important;
+    padding: 4px 14px !important;
+    box-shadow: 0 4px 16px rgba(255, 212, 0, 0.25) !important;
+}
+
+[data-testid="stStatusWidget"] * {
+    color: #FFD400 !important;
+    font-weight: 800 !important;
+    font-size: 0.85rem !important;
+}
+
+/* UI Kit Component Loading Spinner */
+.agy-loader-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    background: #141414;
+    border: 1px solid #2A2A2A;
+    border-radius: 18px;
+    margin: 16px 0;
+    text-align: center;
+}
+
+.agy-loader-ring {
+    width: 44px;
+    height: 44px;
+    border: 4px solid rgba(255, 212, 0, 0.15);
+    border-top-color: #FFD400;
+    border-radius: 50%;
+    animation: agySpin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    margin-bottom: 14px;
+}
+
+.agy-loader-title {
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+.agy-loader-sub {
+    color: #A8A8A8;
+    font-size: 0.82rem;
+    font-weight: 500;
+}
+
+/* 9. BADGES / CHIPS */
 .ui-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: var(--radius-pill);
-  font-size: 0.8rem;
-  font-weight: 600;
-  line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--radius-pill);
+    padding: 3px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }
 
 .ui-chip-gold {
-  background-color: rgba(255, 212, 0, 0.15);
-  color: var(--gold);
-  border: 1px solid rgba(255, 212, 0, 0.35);
-}
-
-.ui-chip-green {
-  background-color: rgba(52, 199, 89, 0.15);
-  color: #34C759;
-  border: 1px solid rgba(52, 199, 89, 0.35);
-}
-
-.ui-chip-red {
-  background-color: rgba(255, 69, 58, 0.15);
-  color: #FF453A;
-  border: 1px solid rgba(255, 69, 58, 0.35);
-}
-
-.ui-chip-neutral {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
+    background: var(--gold);
+    color: #0A0A0A;
 }
 
 .ui-chip-white {
-  background-color: #FFFFFF;
-  color: #0A0A0A;
-  font-weight: 700;
+    background: #FFFFFF;
+    color: #0A0A0A;
 }
 
-/* Stepper Component */
+.ui-chip-green {
+    background: rgba(74, 222, 128, 0.18);
+    color: #4ADE80;
+    border: 1px solid rgba(74, 222, 128, 0.35);
+}
+
+.ui-chip-red {
+    background: rgba(248, 113, 113, 0.18);
+    color: #F87171;
+    border: 1px solid rgba(248, 113, 113, 0.35);
+}
+
+.ui-chip-neutral {
+    background: #222222;
+    color: #A8A8A8;
+    border: 1px solid #333333;
+}
+
+/* 10. STEPPER (5 BƯỚC TIẾN TRÌNH) */
 .ui-stepper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 0;
-  overflow-x: auto;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 .ui-step-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: var(--radius-md);
-  font-size: 0.85rem;
-  font-weight: 600;
-  white-space: nowrap;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .ui-step-done {
-  background-color: var(--surface);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
+    background: #141414;
+    color: #FFFFFF;
+    border: 1px solid #2A2A2A;
 }
 
 .ui-step-done .check {
-  color: var(--gold);
+    color: #4ADE80;
+    font-weight: 900;
 }
 
 .ui-step-active {
-  background-color: var(--gold);
-  color: var(--text-on-white);
-  font-weight: 700;
-  box-shadow: 0 2px 10px rgba(255, 212, 0, 0.3);
+    background: var(--gold);
+    color: #0A0A0A;
+    font-weight: 800;
+    box-shadow: 0 2px 10px rgba(255, 212, 0, 0.3);
+}
+
+.ui-step-active .active-dot {
+    color: #0A0A0A;
+    font-size: 0.9rem;
 }
 
 .ui-step-pending {
-  background-color: transparent;
-  color: var(--text-muted);
-  border: 1px solid #333333;
+    background: transparent;
+    color: #888888;
+    border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-/* Eyebrow Accent */
-.ui-eyebrow {
-  color: var(--gold);
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
+/* 11. EXPANDER, TABS, SELECTBOX */
+[data-testid="stExpander"] {
+    background-color: var(--surface-dark) !important;
+    border: 1px solid var(--border-dark) !important;
+    border-radius: var(--radius-sm) !important;
+    margin-bottom: 12px !important;
 }
 
-/* Highlighted Accent Word */
-.text-gold-accent {
-  color: var(--gold) !important;
+[data-testid="stExpander"] summary {
+    font-weight: 700 !important;
+    color: var(--text-white) !important;
 }
 
-/* Progress bar in Gold */
-.stProgress > div > div > div > div {
-  background-color: var(--gold) !important;
+[data-baseweb="tab-list"] {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--border-dark) !important;
+    gap: 12px !important;
 }
 
-/* Native Container Borders (18px) */
-[data-testid="stVerticalBlockBorderWrapper"] {
-  border-radius: var(--radius-lg) !important;
-  border-color: var(--border) !important;
+[data-baseweb="tab"] {
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0 !important;
+    color: var(--text-muted) !important;
+    font-weight: 700 !important;
+    padding: 8px 16px !important;
 }
 
-/* Segmented Control Styling */
-[data-testid="stSegmentedControl"] {
-  border-radius: var(--radius-md) !important;
-  background-color: var(--surface) !important;
-  padding: 4px !important;
+[aria-selected="true"][data-baseweb="tab"] {
+    color: var(--gold) !important;
+    border-bottom: 2px solid var(--gold) !important;
 }
 
-[data-testid="stSegmentedControl"] button {
-  border-radius: 10px !important;
-  font-weight: 600 !important;
+[data-testid="stDataFrame"] {
+    border: 1px solid var(--border-dark) !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+/* 12. SELECTBOX DROPDOWN LISTBOX / POPOVER */
+[data-testid="stSelectboxVirtualDropdown"],
+[data-testid="stSelectboxVirtualDropdown"] > div,
+ul[role="listbox"],
+div[role="listbox"],
+[data-baseweb="menu"],
+[data-baseweb="popover"],
+[data-baseweb="popover"] > div {
+    background-color: #18181B !important;
+    background: #18181B !important;
+    border: 1.5px solid #3F3F46 !important;
+    border-radius: 14px !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85) !important;
+    padding: 6px !important;
+    min-width: 300px !important;
+    width: max-content !important;
+    max-width: 480px !important;
+    box-sizing: border-box !important;
+    z-index: 999999 !important;
+}
+
+li[role="option"],
+div[role="option"] {
+    color: #FFFFFF !important;
+    border-radius: 10px !important;
+    padding: 10px 14px !important;
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+    min-height: 40px !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    text-overflow: clip !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: background 0.12s ease !important;
+    margin-bottom: 2px !important;
+}
+
+li[role="option"] *,
+div[role="option"] * {
+    white-space: normal !important;
+    word-break: normal !important;
+    text-overflow: clip !important;
+}
+
+li[role="option"]:hover,
+li[role="option"][aria-selected="true"],
+div[role="option"]:hover,
+div[role="option"][aria-selected="true"],
+[aria-selected="true"][data-baseweb="menu-item"] {
+    background-color: var(--gold) !important;
+    background: var(--gold) !important;
+    color: #0A0A0A !important;
+    font-weight: 800 !important;
+}
+
+li[role="option"]:hover *,
+li[role="option"][aria-selected="true"] *,
+div[role="option"]:hover *,
+div[role="option"][aria-selected="true"] * {
+    color: #0A0A0A !important;
 }

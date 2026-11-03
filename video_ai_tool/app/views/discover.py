@@ -23,8 +23,6 @@ def handoff(topic,category=None,suggestion=None,style_preset=None):
 
 
 def render(settings,project,topic,debug,diagnostics):
-    st.title("Khám phá chủ đề")
-    st.caption("RSS và tìm kiếm tin mới → chọn một sự kiện cụ thể → Research kiểm chứng nguồn. Không lấy metadata làm facts.")
     try: categories=categories_for(settings)
     except Exception as error:
         st.error("Không đọc được config/categories.yaml: "+diagnostics.redact(str(error)))
@@ -46,7 +44,7 @@ def render(settings,project,topic,debug,diagnostics):
         style_preset=select_style(settings,key="discover_style_preset",category=category,video_type=default_type)
         with st.form("discover_topics"):
             region=st.selectbox("Khu vực",["vn","global","both"],index=2,format_func=lambda x:{"vn":"Việt Nam","global":"Quốc tế","both":"Cả hai"}[x])
-            days=st.selectbox("Tin trong bao nhiêu ngày",[1,3,7],index=1)
+            days=st.selectbox("Tin trong bao nhiêu ngày",[1,3,7],index=1,format_func=lambda d:f"{d} ngày")
             count=st.selectbox("Số gợi ý",[5,10])
             youtube=st.checkbox("Bổ sung YouTube trends",value=False)
             submitted=st.form_submit_button("Gợi ý chủ đề",type="primary")

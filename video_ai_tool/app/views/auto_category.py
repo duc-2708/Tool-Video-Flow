@@ -16,22 +16,20 @@ def auto_jobs(): return AutoCategoryJobs()
 
 
 def render(settings,project,topic,debug,diagnostics):
-    st.title("Tạo video theo danh mục")
-    st.caption("Khám phá chủ đề → Tìm thông tin → Kịch bản → Asset → Render. Ít dữ liệu sẽ tự rút thời lượng; không thêm sự kiện để kéo dài.")
     try: categories=[c.name for c in categories_for(settings).categories if c.enabled]
     except Exception as error: st.error(diagnostics.redact(str(error)));return
     if not categories: st.warning("Bật ít nhất một danh mục trong config/categories.yaml.");return
     manager=auto_jobs();active=manager.active()
     category=st.selectbox("Danh mục",categories,key="auto_category")
     left,right=st.columns(2)
-    region=left.selectbox("Khu vực",["vn","global","both"],index=2,key="auto_region")
-    days=right.selectbox("Khoảng ngày",[1,3,7],index=1,key="auto_days")
-    duration=left.selectbox("Thời lượng mong muốn (giây)",DURATIONS,index=1,key="auto_duration")
+    region=left.selectbox("Khu vực",["vn","global","both"],index=2,format_func=lambda x:{"vn":"Việt Nam","global":"Quốc tế","both":"Cả hai"}.get(x,str(x)),key="auto_region")
+    days=right.selectbox("Khoảng ngày",[1,3,7],index=1,format_func=lambda d:f"{d} ngày",key="auto_days")
+    duration=left.selectbox("Thời lượng mong muốn (giây)",DURATIONS,index=1,format_func=lambda d:f"{d} giây",key="auto_duration")
     format_name=right.selectbox("Tỉ lệ",["tiktok","youtube"],format_func=lambda v:"TikTok · 9:16" if v=="tiktok" else "YouTube · 16:9",key="auto_format")
     style_preset=select_style(settings,key="auto_style_preset",category=category)
     style=left.selectbox("Phong cách",list(STYLES),format_func=STYLES.get,key="auto_style")
     explainer_v2=st.checkbox("Explainer v2: giảng giải chuyên sâu",value=False,key="auto_explainer_v2")
-    creative=right.selectbox("Mức sáng tạo",["strict","balanced","story"],key="auto_creative")
+    creative=right.selectbox("Mức sáng tạo",["strict","balanced","story"],format_func=lambda x:{"strict":"Chặt chẽ","balanced":"Cân bằng","story":"Kể chuyện"}.get(x,str(x)),key="auto_creative")
     st.caption("Mức sáng tạo chỉ đổi cách kể; số liệu, sự kiện và khẳng định luôn phải có fact làm căn cứ.")
     mode=st.radio("Chế độ chạy",["Tự động hoàn toàn","Dừng để duyệt kịch bản"],key="auto_mode")
     youtube=st.checkbox("Bật YouTube trends",value=False,key="auto_youtube")

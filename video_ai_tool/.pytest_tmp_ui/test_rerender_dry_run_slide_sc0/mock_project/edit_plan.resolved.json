@@ -1,0 +1,145 @@
+{
+  "title": "Dựng video",
+  "format": "tiktok",
+  "voice": "vi-VN-HoaiMyNeural",
+  "music": {
+    "mood": "calm",
+    "volume": 0.1
+  },
+  "scenes": [
+    {
+      "id": 1,
+      "role": "hook",
+      "narration": "Câu số 1 với tốc độ tăng trưởng 10% vượt bậc.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false
+    },
+    {
+      "id": 2,
+      "role": "body",
+      "narration": "Câu số 2 với tốc độ tăng trưởng 20% vượt bậc.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": false
+    },
+    {
+      "id": 3,
+      "role": "body",
+      "narration": "Câu số 3 với tốc độ tăng trưởng 30% vượt bậc.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true
+    },
+    {
+      "id": 4,
+      "role": "body",
+      "narration": "Câu số 4 với tốc độ tăng trưởng 40% vượt bậc.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true
+    },
+    {
+      "id": 5,
+      "role": "cta",
+      "narration": "Câu số 5 với tốc độ tăng trưởng 50% vượt bậc.",
+      "shots": [
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        },
+        {
+          "type": "stock_video",
+          "query": "video editing",
+          "duration_sec": 3.0,
+          "effect": "zoom_in",
+          "text_overlay": null
+        }
+      ],
+      "transition_out": "cut",
+      "sfx": "pop",
+      "fact_ids": [
+        1
+      ],
+      "pattern_interrupt": true
+    }
+  ],
+  "video_type": null,
+  "target_duration_sec": null,
+  "brief_hash": null,
+  "source_plan_hash": "fixture_hash",
+  "timing_basis": "audio",
+  "warnings": []
+}

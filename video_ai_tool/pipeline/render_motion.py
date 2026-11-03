@@ -8,6 +8,7 @@ import math
 import re
 from pathlib import Path
 import subprocess
+from typing import Any
 from tempfile import TemporaryFile
 import time
 from functools import lru_cache
@@ -87,6 +88,31 @@ def background_images(size,top="#101b30",bottom="#080c17"):
         buffer=io.BytesIO();Image.fromarray(pixels).save(buffer,format="PNG")
         return "data:image/png;base64,"+base64.b64encode(buffer.getvalue()).decode("ascii")
     return uri(np.clip(base,0,255).astype(np.uint8)),uri(orb)
+
+
+def _inline_image_paths_to_data_uri(obj: Any) -> Any:
+    """Recursively convert any image file path string in data structures to base64 Data URI."""
+    if isinstance(obj, dict):
+        res = {}
+        for k, v in obj.items():
+            if k in ("image_url", "image_uri", "image_path", "image", "clip_url", "chart_image", "ui_image", "source_image") and isinstance(v, str) and v and not v.startswith("data:"):
+                p = Path(v)
+                if not p.is_file():
+                    cand = Path.cwd() / v
+                    if cand.is_file():
+                        p = cand
+                if p.is_file():
+                    from pipeline.slide_image_resolver import path_to_data_uri
+                    uri = path_to_data_uri(p)
+                    res[k] = uri or v
+                else:
+                    res[k] = v
+            else:
+                res[k] = _inline_image_paths_to_data_uri(v)
+        return res
+    elif isinstance(obj, list):
+        return [_inline_image_paths_to_data_uri(elem) for elem in obj]
+    return obj
 
 
 def scene_payload(scene,size,caption_style,options=None):
@@ -242,6 +268,11 @@ def scene_payload(scene,size,caption_style,options=None):
             }
         elif spec.scene_type in LIGHT_GLASS_RECIPES:
             rebound_dict = rebound.model_dump(mode='json') if hasattr(rebound, 'model_dump') else dict(rebound)
+            if hasattr(spec, 'data') and spec.data:
+                s_data = spec.data if isinstance(spec.data, dict) else spec.data.model_dump(mode='json')
+                for k, v in s_data.items():
+                    if v is not None:
+                        rebound_dict[k] = v
             beats = [b.model_dump(mode='json') for b in getattr(spec, 'beats', [])] if getattr(spec, 'beats', None) else [
                 {"at_sec": 0.35, "action": f"enter_{spec.scene_type}"},
                 {"at_sec": 1.5, "action": f"action_{spec.scene_type}_step"},
@@ -357,6 +388,7 @@ def scene_payload(scene,size,caption_style,options=None):
     payload["repair_notes"]=notes
     from utils.caption_timing import phrase_groups
     payload['caption_groups']=[[{'text':s,'start':a,'end':b} for s,a,b in group] for group in phrase_groups([(w['text'],w['start'],w['end']) for w in payload['caption_words']])]
+    payload = _inline_image_paths_to_data_uri(payload)
     return payload
 
 

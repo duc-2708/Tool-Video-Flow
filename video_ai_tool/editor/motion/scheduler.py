@@ -224,23 +224,22 @@ def suggest_metaphor_recipe(narration: str, previous_recipe: Optional[str] = Non
 
     # Fallback default when no keyword matched: alternate diverse families
     alternating = [
-        "slot_counter",
-        "balance_scale",
-        "conveyor_belt",
-        "lock_unlock",
-        "orbit_system",
-        "glass_fill",
-        "chat_thread",
+        "stat_number",
+        "before_after_split",
+        "timeline_milestones",
+        "code_terminal_window",
+        "profile_dossier",
+        "quote_dialog_card",
+        "network_graph",
         "bar_race",
-        "shield_hit",
-        "domino_chain",
-        "stack_pile"
+        "countdown_timer",
+        "checklist"
     ]
     for alt in alternating:
         if get_recipe_family(alt) != prev_family:
             return alt
 
-    return "slot_counter"
+    return "stat_number"
 
 
 def suggest_light_glass_recipe(
@@ -932,21 +931,21 @@ def schedule_shots_no_repeat(
     INTENT_RECIPE_PRIORITY = {
         "legal": [
             "courtroom_balance", "profile_dossier", "document_page_flip",
-            "camera_surveillance_scan", "evidence_board", "balance_scale"
+            "camera_surveillance_scan", "evidence_board", "quote_dialog_card"
         ],
-        "profile": ["profile_dossier", "document_page_flip", "camera_surveillance_scan", "quote_dialog_card"],
+        "profile": ["profile_dossier", "quote_dialog_card", "document_page_flip", "camera_surveillance_scan"],
         "location": ["map_location_pin", "network_graph", "camera_surveillance_scan"],
         "number": [
-            "slot_counter", "odometer", "strike_replace", "countdown_timer",
-            "gauge_needle", "battery_fill", "glass_fill", "bar_race", "thermometer"
+            "stat_number", "countdown_timer", "strike_replace", "bar_race",
+            "gauge_needle", "slot_counter"
         ],
-        "compare": ["before_after_split", "balance_scale", "courtroom_balance", "vs_flip_cards", "tug_of_war", "before_after_wipe"],
-        "risk": ["shield_hit", "lock_unlock", "camera_surveillance_scan", "traffic_light", "dice_roll"],
-        "process": ["timeline_milestones", "pipeline_pipes", "domino_chain", "conveyor_belt", "funnel_filter"],
-        "network": ["network_graph", "evidence_board", "orbit_system", "puzzle_snap"],
-        "mock_ui": ["code_terminal_window", "form_fill_submit", "mock_card_swipe", "chat_thread", "terminal_command_run", "checklist"],
-        "concept": ["evidence_board", "orbit_system", "puzzle_snap", "stack_pile", "layered_onion"],
-        "recap": ["checklist", "timeline_milestones", "evidence_board", "orbit_system", "lock_unlock"],
+        "compare": ["before_after_split", "versus_split", "courtroom_balance", "vs_flip_cards", "before_after_wipe"],
+        "risk": ["lock_unlock", "camera_surveillance_scan", "shield_hit", "traffic_light"],
+        "process": ["timeline_milestones", "pipeline_pipes", "funnel_filter", "domino_chain"],
+        "network": ["network_graph", "evidence_board", "puzzle_snap", "orbit_system"],
+        "mock_ui": ["code_terminal_window", "mock_ui_window", "checklist", "form_fill_submit", "chat_thread", "mock_card_swipe"],
+        "concept": ["evidence_board", "network_graph", "puzzle_snap", "stack_pile"],
+        "recap": ["checklist", "timeline_milestones", "evidence_board", "quote_dialog_card"],
     }
 
     # Central anchor metaphor determined dynamically from script content via score

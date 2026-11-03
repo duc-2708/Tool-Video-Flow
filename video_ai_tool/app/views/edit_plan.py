@@ -27,7 +27,7 @@ def report_error(error: BaseException, diagnostics: Diagnostics, project: Path) 
 
 
 def render(settings: Settings, project: Path | None, topic: str, debug: bool, diagnostics: Diagnostics) -> None:
-    section_header("XỬ LÝ", "Kịch bản (Edit Plan)", accent_word="(Edit Plan)")
+    st.title("Edit Plan")
     st.caption("Director → kế hoạch JSON. Chưa tạo audio, tải media hoặc render video.")
     if project is None or not (project / "brief.json").exists():
         st.info("Chọn project đã có brief.json hoặc chạy Research trước khi tạo Edit Plan.")
@@ -90,9 +90,12 @@ def render(settings: Settings, project: Path | None, topic: str, debug: bool, di
         duration = st.number_input("Độ dài yêu cầu (giây)", min_value=6.0, max_value=600.0,
                                   value=float(existing.requested_duration_sec or existing.target_duration_sec or 45) if existing else 45.0, step=1.0)
         duration = float(preset) if preset != "Tùy chỉnh" else duration
-        advice = data_advice(ResearchBrief.model_validate(brief_data),duration)
-        if advice["thin"]:
-            st.warning(advice["warning"]+f"; đề xuất {advice['suggested_duration']:g} giây.")
+        try:
+            advice = data_advice(ResearchBrief.model_validate(brief_data), duration)
+            if advice['thin']:
+                st.warning(advice['warning'] + f'; đề xuất {advice["suggested_duration"]:g} giây.')
+        except Exception:
+            pass
         output_language = st.selectbox("Ngôn ngữ kịch bản",["vi"],format_func=lambda value:"Tiếng Việt")
         ai_clip_limit = st.number_input("Số shot chuẩn bị clip AI",min_value=0,max_value=max(0,settings.ai_clip_max_per_run),value=0,step=1)
         generate = st.form_submit_button("Tạo Edit Plan", type="primary", disabled=not model_ready)

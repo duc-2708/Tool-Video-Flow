@@ -1,0 +1,10 @@
+{
+  "url": "https://invalid-offline-domain-test.local/news/123",
+  "domain": "invalid-offline-domain-test.local",
+  "title": "Bước tiến công nghệ mới nhất trong năm 2026",
+  "capture_time": "2026-11-02T20:54:05.088387",
+  "kind": "card",
+  "image_path": "C:\\Users\\admin\\Desktop\\app create video\\video_ai_tool\\.pytest_tmp_ui\\test_capture_sources_for_brief0\\sources\\387070223062.png",
+  "fallback_used": true,
+  "error": "Page.goto: Timeout 2000ms exceeded.\nCall log:\n  - navigating to \"https://invalid-offline-domain-test.local/news/123\", waiting until \"domcontentloaded\"\n"
+}

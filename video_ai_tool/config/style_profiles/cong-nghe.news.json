@@ -61,6 +61,7 @@
     "font_scale": 0.064,
     "color": "#FFFFFF",
     "highlight_color": "#FFD741",
+    "standout_color": "#FF3344",
     "stroke_color": "#000000",
     "color_note": "",
     "stroke_width_ratio": 0.006,
@@ -90,7 +91,7 @@
   "video_type": "news",
   "video_count": 0,
   "confidence_label": "mặc định",
-  "source_signature": "ef23174d0b38bef68cb88454b77de7aa2241421c78accc1347599622281f9d42",
+  "source_signature": "de1a1d9017e8037e6d995f2dd4732d586efcc6ac14b27144979593107484a900",
   "locked_fields": [],
   "scene_pacing": [
     {

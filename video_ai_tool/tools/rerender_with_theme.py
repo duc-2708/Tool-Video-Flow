@@ -15,6 +15,10 @@ from pathlib import Path
 import sys
 from typing import Any
 
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 from agents.slide_planner import plan_slides
 from config.settings import get_settings
 from editor.motion.slide_grounding import verify_and_ground_slides
@@ -98,16 +102,23 @@ def rerender_project_with_theme(
         # If confirm_cost is False, we pass a mock LLM or let plan_slides use heuristic
         mock_client = None
         if not confirm_cost:
-            # Safe offline mode: no remote LLM cost
-            logger.info("confirm_cost is False: using deterministic heuristic planner (0 remote API cost)")
-            from editor.motion.light_glass_slots import create_heuristic_slide_script
-            slide_script_obj = create_heuristic_slide_script(
-                sentences=sentences,
-                brief=brief_data,
-                total_duration=total_duration,
-                brand_name=getattr(settings, "brand_name", "TIN CÔNG NGHỆ"),
-            )
-            slide_script_obj = verify_and_ground_slides(slide_script_obj, {s["id"]: s for s in sentences}, brief_data)
+            if (p_dir / "slide_script.json").is_file():
+                try:
+                    slide_script_obj = SlideScript.model_validate_json((p_dir / "slide_script.json").read_text(encoding="utf-8"))
+                    logger.info("Loaded existing slide_script.json (%d slides)", len(slide_script_obj.slides))
+                except Exception:
+                    slide_script_obj = None
+            if not slide_script_obj:
+                # Safe offline mode: no remote LLM cost
+                logger.info("confirm_cost is False: using deterministic heuristic planner (0 remote API cost)")
+                from editor.motion.light_glass_slots import create_heuristic_slide_script
+                slide_script_obj = create_heuristic_slide_script(
+                    sentences=sentences,
+                    brief=brief_data,
+                    total_duration=total_duration,
+                    brand_name=getattr(settings, "brand_name", "TIN CÔNG NGHỆ"),
+                )
+                slide_script_obj = verify_and_ground_slides(slide_script_obj, {s["id"]: s for s in sentences}, brief_data)
         else:
             # Token and cost estimation before calling remote LLM
             est_in = max(100, len(sentences) * 120 + 400)
@@ -124,11 +135,27 @@ def rerender_project_with_theme(
                 brand_name=getattr(settings, "brand_name", "TIN CÔNG NGHỆ"),
             )
 
-        # Attach captured image if available
-        if first_img_path and slide_script_obj.slides:
-            first_slide = slide_script_obj.slides[0]
-            if first_slide.layout == "lg_source_headline":
-                first_slide.slots["image_url"] = str(first_img_path)
+        # Attach captured images across slides
+        if source_captures and slide_script_obj.slides:
+            captures_list = [c.get("image_path") for c in source_captures.values() if c.get("image_path")]
+            if captures_list:
+                # Slide 1 gets primary capture if not already set
+                if not slide_script_obj.slides[0].slots.get("image_url"):
+                    slide_script_obj.slides[0].slots["image_url"] = str(captures_list[0])
+                # Distribute remaining captures to other slides (e.g. slide 3, 4)
+                if len(captures_list) > 1 and len(slide_script_obj.slides) > 3:
+                    target_slide = slide_script_obj.slides[3]
+                    if not target_slide.slots.get("image_url") and target_slide.layout in ("lg_source_headline", "lg_shot_features", "lg_stat_hero", "lg_note_card"):
+                        target_slide.slots["image_url"] = str(captures_list[1])
+                if len(captures_list) > 2 and len(slide_script_obj.slides) > 4:
+                    target_slide = slide_script_obj.slides[4]
+                    if not target_slide.slots.get("image_url") and target_slide.layout in ("lg_source_headline", "lg_shot_features", "lg_stat_hero"):
+                        target_slide.slots["image_url"] = str(captures_list[2])
+
+        # Synthesize & resolve high-contrast cinematic imagery for all slides
+        from pipeline.slide_image_resolver import resolve_images_for_slide_script
+        resolved_imgs = resolve_images_for_slide_script(p_dir, slide_script_obj)
+        logger.info("Resolved %d visual graphic assets for slides", len(resolved_imgs))
 
         # Save slide_script.json
         slide_script_file = p_dir / "slide_script.json"

@@ -103,39 +103,38 @@ def show_result(result, project, diagnostics):
         st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 
         # Checklist ✓ / ! / ✕ từ quality_report / layout_report
-        st.markdown('<div class="ui-card-dark" style="padding: 14px 18px; margin-bottom: 12px;">', unsafe_allow_html=True)
-        st.markdown('<div style="font-size: 0.85rem; font-weight: 800; color: #FFD400; text-transform: uppercase; margin-bottom: 8px;">Tiêu chuẩn kiểm định</div>', unsafe_allow_html=True)
-
-        # 1. Bố cục
-        lr_path = project / "layout_report.json"
-        if lr_path.is_file():
-            try:
-                lr_data = read_json(lr_path)
-                if lr_data.get("overall_all_passed", True):
-                    st.markdown("<div style='color: #4CAF50; font-weight: 600; margin: 4px 0;'>✓ Bố cục: Toàn bộ khung hình đạt chuẩn khoảng an toàn</div>", unsafe_allow_html=True)
-                else:
-                    st.markdown("<div style='color: #FF5252; font-weight: 600; margin: 4px 0;'>✕ Bố cục: Phát hiện lỗi va chạm hoặc tràn viền sau kiểm định</div>", unsafe_allow_html=True)
-            except Exception:
-                st.markdown("<div style='color: #FFD400; font-weight: 600; margin: 4px 0;'>! Bố cục: Chưa phân tích được layout_report</div>", unsafe_allow_html=True)
-        else:
-            st.markdown("<div style='color: #A8A8A8; font-weight: 600; margin: 4px 0;'>! Bố cục: Không có layout_report.json</div>", unsafe_allow_html=True)
-
-        # 2. Minh họa chuyển động
-        if cov is not None:
-            if float(cov) >= 85:
-                st.markdown(f"<div style='color: #4CAF50; font-weight: 600; margin: 4px 0;'>✓ Minh họa: Đạt độ phủ hoạt họa {float(cov):.1f}% (mục tiêu &gt;= 85%)</div>", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown('<div style="font-size: 0.85rem; font-weight: 800; color: #FFD400; text-transform: uppercase; margin-bottom: 8px;">Tiêu chuẩn kiểm định</div>', unsafe_allow_html=True)
+    
+            # 1. Bố cục
+            lr_path = project / "layout_report.json"
+            if lr_path.is_file():
+                try:
+                    lr_data = read_json(lr_path)
+                    if lr_data.get("overall_all_passed", True):
+                        st.markdown("<div style='color: #4CAF50; font-weight: 600; margin: 4px 0;'>✓ Bố cục: Toàn bộ khung hình đạt chuẩn khoảng an toàn</div>", unsafe_allow_html=True)
+                    else:
+                        st.markdown("<div style='color: #FF5252; font-weight: 600; margin: 4px 0;'>✕ Bố cục: Phát hiện lỗi va chạm hoặc tràn viền sau kiểm định</div>", unsafe_allow_html=True)
+                except Exception:
+                    st.markdown("<div style='color: #FFD400; font-weight: 600; margin: 4px 0;'>! Bố cục: Chưa phân tích được layout_report</div>", unsafe_allow_html=True)
             else:
-                st.markdown(f"<div style='color: #FFD400; font-weight: 600; margin: 4px 0;'>! Minh họa: Độ phủ hoạt họa {float(cov):.1f}% dưới 85% (có fallback)</div>", unsafe_allow_html=True)
-        else:
-            st.markdown("<div style='color: #A8A8A8; font-weight: 600; margin: 4px 0;'>! Minh họa: Chưa có số liệu độ phủ</div>", unsafe_allow_html=True)
-
-        # 3. Dữ kiện nguồn
-        if brief_facts:
-            st.markdown(f"<div style='color: #4CAF50; font-weight: 600; margin: 4px 0;'>✓ Nguồn tin: Đã đối chiếu {facts_display} sự kiện với nguồn xác thực</div>", unsafe_allow_html=True)
-        else:
-            st.markdown("<div style='color: #A8A8A8; font-weight: 600; margin: 4px 0;'>! Nguồn tin: Chưa có thông tin đối chiếu nguồn</div>", unsafe_allow_html=True)
-
-        st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown("<div style='color: #A8A8A8; font-weight: 600; margin: 4px 0;'>! Bố cục: Không có layout_report.json</div>", unsafe_allow_html=True)
+    
+            # 2. Minh họa chuyển động
+            if cov is not None:
+                if float(cov) >= 85:
+                    st.markdown(f"<div style='color: #4CAF50; font-weight: 600; margin: 4px 0;'>✓ Minh họa: Đạt độ phủ hoạt họa {float(cov):.1f}% (mục tiêu &gt;= 85%)</div>", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"<div style='color: #FFD400; font-weight: 600; margin: 4px 0;'>! Minh họa: Độ phủ hoạt họa {float(cov):.1f}% dưới 85% (có fallback)</div>", unsafe_allow_html=True)
+            else:
+                st.markdown("<div style='color: #A8A8A8; font-weight: 600; margin: 4px 0;'>! Minh họa: Chưa có số liệu độ phủ</div>", unsafe_allow_html=True)
+    
+            # 3. Dữ kiện nguồn
+            if brief_facts:
+                st.markdown(f"<div style='color: #4CAF50; font-weight: 600; margin: 4px 0;'>✓ Nguồn tin: Đã đối chiếu {facts_display} sự kiện với nguồn xác thực</div>", unsafe_allow_html=True)
+            else:
+                st.markdown("<div style='color: #A8A8A8; font-weight: 600; margin: 4px 0;'>! Nguồn tin: Chưa có thông tin đối chiếu nguồn</div>", unsafe_allow_html=True)
+    
 
         # Bảng chi phí theo bước chỉ khi có dữ liệu thật
         cost_file = project / "cost_log.json"
@@ -197,8 +196,6 @@ def show_result(result, project, diagnostics):
 
 
 def render(settings, project, topic, debug, diagnostics):
-    section_header("XỬ LÝ", "Render Video", accent_word="Video")
-    st.caption("Dựng video từ Assets đã chuẩn bị. Mọi kết quả nằm trong render/; các đầu vào được giữ nguyên.")
     if settings.motion_enabled:
         st.info(f"Motion graphics bật · {settings.motion_fps} fps · scale {settings.motion_scale:g}. Thiếu Playwright/Chromium sẽ dùng đồ họa Pillow. Tiến độ chụp cảnh kèm thời gian còn lại ước tính.")
     if project is None:

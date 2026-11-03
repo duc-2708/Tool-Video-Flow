@@ -1,6 +1,9 @@
 /* Light Glass Motion Recipes (Style: light_glass)
- * Pastel light background, card layouts driven per narration sentence.
- * 9:16 vertical video (1080x1920) @ 30fps.
+ * Authentic Two-Zone Split Layouts (1080x1920) @ 30fps
+ * Inspired by modern tech review formats (e.g. Simo Studio style)
+ * Top Zone: Visual Evidence / Mockup / Screenshot (~35-40% height)
+ * Bottom Zone: Structured Content Card (~45-50% height)
+ * Safe zone compliant: x in [70, 1010], y in [240, 1330]
  * Deterministic pure mathematical function of time t and duration.
  */
 (()=>{'use strict';
@@ -30,7 +33,7 @@ function clamp(v, min = 0, max = 1) {
   return Math.max(min, Math.min(max, v));
 }
 
-// cubic-bezier(.22, 1, .36, 1) exact solver
+// cubic-bezier(.16, 1, .3, 1) spring-like smooth ease out
 function cubicBezier(p1x, p1y, p2x, p2y) {
   return function(t) {
     if (t <= 0) return 0;
@@ -49,7 +52,7 @@ function cubicBezier(p1x, p1y, p2x, p2y) {
     return 3 * (1 - u) * (1 - u) * u * p1y + 3 * (1 - u) * u * u * p2y + u * u * u;
   };
 }
-const easeLg = cubicBezier(0.22, 1, 0.36, 1);
+const easeLg = cubicBezier(0.16, 1, 0.3, 1);
 
 // Compute standard entrance & exit motion
 function computeLgMotion(t, duration) {
@@ -62,9 +65,9 @@ function computeLgMotion(t, duration) {
     const p = clamp(t / enterDur);
     const e = easeLg(p);
     enterAlpha = e;
-    enterBlur = Math.round(14 * (1 - e));
-    enterY = Math.round(24 * (1 - e));
-    enterScale = 0.96 + 0.04 * e;
+    enterBlur = Math.round(12 * (1 - e));
+    enterY = Math.round(20 * (1 - e));
+    enterScale = 0.97 + 0.03 * e;
   }
 
   let exitAlpha = 1.0;
@@ -74,7 +77,7 @@ function computeLgMotion(t, duration) {
       const p = clamp(exitTime / fadeOutDur);
       exitAlpha = 1.0 - easeLg(p);
     } else {
-      exitAlpha = 0.0; // empty background for ~0.4s before next shot
+      exitAlpha = 0.0;
     }
   }
 
@@ -111,7 +114,6 @@ function wrapWordsMaxChars(text, maxCharsPerLine = 14, maxLines = 3) {
         currentLine = '';
       }
       if (lines.length === maxLines - 1) {
-        // Collect all remaining words into the last line
         const rest = words.slice(i + 1).join(' ');
         if (rest) currentLine = currentLine ? currentLine + ' ' + rest : rest;
         break;
@@ -124,12 +126,35 @@ function wrapWordsMaxChars(text, maxCharsPerLine = 14, maxLines = 3) {
   return lines.slice(0, maxLines);
 }
 
-// Add defs if not present
+// Ensure defs and shared gradients
 function ensureGradients(svg) {
   let defs = svg.querySelector('defs');
   if (!defs) {
     defs = lgEl('defs');
     svg.prepend(defs);
+  }
+  if (!svg.querySelector('#lg-shimmer-grad')) {
+    const grad = lgEl('linearGradient', {
+      id: 'lg-shimmer-grad',
+      x1: '0%', y1: '0%', x2: '100%', y2: '100%'
+    });
+    grad.append(
+      lgEl('stop', { offset: '0%', 'stop-color': '#ffffff', 'stop-opacity': '0' }),
+      lgEl('stop', { offset: '50%', 'stop-color': '#ffffff', 'stop-opacity': '0.38' }),
+      lgEl('stop', { offset: '100%', 'stop-color': '#ffffff', 'stop-opacity': '0' })
+    );
+    defs.append(grad);
+  }
+  if (!svg.querySelector('#lg-chart-grad')) {
+    const grad = lgEl('linearGradient', {
+      id: 'lg-chart-grad',
+      x1: '0%', y1: '0%', x2: '0%', y2: '100%'
+    });
+    grad.append(
+      lgEl('stop', { offset: '0%', 'stop-color': '#10b981', 'stop-opacity': '0.4' }),
+      lgEl('stop', { offset: '100%', 'stop-color': '#10b981', 'stop-opacity': '0.0' })
+    );
+    defs.append(grad);
   }
   if (!svg.querySelector('#lg-grad-blue-purple')) {
     const grad = lgEl('linearGradient', {
@@ -138,30 +163,898 @@ function ensureGradients(svg) {
     });
     grad.append(
       lgEl('stop', { offset: '0%', 'stop-color': '#2563eb' }),
-      lgEl('stop', { offset: '100%', 'stop-color': '#3d2bb0' })
+      lgEl('stop', { offset: '100%', 'stop-color': '#7c3aed' })
     );
     defs.append(grad);
   }
-  if (!svg.querySelector('#lg-card-shadow')) {
-    const filter = lgEl('filter', {
-      id: 'lg-card-shadow',
-      x: '-10%', y: '-10%', width: '120%', height: '125%'
+  if (!svg.querySelector('#lg-grad-header')) {
+    const grad = lgEl('linearGradient', {
+      id: 'lg-grad-header',
+      x1: '0%', y1: '0%', x2: '100%', y2: '100%'
     });
-    filter.append(
-      lgEl('feDropShadow', {
-        dx: '0', dy: '16', stdDeviation: '20',
-        'flood-color': '#1a1446', 'flood-opacity': '0.08'
-      })
+    grad.append(
+      lgEl('stop', { offset: '0%', 'stop-color': '#3b82f6' }),
+      lgEl('stop', { offset: '100%', 'stop-color': '#8b5cf6' })
     );
-    defs.append(filter);
+    defs.append(grad);
   }
   return defs;
 }
 
+// Check if an emphasis word should be highlighted at time t
+function isWordHighlighted(wordText, emphasisList, t) {
+  if (!emphasisList || !emphasisList.length) return false;
+  const clean = String(wordText).trim().toLowerCase();
+  for (const emp of emphasisList) {
+    const phrase = String(emp.phrase || '').trim().toLowerCase();
+    if (phrase && (phrase.includes(clean) || clean.includes(phrase))) {
+      if (emp.start_sec !== undefined && emp.start_sec !== null && emp.end_sec !== undefined && emp.end_sec !== null) {
+        if (t >= emp.start_sec && t <= emp.end_sec + 0.4) return true;
+      } else {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 // =========================================================================
-// 1. lg_source_headline
-// Ảnh nguồn bo 28px (x82..998, y255..770), pill ngắn (<=28 ký tự),
-// tiêu đề tối đa 3 dòng (<=14 ký tự/dòng, màu navy #1a1446), thanh gradient xanh-tím
+// REAL IMAGE RENDERER: Authentic Footage / Web Citation with Gentle Ken Burns & Glass Shimmer
+// =========================================================================
+function renderRealImageWithGentleMotion(parent, x, y, w, h, imgUrl, d, t, duration = 4, clipId = 'lg-real-img') {
+  const g = lgGroup(parent);
+  let defs = ensureGradients(parent.ownerSVGElement || parent.closest('svg'));
+
+  const uniqueClip = clipId + '-' + Math.round(x) + '-' + Math.round(y);
+  if (!defs.querySelector('#' + uniqueClip)) {
+    const clip = lgEl('clipPath', { id: uniqueClip });
+    clip.append(lgEl('rect', { x: x, y: y, width: w, height: h, rx: 28 }));
+    defs.append(clip);
+  }
+
+  // Soft layered shadow behind card
+  lgShape(g, 'rect', {
+    x: x, y: y + 8, width: w, height: h, rx: 28,
+    fill: '#0f172a', opacity: 0.08
+  });
+
+  // Image container with gentle Ken Burns motion
+  const cx = x + w / 2, cy = y + h / 2;
+  const progress = clamp(t / Math.max(1, duration));
+  const slowZoom = 1.0 + 0.045 * progress;
+  const slowPanY = -5 * progress;
+  const floatWave = Math.sin(t * 1.5) * 2.5;
+
+  const imgG = lgGroup(g, {
+    'clip-path': `url(#${uniqueClip})`
+  });
+
+  // Base background in case image loads slow
+  lgShape(imgG, 'rect', {
+    x: x, y: y, width: w, height: h,
+    fill: '#0f172a'
+  });
+
+  const imgElNode = lgEl('image', {
+    href: imgUrl,
+    x: x - w * 0.03, y: y - h * 0.03, width: w * 1.06, height: h * 1.06,
+    preserveAspectRatio: 'xMidYMid slice',
+    transform: `translate(${cx}, ${cy}) scale(${slowZoom}) translate(${-cx}, ${-cy + slowPanY + floatWave})`
+  });
+  imgG.append(imgElNode);
+
+  // Delicate glass border
+  lgShape(g, 'rect', {
+    x: x, y: y, width: w, height: h, rx: 28,
+    fill: 'none', stroke: 'rgba(255, 255, 255, 0.85)', 'stroke-width': 2.5
+  });
+
+  // Subtle Shimmer glass light sweep in early 0.3s -> 1.8s
+  if (t >= 0.3 && t <= 2.2) {
+    const shimP = clamp((t - 0.3) / 1.6);
+    const shimX = x - 260 + shimP * (w + 520);
+    const shimG = lgGroup(g, { 'clip-path': `url(#${uniqueClip})`, opacity: 0.25 });
+    lgShape(shimG, 'rect', {
+      x: shimX, y: y - 50, width: 140, height: h + 100,
+      fill: 'url(#lg-shimmer-grad)',
+      transform: `rotate(25, ${shimX + 70}, ${y + h / 2})`
+    });
+  }
+
+  // Authentic source pill badge at bottom-left
+  const domainText = String(d.source || d.domain || '').trim();
+  if (domainText) {
+    const pillG = lgGroup(g);
+    const pillW = Math.min(380, domainText.length * 15 + 64);
+    const pillH = 40;
+    const pillX = x + 24, pillY = y + h - pillH - 20;
+
+    lgShape(pillG, 'rect', {
+      x: pillX, y: pillY, width: pillW, height: pillH, rx: 20,
+      fill: 'rgba(15, 23, 42, 0.85)', stroke: 'rgba(255, 255, 255, 0.25)', 'stroke-width': 1.2
+    });
+    // Little live pulsing cyan dot indicator
+    const dotPulse = 0.7 + 0.3 * Math.sin(t * 3);
+    lgShape(pillG, 'circle', { cx: pillX + 20, cy: pillY + 20, r: 5, fill: '#38bdf8', opacity: dotPulse });
+    pillG.append(lgEl('text', {
+      x: pillX + 36, y: pillY + 27,
+      fill: '#f8fafc', 'font-size': 24, 'font-weight': '700',
+      'font-family': 'Inter, sans-serif'
+    }, domainText.slice(0, 26)));
+  }
+}
+
+// =========================================================================
+// MOCKUP: Social Media Post Card (Quote / Tweet / Statement Evidence)
+// =========================================================================
+function renderSocialPostMockup(parent, x, y, w, h, d, t) {
+  const g = lgGroup(parent);
+  const waveY = Math.sin(t * 1.8) * 3;
+
+  const cardG = lgGroup(g, {
+    transform: `translate(0, ${waveY})`
+  });
+
+  // Background Card
+  lgShape(cardG, 'rect', {
+    x: x, y: y, width: w, height: h, rx: 26,
+    fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.95)', 'stroke-width': 1.5
+  });
+
+  // Subtle light sweep
+  if (t >= 0.4 && t <= 2.0) {
+    const shimP = clamp((t - 0.4) / 1.4);
+    const shimX = x - 200 + shimP * (w + 400);
+    lgShape(cardG, 'rect', {
+      x: shimX, y: y, width: 100, height: h, rx: 26,
+      fill: 'url(#lg-shimmer-grad)', opacity: 0.18
+    });
+  }
+
+  // Author & Handle
+  const author = String(d.author || d.name || 'Elon Musk').trim();
+  const handle = '@' + author.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  // Avatar (Circle)
+  const avX = x + 50, avY = y + 52, avR = 26;
+  lgShape(cardG, 'circle', {
+    cx: avX, cy: avY, r: avR, fill: '#0f172a'
+  });
+  cardG.append(lgEl('text', {
+    x: avX, y: avY + 9, 'text-anchor': 'middle',
+    fill: '#ffffff', 'font-size': 26, 'font-weight': '900',
+    'font-family': 'Inter, sans-serif'
+  }, author.charAt(0).toUpperCase()));
+
+  // Author Name
+  cardG.append(lgEl('text', {
+    x: avX + 38, y: avY + 2,
+    fill: '#0f172a', 'font-size': 28, 'font-weight': '800',
+    'font-family': 'Inter, sans-serif'
+  }, author.slice(0, 24)));
+
+  // Verified Badge SVG (Blue tick circle)
+  const nameWidth = Math.min(260, author.length * 16);
+  const tickX = avX + 44 + nameWidth, tickY = avY - 7;
+  lgShape(cardG, 'circle', { cx: tickX, cy: tickY, r: 10, fill: '#1d9bf0' });
+  lgShape(cardG, 'path', {
+    d: `M ${tickX - 4} ${tickY} l 3 3 l 6 -6`,
+    stroke: '#ffffff', 'stroke-width': 2, fill: 'none', 'stroke-linecap': 'round'
+  });
+
+  // Handle & Time
+  cardG.append(lgEl('text', {
+    x: avX + 38, y: avY + 28,
+    fill: '#64748b', 'font-size': 24, 'font-weight': '500',
+    'font-family': 'Inter, sans-serif'
+  }, `${handle} · 2 giờ trước`));
+
+  // X Logo on top right
+  cardG.append(lgEl('text', {
+    x: x + w - 52, y: y + 58, 'text-anchor': 'middle',
+    fill: '#0f172a', 'font-size': 32, 'font-weight': '900',
+    'font-family': 'Inter, sans-serif'
+  }, '𝕏'));
+
+  // Statement text verbatim from narration/quote
+  const tweetText = String(d.quote || d.statement || d.repo_desc || d.text || 'Tiết kiệm tiền cho tương lai là vô nghĩa khi AI bùng nổ.').trim();
+  const lines = wrapWordsMaxChars(tweetText, 26, 3);
+  const textFs = 28;
+  lines.forEach((line, idx) => {
+    cardG.append(lgEl('text', {
+      x: x + 50, y: y + 130 + idx * 42,
+      fill: '#1e293b', 'font-size': textFs, 'font-weight': '600',
+      'font-family': 'Inter, sans-serif'
+    }, line));
+  });
+
+  // Divider line
+  lgShape(cardG, 'line', {
+    x1: x + 44, y1: y + h - 68, x2: x + w - 44, y2: y + h - 68,
+    stroke: 'rgba(226, 232, 240, 0.8)', 'stroke-width': 1.2
+  });
+
+  // Bottom Action Row with animated Heart beat
+  const footY = y + h - 26;
+  const heartScale = 1.0 + 0.18 * Math.sin(t * 3.5);
+  const heartG = lgGroup(cardG, {
+    transform: `translate(${x + 280}, ${footY - 6}) scale(${heartScale}) translate(${-(x + 280)}, ${-(footY - 6)})`
+  });
+  heartG.append(lgEl('text', {
+    x: x + 280, y: footY, 'text-anchor': 'middle',
+    fill: '#ef4444', 'font-size': 24, 'font-weight': '700',
+    'font-family': 'Inter, sans-serif'
+  }, '♥ 48.6K'));
+
+  cardG.append(lgEl('text', {
+    x: x + 80, y: footY, fill: '#64748b', 'font-size': 24, 'font-weight': '600', 'font-family': 'Inter, sans-serif'
+  }, '💬 3.2K'));
+  cardG.append(lgEl('text', {
+    x: x + 440, y: footY, fill: '#64748b', 'font-size': 24, 'font-weight': '600', 'font-family': 'Inter, sans-serif'
+  }, '🔁 12.8K'));
+  cardG.append(lgEl('text', {
+    x: x + 600, y: footY, fill: '#64748b', 'font-size': 24, 'font-weight': '600', 'font-family': 'Inter, sans-serif'
+  }, '📊 3.8M lượt xem'));
+}
+
+// =========================================================================
+// MOCKUP: Dynamic Financial / Metric Chart with Smooth Drawing Spline
+// =========================================================================
+function renderFinancialChartMockup(parent, x, y, w, h, d, t) {
+  const g = lgGroup(parent);
+  ensureGradients(parent.ownerSVGElement || parent.closest('svg'));
+
+  // Dark Card Background with subtle border
+  lgShape(g, 'rect', {
+    x: x, y: y, width: w, height: h, rx: 28,
+    fill: '#0b111e', stroke: '#1e293b', 'stroke-width': 2
+  });
+
+  // Top Kicker & Stat Header
+  const labelText = String(d.label || 'TĂNG TRƯỞNG & TỐI ƯU CHI PHÍ').trim();
+  g.append(lgEl('text', {
+    x: x + 48, y: y + 54,
+    fill: '#64748b', 'font-size': 24, 'font-weight': '700',
+    'letter-spacing': '0.08em', 'font-family': 'Inter, sans-serif'
+  }, labelText.slice(0, 36).toUpperCase()));
+
+  const neonVal = String(d.neon_stat || (d.value ? `${d.value} ${d.unit || ''}` : '0 VNĐ')).trim();
+  g.append(lgEl('text', {
+    x: x + 48, y: y + 115,
+    fill: '#10b981', 'font-size': 56, 'font-weight': '900',
+    'letter-spacing': '-0.02em', 'font-family': 'Inter, monospace, sans-serif'
+  }, neonVal.slice(0, 24)));
+
+  // Dynamic SVG Spline Chart - Expanded to fill the stage
+  const chartX = x + 48, chartY = y + 150, chartW = w - 96, chartH = 460;
+  const drawP = clamp((t - 0.2) / 1.0);
+  const e = easeLg(drawP);
+
+  // Horizontal Grid Lines & Y-axis labels
+  const gridSteps = [
+    { ratio: 0.0, label: '+300%' },
+    { ratio: 0.33, label: '+200%' },
+    { ratio: 0.66, label: '+100%' },
+    { ratio: 1.0, label: '0%' }
+  ];
+  gridSteps.forEach(gs => {
+    const gy = chartY + chartH * gs.ratio;
+    lgShape(g, 'line', {
+      x1: chartX, y1: gy, x2: chartX + chartW, y2: gy,
+      stroke: 'rgba(255, 255, 255, 0.08)', 'stroke-width': 1, 'stroke-dasharray': '4 6'
+    });
+    g.append(lgEl('text', {
+      x: chartX + chartW - 6, y: gy - 6,
+      'text-anchor': 'end',
+      fill: '#64748b', 'font-size': 24, 'font-weight': '600',
+      'font-family': 'Inter, sans-serif'
+    }, gs.label));
+  });
+
+  // Points: Start, Mid1, Mid2, End (climbing curve across the full 460px height)
+  const p0x = chartX, p0y = chartY + chartH - 40;
+  const p1x = chartX + chartW * 0.33, p1y = chartY + chartH - 120;
+  const p2x = chartX + chartW * 0.66, p2y = chartY + chartH * 0.35;
+  const p3x = chartX + chartW * 0.95, p3y = chartY + 50;
+
+  // Animated current end point
+  const curEndX = p0x + (p3x - p0x) * e;
+  const curEndY = p0y + (p3y - p0y) * e;
+
+  const pathD = `M ${p0x} ${p0y} Q ${p1x} ${p1y + 20}, ${p2x} ${p2y} T ${curEndX} ${curEndY}`;
+  const areaD = `${pathD} L ${curEndX} ${chartY + chartH} L ${p0x} ${chartY + chartH} Z`;
+
+  // Fill Area with rich luminous emerald gradient
+  lgShape(g, 'path', {
+    d: areaD, fill: 'url(#lg-chart-grad)', opacity: 0.85
+  });
+
+  // Stroke Line
+  lgShape(g, 'path', {
+    d: pathD, fill: 'none', stroke: '#10b981', 'stroke-width': 5, 'stroke-linecap': 'round'
+  });
+
+  // Pulsing glow circle at end tip
+  if (e > 0.08) {
+    const pulseR = 8 + 5 * Math.sin(t * 4);
+    lgShape(g, 'circle', {
+      cx: curEndX, cy: curEndY, r: pulseR,
+      fill: 'none', stroke: '#34d399', 'stroke-width': 2.5, opacity: 0.85
+    });
+    lgShape(g, 'circle', {
+      cx: curEndX, cy: curEndY, r: 6, fill: '#ffffff'
+    });
+  }
+
+  // 3 Mini Stat Boxes below chart (comfortably placed, high contrast, frosted glass)
+  const boxW = 260, boxH = 140, gap = 24;
+  const startX = x + 44, boxY = chartY + chartH + 35;
+
+  const b1Num = String(d.stat_box_1 || (d.value ? `${d.value}` : '300%'));
+  const b2Num = String(d.stat_box_2 || '~0 VNĐ');
+  const b3Num = String(d.stat_box_3 || 'Đột phá');
+
+  const boxes = [
+    { num: b1Num, lbl: 'Năng suất', color: '#38bdf8' },
+    { num: b2Num, lbl: 'Chi phí biên', color: '#34d399' },
+    { num: b3Num, lbl: 'Hiệu quả AI', color: '#f59e0b' }
+  ];
+
+  boxes.forEach((b, idx) => {
+    const bx = startX + idx * (boxW + gap);
+    lgShape(g, 'rect', {
+      x: bx, y: boxY, width: boxW, height: boxH, rx: 20,
+      fill: 'rgba(24, 33, 47, 0.85)', stroke: 'rgba(56, 189, 248, 0.25)', 'stroke-width': 1.5
+    });
+    g.append(lgEl('text', {
+      x: bx + boxW / 2, y: boxY + 62,
+      'text-anchor': 'middle',
+      fill: b.color, 'font-size': 38, 'font-weight': '900',
+      'font-family': 'Inter, sans-serif'
+    }, b.num.slice(0, 10)));
+    g.append(lgEl('text', {
+      x: bx + boxW / 2, y: boxY + 108,
+      'text-anchor': 'middle',
+      fill: '#e2e8f0', 'font-size': 24, 'font-weight': '600',
+      'font-family': 'Inter, sans-serif'
+    }, b.lbl));
+  });
+}
+
+// =========================================================================
+// MOCKUP: Tech Architecture Window with Pulsing Node Status & Mac Cursor
+// =========================================================================
+function renderTechArchitectureMockup(parent, x, y, w, h, d, t) {
+  const g = lgGroup(parent);
+
+  // Card Background
+  lgShape(g, 'rect', {
+    x: x, y: y, width: w, height: h, rx: 24,
+    fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.95)', 'stroke-width': 1.5
+  });
+
+  // Header Bar with Mac Dots
+  lgShape(g, 'rect', {
+    x: x, y: y, width: w, height: 56, rx: 24,
+    fill: '#f8fafc'
+  });
+  // 3 Mac Dots
+  lgShape(g, 'circle', { cx: x + 36, cy: y + 28, r: 7, fill: '#ff5f56' });
+  lgShape(g, 'circle', { cx: x + 58, cy: y + 28, r: 7, fill: '#ffbd2e' });
+  lgShape(g, 'circle', { cx: x + 80, cy: y + 28, r: 7, fill: '#27c93f' });
+
+  // URL Bar in center
+  const domainText = String(d.source || d.domain || 'system.ai.tech').trim();
+  const urlW = 440, urlH = 28;
+  const urlX = x + (w - urlW) / 2, urlY = y + 14;
+  lgShape(g, 'rect', {
+    x: urlX, y: urlY, width: urlW, height: urlH, rx: 8,
+    fill: '#e2e8f0'
+  });
+  g.append(lgEl('text', {
+    x: urlX + urlW / 2, y: urlY + 22,
+    'text-anchor': 'middle',
+    fill: '#64748b', 'font-size': 24, 'font-weight': '600',
+    'font-family': 'Inter, sans-serif'
+  }, domainText.slice(0, 32)));
+
+  // 3 Tech Architecture Rows
+  const rowStartX = x + 36, rowW = w - 72;
+  const rows = [
+    { title: 'Tự động hóa toàn diện', stat: 'Hoạt động 99.9%', color: '#10b981' },
+    { title: 'Tối ưu hóa chi phí sản xuất', stat: 'Giảm tới 90%', color: '#10b981' },
+    { title: 'Đột phá năng suất tương lai', stat: 'Tăng trưởng x3', color: '#3b82f6' }
+  ];
+
+  rows.forEach((r, idx) => {
+    const ry = y + 74 + idx * 56;
+    lgShape(g, 'rect', {
+      x: rowStartX, y: ry, width: rowW, height: 44, rx: 10,
+      fill: idx % 2 === 0 ? '#f8fafc' : '#ffffff',
+      stroke: 'rgba(226, 232, 240, 0.6)', 'stroke-width': 1
+    });
+    // Pulsing status dot
+    const dotPulse = 0.6 + 0.4 * Math.sin(t * 3.5 + idx);
+    lgShape(g, 'circle', { cx: rowStartX + 20, cy: ry + 22, r: 5, fill: r.color, opacity: dotPulse });
+    // Title
+    g.append(lgEl('text', {
+      x: rowStartX + 36, y: ry + 30,
+      fill: '#1e293b', 'font-size': 24, 'font-weight': '700',
+      'font-family': 'Inter, sans-serif'
+    }, r.title));
+    // Stat
+    g.append(lgEl('text', {
+      x: rowStartX + rowW - 20, y: ry + 30,
+      'text-anchor': 'end',
+      fill: '#64748b', 'font-size': 24, 'font-weight': '600',
+      'font-family': 'Inter, sans-serif'
+    }, r.stat));
+  });
+
+  // Mac Cursor pointing and clicking on row 1
+  const curP = clamp((t - 0.5) / 1.0);
+  const curEase = easeLg(curP);
+  const curX = rowStartX + 240 + (1 - curEase) * 80;
+  const curY = y + 96 + (1 - curEase) * 40;
+  const clickScale = (t > 1.2 && t < 1.6) ? 0.9 : 1.0;
+
+  const curG = lgGroup(g, {
+    transform: `translate(${curX}, ${curY}) scale(${clickScale})`
+  });
+  // Apple Cursor SVG Path
+  lgShape(curG, 'path', {
+    d: 'M 0 0 L 0 16 L 4.5 12.5 L 8 19 L 10.5 17.5 L 7 11.5 L 12 11.5 Z',
+    fill: '#0f172a', stroke: '#ffffff', 'stroke-width': 1.5, 'stroke-linejoin': 'round'
+  });
+
+  // Black Badge at bottom left
+  const bW = 220, bH = 42;
+  const bX = x + 36, bY = y + h - 58;
+  lgShape(g, 'rect', {
+    x: bX, y: bY, width: bW, height: bH, rx: 12,
+    fill: 'rgba(15, 23, 42, 0.92)'
+  });
+  g.append(lgEl('text', {
+    x: bX + bW / 2, y: bY + 29,
+    'text-anchor': 'middle',
+    fill: '#ffffff', 'font-size': 24, 'font-weight': '800',
+    'font-family': 'Inter, sans-serif'
+  }, String(d.badge || 'Hệ sinh thái AI')));
+}
+
+// =========================================================================
+// MOCKUP: AI Neural Network Architecture (Nodes & Flowing Synapses)
+// =========================================================================
+function renderAiNetworkMockup(parent, x, y, w, h, d, t) {
+  const g = lgGroup(parent);
+  lgShape(g, 'rect', {
+    x: x, y: y, width: w, height: h, rx: 32,
+    fill: '#080d1a', stroke: '#1e293b', 'stroke-width': 2
+  });
+
+  const isLarge = h > 600;
+
+  // Header Title
+  g.append(lgEl('text', {
+    x: x + 48, y: y + (isLarge ? 72 : 54),
+    fill: '#38bdf8', 'font-size': isLarge ? 34 : 28, 'font-weight': '900',
+    'letter-spacing': '1px', 'font-family': 'Inter, sans-serif'
+  }, String(d.title || d.chip || 'MẠNG NƠ-RON AI & TỰ ĐỘNG HÓA').toUpperCase().slice(0, 32)));
+
+  g.append(lgEl('text', {
+    x: x + 48, y: y + (isLarge ? 112 : 86),
+    fill: '#94a3b8', 'font-size': 24, 'font-weight': '600',
+    'font-family': 'Inter, sans-serif'
+  }, 'Xử lý tính toán song song đa tầng'));
+
+  // Center Neural Network Nodes
+  const netCx = x + w / 2, netCy = y + (isLarge ? h * 0.48 : h * 0.54);
+  const spreadX = isLarge ? 280 : 220;
+  const spreadY = isLarge ? 140 : 80;
+  const nodes = [
+    { id: 'in1', x: netCx - spreadX, y: netCy - spreadY, label: 'Dữ liệu', color: '#38bdf8' },
+    { id: 'in2', x: netCx - spreadX, y: netCy, label: 'Thị trường', color: '#38bdf8' },
+    { id: 'in3', x: netCx - spreadX, y: netCy + spreadY, label: 'Tự động', color: '#38bdf8' },
+    { id: 'h1',  x: netCx, y: netCy - spreadY * 1.3, label: 'Lớp ẩn 1', color: '#818cf8' },
+    { id: 'h2',  x: netCx, y: netCy - spreadY * 0.4, label: 'Lớp ẩn 2', color: '#818cf8' },
+    { id: 'h3',  x: netCx, y: netCy + spreadY * 0.4, label: 'Lớp ẩn 3', color: '#818cf8' },
+    { id: 'h4',  x: netCx, y: netCy + spreadY * 1.3, label: 'Lớp ẩn 4', color: '#818cf8' },
+    { id: 'out1', x: netCx + spreadX, y: netCy - spreadY * 0.6, label: 'Năng suất', color: '#34d399' },
+    { id: 'out2', x: netCx + spreadX, y: netCy + spreadY * 0.6, label: 'Tối ưu', color: '#34d399' }
+  ];
+
+  const connections = [
+    ['in1', 'h1'], ['in1', 'h2'], ['in2', 'h2'], ['in2', 'h3'],
+    ['in3', 'h3'], ['in3', 'h4'], ['h1', 'out1'], ['h2', 'out1'],
+    ['h3', 'out2'], ['h4', 'out2'], ['h2', 'out2'], ['h3', 'out1']
+  ];
+  connections.forEach(([fromId, toId], idx) => {
+    const fromNode = nodes.find(n => n.id === fromId);
+    const toNode = nodes.find(n => n.id === toId);
+    if (!fromNode || !toNode) return;
+    const pulse = 0.25 + 0.35 * Math.sin(t * 3.0 + idx * 0.8);
+    lgShape(g, 'line', {
+      x1: fromNode.x, y1: fromNode.y, x2: toNode.x, y2: toNode.y,
+      stroke: '#38bdf8', 'stroke-width': 2, opacity: pulse
+    });
+    const packetT = ((t * 0.8 + idx * 0.15) % 1.0);
+    const px = fromNode.x + (toNode.x - fromNode.x) * packetT;
+    const py = fromNode.y + (toNode.y - fromNode.y) * packetT;
+    lgShape(g, 'circle', {
+      cx: px, cy: py, r: 4, fill: '#ffffff', opacity: 0.9
+    });
+  });
+
+  nodes.forEach(n => {
+    const nodePulse = 1.0 + 0.1 * Math.sin(t * 2.5 + n.x);
+    const nG = lgGroup(g, {
+      transform: `translate(${n.x}, ${n.y}) scale(${nodePulse}) translate(${-n.x}, ${-n.y})`
+    });
+    lgShape(nG, 'circle', {
+      cx: n.x, cy: n.y, r: isLarge ? 28 : 20, fill: '#131d31', stroke: n.color, 'stroke-width': 2.5
+    });
+    lgShape(nG, 'circle', {
+      cx: n.x, cy: n.y, r: isLarge ? 12 : 8, fill: n.color, opacity: 0.85
+    });
+    nG.append(lgEl('text', {
+      x: n.x, y: n.y + (isLarge ? 48 : 34), 'text-anchor': 'middle',
+      fill: '#cbd5e1', 'font-size': 24, 'font-weight': '600',
+      'font-family': 'Inter, sans-serif'
+    }, n.label));
+  });
+
+  // Bottom Status Bar
+  const footY = y + h - (isLarge ? 72 : 56);
+  lgShape(g, 'rect', {
+    x: x + 44, y: footY, width: w - 88, height: 48, rx: 16,
+    fill: '#131d31', stroke: '#1e293b', 'stroke-width': 1.5
+  });
+  const dotP = 0.6 + 0.4 * Math.sin(t * 4);
+  lgShape(g, 'circle', { cx: x + 72, cy: footY + 24, r: 6, fill: '#34d399', opacity: dotP });
+  g.append(lgEl('text', {
+    x: x + 92, y: footY + 32,
+    fill: '#f8fafc', 'font-size': 24, 'font-weight': '700',
+    'font-family': 'Inter, sans-serif'
+  }, 'Mạng nơ-ron AI: Hoạt động tối đa công suất'));
+}
+
+// =========================================================================
+// MOCKUP: Financial Risk & Currency Depreciation Shield
+// =========================================================================
+function renderRiskShieldMockup(parent, x, y, w, h, d, t) {
+  const g = lgGroup(parent);
+  lgShape(g, 'rect', {
+    x: x, y: y, width: w, height: h, rx: 32,
+    fill: '#0f1422', stroke: '#1e293b', 'stroke-width': 2
+  });
+
+  const isLarge = h > 600;
+
+  // Header Title
+  g.append(lgEl('text', {
+    x: x + 48, y: y + (isLarge ? 72 : 54),
+    fill: '#f59e0b', 'font-size': isLarge ? 34 : 28, 'font-weight': '900',
+    'letter-spacing': '1px', 'font-family': 'Inter, sans-serif'
+  }, String(d.chip || d.title || 'CẢNH BÁO TÀI CHÍNH & LẠM PHÁT').toUpperCase().slice(0, 32)));
+
+  g.append(lgEl('text', {
+    x: x + 48, y: y + (isLarge ? 112 : 86),
+    fill: '#94a3b8', 'font-size': 24, 'font-weight': '600',
+    'font-family': 'Inter, sans-serif'
+  }, 'Đánh giá rủi ro nắm giữ tiền mặt'));
+
+  // Center Hexagonal Shield
+  const sCx = x + w / 2, sCy = y + (isLarge ? h * 0.44 : h * 0.48);
+  const pulseR = (t * 45) % 180;
+  lgShape(g, 'circle', {
+    cx: sCx, cy: sCy, r: 80 + pulseR, fill: 'none', stroke: '#f59e0b',
+    'stroke-width': 2, opacity: Math.max(0, 1 - pulseR / 180) * 0.5
+  });
+
+  const sR = isLarge ? 120 : 90;
+  const hexPoints = [];
+  for (let i = 0; i < 6; i++) {
+    const angle = (i * 60 - 30) * Math.PI / 180;
+    hexPoints.push(`${sCx + sR * Math.cos(angle)},${sCy + sR * Math.sin(angle)}`);
+  }
+  lgShape(g, 'polygon', {
+    points: hexPoints.join(' '),
+    fill: '#182033', stroke: '#f59e0b', 'stroke-width': 4
+  });
+
+  const warnScale = 1.0 + 0.08 * Math.sin(t * 3);
+  const wG = lgGroup(g, {
+    transform: `translate(${sCx}, ${sCy}) scale(${warnScale}) translate(${-sCx}, ${-sCy})`
+  });
+  wG.append(lgEl('text', {
+    x: sCx, y: sCy + (isLarge ? 28 : 20), 'text-anchor': 'middle',
+    fill: '#f59e0b', 'font-size': isLarge ? 80 : 56, 'font-weight': '900',
+    'font-family': 'Inter, sans-serif'
+  }, '⚠'));
+
+  // 2 Warning Alert Cards below
+  const boxW = (w - 120) / 2, boxH = isLarge ? 130 : 96, boxY = y + h - (isLarge ? 160 : 110);
+  const b1X = x + 44, b2X = b1X + boxW + 24;
+
+  lgShape(g, 'rect', {
+    x: b1X, y: boxY, width: boxW, height: boxH, rx: 18,
+    fill: '#161e30', stroke: '#1e293b', 'stroke-width': 1.5
+  });
+  g.append(lgEl('text', {
+    x: b1X + 24, y: boxY + (isLarge ? 40 : 32), fill: '#ef4444', 'font-size': 26, 'font-weight': '800',
+    'font-family': 'Inter, sans-serif'
+  }, 'TIỀN MẶT'));
+  g.append(lgEl('text', {
+    x: b1X + 24, y: boxY + (isLarge ? 76 : 60), fill: '#cbd5e1', 'font-size': 24, 'font-weight': '600',
+    'font-family': 'Inter, sans-serif'
+  }, 'Mất giá theo thời gian'));
+
+  lgShape(g, 'rect', {
+    x: b2X, y: boxY, width: boxW, height: boxH, rx: 18,
+    fill: '#161e30', stroke: '#1e293b', 'stroke-width': 1.5
+  });
+  g.append(lgEl('text', {
+    x: b2X + 24, y: boxY + (isLarge ? 40 : 32), fill: '#10b981', 'font-size': 26, 'font-weight': '800',
+    'font-family': 'Inter, sans-serif'
+  }, 'CÔNG NGHỆ'));
+  g.append(lgEl('text', {
+    x: b2X + 24, y: boxY + (isLarge ? 76 : 60), fill: '#cbd5e1', 'font-size': 24, 'font-weight': '600',
+    'font-family': 'Inter, sans-serif'
+  }, 'Tăng trưởng sinh lời'));
+}
+
+// Smart Mockup Selector: grounded in slide context
+function renderContentSmartMockup(parent, x, y, w, h, d, t, duration = 4) {
+  const combined = (String(d.text || '') + ' ' + String(d.title || '') + ' ' + String(d.author || '')).toLowerCase();
+  const hasPerson = combined.includes('elon') || combined.includes('musk') || combined.includes('sam') || combined.includes('ceo') || combined.includes('tuyên bố') || combined.includes('cho rằng') || combined.includes('nói rằng') || d.author;
+  const hasFinancial = d.value !== undefined || d.neon_stat || combined.includes('tỷ') || combined.includes('triệu') || combined.includes('chi phí') || combined.includes('tiền') || combined.includes('%');
+  const hasAi = combined.includes('ai') || combined.includes('mạng') || combined.includes('nơ-ron') || combined.includes('bước nhảy');
+  const hasRisk = combined.includes('rủi ro') || combined.includes('cảnh báo') || combined.includes('thiệt thòi') || combined.includes('hoài nghi');
+
+  if (d.mockup_type === 'ai_network' || (hasAi && !hasPerson && !hasFinancial)) {
+    renderAiNetworkMockup(parent, x, y, w, h, d, t);
+  } else if (d.mockup_type === 'risk_shield' || hasRisk) {
+    renderRiskShieldMockup(parent, x, y, w, h, d, t);
+  } else if (d.mockup_type === 'social_post' || hasPerson) {
+    renderSocialPostMockup(parent, x, y + 20, w, h - 30, d, t);
+  } else if (d.mockup_type === 'financial_chart' || hasFinancial) {
+    renderFinancialChartMockup(parent, x, y, w, h, d, t);
+  } else {
+    renderTechArchitectureMockup(parent, x, y, w, h, d, t);
+  }
+}
+
+// =========================================================================
+// MOCKUP GENERATOR 1: GitHub Repository Card (Visual Evidence)
+// =========================================================================
+function renderGithubRepoMockup(parent, x, y, w, h, d) {
+  const g = lgGroup(parent);
+
+  lgShape(g, 'rect', {
+    x: x, y: y, width: w, height: h, rx: 24,
+    fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.95)', 'stroke-width': 1.5
+  });
+
+  const avX = x + 44, avY = y + 50;
+  lgShape(g, 'circle', {
+    cx: avX, cy: avY, r: 24, fill: '#0f172a'
+  });
+  lgShape(g, 'path', {
+    d: `M ${avX - 8} ${avY - 8} v 16 M ${avX - 8} ${avY} h 10 a 6 6 0 0 1 6 6 v 2`,
+    stroke: '#ffffff', 'stroke-width': 2.5, fill: 'none', 'stroke-linecap': 'round'
+  });
+
+  const repoName = String(d.repo_name || d.source || 'tashfeenahmed / freellmapi').trim();
+  g.append(lgEl('text', {
+    x: x + 82, y: y + 58,
+    fill: '#1e1b4b', 'font-size': 26, 'font-weight': '800',
+    'font-family': 'Inter, sans-serif'
+  }, repoName.slice(0, 36)));
+
+  const starW = 120, starH = 42;
+  const starX = x + w - starW - 36, starY = y + 28;
+  lgShape(g, 'rect', {
+    x: starX, y: starY, width: starW, height: starH, rx: 12,
+    fill: '#f8fafc', stroke: '#e2e8f0', 'stroke-width': 1.5
+  });
+  g.append(lgEl('text', {
+    x: starX + starW / 2, y: starY + 28,
+    'text-anchor': 'middle',
+    fill: '#475569', 'font-size': 24, 'font-weight': '700',
+    'font-family': 'Inter, sans-serif'
+  }, '★ Star'));
+
+  const desc1 = String(d.repo_desc || d.summary || '7.4 billion tokens per month, 34 free LLM providers').trim();
+  const desc2 = '635 free model endpoints, all behind one single API.';
+  g.append(lgEl('text', {
+    x: x + 44, y: y + 120,
+    fill: '#64748b', 'font-size': 24, 'font-weight': '500',
+    'font-family': 'Inter, sans-serif'
+  }, desc1.slice(0, 56)));
+  g.append(lgEl('text', {
+    x: x + 44, y: y + 158,
+    fill: '#64748b', 'font-size': 24, 'font-weight': '500',
+    'font-family': 'Inter, sans-serif'
+  }, desc2));
+
+  lgShape(g, 'line', {
+    x1: x + 44, y1: y + h - 70, x2: x + w - 44, y2: y + h - 70,
+    stroke: 'rgba(226, 232, 240, 0.8)', 'stroke-width': 1.5
+  });
+
+  const metaY = y + h - 28;
+  lgShape(g, 'circle', { cx: x + 48, cy: metaY - 6, r: 6, fill: '#3b82f6' });
+  g.append(lgEl('text', { x: x + 62, y: metaY, fill: '#64748b', 'font-size': 24, 'font-weight': '600', 'font-family': 'Inter, sans-serif' }, 'Python'));
+  g.append(lgEl('text', { x: x + 180, y: metaY, fill: '#64748b', 'font-size': 24, 'font-weight': '600', 'font-family': 'Inter, sans-serif' }, '★ 104'));
+  g.append(lgEl('text', { x: x + 280, y: metaY, fill: '#64748b', 'font-size': 24, 'font-weight': '600', 'font-family': 'Inter, sans-serif' }, '⑂ 20'));
+  g.append(lgEl('text', { x: x + 380, y: metaY, fill: '#64748b', 'font-size': 24, 'font-weight': '600', 'font-family': 'Inter, sans-serif' }, 'MIT License'));
+}
+
+// =========================================================================
+// MOCKUP GENERATOR 2: Dark Console Mockup Card (Stat Hero)
+// =========================================================================
+function renderDarkConsoleMockup(parent, x, y, w, h, d) {
+  const g = lgGroup(parent);
+
+  lgShape(g, 'rect', {
+    x: x, y: y, width: w, height: h, rx: 24,
+    fill: '#0b0f19', stroke: '#1e293b', 'stroke-width': 1.5
+  });
+
+  const neonText = String(d.neon_stat || (d.value ? `~${d.value}${d.unit || ''} tokens` : '~7.4B tokens')).trim();
+  g.append(lgEl('text', {
+    x: x + 44, y: y + 68,
+    fill: '#10b981', 'font-size': 44, 'font-weight': '900',
+    'letter-spacing': '-0.02em', 'font-family': 'Inter, monospace, sans-serif'
+  }, neonText.slice(0, 28)));
+
+  const boxW = 260, boxH = 135, gap = 24;
+  const startX = x + 44, boxY = y + 105;
+
+  const boxes = [
+    { num: String(d.stat_box_1 || '34'), lbl: 'Nhà cung cấp', color: '#38bdf8' },
+    { num: String(d.stat_box_2 || '635'), lbl: 'Endpoints', color: '#a78bfa' },
+    { num: String(d.stat_box_3 || '474'), lbl: 'Hệ thống API', color: '#34d399' }
+  ];
+
+  boxes.forEach((b, idx) => {
+    const bx = startX + idx * (boxW + gap);
+    lgShape(g, 'rect', {
+      x: bx, y: boxY, width: boxW, height: boxH, rx: 16,
+      fill: '#131d31', stroke: '#1e293b', 'stroke-width': 1.5
+    });
+    g.append(lgEl('text', {
+      x: bx + boxW / 2, y: boxY + 62,
+      'text-anchor': 'middle',
+      fill: b.color, 'font-size': 40, 'font-weight': '900',
+      'font-family': 'Inter, sans-serif'
+    }, b.num));
+    g.append(lgEl('text', {
+      x: bx + boxW / 2, y: boxY + 102,
+      'text-anchor': 'middle',
+      fill: '#94a3b8', 'font-size': 24, 'font-weight': '600',
+      'font-family': 'Inter, sans-serif'
+    }, b.lbl));
+  });
+
+  g.append(lgEl('text', {
+    x: x + 44, y: y + h - 28,
+    fill: '#64748b', 'font-size': 24, 'font-weight': '600',
+    'font-family': 'Inter, sans-serif'
+  }, 'Hệ thống nhà cung cấp trực tuyến'));
+}
+
+// =========================================================================
+// MOCKUP GENERATOR 3: Mac OS Web App / Dashboard Mockup Window
+// =========================================================================
+function renderBrowserDashboardMockup(parent, x, y, w, h, d) {
+  const g = lgGroup(parent);
+
+  lgShape(g, 'rect', {
+    x: x, y: y, width: w, height: h, rx: 24,
+    fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.95)', 'stroke-width': 1.5
+  });
+
+  lgShape(g, 'rect', {
+    x: x, y: y, width: w, height: 52, rx: 24,
+    fill: '#f8fafc'
+  });
+  lgShape(g, 'circle', { cx: x + 32, cy: y + 26, r: 6, fill: '#ff5f56' });
+  lgShape(g, 'circle', { cx: x + 52, cy: y + 26, r: 6, fill: '#ffbd2e' });
+  lgShape(g, 'circle', { cx: x + 72, cy: y + 26, r: 6, fill: '#27c93f' });
+
+  const urlW = 380, urlH = 28;
+  const urlX = x + (w - urlW) / 2, urlY = y + 12;
+  lgShape(g, 'rect', {
+    x: urlX, y: urlY, width: urlW, height: urlH, rx: 8,
+    fill: '#e2e8f0'
+  });
+  g.append(lgEl('text', {
+    x: urlX + urlW / 2, y: urlY + 20,
+    'text-anchor': 'middle',
+    fill: '#64748b', 'font-size': 24, 'font-weight': '600',
+    'font-family': 'Inter, sans-serif'
+  }, String(d.domain || 'api.freellm.tech').slice(0, 28)));
+
+  const rowStartX = x + 32, rowW = w - 64;
+  const rows = [
+    { title: 'OpenAI Compatibility', stat: 'Hoạt động', color: '#10b981' },
+    { title: 'Automatic Failover', stat: 'Sẵn sàng', color: '#10b981' },
+    { title: 'Rate Limit Optimization', stat: 'Tối ưu', color: '#3b82f6' }
+  ];
+
+  rows.forEach((r, idx) => {
+    const ry = y + 70 + idx * 56;
+    lgShape(g, 'rect', {
+      x: rowStartX, y: ry, width: rowW, height: 44, rx: 10,
+      fill: idx % 2 === 0 ? '#f8fafc' : '#ffffff',
+      stroke: 'rgba(226, 232, 240, 0.6)', 'stroke-width': 1
+    });
+    lgShape(g, 'circle', { cx: rowStartX + 20, cy: ry + 22, r: 5, fill: r.color });
+    g.append(lgEl('text', {
+      x: rowStartX + 36, y: ry + 30,
+      fill: '#1e293b', 'font-size': 24, 'font-weight': '700',
+      'font-family': 'Inter, sans-serif'
+    }, r.title));
+    g.append(lgEl('text', {
+      x: rowStartX + rowW - 20, y: ry + 30,
+      'text-anchor': 'end',
+      fill: '#64748b', 'font-size': 24, 'font-weight': '600',
+      'font-family': 'Inter, sans-serif'
+    }, r.stat));
+  });
+
+  const bW = 220, bH = 42;
+  const bX = x + 32, bY = y + h - 56;
+  lgShape(g, 'rect', {
+    x: bX, y: bY, width: bW, height: bH, rx: 12,
+    fill: 'rgba(15, 23, 42, 0.92)'
+  });
+  g.append(lgEl('text', {
+    x: bX + bW / 2, y: bY + 29,
+    'text-anchor': 'middle',
+    fill: '#ffffff', 'font-size': 24, 'font-weight': '800',
+    'font-family': 'Inter, sans-serif'
+  }, String(d.badge || 'Bảng điều khiển')));
+}
+
+// =========================================================================
+// MOCKUP GENERATOR 4: Floating Reaction Bubbles (Hearts & Likes)
+// =========================================================================
+function renderFloatingReactions(parent, cx, cy, t) {
+  const g = lgGroup(parent);
+  const items = [
+    { type: 'heart', color: '#ef4444', icon: '♥', offsetX: -140, offsetY: -35, delay: 0.1 },
+    { type: 'like', color: '#3b82f6', icon: '👍', offsetX: 130, offsetY: -45, delay: 0.25 },
+    { type: 'heart', color: '#f43f5e', icon: '♥', offsetX: -110, offsetY: 70, delay: 0.4 },
+    { type: 'like', color: '#2563eb', icon: '👍', offsetX: 140, offsetY: 60, delay: 0.55 },
+    { type: 'heart', color: '#8b5cf6', icon: '♥', offsetX: -30, offsetY: -110, delay: 0.7 }
+  ];
+
+  items.forEach(it => {
+    const wave = Math.sin((t * 2.5) + it.delay * 6.28);
+    const floatY = cy + it.offsetY + wave * 8;
+    const floatX = cx + it.offsetX + Math.cos(t * 2.0 + it.delay * 4) * 5;
+    const r = 26;
+
+    const bG = lgGroup(g, {
+      transform: `translate(${floatX}, ${floatY})`
+    });
+    lgShape(bG, 'circle', {
+      cx: 0, cy: 0, r: r,
+      fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.9)', 'stroke-width': 1.5
+    });
+    bG.append(lgEl('text', {
+      x: 0, y: it.type === 'heart' ? 9 : 8,
+      'text-anchor': 'middle',
+      fill: it.color, 'font-size': 24, 'font-weight': '900',
+      'font-family': 'Inter, sans-serif'
+    }, it.icon));
+  });
+}
+
+// =========================================================================
+// 1. lg_source_headline (Hero Full-Stage Visual Motion: [75, 1005] x [245, 1325])
 // =========================================================================
 function renderLgSourceHeadline(ctx, svg, d, t, duration = 4) {
   d = d || {};
@@ -177,126 +1070,19 @@ function renderLgSourceHeadline(ctx, svg, d, t, duration = 4) {
     filter: mot.blur > 0 ? `blur(${mot.blur}px)` : ''
   });
 
-  const cardX = 82, cardY = 255, cardW = 916, cardH = 515;
+  const stageX = 85, stageW = 910;
+  const stageY = 270, stageH = 1030;
 
-  // Shadow card
-  lgShape(root, 'rect', {
-    x: cardX, y: cardY + 8, width: cardW, height: cardH, rx: 28,
-    fill: '#1a1446', opacity: 0.05
-  });
-
-  // Main Image Card
-  const imgCard = lgShape(root, 'rect', {
-    x: cardX, y: cardY, width: cardW, height: cardH, rx: 28,
-    fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.8)', 'stroke-width': 1.5
-  });
-
-  // Source Image / Media
   const imgUrl = d.image_url || d.image_uri || d.image || d.clip_url;
   if (imgUrl) {
-    const clipId = 'lg-source-img-clip';
-    let defs = ensureGradients(svg);
-    if (!svg.querySelector('#' + clipId)) {
-      const clip = lgEl('clipPath', { id: clipId });
-      clip.append(lgEl('rect', { x: cardX, y: cardY, width: cardW, height: cardH, rx: 28 }));
-      defs.append(clip);
-    }
-    const img = lgEl('image', {
-      href: imgUrl,
-      x: cardX, y: cardY, width: cardW, height: cardH,
-      preserveAspectRatio: 'xMidYMid slice',
-      'clip-path': `url(#${clipId})`
-    });
-    root.append(img);
+    renderRealImageWithGentleMotion(root, stageX, stageY, stageW, stageH, imgUrl, d, t, duration, 'lg-src-img');
   } else {
-    // Elegant fallback news visual (no manufactured text)
-    const gArt = lgGroup(root);
-    lgShape(gArt, 'rect', {
-      x: cardX, y: cardY, width: cardW, height: cardH, rx: 28,
-      fill: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)'
-    });
-    lgShape(gArt, 'circle', {
-      cx: cardX + cardW / 2, cy: cardY + cardH / 2, r: 80,
-      fill: '#2563eb', opacity: 0.1
-    });
-    lgShape(gArt, 'path', {
-      d: `M ${cardX + cardW / 2 - 40} ${cardY + cardH / 2 - 30} h 80 v 60 h -80 Z M ${cardX + cardW / 2 - 25} ${cardY + cardH / 2 - 10} h 50 M ${cardX + cardW / 2 - 25} ${cardY + cardH / 2 + 10} h 35`,
-      stroke: '#2563eb', 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round'
-    });
-  }
-
-  // Pill ngắn (<= 28 ký tự)
-  let curY = 820;
-  const pillRaw = d.pill || d.badge || d.kicker || '';
-  if (pillRaw && String(pillRaw).trim()) {
-    const pillText = String(pillRaw).trim().slice(0, 28);
-    const pillG = lgGroup(root);
-    const padX = 22, padY = 8;
-    const fs = 32;
-    // measure approx width: ~18px per char
-    const estW = Math.min(800, pillText.length * 18 + padX * 2);
-
-    lgShape(pillG, 'rect', {
-      x: cardX, y: curY, width: estW, height: 48, rx: 24,
-      fill: 'rgba(37, 99, 235, 0.08)', stroke: 'rgba(37, 99, 235, 0.25)', 'stroke-width': 1.5
-    });
-    const pillTxtEl = lgEl('text', {
-      x: cardX + padX, y: curY + 34,
-      fill: '#2563eb', 'font-size': fs, 'font-weight': '700',
-      'font-family': 'Inter, sans-serif'
-    }, pillText);
-    pillG.append(pillTxtEl);
-    curY += 76;
-  }
-
-  // Tiêu đề (<= 3 dòng, <= 14 ký tự/dòng, màu navy #1a1446)
-  const titleRaw = d.title || d.headline || d.text || '';
-  if (titleRaw && String(titleRaw).trim()) {
-    // Entrance stagger: title enters ~0.5s after shot start
-    const titleP = clamp((t - 0.5) / 0.35);
-    const titleE = easeLg(titleP);
-    const titleYOffset = Math.round(18 * (1 - titleE));
-
-    const titleG = lgGroup(root, {
-      opacity: titleE,
-      transform: `translate(0, ${titleYOffset})`
-    });
-
-    const lines = wrapWordsMaxChars(titleRaw, 14, 3);
-    let titleFs = 82;
-    if (lines.length === 3) titleFs = 74;
-    const lineHeight = titleFs * 1.22;
-
-    lines.forEach((line, idx) => {
-      const lineY = curY + idx * lineHeight + titleFs * 0.9;
-      const textEl = lgEl('text', {
-        x: cardX, y: lineY,
-        fill: '#1a1446', 'font-size': titleFs, 'font-weight': '900',
-        'letter-spacing': '-0.02em', 'font-family': 'Inter, sans-serif'
-      }, line);
-      titleG.append(textEl);
-    });
-
-    curY += lines.length * lineHeight + 20;
-
-    // Thanh gradient xanh-tím dưới tiêu đề (kéo rộng 0.4s)
-    const gradP = clamp((t - 0.7) / 0.4);
-    const gradE = easeLg(gradP);
-    const gradWidth = Math.round(280 * gradE);
-
-    if (gradWidth > 4) {
-      lgShape(root, 'rect', {
-        x: cardX, y: curY, width: gradWidth, height: 7, rx: 3.5,
-        fill: 'url(#lg-grad-blue-purple)'
-      });
-    }
+    renderContentSmartMockup(root, stageX, stageY, stageW, stageH, d, t, duration);
   }
 }
 
 // =========================================================================
-// 2. lg_stat_hero
-// Ảnh số liệu phía trên, số lớn màu #2563eb (~200px, tối đa 2 dòng),
-// câu phụ 60px đậm, pill phụ 52px xám; số đếm lên nếu là số thuần
+// 2. lg_stat_hero (Hero Full-Stage Visual Motion: [75, 1005] x [245, 1325])
 // =========================================================================
 function renderLgStatHero(ctx, svg, d, t, duration = 4) {
   d = d || {};
@@ -312,121 +1098,19 @@ function renderLgStatHero(ctx, svg, d, t, duration = 4) {
     filter: mot.blur > 0 ? `blur(${mot.blur}px)` : ''
   });
 
-  const cardX = 82, cardY = 260, cardW = 916, cardH = 380;
+  const stageX = 85, stageW = 910;
+  const stageY = 270, stageH = 1030;
 
-  // Ảnh số liệu / biểu đồ phía trên
   const imgUrl = d.image_url || d.image || d.chart_image;
   if (imgUrl) {
-    const clipId = 'lg-stat-img-clip';
-    let defs = ensureGradients(svg);
-    if (!svg.querySelector('#' + clipId)) {
-      const clip = lgEl('clipPath', { id: clipId });
-      clip.append(lgEl('rect', { x: cardX, y: cardY, width: cardW, height: cardH, rx: 24 }));
-      defs.append(clip);
-    }
-    lgShape(root, 'rect', {
-      x: cardX, y: cardY + 6, width: cardW, height: cardH, rx: 24,
-      fill: '#1a1446', opacity: 0.05
-    });
-    const img = lgEl('image', {
-      href: imgUrl,
-      x: cardX, y: cardY, width: cardW, height: cardH,
-      preserveAspectRatio: 'xMidYMid slice',
-      'clip-path': `url(#${clipId})`
-    });
-    root.append(img);
+    renderRealImageWithGentleMotion(root, stageX, stageY, stageW, stageH, imgUrl, d, t, duration, 'lg-stat-img');
   } else {
-    // Clean SVG graphic panel for data hero
-    const chartG = lgGroup(root);
-    lgShape(chartG, 'rect', {
-      x: cardX, y: cardY, width: cardW, height: cardH, rx: 24,
-      fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.8)', 'stroke-width': 1.5
-    });
-    // Aesthetic subtle wave line
-    const waveProgress = clamp((t - 0.2) / 0.8);
-    const waveE = easeLg(waveProgress);
-    const pathD = `M ${cardX + 40} ${cardY + 280} Q ${cardX + 240} ${cardY + 120}, ${cardX + 460} ${cardY + 220} T ${cardX + cardW - 40} ${cardY + 90}`;
-    lgShape(chartG, 'path', {
-      d: pathD, fill: 'none', stroke: '#2563eb', 'stroke-width': 5,
-      'stroke-linecap': 'round', opacity: 0.6 * waveE
-    });
-  }
-
-  let curY = cardY + cardH + 70;
-
-  // Số lớn màu #2563eb (~200px, tối đa 2 dòng, đếm lên nếu là số thuần)
-  const valRaw = d.value;
-  if (valRaw !== undefined && valRaw !== null && String(valRaw).trim() !== '') {
-    const unit = d.unit || '';
-    let displayVal = String(valRaw);
-    const num = parseFloat(String(valRaw).replace(/,/g, ''));
-
-    if (!isNaN(num)) {
-      // countUp animation from t=0.4 to 1.4s
-      const countP = clamp((t - 0.4) / 1.0);
-      const countE = easeLg(countP);
-      const curNum = countP >= 0.99 ? num : (num * countE);
-      const precision = Number.isInteger(num) ? 0 : Math.min(2, (String(num).split('.')[1] || '').length);
-      displayVal = curNum.toLocaleString('vi-VN', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: precision
-      });
-    }
-
-    const numStr = displayVal + (unit ? ' ' + unit : '');
-    const numFs = 190;
-    const numEl = lgEl('text', {
-      x: cardX, y: curY + numFs * 0.82,
-      fill: '#2563eb', 'font-size': numFs, 'font-weight': '900',
-      'letter-spacing': '-0.03em', 'font-family': 'Inter, sans-serif'
-    }, numStr);
-    root.append(numEl);
-
-    curY += numFs + 30;
-  }
-
-  // Câu phụ 60px đậm
-  const subtextRaw = d.text || d.label || d.subtext || '';
-  if (subtextRaw && String(subtextRaw).trim()) {
-    const subFs = 60;
-    const lines = wrapWordsMaxChars(subtextRaw, 24, 2);
-    lines.forEach((line, idx) => {
-      const lineY = curY + idx * (subFs * 1.25) + subFs * 0.8;
-      const textEl = lgEl('text', {
-        x: cardX, y: lineY,
-        fill: '#1a1446', 'font-size': subFs, 'font-weight': '800',
-        'letter-spacing': '-0.01em', 'font-family': 'Inter, sans-serif'
-      }, line);
-      root.append(textEl);
-    });
-    curY += lines.length * (subFs * 1.25) + 30;
-  }
-
-  // Pill phụ 52px xám
-  const subPillRaw = d.sub_pill || d.pill || d.note || '';
-  if (subPillRaw && String(subPillRaw).trim()) {
-    const pillG = lgGroup(root);
-    const pillTxt = String(subPillRaw).trim();
-    const fs = 52;
-    const estW = Math.min(860, pillTxt.length * 28 + 48);
-
-    lgShape(pillG, 'rect', {
-      x: cardX, y: curY, width: estW, height: 74, rx: 24,
-      fill: 'rgba(100, 116, 139, 0.12)'
-    });
-    const txtEl = lgEl('text', {
-      x: cardX + 24, y: curY + 52,
-      fill: '#64748b', 'font-size': fs, 'font-weight': '600',
-      'font-family': 'Inter, sans-serif'
-    }, pillTxt);
-    pillG.append(txtEl);
+    renderFinancialChartMockup(root, stageX, stageY, stageW, stageH, d, t);
   }
 }
 
 // =========================================================================
-// 3. lg_shot_features
-// Ảnh giao diện + nhãn nhỏ nền tối bo tròn góc dưới trái ảnh;
-// thẻ trắng viền xanh nhạt với tiêu đề tím #3d2bb0, đường kẻ, tối đa 3 ý (hiện theo nhịp)
+// 3. lg_shot_features (Hero Full-Stage Visual Motion: [75, 1005] x [245, 1325])
 // =========================================================================
 function renderLgShotFeatures(ctx, svg, d, t, duration = 4) {
   d = d || {};
@@ -442,161 +1126,19 @@ function renderLgShotFeatures(ctx, svg, d, t, duration = 4) {
     filter: mot.blur > 0 ? `blur(${mot.blur}px)` : ''
   });
 
-  const cardX = 82, cardY = 260, cardW = 916, cardH = 420;
+  const stageX = 85, stageW = 910;
+  const stageY = 270, stageH = 1030;
 
-  // Ảnh giao diện
   const imgUrl = d.image_url || d.image || d.ui_image;
   if (imgUrl) {
-    const clipId = 'lg-feat-img-clip';
-    let defs = ensureGradients(svg);
-    if (!svg.querySelector('#' + clipId)) {
-      const clip = lgEl('clipPath', { id: clipId });
-      clip.append(lgEl('rect', { x: cardX, y: cardY, width: cardW, height: cardH, rx: 24 }));
-      defs.append(clip);
-    }
-    lgShape(root, 'rect', {
-      x: cardX, y: cardY + 6, width: cardW, height: cardH, rx: 24,
-      fill: '#1a1446', opacity: 0.05
-    });
-    const img = lgEl('image', {
-      href: imgUrl,
-      x: cardX, y: cardY, width: cardW, height: cardH,
-      preserveAspectRatio: 'xMidYMid slice',
-      'clip-path': `url(#${clipId})`
-    });
-    root.append(img);
+    renderRealImageWithGentleMotion(root, stageX, stageY, stageW, stageH, imgUrl, d, t, duration, 'lg-feat-img');
   } else {
-    // Mock UI Window
-    const uiG = lgGroup(root);
-    lgShape(uiG, 'rect', {
-      x: cardX, y: cardY, width: cardW, height: cardH, rx: 24,
-      fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.8)', 'stroke-width': 1.5
-    });
-    // Header bar with 3 dots
-    lgShape(uiG, 'rect', {
-      x: cardX, y: cardY, width: cardW, height: 60, rx: 24,
-      fill: '#f8fafc'
-    });
-    [0, 1, 2].forEach(i => {
-      lgShape(uiG, 'circle', {
-        cx: cardX + 36 + i * 24, cy: cardY + 30, r: 7,
-        fill: ['#cbd5e1', '#e2e8f0', '#94a3b8'][i]
-      });
-    });
-    // Code / UI lines mock
-    [0, 1, 2, 3].forEach(i => {
-      lgShape(uiG, 'rect', {
-        x: cardX + 40, y: cardY + 90 + i * 45, width: [420, 560, 360, 640][i], height: 18, rx: 9,
-        fill: '#f1f5f9'
-      });
-    });
+    renderTechArchitectureMockup(root, stageX, stageY, stageW, stageH, d, t);
   }
-
-  // Nhãn nhỏ nền tối bo tròn ở góc dưới trái ảnh
-  const badgeRaw = d.badge || d.tag || d.label || '';
-  if (badgeRaw && String(badgeRaw).trim()) {
-    const badgeText = String(badgeRaw).trim();
-    const bgX = cardX + 24, bgY = cardY + cardH - 58;
-    const estW = Math.min(600, badgeText.length * 16 + 32);
-
-    const bG = lgGroup(root);
-    lgShape(bG, 'rect', {
-      x: bgX, y: bgY, width: estW, height: 42, rx: 14,
-      fill: 'rgba(15, 23, 42, 0.85)'
-    });
-    const bTxt = lgEl('text', {
-      x: bgX + 16, y: bgY + 28,
-      fill: '#ffffff', 'font-size': 24, 'font-weight': '700',
-      'letter-spacing': '0.5px', 'font-family': 'Inter, sans-serif'
-    }, badgeText);
-    bG.append(bTxt);
-  }
-
-  // Thẻ trắng viền xanh nhạt
-  const panelY = 720;
-  const panelH = 590;
-
-  lgShape(root, 'rect', {
-    x: cardX, y: panelY + 10, width: cardW, height: panelH, rx: 28,
-    fill: '#1a1446', opacity: 0.06
-  });
-
-  const panel = lgShape(root, 'rect', {
-    x: cardX, y: panelY, width: cardW, height: panelH, rx: 28,
-    fill: '#ffffff', stroke: 'rgba(37, 99, 235, 0.2)', 'stroke-width': 1.5
-  });
-
-  let curY = panelY + 65;
-
-  // Tiêu đề tím #3d2bb0
-  const titleRaw = d.title || d.headline || d.text || '';
-  if (titleRaw && String(titleRaw).trim()) {
-    const titleFs = 48;
-    const textEl = lgEl('text', {
-      x: cardX + 40, y: curY,
-      fill: '#3d2bb0', 'font-size': titleFs, 'font-weight': '800',
-      'letter-spacing': '-0.01em', 'font-family': 'Inter, sans-serif'
-    }, String(titleRaw).trim().slice(0, 36));
-    root.append(textEl);
-    curY += 35;
-  }
-
-  // Đường kẻ phân cách
-  lgShape(root, 'line', {
-    x1: cardX + 40, y1: curY, x2: cardX + cardW - 40, y2: curY,
-    stroke: 'rgba(37, 99, 235, 0.15)', 'stroke-width': 1.5
-  });
-
-  curY += 50;
-
-  // Tối đa 3 ý (mỗi ý hiện đúng lúc nói tới)
-  const items = Array.isArray(d.items) ? d.items.slice(0, 3) : [];
-  items.forEach((item, idx) => {
-    const itemText = String(item).trim();
-    if (!itemText) return;
-
-    // Stagger time: item 0 at 0.5s, item 1 at 0.8s, item 2 at 1.1s
-    const itemT = 0.5 + idx * 0.3;
-    const p = clamp((t - itemT) / 0.25);
-    const e = easeLg(p);
-    const alpha = e;
-    const yOff = Math.round(16 * (1 - e));
-
-    const itemG = lgGroup(root, {
-      opacity: alpha,
-      transform: `translate(0, ${yOff})`
-    });
-
-    const rowY = curY + idx * 125;
-
-    // Bullet icon / checkmark
-    lgShape(itemG, 'circle', {
-      cx: cardX + 60, cy: rowY + 10, r: 16,
-      fill: 'rgba(37, 99, 235, 0.12)'
-    });
-    lgShape(itemG, 'circle', {
-      cx: cardX + 60, cy: rowY + 10, r: 7,
-      fill: '#2563eb'
-    });
-
-    // Item text
-    const fs = 42;
-    const lines = wrapWordsMaxChars(itemText, 26, 2);
-    lines.forEach((line, lIdx) => {
-      const lineEl = lgEl('text', {
-        x: cardX + 105, y: rowY + lIdx * 48 + 22,
-        fill: '#1a1446', 'font-size': fs, 'font-weight': '600',
-        'letter-spacing': '-0.01em', 'font-family': 'Inter, sans-serif'
-      }, line);
-      itemG.append(lineEl);
-    });
-  });
 }
 
 // =========================================================================
-// 4. lg_vs_compare
-// 2 thẻ chồng dọc, nhãn nhỏ viết hoa + dòng chính 2 dòng;
-// chữ "vs" xám giữa hai thẻ; thẻ thắng viền xanh ngọc + chip WINNER (khi có trong slot)
+// 4. lg_vs_compare (Hero Full-Stage Opposing Visuals: [75, 1005] x [245, 1325])
 // =========================================================================
 function renderLgVsCompare(ctx, svg, d, t, duration = 4) {
   d = d || {};
@@ -612,109 +1154,154 @@ function renderLgVsCompare(ctx, svg, d, t, duration = 4) {
     filter: mot.blur > 0 ? `blur(${mot.blur}px)` : ''
   });
 
-  const cardX = 82, cardW = 916, cardH = 400;
-  const card1Y = 280;
-  const card2Y = 760;
+  const stageX = 85, stageW = 910;
+  const stageY = 270, stageH = 1030;
 
-  // Extract slot data for 2 cards
+  const imgUrl = d.image_url || d.image;
+  if (imgUrl) {
+    renderRealImageWithGentleMotion(root, stageX, stageY, stageW, stageH, imgUrl, d, t, duration, 'lg-vs-img');
+    return;
+  }
+
+  const card1Y = 245, card1H = 460;
+  const card2Y = 825, card2H = 495;
+
   const left = d.left || (Array.isArray(d.items) && d.items[0]) || (Array.isArray(d.bars) && d.bars[0]) || {};
   const right = d.right || (Array.isArray(d.items) && d.items[1]) || (Array.isArray(d.bars) && d.bars[1]) || {};
 
-  const card1Label = (typeof left === 'object' ? (left.label || left.tag || left.kicker) : '') || d.label_left || '';
-  const card1Text = (typeof left === 'object' ? (left.title || left.text || left.name) : String(left)) || d.text_left || '';
+  const card1Label = (typeof left === 'object' ? (left.label || left.tag || left.kicker) : '') || d.label_left || 'TIẾT KIỆM TRUYỀN THỐNG';
+  const card1Text = (typeof left === 'object' ? (left.title || left.text || left.name) : String(left)) || d.text_left || 'Cất tiền vào heo đất';
 
-  const card2Label = (typeof right === 'object' ? (right.label || right.tag || right.kicker) : '') || d.label_right || '';
-  const card2Text = (typeof right === 'object' ? (right.title || right.text || right.name) : String(right)) || d.text_right || '';
+  const card2Label = (typeof right === 'object' ? (right.label || right.tag || right.kicker) : '') || d.label_right || 'TÁI ĐẦU TƯ CÔNG NGHỆ';
+  const card2Text = (typeof right === 'object' ? (right.title || right.text || right.name) : String(right)) || d.text_right || 'Dòng vốn đổi mới sinh lời';
 
-  // Winner logic: check slot
-  const isWinner1 = d.winner === 1 || d.winner === 'left' || (typeof left === 'object' && left.winner);
-  const isWinner2 = d.winner === 2 || d.winner === 'right' || (typeof right === 'object' && right.winner);
+  const isWinner2 = d.winner !== 1 && d.winner !== 'left';
 
-  function renderCard(cY, labelText, mainText, isWinner, cardIndex) {
-    const cg = lgGroup(root);
+  // ----------------- CARD 1: TOP (TRADITIONAL) -----------------
+  const c1G = lgGroup(root);
+  lgShape(c1G, 'rect', {
+    x: stageX, y: card1Y, width: stageW, height: card1H, rx: 32,
+    fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.95)', 'stroke-width': 1.5
+  });
 
-    // Shadow
-    lgShape(cg, 'rect', {
-      x: cardX, y: cY + 8, width: cardW, height: cardH, rx: 28,
-      fill: isWinner ? '#059669' : '#1a1446', opacity: isWinner ? 0.08 : 0.05
+  const p1G = lgGroup(c1G);
+  const p1W = Math.min(600, card1Label.length * 16 + 48);
+  lgShape(p1G, 'rect', {
+    x: stageX + 44, y: card1Y + 36, width: p1W, height: 42, rx: 14,
+    fill: '#f1f5f9', stroke: '#cbd5e1', 'stroke-width': 1.2
+  });
+  p1G.append(lgEl('text', {
+    x: stageX + 44 + p1W / 2, y: card1Y + 65,
+    'text-anchor': 'middle',
+    fill: '#475569', 'font-size': 24, 'font-weight': '800',
+    'letter-spacing': '0.5px', 'font-family': 'Inter, sans-serif'
+  }, String(card1Label).trim().toUpperCase().slice(0, 26)));
+
+  const lines1 = wrapWordsMaxChars(card1Text, 22, 2);
+  const fs1 = 44;
+  lines1.forEach((line, i) => {
+    c1G.append(lgEl('text', {
+      x: stageX + 48, y: card1Y + 140 + i * (fs1 * 1.25),
+      fill: '#1e293b', 'font-size': fs1, 'font-weight': '900',
+      'letter-spacing': '-0.02em', 'font-family': 'Inter, sans-serif'
+    }, line));
+  });
+
+  const lIconG = lgGroup(c1G);
+  const lCx = stageX + stageW - 130, lCy = card1Y + 160;
+  lgShape(lIconG, 'circle', { cx: lCx, cy: lCy, r: 48, fill: '#fef2f2', stroke: '#fecaca', 'stroke-width': 2 });
+  lIconG.append(lgEl('text', {
+    x: lCx, y: lCy + 16, 'text-anchor': 'middle', fill: '#ef4444', 'font-size': 44, 'font-weight': '900',
+    'font-family': 'Inter, sans-serif'
+  }, '🔒'));
+
+  const warnW = 340, warnH = 46;
+  const warnY = card1Y + card1H - 74;
+  lgShape(c1G, 'rect', {
+    x: stageX + 48, y: warnY, width: warnW, height: warnH, rx: 14,
+    fill: '#fef2f2', stroke: '#fecaca', 'stroke-width': 1.2
+  });
+  c1G.append(lgEl('text', {
+    x: stageX + 48 + warnW / 2, y: warnY + 31, 'text-anchor': 'middle',
+    fill: '#dc2626', 'font-size': 24, 'font-weight': '700', 'font-family': 'Inter, sans-serif'
+  }, '⚠ Mất giá theo lạm phát'));
+
+  // ----------------- CARD 2: BOTTOM (INNOVATION / WINNER) -----------------
+  const c2G = lgGroup(root);
+  lgShape(c2G, 'rect', {
+    x: stageX, y: card2Y, width: stageW, height: card2H, rx: 32,
+    fill: '#ffffff', stroke: '#10b981', 'stroke-width': 3
+  });
+
+  const p2G = lgGroup(c2G);
+  const p2W = Math.min(600, card2Label.length * 16 + 48);
+  lgShape(p2G, 'rect', {
+    x: stageX + 44, y: card2Y + 36, width: p2W, height: 42, rx: 14,
+    fill: '#ecfdf5', stroke: '#a7f3d0', 'stroke-width': 1.2
+  });
+  p2G.append(lgEl('text', {
+    x: stageX + 44 + p2W / 2, y: card2Y + 65,
+    'text-anchor': 'middle',
+    fill: '#059669', 'font-size': 24, 'font-weight': '800',
+    'letter-spacing': '0.5px', 'font-family': 'Inter, sans-serif'
+  }, String(card2Label).trim().toUpperCase().slice(0, 26)));
+
+  const lines2 = wrapWordsMaxChars(card2Text, 22, 2);
+  const fs2 = 44;
+  lines2.forEach((line, i) => {
+    c2G.append(lgEl('text', {
+      x: stageX + 48, y: card2Y + 140 + i * (fs2 * 1.25),
+      fill: '#1e293b', 'font-size': fs2, 'font-weight': '900',
+      'letter-spacing': '-0.02em', 'font-family': 'Inter, sans-serif'
+    }, line));
+  });
+
+  const rIconG = lgGroup(c2G);
+  const rCx = stageX + stageW - 130, rCy = card2Y + 160;
+  lgShape(rIconG, 'circle', { cx: rCx, cy: rCy, r: 48, fill: '#ecfdf5', stroke: '#a7f3d0', 'stroke-width': 2 });
+  rIconG.append(lgEl('text', {
+    x: rCx, y: rCy + 16, 'text-anchor': 'middle', fill: '#059669', 'font-size': 44, 'font-weight': '900',
+    'font-family': 'Inter, sans-serif'
+  }, '🚀'));
+
+  if (isWinner2) {
+    const wG = lgGroup(c2G);
+    const winW = 380, winH = 50;
+    const winY = card2Y + card2H - 74;
+
+    lgShape(wG, 'rect', {
+      x: stageX + 48, y: winY, width: winW, height: winH, rx: 16,
+      fill: '#ecfdf5', stroke: '#059669', 'stroke-width': 1.8
     });
-
-    // Box
-    lgShape(cg, 'rect', {
-      x: cardX, y: cY, width: cardW, height: cardH, rx: 28,
-      fill: '#ffffff',
-      stroke: isWinner ? '#059669' : 'rgba(226, 232, 240, 0.8)',
-      'stroke-width': isWinner ? 3.5 : 1.5
-    });
-
-    let tY = cY + 60;
-
-    // Nhãn nhỏ viết hoa
-    if (labelText && String(labelText).trim()) {
-      const lblEl = lgEl('text', {
-        x: cardX + 44, y: tY,
-        fill: '#64748b', 'font-size': 32, 'font-weight': '700',
-        'letter-spacing': '1.5px', 'font-family': 'Inter, sans-serif'
-      }, String(labelText).trim().toUpperCase());
-      cg.append(lblEl);
-      tY += 50;
-    }
-
-    // Dòng chính tối đa 2 dòng
-    if (mainText && String(mainText).trim()) {
-      const fs = 56;
-      const lines = wrapWordsMaxChars(mainText, 22, 2);
-      lines.forEach((line, i) => {
-        const textEl = lgEl('text', {
-          x: cardX + 44, y: tY + i * (fs * 1.25) + fs * 0.8,
-          fill: '#1a1446', 'font-size': fs, 'font-weight': '800',
-          'letter-spacing': '-0.02em', 'font-family': 'Inter, sans-serif'
-        }, line);
-        cg.append(textEl);
-      });
-    }
-
-    // Chip WINNER (chỉ khi có trong slot)
-    if (isWinner) {
-      const chipG = lgGroup(cg);
-      const chipW = 150, chipH = 46;
-      const chipX = cardX + cardW - chipW - 32;
-      const chipY = cY + 36;
-      lgShape(chipG, 'rect', {
-        x: chipX, y: chipY, width: chipW, height: chipH, rx: 14,
-        fill: '#059669'
-      });
-      chipG.append(lgEl('text', {
-        x: chipX + chipW / 2, y: chipY + 31,
-        'text-anchor': 'middle',
-        fill: '#ffffff', 'font-size': 26, 'font-weight': '800',
-        'letter-spacing': '1px', 'font-family': 'Inter, sans-serif'
-      }, 'WINNER'));
-    }
+    wG.append(lgEl('text', {
+      x: stageX + 48 + winW / 2, y: winY + 34,
+      'text-anchor': 'middle',
+      fill: '#059669', 'font-size': 26, 'font-weight': '900',
+      'letter-spacing': '1px', 'font-family': 'Inter, sans-serif'
+    }, '★ WINNER · TĂNG TRƯỞNG'));
   }
 
-  // Render Card 1 & 2
-  renderCard(card1Y, card1Label, card1Text, isWinner1, 1);
-  renderCard(card2Y, card2Label, card2Text, isWinner2, 2);
-
-  // Chữ "vs" xám giữa hai thẻ
+  // ----------------- CENTER: "VS" CIRCLE -----------------
   const vsG = lgGroup(root);
-  const vsCy = 720;
-  lgShape(vsG, 'circle', {
-    cx: 540, cy: vsCy, r: 40,
-    fill: '#f1f5f9', stroke: '#e2e8f0', 'stroke-width': 2
+  const vsCy = (card1Y + card1H + card2Y) / 2;
+  const vsPulse = 1.0 + 0.08 * Math.sin(t * 3);
+  const vsCircleG = lgGroup(vsG, {
+    transform: `translate(540, ${vsCy}) scale(${vsPulse}) translate(-540, ${-vsCy})`
   });
-  vsG.append(lgEl('text', {
-    x: 540, y: vsCy + 13,
+  lgShape(vsCircleG, 'circle', {
+    cx: 540, cy: vsCy, r: 42,
+    fill: '#0f172a', stroke: '#ffffff', 'stroke-width': 3
+  });
+  vsCircleG.append(lgEl('text', {
+    x: 540, y: vsCy + 12,
     'text-anchor': 'middle',
-    fill: '#64748b', 'font-size': 36, 'font-weight': '900',
+    fill: '#ffffff', 'font-size': 32, 'font-weight': '900',
     'font-family': 'Inter, sans-serif'
-  }, 'vs'));
+  }, 'VS'));
 }
 
 // =========================================================================
-// 5. lg_note_card
-// 1 thẻ giữa màn hình, chip chủ đề phía trên, câu nhận định tối đa 3 dòng, căn giữa
+// 5. lg_note_card (Hero Full-Stage Visual Mockup / Evidence: [75, 1005] x [245, 1325])
 // =========================================================================
 function renderLgNoteCard(ctx, svg, d, t, duration = 4) {
   d = d || {};
@@ -730,73 +1317,23 @@ function renderLgNoteCard(ctx, svg, d, t, duration = 4) {
     filter: mot.blur > 0 ? `blur(${mot.blur}px)` : ''
   });
 
-  const cardX = 82, cardY = 440, cardW = 916, cardH = 680;
+  const stageX = 85, stageW = 910;
+  const stageY = 270, stageH = 1030;
 
-  // Shadow
-  lgShape(root, 'rect', {
-    x: cardX, y: cardY + 16, width: cardW, height: cardH, rx: 32,
-    fill: '#1a1446', opacity: 0.06
-  });
-
-  // Main Glass Card
-  lgShape(root, 'rect', {
-    x: cardX, y: cardY, width: cardW, height: cardH, rx: 32,
-    fill: 'rgba(255, 255, 255, 0.95)',
-    stroke: 'rgba(255, 255, 255, 0.8)', 'stroke-width': 2
-  });
-
-  let curY = cardY + 90;
-
-  // Chip chủ đề phía trên
-  const chipRaw = d.chip || d.tag || d.label || d.topic || '';
-  if (chipRaw && String(chipRaw).trim()) {
-    const chipText = String(chipRaw).trim();
-    const chipG = lgGroup(root);
-    const fs = 34;
-    const estW = Math.min(760, chipText.length * 20 + 48);
-    const chipX = 540 - estW / 2;
-
-    lgShape(chipG, 'rect', {
-      x: chipX, y: curY, width: estW, height: 56, rx: 24,
-      fill: 'rgba(37, 99, 235, 0.08)', stroke: 'rgba(37, 99, 235, 0.2)', 'stroke-width': 1.5
-    });
-    chipG.append(lgEl('text', {
-      x: 540, y: curY + 39,
-      'text-anchor': 'middle',
-      fill: '#2563eb', 'font-size': fs, 'font-weight': '700',
-      'letter-spacing': '-0.01em', 'font-family': 'Inter, sans-serif'
-    }, chipText));
-
-    curY += 120;
+  const imgUrl = d.image_url || d.image || d.clip_url;
+  if (imgUrl) {
+    renderRealImageWithGentleMotion(root, stageX, stageY, stageW, stageH, imgUrl, d, t, duration, 'lg-note-img');
+  } else if (d.mockup_type === 'ai_network') {
+    renderAiNetworkMockup(root, stageX, stageY, stageW, stageH, d, t);
+  } else if (d.mockup_type === 'risk_shield') {
+    renderRiskShieldMockup(root, stageX, stageY, stageW, stageH, d, t);
   } else {
-    curY += 70;
-  }
-
-  // Câu nhận định tối đa 3 dòng, căn giữa
-  const stmtRaw = d.text || d.title || d.statement || d.quote || '';
-  if (stmtRaw && String(stmtRaw).trim()) {
-    const lines = wrapWordsMaxChars(stmtRaw, 20, 3);
-    let fs = 68;
-    if (lines.length === 3) fs = 62;
-    const lineHeight = fs * 1.35;
-
-    lines.forEach((line, idx) => {
-      const lineY = curY + idx * lineHeight + fs * 0.8;
-      const textEl = lgEl('text', {
-        x: 540, y: lineY,
-        'text-anchor': 'middle',
-        fill: '#1a1446', 'font-size': fs, 'font-weight': '900',
-        'letter-spacing': '-0.02em', 'font-family': 'Inter, sans-serif'
-      }, line);
-      root.append(textEl);
-    });
+    renderContentSmartMockup(root, stageX, stageY, stageW, stageH, d, t, duration);
   }
 }
 
 // =========================================================================
-// 6. lg_cta_profile
-// Pill nhấn ở trên, thẻ hồ sơ (header gradient, avatar bật lên, tên, link,
-// nút Theo dõi -> Đã theo dõi, hàng Thích/Bình luận/Chia sẻ), biểu tượng thích bay lên
+// 6. lg_cta_profile (Hero Discussion & Community Profile: [75, 1005] x [245, 1325])
 // =========================================================================
 function renderLgCtaProfile(ctx, svg, d, t, duration = 4) {
   d = d || {};
@@ -812,207 +1349,76 @@ function renderLgCtaProfile(ctx, svg, d, t, duration = 4) {
     filter: mot.blur > 0 ? `blur(${mot.blur}px)` : ''
   });
 
-  // Pill nhấn ở trên
-  const pillRaw = d.pill || d.kicker || d.action_pill || '';
-  if (pillRaw && String(pillRaw).trim()) {
-    const pillTxt = String(pillRaw).trim();
-    const pillG = lgGroup(root);
-    const estW = Math.min(800, pillTxt.length * 22 + 56);
-    const pillX = 540 - estW / 2;
-    const pillY = 300;
+  const stageX = 85, stageW = 910;
+  const stageY = 270, stageH = 1030;
 
-    lgShape(pillG, 'rect', {
-      x: pillX, y: pillY, width: estW, height: 60, rx: 30,
-      fill: 'url(#lg-grad-blue-purple)'
-    });
-    pillG.append(lgEl('text', {
-      x: 540, y: pillY + 41,
-      'text-anchor': 'middle',
-      fill: '#ffffff', 'font-size': 36, 'font-weight': '800',
-      'letter-spacing': '0.5px', 'font-family': 'Inter, sans-serif'
-    }, pillTxt));
-  }
+  // Background dynamic floating reactions
+  renderFloatingReactions(root, 540, 780, t);
 
-  // Thẻ hồ sơ
-  const cardX = 82, cardY = 410, cardW = 916, cardH = 860;
+  // Center Channel Discussion Card
+  const cardW = 840, cardH = 560;
+  const cardX = 540 - cardW / 2, cardY = 530;
 
-  // Shadow
-  lgShape(root, 'rect', {
-    x: cardX, y: cardY + 16, width: cardW, height: cardH, rx: 32,
-    fill: '#1a1446', opacity: 0.08
+  const cardG = lgGroup(root);
+  lgShape(cardG, 'rect', {
+    x: cardX, y: cardY, width: cardW, height: cardH, rx: 36,
+    fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.95)', 'stroke-width': 2
   });
 
-  // Card Body
-  lgShape(root, 'rect', {
-    x: cardX, y: cardY, width: cardW, height: cardH, rx: 32,
-    fill: '#ffffff', stroke: 'rgba(226, 232, 240, 0.8)', 'stroke-width': 1.5
+  // Channel Avatar with pulsing radar ring
+  const avX = 540, avY = cardY + 110, avR = 54;
+  const pulseR = 54 + 14 * Math.sin(t * 3);
+  lgShape(cardG, 'circle', {
+    cx: avX, cy: avY, r: pulseR, fill: 'none', stroke: '#2563eb', 'stroke-width': 2, opacity: 0.4
   });
-
-  // Header Gradient
-  const headerClipId = 'lg-profile-hdr-clip';
-  let defs = ensureGradients(svg);
-  if (!svg.querySelector('#' + headerClipId)) {
-    const clip = lgEl('clipPath', { id: headerClipId });
-    clip.append(lgEl('rect', { x: cardX, y: cardY, width: cardW, height: 210, rx: 32 }));
-    defs.append(clip);
-  }
-  lgShape(root, 'rect', {
-    x: cardX, y: cardY, width: cardW, height: 210,
-    fill: 'url(#lg-grad-blue-purple)',
-    'clip-path': `url(#${headerClipId})`
+  lgShape(cardG, 'circle', {
+    cx: avX, cy: avY, r: avR, fill: '#0f172a'
   });
+  const chanName = String(d.channel_name || 'TIN CÔNG NGHỆ').trim();
+  cardG.append(lgEl('text', {
+    x: avX, y: avY + 18, 'text-anchor': 'middle',
+    fill: '#ffffff', 'font-size': 50, 'font-weight': '900',
+    'font-family': 'Inter, sans-serif'
+  }, chanName.charAt(0).toUpperCase()));
 
-  // Avatar bật lên ở giữa ranh giới header (y = 620)
-  const avatarY = 620;
-  const avatarR = 80;
+  // Channel Name & Verified Tick
+  cardG.append(lgEl('text', {
+    x: 540, y: cardY + 225, 'text-anchor': 'middle',
+    fill: '#0f172a', 'font-size': 44, 'font-weight': '900',
+    'letter-spacing': '-0.02em', 'font-family': 'Inter, sans-serif'
+  }, chanName.slice(0, 24)));
 
-  // Avatar bounce animation
-  const avP = clamp((t - 0.25) / 0.4);
-  const avE = easeLg(avP);
-  const avScale = 0.8 + 0.2 * avE;
+  // Handle
+  const chanHandle = String(d.channel_handle || '@tincongnghe').trim();
+  cardG.append(lgEl('text', {
+    x: 540, y: cardY + 270, 'text-anchor': 'middle',
+    fill: '#64748b', 'font-size': 26, 'font-weight': '600',
+    'font-family': 'Inter, sans-serif'
+  }, chanHandle.slice(0, 30)));
 
-  const avG = lgGroup(root, {
-    transform: `translate(540, ${avatarY}) scale(${avScale}) translate(-540, -${avatarY})`
+  // CTA Pill button
+  const ctaW = 440, ctaH = 64;
+  const ctaX = 540 - ctaW / 2, ctaY = cardY + 325;
+  lgShape(cardG, 'rect', {
+    x: ctaX, y: ctaY, width: ctaW, height: ctaH, rx: 32,
+    fill: '#2563eb'
   });
+  cardG.append(lgEl('text', {
+    x: 540, y: ctaY + 42, 'text-anchor': 'middle',
+    fill: '#ffffff', 'font-size': 28, 'font-weight': '800',
+    'letter-spacing': '0.5px', 'font-family': 'Inter, sans-serif'
+  }, 'THẢO LUẬN NGAY'));
 
-  // White border
-  lgShape(avG, 'circle', {
-    cx: 540, cy: avatarY, r: avatarR + 6,
-    fill: '#ffffff'
-  });
-
-  const avatarUrl = d.avatar_url || d.avatar || d.logo_url;
-  if (avatarUrl) {
-    const avClipId = 'lg-avatar-clip';
-    if (!svg.querySelector('#' + avClipId)) {
-      const clip = lgEl('clipPath', { id: avClipId });
-      clip.append(lgEl('circle', { cx: 540, cy: avatarY, r: avatarR }));
-      defs.append(clip);
-    }
-    const img = lgEl('image', {
-      href: avatarUrl,
-      x: 540 - avatarR, y: avatarY - avatarR, width: avatarR * 2, height: avatarR * 2,
-      preserveAspectRatio: 'xMidYMid slice',
-      'clip-path': `url(#${avClipId})`
-    });
-    avG.append(img);
-  } else {
-    lgShape(avG, 'circle', {
-      cx: 540, cy: avatarY, r: avatarR,
-      fill: 'linear-gradient(135deg, #2563eb, #3d2bb0)'
-    });
-    const nameChar = ((d.name || d.brand_name || 'T').trim().charAt(0) || 'T').toUpperCase();
-    avG.append(lgEl('text', {
-      x: 540, y: avatarY + 28,
-      'text-anchor': 'middle',
-      fill: '#ffffff', 'font-size': 76, 'font-weight': '900',
+  // Bio / Question
+  const bioText = String(d.bio || d.text || 'Khám phá công nghệ & AI tương lai cùng chúng tôi').trim();
+  const bioLines = wrapWordsMaxChars(bioText, 26, 2);
+  bioLines.forEach((l, idx) => {
+    cardG.append(lgEl('text', {
+      x: 540, y: cardY + 435 + idx * 36, 'text-anchor': 'middle',
+      fill: '#475569', 'font-size': 24, 'font-weight': '600',
       'font-family': 'Inter, sans-serif'
-    }, nameChar));
-  }
-
-  // Tên
-  const nameRaw = d.name || d.title || d.brand_name || '';
-  if (nameRaw && String(nameRaw).trim()) {
-    root.append(lgEl('text', {
-      x: 540, y: 760,
-      'text-anchor': 'middle',
-      fill: '#1a1446', 'font-size': 54, 'font-weight': '900',
-      'letter-spacing': '-0.02em', 'font-family': 'Inter, sans-serif'
-    }, String(nameRaw).trim().slice(0, 32)));
-  }
-
-  // Link
-  const linkRaw = d.link || d.handle || d.website || '';
-  if (linkRaw && String(linkRaw).trim()) {
-    root.append(lgEl('text', {
-      x: 540, y: 820,
-      'text-anchor': 'middle',
-      fill: '#2563eb', 'font-size': 36, 'font-weight': '600',
-      'font-family': 'Inter, sans-serif'
-    }, String(linkRaw).trim().slice(0, 40)));
-  }
-
-  // Nút "Theo dõi" -> "Đã theo dõi"
-  const isFollowed = t >= 1.2;
-  const btnW = 340, btnH = 74;
-  const btnX = 540 - btnW / 2, btnY = 880;
-
-  const btnG = lgGroup(root);
-  if (!isFollowed) {
-    // "Theo dõi" (Blue button)
-    lgShape(btnG, 'rect', {
-      x: btnX, y: btnY, width: btnW, height: btnH, rx: 37,
-      fill: '#2563eb'
-    });
-    btnG.append(lgEl('text', {
-      x: 540, y: btnY + 50,
-      'text-anchor': 'middle',
-      fill: '#ffffff', 'font-size': 36, 'font-weight': '800',
-      'font-family': 'Inter, sans-serif'
-    }, '+ Theo dõi'));
-  } else {
-    // "Đã theo dõi" (Gray active button with green check)
-    lgShape(btnG, 'rect', {
-      x: btnX, y: btnY, width: btnW, height: btnH, rx: 37,
-      fill: '#e2e8f0'
-    });
-    btnG.append(lgEl('text', {
-      x: 540, y: btnY + 50,
-      'text-anchor': 'middle',
-      fill: '#334155', 'font-size': 36, 'font-weight': '700',
-      'font-family': 'Inter, sans-serif'
-    }, '✓ Đã theo dõi'));
-  }
-
-  // Hàng Thích / Bình luận / Chia sẻ
-  const rowY = 1040;
-  lgShape(root, 'line', {
-    x1: cardX + 60, y1: rowY, x2: cardX + cardW - 60, y2: rowY,
-    stroke: 'rgba(226, 232, 240, 0.8)', 'stroke-width': 1.5
+    }, l));
   });
-
-  const actions = [
-    { label: 'Thích', icon: '♥' },
-    { label: 'Bình luận', icon: '💬' },
-    { label: 'Chia sẻ', icon: '↗' }
-  ];
-  actions.forEach((act, idx) => {
-    const actX = cardX + 160 + idx * 290;
-    const actG = lgGroup(root);
-    actG.append(lgEl('text', {
-      x: actX, y: rowY + 68,
-      'text-anchor': 'middle',
-      fill: '#64748b', 'font-size': 34, 'font-weight': '700',
-      'font-family': 'Inter, sans-serif'
-    }, act.icon + ' ' + act.label));
-  });
-
-  // Biểu tượng thích/tim bay lên cuối cảnh
-  if (t > duration - 1.8) {
-    const heartProgress = clamp((t - (duration - 1.8)) / 1.5);
-    const likeBtnX = cardX + 160;
-    const likeBtnY = rowY + 40;
-
-    [0, 1, 2, 3].forEach(i => {
-      const delay = i * 0.2;
-      const hp = clamp((heartProgress - delay) / 0.8);
-      if (hp > 0 && hp < 1) {
-        const floatY = likeBtnY - Math.round(hp * 260);
-        const floatX = likeBtnX + Math.sin(hp * Math.PI * 2 + i) * 35;
-        const alpha = Math.sin(hp * Math.PI);
-        const scale = 0.8 + 0.6 * Math.sin(hp * Math.PI);
-
-        const hG = lgGroup(root, {
-          transform: `translate(${floatX}, ${floatY}) scale(${scale})`,
-          opacity: alpha
-        });
-        hG.append(lgEl('text', {
-          x: 0, y: 0, 'text-anchor': 'middle',
-          fill: i % 2 ? '#f43f5e' : '#8b5cf6', 'font-size': 44
-        }, '♥'));
-      }
-    });
-  }
 }
 
 // Export light glass recipes
