@@ -53,26 +53,33 @@ def _generate_vivid_image_prompt(
     if any(k in n_low for k in ("ai", "trí tuệ nhân tạo", "thuật toán", "mô hình", "mạng thần kinh", "tương lai")):
         return "Vibrant glowing cybernetic neural network core pulsating with complex interconnected data nodes and synaptic fiber conduits, deep indigo and cyan volumetric atmosphere, 8k."
 
-    dedicated_beat_prompts = [
-        f"Cinematic studio portrait of visionary tech founder {author or 'Elon Musk'} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field, 8k octane render.",
-        "Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams, dramatic high-contrast studio rim lighting, 8k hyper-detailed.",
-        "High-precision industrial robotic arm welding futuristic quantum components in an automated Tesla Gigafactory, glowing laser beams and spark particles, 8k cinematic.",
-        "Professional multi-screen Bloomberg financial trading terminal showing production cost descending to zero with vibrant green and red candlestick price charts, 8k.",
-        "High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and green asset growth on right, 8k.",
-        "Ornate 3D glowing golden key floating above a dark frosted glass pedestal with pulsing cyan circuit runes, representing cash flow mastery, 8k.",
-        f"Editorial financial newspaper article clipping with large golden quotation marks, verified expert badge for {author or 'financial planner Ted Jenkin'}, and bold highlighted callout text, 8k.",
-        "Futuristic glowing amber-crimson holographic cyber security shield deflecting volatile pension and market risk anomalies on an advanced tactical monitoring matrix, 8k.",
-        "Futuristic golden mechanical balance scale in equilibrium, weighing physical gold assets against algorithmic technology capital across society, 8k octane render.",
-        "Futuristic cybernetic city skyline with autonomous humanoid robot gazing at technological horizon and neon glass skyscrapers, 8k.",
-        "Circular glowing emergency reserve gauge meter pointing to 6-month green safety zone, fortified biometric vault lock mechanism, 8k.",
-        "Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights, cinematic 8k.",
-    ]
+    if any(k in n_low for k in ("hầm", "metro", "tbm", "đào hầm", "tường vây", "đường sắt", "công trình ngầm", "đô thị", "kỹ sư")):
+        return f"Cinematic engineering visualization of urban underground tunnel construction and modern metro infrastructure, advanced TBM cutterhead and structural engineering, dramatic lighting, 8k concept art."
 
-    if idx is not None and 0 <= idx < len(dedicated_beat_prompts):
-        return dedicated_beat_prompts[idx]
+    if any(k in n_low for k in ("đào tạo", "học tập", "thực hành", "vận hành", "kỹ thuật viên", "nhân lực")):
+        return f"Vietnamese engineers and technicians in professional safety gear collaborating in an advanced modern engineering control room, volumetric cyan studio lighting, 8k."
 
-    clean_topic = topic or "Future of Technology"
-    return f"Cinematic visual concept visualizing '{clean_topic}', dynamic cyber aesthetic with glass reflections and volumetric neon lighting, 8k concept art."
+    # Index-based beat defaults when generic narration is supplied (12 diverse beats)
+    if idx is not None:
+        idx_beats = {
+            0: f"Cinematic studio portrait of visionary tech founder {author or 'tech leader'} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field, 8k octane render.",
+            1: "Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams, dramatic high-contrast studio rim lighting, 8k hyper-detailed.",
+            2: "High-precision industrial robotic arm welding futuristic quantum components in an automated Tesla Gigafactory, glowing laser beams and spark particles, 8k cinematic.",
+            3: "Professional multi-screen Bloomberg financial trading terminal showing production cost descending to zero with vibrant green and red candlestick price charts, 8k.",
+            4: "High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and green asset growth on right, 8k.",
+            5: "Intricate 3D golden key unlocking a boundless stream of glowing digital cashflow, dark moody aesthetic with golden light rays, 8k concept art.",
+            6: "Respected financial expert giving insights in a modern television studio, dynamic bokeh backdrop and studio cameras, cinematic 8k.",
+            7: "Futuristic glowing amber-crimson holographic cyber security shield deflecting volatile pension and market risk anomalies on an advanced tactical monitoring matrix, 8k.",
+            8: "Balanced mechanical scale weighing golden cash against futuristic glowing AI microchip, cinematic studio illumination, 8k octane render.",
+            9: "Futuristic metropolitan cityscape with gleaming skyscrapers, autonomous flying vehicles, and green sustainable energy grids, cinematic 8k.",
+            10: "Modern semi-circular dashboard emergency gauge needle pointing smoothly into safe optimal 6-month reserve zone, precision glass instrument, 8k.",
+            11: "Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights, cinematic 8k.",
+        }
+        if idx in idx_beats:
+            return idx_beats[idx]
+
+    clean_topic = topic or "Advanced Technology"
+    return f"Cinematic visual concept visualizing '{clean_topic}', dynamic clean aesthetic with subtle glass reflections and studio lighting, 8k concept art."
 
 
 def _clean_domain(url: str | None) -> str:
@@ -308,9 +315,29 @@ def create_heuristic_slide_script(
                 "call_to_action": "Theo dõi kênh để đón xem những bản tin công nghệ mới nhất!",
                 "button_text": "Theo Dõi",
             }
+            if source_domain:
+                slots["source"] = source_domain
+            # Check source publication date: if > 12 months from 2026-11-04, warn and show date
+            if brief:
+                b_facts = getattr(brief, "facts", None) or (brief.get("facts") if isinstance(brief, dict) else [])
+                for f in b_facts:
+                    pub = str(getattr(f, "published_at", "") or (f.get("published_at") if isinstance(f, dict) else ""))
+                    if pub and re.match(r"^\d{4}-\d{2}-\d{2}$", pub):
+                        try:
+                            # Compare against current year 2026
+                            y, m, d = [int(x) for x in pub.split("-")]
+                            from datetime import date
+                            pub_date = date(y, m, d)
+                            today = date(2026, 11, 4)
+                            diff_days = (today - pub_date).days
+                            if diff_days > 365:
+                                slots["source_date"] = f"{d:02d}/{m:02d}/{y}"
+                                break
+                        except Exception:
+                            pass
 
         # Synthesize image prompt in English
-        img_prompt = f"Cinematic minimalist tech visual representing {topic_title or 'technology news'}, clean studio lighting, 8k"
+        img_prompt = _generate_vivid_image_prompt(combined_text, topic=topic_title, layout=layout, idx=s_idx)
 
         emphasis = _find_emphasis_phrases(combined_text, slide_words, slide_start=s_start)
 

@@ -476,33 +476,38 @@ def download_real_web_image(query: str, target_path: Path, timeout: float = 5.0)
 
 
 def _query_for_beat(idx: int, prompt: str) -> str:
-    """Determine authentic search query for given beat and prompt."""
+    """Determine authentic search query for given beat and prompt based on content keywords."""
     p_low = prompt.lower()
-    if idx == 0 or "elon musk" in p_low:
+    if any(k in p_low for k in ("tbm", "đào hầm", "máy đào hầm")):
+        return "Tunnel Boring Machine TBM underground metro construction"
+    elif any(k in p_low for k in ("tường vây", "thành đất", "bờ ao", "ngăn nước")):
+        return "diaphragm wall underground foundation construction engineering"
+    elif any(k in p_low for k in ("hầm", "công trình ngầm", "lòng đất", "địa đạo")):
+        return "underground tunnel construction engineering urban infrastructure"
+    elif any(k in p_low for k in ("đào tạo", "kỹ sư", "học lái", "vô lăng", "nhân lực")):
+        return "Vietnamese engineers metro railway infrastructure construction"
+    elif any(k in p_low for k in ("đường sắt", "metro", "cát linh", "tàu điện")):
+        return "urban railway metro train construction vietnam"
+    elif any(k in p_low for k in ("elon musk",)):
         return "Elon Musk speaking stage keynote conference portrait"
-    elif idx == 1 or any(k in p_low for k in ("heo đất", "tiết kiệm", "piggy", "cash", "heo")):
+    elif any(k in p_low for k in ("heo đất", "lợn đất", "piggy bank")):
         return "piggy bank breaking shattered money cash savings"
-    elif idx == 2 or any(k in p_low for k in ("nhà máy", "robot", "gigafactory", "tự động")):
-        return "tesla gigafactory humanoid robot automation manufacturing factory"
-    elif idx == 3:
-        return ""  # dynamic animated candlestick & spline chart
-    elif idx == 4 or any(k in p_low for k in ("chip", "vi mạch", "lượng tử", "processor")):
+    elif any(k in p_low for k in ("robot", "gigafactory", "tay máy")):
+        return "industrial robot automation manufacturing factory"
+    elif any(k in p_low for k in ("chip", "vi mạch", "bán dẫn")):
         return "ai microchip processor semiconductor hardware technology"
-    elif idx == 5 or any(k in p_low for k in ("chìa khóa", "dòng tiền", "thành công", "golden key")):
-        return "gold key financial investment cashflow business success"
-    elif idx == 6 or any(k in p_low for k in ("ted jenkin", "chuyên gia", "tài chính", "yahoo")):
-        return "Ted Jenkin financial advisor Yahoo Finance interview portrait"
-    elif idx == 7 or any(k in p_low for k in ("khiên", "an ninh", "bảo mật", "shield", "cyber")):
+    elif any(k in p_low for k in ("ted jenkin",)):
+        return "Ted Jenkin financial advisor portrait"
+    elif any(k in p_low for k in ("khiên", "an ninh", "bảo mật")):
         return "cyber security shield digital protection network technology"
-    elif idx == 8 or any(k in p_low for k in ("cán cân", "tài sản", "balance", "scale")):
-        return "justice scale financial balance gold coins investment assets"
-    elif idx == 9 or any(k in p_low for k in ("đô thị", "thành phố", "city", "tương lai")):
-        return "futuristic smart city artificial intelligence modern skyscraper skyline"
-    elif idx == 10:
-        return ""  # dynamic animated emergency reserve gauge
-    elif idx == 11 or any(k in p_low for k in ("kênh", "youtube", "subscribe", "cta")):
-        return "technology modern digital media studio podcast neon"
-    return "technology business innovation finance"
+    elif any(k in p_low for k in ("kênh", "youtube", "subscribe", "đăng ký", "theo dõi")):
+        return "modern digital broadcast studio newsroom"
+    
+    # Fallback: clean keywords from prompt
+    clean_words = [w for w in re.findall(r"\b[a-zA-Z]{3,}\b", prompt) if w.lower() not in {"cinematic", "photorealistic", "ultra", "dramatic", "concept", "render"}]
+    if clean_words:
+        return " ".join(clean_words[:4]) + " technology"
+    return "modern engineering technology infrastructure"
 
 
 def resolve_images_for_slide_script(
@@ -530,10 +535,10 @@ def resolve_images_for_slide_script(
         slide_id = getattr(slide, "id", f"slide_{idx+1}")
         prompt = getattr(slide, "image_prompt", "") or slots.get("image_prompt", "") or getattr(slide, "narration", "") or slots.get("text", "")
         
-        # Configure chart layouts for data beats
-        if idx == 3 or ("300%" in prompt) or ("chi phí" in prompt.lower() and "năng suất" in prompt.lower()):
+        # Configure chart layouts for data beats if content explicitly mentions them
+        if ("300%" in prompt) or ("chi phí" in prompt.lower() and "năng suất" in prompt.lower()):
             slots["mockup_type"] = "financial_chart"
-        elif idx == 10 or ("quỹ dự phòng" in prompt.lower()) or ("3 đến 6 tháng" in prompt.lower()):
+        elif ("quỹ dự phòng" in prompt.lower()) or ("3 đến 6 tháng" in prompt.lower()):
             slots["mockup_type"] = "emergency_gauge"
 
         existing_url = slots.get("image_url")

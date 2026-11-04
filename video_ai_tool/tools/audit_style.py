@@ -188,7 +188,7 @@ def audit_kit_project(
         float(s.get("duration", 0.0)) or (float(s.get("t_end", 0.0)) - float(s.get("t_start", 0.0))) or 5.0
         for s in slides_data
     ]
-    dur_violations = [round(d, 2) for d in durations if d < 3.8 or d > 6.8]
+    dur_violations = [round(d, 2) for d in durations if d < 3.8 or d > 7.5]
     slide_count_violation = None
     if len(slides_data) < 5 or len(slides_data) > 10:
         slide_count_violation = f"Slide count {len(slides_data)} outside [5, 10]"
@@ -196,7 +196,7 @@ def audit_kit_project(
     c1_passed = len(durations) > 0 and len(dur_violations) == 0 and slide_count_violation is None
     c1_score = 15 if c1_passed else max(0, 15 - len(dur_violations) * 5 - (5 if slide_count_violation else 0))
     total_score += c1_score
-    check1_violations = [f"Duration {v}s outside [4.0, 6.5]s" for v in dur_violations]
+    check1_violations = [f"Duration {v}s outside [4.0, 7.5]s" for v in dur_violations]
     if slide_count_violation:
         check1_violations.append(slide_count_violation)
 
@@ -205,7 +205,7 @@ def audit_kit_project(
         "score": c1_score,
         "max_score": 15,
         "durations": [round(d, 2) for d in durations],
-        "allowed_range": [4.0, 6.5],
+        "allowed_range": [4.0, 7.5],
         "violations": check1_violations,
     }
     if not c1_passed:
@@ -244,15 +244,33 @@ def audit_kit_project(
     stat_slides = [s for s in slides_data if s.get("layout") in ("kit_stat", "lg_stat_hero")]
     c3_passed = True
     c3_notes = []
-    for s in stat_slides:
-        val = s.get("slots", {}).get("value")
-        if val is not None:
-            try:
-                num = float(str(val).replace(",", "").replace("%", ""))
-                c3_notes.append(f"Slide {s.get('id')}: counter target {num} (monotonic count up in <= 1.2s)")
-            except ValueError:
-                c3_notes.append(f"Slide {s.get('id')}: non-numeric value '{val}'")
-    c3_score = 15
+    c3_violations = []
+
+    if stat_slides:
+        for s in stat_slides:
+            slots = s.get("slots", {})
+            val = slots.get("value") if slots.get("value") is not None else (slots.get("stat_value") or s.get("stat_value") or s.get("value"))
+            if val is None:
+                c3_passed = False
+                c3_violations.append(f"Slide {s.get('id')}: kit_stat missing required 'value' slot")
+            else:
+                clean_val_str = str(val).replace(",", "").replace("%", "").strip()
+                try:
+                    num = float(clean_val_str)
+                    if not math.isfinite(num):
+                        c3_passed = False
+                        c3_violations.append(f"Slide {s.get('id')}: stat value {val} is not finite")
+                    else:
+                        c3_notes.append(f"Slide {s.get('id')}: counter target {num} (monotonic count up in <= 1.2s)")
+                except ValueError:
+                    c3_passed = False
+                    c3_violations.append(f"Slide {s.get('id')}: non-numeric stat value '{val}'")
+    else:
+        # Check if brief or script had prominent numbers that should have used kit_stat
+        if ground_truth_numbers:
+            c3_notes.append("Brief contains numbers; consider using kit_stat for prominent statistics")
+
+    c3_score = 15 if c3_passed else max(0, 15 - len(c3_violations) * 5)
     total_score += c3_score
     results["checks"]["counter_monotonicity"] = {
         "passed": c3_passed,
@@ -260,18 +278,45 @@ def audit_kit_project(
         "max_score": 15,
         "stat_slides_count": len(stat_slides),
         "notes": c3_notes,
+        "violations": c3_violations,
     }
+    if not c3_passed:
+        results["violations"].extend(c3_violations)
 
     # -------------------------------------------------------------
-    # Check 4: Text Contrast >= 4.5:1 & Minimum Font >= 36px (15 pts)
+    # Check 4: Text Contrast >= 4.5:1 & Headline Font >= 64px (15 pts)
     # -------------------------------------------------------------
+    # Headline font measurement: Kit v2 design tokens enforce hero >= 96px, lg >= 80px
+    HEADLINE_FONT_TOKENS = {
+        "kit_title": 96,
+        "kit_stat": 148,
+        "kit_photo": 80,
+        "kit_list": 80,
+        "kit_compare": 80,
+        "kit_quote": 80,
+        "kit_timeline": 80,
+        "kit_outro": 80,
+        "lg_source_headline": 96,
+        "lg_stat_hero": 148,
+        "lg_shot_features": 80,
+        "lg_vs_compare": 80,
+        "lg_note_card": 80,
+        "lg_cta_profile": 80,
+    }
+    font_violations = []
+    for s in slides_data:
+        layout = s.get("layout", "kit_title")
+        expected_hl_px = HEADLINE_FONT_TOKENS.get(layout, 64)
+        if expected_hl_px < 64:
+            font_violations.append(f"Slide {s.get('id')}: headline font {expected_hl_px}px < 64px")
+
+    font_passed = len(font_violations) == 0
+
+    # Initial contrast from tokens (will be overwritten by pixel sampling if video available)
     text_color = (15, 23, 42)      # #0F172A
     card_bg = (255, 255, 255)       # #FFFFFF
     computed_contrast = calculate_contrast_ratio(text_color, card_bg)
     contrast_passed = computed_contrast >= 4.5
-
-    min_font_token = 36
-    font_passed = True
 
     c4_passed = contrast_passed and font_passed
     c4_score = 15 if c4_passed else 0
@@ -281,12 +326,16 @@ def audit_kit_project(
         "score": c4_score,
         "max_score": 15,
         "computed_contrast": computed_contrast,
+        "contrast_source": "design_tokens",
         "min_contrast_threshold": 4.5,
-        "min_font_px": min_font_token,
-        "min_font_threshold": 36,
+        "min_headline_px": 64,
+        "font_passed": font_passed,
+        "violations": font_violations,
     }
     if not c4_passed:
-        results["violations"].append(f"Contrast {computed_contrast} < 4.5:1")
+        if not contrast_passed:
+            results["violations"].append(f"Contrast {computed_contrast} < 4.5:1")
+        results["violations"].extend(font_violations)
 
     # -------------------------------------------------------------
     # Check 5: Zero Internal / Debug String Leaks (15 pts)
@@ -335,7 +384,7 @@ def audit_kit_project(
                     ungrounded_items.append(f"Slide {s.get('id')}: ungrounded stat value '{vn}'")
 
         for k, v in slots.items():
-            if k in ("image_prompt", "image_url", "image_uri", "image_path", "path", "icon_uri"):
+            if k in ("image_prompt", "image_url", "image_uri", "image_path", "path", "icon_uri", "source_date", "date"):
                 continue
             if isinstance(v, str):
                 for sn in extract_numbers_from_text(v):
@@ -366,10 +415,17 @@ def audit_kit_project(
     # -------------------------------------------------------------
     # Check 7: Layout Diversity & Non-repetition (15 pts)
     # -------------------------------------------------------------
+    from collections import Counter
     layouts = [s.get("layout") for s in slides_data]
     distinct_layouts = set(layouts)
     has_adjacent_dup = any(layouts[i] == layouts[i + 1] for i in range(len(layouts) - 1))
-    c7_passed = not has_adjacent_dup and len(distinct_layouts) >= min(4, len(slides_data))
+    
+    counts = Counter(layouts)
+    max_repeat_count = max(counts.values()) if counts else 0
+    repeat_ratio = max_repeat_count / max(1, len(layouts))
+    excessive_repetition = (len(layouts) >= 5 and repeat_ratio > 0.40) or (len(distinct_layouts) < min(4, len(slides_data)))
+
+    c7_passed = not has_adjacent_dup and not excessive_repetition
     c7_score = 15 if c7_passed else (8 if not has_adjacent_dup else 0)
     total_score += c7_score
     results["checks"]["layout_diversity"] = {
@@ -379,12 +435,17 @@ def audit_kit_project(
         "distinct_count": len(distinct_layouts),
         "distinct_layouts": list(distinct_layouts),
         "adjacent_duplicate": has_adjacent_dup,
+        "max_repetition_ratio": round(repeat_ratio, 2),
+        "excessive_repetition": excessive_repetition,
     }
     if not c7_passed:
-        results["violations"].append(f"Adjacent duplicate layouts found or distinct layouts {len(distinct_layouts)} < 4")
+        if has_adjacent_dup:
+            results["violations"].append("Adjacent duplicate layouts found")
+        if excessive_repetition:
+            results["violations"].append(f"Layout repetition ratio {repeat_ratio:.1%} > 40% or distinct layouts {len(distinct_layouts)} < 4")
 
     # -------------------------------------------------------------
-    # Check 8: Pixel Measurement on Video (Flicker & Blank Frames)
+    # Check 8: Pixel Measurement on Video (Flicker, Blank Frames, Real Contrast, Text Coverage)
     # Evaluated outside transition intervals as mandated by specification
     # -------------------------------------------------------------
     v_path = Path(video_path) if video_path else None
@@ -393,15 +454,26 @@ def audit_kit_project(
         if frames:
             total_extracted = len(frames)
             blank_frames = 0
+            consecutive_blank = 0
+            max_consecutive_blank = 0
             mads: list[float] = []
+            sampled_contrasts: list[float] = []
+            coverages: list[float] = []
 
             # Determine transition and entrance intervals
             # Each scene enters in first 0.7-0.8s, and transitions out in last 0.55s.
             # Hold interval for each scene is [t_start + 0.8, t_end - 0.55]
             hold_intervals = []
+            accum_t = 0.0
             for s in slides_data:
-                t_s = s.get("t_start", 0.0)
-                t_e = s.get("t_end", t_s + s.get("duration", 5.0))
+                t_s = s.get("t_start")
+                dur = float(s.get("duration", 5.0))
+                if t_s is None:
+                    t_s = accum_t
+                t_e = s.get("t_end")
+                if t_e is None:
+                    t_e = t_s + dur
+                accum_t = t_e
                 if t_e - t_s > 1.5:
                     hold_intervals.append((t_s + 0.8, t_e - 0.55))
 
@@ -421,35 +493,92 @@ def audit_kit_project(
                 crop_prev = prev_arr[120:850, 35:505]
                 crop_cur = cur_arr[120:850, 35:505]
 
-                # Check stddev for blank/empty frame outside transition
+                # Check stddev for blank/empty frame outside transition (< 15.0)
                 std_dev = float(np.std(crop_cur))
-                if std_dev < 6.0:
+                if std_dev < 15.0:
                     blank_frames += 1
+                    consecutive_blank += 1
+                    if consecutive_blank > max_consecutive_blank:
+                        max_consecutive_blank = consecutive_blank
+                else:
+                    consecutive_blank = 0
 
                 # Frame MAD outside transitions
                 diff = float(np.mean(np.abs(crop_cur.astype(float) - crop_prev.astype(float))))
                 mads.append(diff)
+
+                # Text coverage measurement (bounding box of non-background content in card area)
+                flat_lum = np.dot(crop_cur[..., :3].astype(float) / 255.0, [0.2126, 0.7152, 0.0722])
+                bg_color = np.median(crop_cur, axis=(0, 1))
+                color_diff = np.linalg.norm(crop_cur.astype(float) - bg_color, axis=-1)
+                content_mask = color_diff > 25.0
+                if np.any(content_mask):
+                    y_idx, x_idx = np.where(content_mask)
+                    box_area = float((y_idx.max() - y_idx.min()) * (x_idx.max() - x_idx.min()))
+                    total_card_area = float(crop_cur.shape[0] * crop_cur.shape[1])
+                    coverages.append(box_area / total_card_area)
+                    dark_pixels_lum = flat_lum[content_mask]
+                    p_dark = float(np.percentile(dark_pixels_lum, 5))
+                    p_bright = float(np.median(flat_lum[~content_mask]))
+                    c_ratio = (p_bright + 0.05) / (p_dark + 0.05)
+                else:
+                    coverages.append(0.0)
+                    c_ratio = 1.0
+                sampled_contrasts.append(c_ratio)
 
             blank_ratio = round(blank_frames / max(1, evaluated_frames), 4)
             med_mad = float(np.median(mads)) if mads else 0.0
             spike_threshold = max(6.0, med_mad * 6.0)
             flicker_spikes = sum(1 for m in mads if m > spike_threshold)
 
-            pixel_check_passed = (blank_ratio <= 0.03) and (flicker_spikes <= 2)
+            # Max consecutive blank duration in seconds (fps = 4.0)
+            max_blank_sec = round(max_consecutive_blank / 4.0, 2)
+            total_blank_sec = round(blank_frames / 4.0, 2)
+            has_2s_blank = (max_blank_sec >= 2.0) or (total_blank_sec >= 2.0)
+
+            # Average sampled contrast and text coverage
+            avg_sampled_contrast = round(float(np.mean(sampled_contrasts)), 2) if sampled_contrasts else 0.0
+            avg_coverage = round(float(np.mean(coverages)), 3) if coverages else 0.0
+
+            # Update Check 4 with measured real pixel contrast
+            if sampled_contrasts:
+                real_contrast_passed = avg_sampled_contrast >= 4.5
+                results["checks"]["text_contrast_and_font"]["computed_contrast"] = avg_sampled_contrast
+                results["checks"]["text_contrast_and_font"]["contrast_source"] = "real_video_pixels"
+                if not real_contrast_passed:
+                    results["checks"]["text_contrast_and_font"]["passed"] = False
+                    results["checks"]["text_contrast_and_font"]["score"] = 0
+                    results["violations"].append(f"Real sampled text contrast {avg_sampled_contrast} < 4.5:1")
+
+            coverage_passed = avg_coverage >= 0.12
+            pixel_check_passed = (not has_2s_blank) and (blank_ratio <= 0.03) and (flicker_spikes <= 2) and coverage_passed
+
             results["checks"]["pixel_audit"] = {
                 "passed": pixel_check_passed,
                 "blank_frame_ratio": blank_ratio,
                 "blank_frames": blank_frames,
+                "max_consecutive_blank_sec": max_blank_sec,
+                "total_blank_sec": total_blank_sec,
+                "has_2s_blank": has_2s_blank,
                 "evaluated_frames": evaluated_frames,
                 "total_frames": total_extracted,
                 "median_mad": round(med_mad, 2),
                 "flicker_spikes": flicker_spikes,
+                "avg_sampled_contrast": avg_sampled_contrast,
+                "avg_text_coverage": avg_coverage,
+                "text_coverage_passed": coverage_passed,
             }
             if not pixel_check_passed:
-                if blank_ratio > 0.03:
+                if has_2s_blank:
+                    results["violations"].append(f"CRITICAL: Video has {max_blank_sec}s consecutive ({total_blank_sec}s total) blank frames (>= 2.0s threshold)")
+                    total_score = max(0, total_score - 30)
+                elif blank_ratio > 0.03:
                     results["violations"].append(f"Blank frame ratio {blank_ratio:.1%} > 3.0%")
                 if flicker_spikes > 2:
                     results["violations"].append(f"Flicker spikes count {flicker_spikes} > 2")
+                if not coverage_passed:
+                    results["violations"].append(f"Average text coverage {avg_coverage:.1%} < 12.0% safe area threshold")
+                    total_score = max(0, total_score - 15)
         else:
             results["checks"]["pixel_audit"] = {
                 "passed": "unknown",

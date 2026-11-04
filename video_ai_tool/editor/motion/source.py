@@ -7,7 +7,9 @@ from schemas.visual import Visual,VisualData
 def ensure_source_slot(timeline):
     plan=timeline.plan
     if plan.render_style is not None and not plan.render_style.visual_templates: return
-    if any(q.visual and q.visual.template=="source_card" for s in plan.scenes for q in s.shots): return
+    theme = getattr(getattr(plan, "render_style", None), "theme", None)
+    if theme == "light_glass": return
+    if any(q.visual and q.visual.template in ("source_card", "kit_outro", "lg_cta_profile") for s in plan.scenes for q in s.shots): return
     path=timeline.project/"brief.json"
     try: brief=ResearchBrief.model_validate_json(path.read_text(encoding="utf-8"))
     except (OSError,ValueError): return

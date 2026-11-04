@@ -1,5 +1,5 @@
 """Small structured-output friendly visual payload; no executable expressions."""
-from typing import Literal
+from typing import Any, Literal
 from pydantic import Field
 from schemas.base import StrictModel
 
@@ -18,10 +18,29 @@ class VisualBeat(StrictModel):
     action: str = "reveal"
 
 
+class VisualCompareSide(StrictModel):
+    label: str = ""
+    sub: str = ""
+    points: list[str] = Field(default_factory=list)
+
+
+class VisualSeriesItem(StrictModel):
+    label: str = ""
+    value: float = 0.0
+    unit: str = ""
+
+
+class VisualPhoto(StrictModel):
+    path: str = ""
+    name: str = ""
+    role: str = ""
+    credit: str = ""
+
+
 class VisualData(StrictModel):
     text: str = ""
     highlight: list[str] = Field(default_factory=list)
-    value: float | None = None
+    value: float | int | str | None = None
     number_text: str = ""
     label: str = ""
     unit: str = ""
@@ -56,6 +75,25 @@ class VisualData(StrictModel):
     statement: str = ""
     quote: str = ""
     mockup_type: str = ""
+    subtitle: str = ""
+    sub: str = ""
+    series: list[VisualSeriesItem] = Field(default_factory=list)
+    left: VisualCompareSide = Field(default_factory=VisualCompareSide)
+    right: VisualCompareSide = Field(default_factory=VisualCompareSide)
+    role: str = ""
+    call_to_action: str = ""
+    button_text: str = ""
+    chart_type: str = ""
+    icon: str = ""
+    icon_reason: str = ""
+    photo: VisualPhoto = Field(default_factory=VisualPhoto)
+    path: str = ""
+    image: str = ""
+    thumbnail: str = ""
+    delta: str = ""
+    delta_type: str = ""
+    delta_dir: str = ""
+    source_date: str = ""
     repair_notes: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)
 
 
@@ -66,6 +104,9 @@ class Visual(StrictModel):
     content_type: Literal["event","explain","opinion","cta"] = Field(default="event",exclude_if=lambda v:v=="event")
     auto_generated: bool = Field(default=False,exclude_if=lambda v:not v)
     template: Literal["hook_card", "stat_card", "steps_list", "compare_bars", "source_card", "text_focus", "stock",
-        "progress_tracker", "ring_percent", "line_growth", "strike_replace", "quote_card", "timeline", "versus", "icon_card", "cta_card"] = "stock"
+        "progress_tracker", "ring_percent", "line_growth", "strike_replace", "quote_card", "timeline", "versus", "icon_card", "cta_card",
+        "kit_title", "kit_stat", "kit_chart_bar", "kit_chart_line", "kit_chart_donut",
+        "kit_photo", "kit_list", "kit_compare", "kit_quote", "kit_timeline", "kit_outro",
+        "lg_source_headline", "lg_stat_hero", "lg_shot_features", "lg_vs_compare", "lg_note_card", "lg_cta_profile"] = "stock"
     data: VisualData = Field(default_factory=VisualData)
     repair_notes: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)

@@ -6,7 +6,7 @@
       var card = document.createElement('div');
       card.className = 'kit-card';
 
-      // 1. Optional Pill
+      // 1. Optional Pill / Tag
       if (slots.pill) {
         var pill = document.createElement('div');
         pill.className = 'kit-pill';
@@ -14,24 +14,40 @@
         card.appendChild(pill);
       }
 
-      // 2. Large Headline / Title (Required in kit_title)
-      if (slots.title) {
+      // Max 2 ideas per scene: 1 main headline + 1 supporting sub-line
+      // Idea 1: Large Headline / Title (font-size >= 64px via kit-title-hero)
+      var headline = slots.headline || slots.title || '';
+      if (headline) {
         var title = document.createElement('div');
         title.className = 'kit-title-hero';
-        title.textContent = String(slots.title);
+        title.textContent = String(headline);
         card.appendChild(title);
       }
 
-      // 3. Optional Subtitle
-      if (slots.subtitle || slots.text) {
-        var sub = document.createElement('div');
-        sub.className = 'kit-subtitle';
-        sub.textContent = String(slots.subtitle || slots.text);
-        card.appendChild(sub);
+      // Idea 2: Supporting Sub-line
+      var sub = slots.subtitle || slots.sub || slots.text || '';
+      if (sub && sub !== headline) {
+        var subEl = document.createElement('div');
+        subEl.className = 'kit-subtitle';
+        subEl.textContent = String(sub);
+        card.appendChild(subEl);
+      }
+
+      // Explicit Icon ONLY when planner selected icon WITH a reason (no default lightbulb)
+      if (slots.icon && slots.icon_reason && slots.icon_uri) {
+        var iconWrap = document.createElement('div');
+        iconWrap.style.marginTop = '20px';
+        var iconImg = document.createElement('img');
+        iconImg.src = slots.icon_uri;
+        iconImg.style.width = '48px';
+        iconImg.style.height = '48px';
+        iconWrap.appendChild(iconImg);
+        card.appendChild(iconWrap);
       }
 
       // 4. Optional Thumbnail
-      if (slots.thumbnail || slots.image) {
+      var thumbSrc = slots.thumbnail || slots.image || slots.image_url;
+      if (thumbSrc) {
         var imgWrapper = document.createElement('div');
         imgWrapper.style.width = '100%';
         imgWrapper.style.height = '340px';
@@ -40,7 +56,7 @@
         imgWrapper.style.marginTop = '28px';
         imgWrapper.style.border = '1px solid var(--kit-card-border)';
         var img = document.createElement('img');
-        img.src = String(slots.thumbnail || slots.image);
+        img.src = String(thumbSrc);
         img.style.width = '100%';
         img.style.height = '100%';
         img.style.objectFit = 'cover';

@@ -87,7 +87,18 @@ SceneType=Literal[
     'lg_shot_features',
     'lg_vs_compare',
     'lg_note_card',
-    'lg_cta_profile'
+    'lg_cta_profile',
+    'kit_title',
+    'kit_stat',
+    'kit_chart_bar',
+    'kit_chart_line',
+    'kit_chart_donut',
+    'kit_photo',
+    'kit_list',
+    'kit_compare',
+    'kit_quote',
+    'kit_timeline',
+    'kit_outro'
 ]
 
 

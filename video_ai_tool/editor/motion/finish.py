@@ -47,7 +47,8 @@ def save_review(timeline,results,video_path,*,scene_id=None):
             for repair in result.get("repair_notes",[]): notes.append(f"Cảnh {scene.spec.id}: {repair}")
             for check in result.get("quality",[]):
                 checks.append(dict(check,scene_id=scene.spec.id))
-                if check["issues"]: notes.append(f"Cảnh {scene.spec.id}, shot {check['shot_id']}: motion_layout nhóm 3 sau tự sửa: {', '.join(check['issues'])}.")
+                issues = check.get("issues", [])
+                if issues: notes.append(f"Cảnh {scene.spec.id}, shot {check.get('shot_id', 1)}: motion_layout nhóm 3 sau tự sửa: {', '.join(issues)}.")
             from agents.motion_beats import max_gap
             beats=[b.model_dump(mode="json") for shot in scene.shots if shot.spec.visual for b in shot.spec.visual.beats]
             gap=max_gap(beats,scene.duration)

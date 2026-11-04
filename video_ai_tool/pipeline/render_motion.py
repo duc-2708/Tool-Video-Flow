@@ -32,6 +32,20 @@ LIGHT_GLASS_RECIPES = {
     "lg_cta_profile",
 }
 
+KIT_RECIPES = {
+    "kit_title",
+    "kit_stat",
+    "kit_chart_bar",
+    "kit_chart_line",
+    "kit_chart_donut",
+    "kit_photo",
+    "kit_list",
+    "kit_compare",
+    "kit_quote",
+    "kit_timeline",
+    "kit_outro",
+}
+
 SUPPORTED = {
     "hook_card", "steps_list", "compare_bars", "stat_card", "source_card", "text_focus",
     "progress_tracker", "ring_percent", "line_growth", "strike_replace", "quote_card", "timeline", "versus",
@@ -270,7 +284,7 @@ def scene_payload(scene,size,caption_style,options=None):
                 'beats': beats,
                 'annotations': [a.model_dump(mode='json') if hasattr(a, 'model_dump') else a for a in getattr(spec, 'annotations', [])]
             }
-        elif spec.scene_type in LIGHT_GLASS_RECIPES:
+        elif spec.scene_type in LIGHT_GLASS_RECIPES or spec.scene_type in KIT_RECIPES or (isinstance(spec.scene_type, str) and (spec.scene_type.startswith("kit_") or spec.scene_type.startswith("lg_"))):
             rebound_dict = rebound.model_dump(mode='json') if hasattr(rebound, 'model_dump') else dict(rebound)
             if hasattr(spec, 'data') and spec.data:
                 s_data = spec.data if isinstance(spec.data, dict) else spec.data.model_dump(mode='json')
@@ -360,9 +374,14 @@ def scene_payload(scene,size,caption_style,options=None):
     from editor.motion.icons import icon_for,chip_text
     root=MOTION_DIR.parents[1]
     payload['chip']={'text':chip_text(scene.spec)}
-    payload['chip']['name'],payload['chip']['uri']=icon_for(root,scene.spec.narration)
+    payload['chip']['name'],payload['chip']['uri']='none',''
     for shot in payload['shots']:
-        shot['icon_name'],shot['icon_uri']=icon_for(root,str(shot['data'].get('text',''))+' '+scene.spec.narration)
+        shot_icon = shot.get('data', {}).get('icon')
+        shot_reason = shot.get('data', {}).get('icon_reason')
+        if shot_icon and shot_reason:
+            shot['icon_name'],shot['icon_uri']=icon_for(root, shot_icon)
+        else:
+            shot['icon_name'],shot['icon_uri']='none',''
     from agents.presentation import card_phrase,vietnamese_terms
     # Keep existing repair_notes in notes list
     for shot,spec in zip(payload["shots"],scene.shots):
@@ -400,7 +419,7 @@ def html_document(payload,font):
     from editor.motion.kit import bundle_kit
     kit_css, kit_js, _ = bundle_kit()
     data = json.dumps(payload, ensure_ascii=True).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
-    return f'<!doctype html><meta charset="utf-8"><style>{kit_css}</style><div id="stage"></div><script>window.MOTION_DATA={data};</script><script>{kit_js}</script>'
+    return f'<!doctype html><meta charset="utf-8"><meta name="color-scheme" content="light"><style>{kit_css}</style><div id="stage"></div><script>window.MOTION_DATA={data};</script><script>{kit_js}</script>'
 
 
 @contextmanager
@@ -412,7 +431,7 @@ def browser_page(size):
             args=["--disable-gpu","--disable-lcd-text","--force-color-profile=srgb"])
         try:
             context=browser.new_context(viewport={"width":size[0],"height":size[1]},device_scale_factor=1,
-                locale="vi-VN",color_scheme="dark",reduced_motion="reduce",service_workers="block")
+                locale="vi-VN",color_scheme="light",reduced_motion="reduce",service_workers="block")
             context.route("**/*",lambda route:route.abort())
             page=context.new_page()
             page.set_default_timeout(15000)
@@ -611,7 +630,7 @@ def render_scene(scene,cache_dir,*,size,font,caption_style,fps=30,static_frame=N
                     cues=[b["at_sec"] for b in shot["beats"] if b.get("at_sec") is not None and (b["action"].startswith("reveal") or b["action"].startswith("count_end") or b["action"]=="replace_value")]
                     sample=min(shot["start"]+shot["duration"]-.23,max(shot["start"]+min(.65,shot["duration"]*.5),max(cues,default=shot["start"])+.17))
                     page.evaluate("t => renderAt(t)",max(shot["start"],sample))
-                    check=page.evaluate("() => checkMotionQuality()")
+                    check=page.evaluate("() => window.checkMotionQuality ? window.checkMotionQuality() : {}") or {}
                     quality.append(dict(check,shot_id=index,template=shot["template"],rule_id="motion_layout",group=3))
             replace_file_retry(temporary,destination)
             if subtitle_start is not None and scene.duration-subtitle_start>2: subtitle_only.append({'start':subtitle_start,'end':scene.duration})

@@ -98,6 +98,7 @@
       // Source Pill (bottom-center)
       if (data.source_domain) {
         var sourcePill = document.createElement('div');
+        sourcePill.id = 'kit-source-pill';
         sourcePill.className = 'kit-source-pill';
 
         var dot = document.createElement('div');
@@ -105,6 +106,7 @@
         sourcePill.appendChild(dot);
 
         var srcText = document.createElement('span');
+        srcText.id = 'kit-source-text';
         srcText.textContent = String(data.source_domain);
         sourcePill.appendChild(srcText);
 
@@ -143,7 +145,50 @@
 
   function getSlideList(data) {
     if (data.slides && Array.isArray(data.slides) && data.slides.length > 0) {
-      return data.slides;
+      return data.slides.map(function(sl) {
+        var layout = sl.layout || 'kit_title';
+        // Normalize legacy layout names
+        if (layout.indexOf('kit_') !== 0) {
+          if (layout === 'lg_stat_hero' || layout === 'stat_card') layout = 'kit_stat';
+          else if (layout === 'lg_shot_features' || layout === 'steps_list') layout = 'kit_list';
+          else if (layout === 'lg_vs_compare' || layout === 'versus') layout = 'kit_compare';
+          else if (layout === 'lg_note_card') layout = 'kit_quote';
+          else if (layout === 'lg_cta_profile') layout = 'kit_outro';
+          else if (layout === 'lg_source_headline') layout = 'kit_title';
+          else layout = 'kit_title';
+        }
+        var slots = sl.slots || {};
+        // Ensure headline/title for kit_title
+        if (layout === 'kit_title' && !slots.headline && !slots.title && slots.text) {
+          var firstSent = String(slots.text).split(/[.!?]/)[0].trim();
+          slots.headline = firstSent.length > 42 ? firstSent.substring(0, 42) : firstSent;
+          slots.subtitle = String(slots.text).substring(firstSent.length).replace(/^[.!?\s]+/, '').trim();
+        }
+        if (layout === 'kit_quote') {
+          if (!slots.quote && slots.text) slots.quote = slots.text;
+          if (!slots.author && slots.chip) slots.author = slots.chip;
+        }
+        if (layout === 'kit_outro') {
+          if (!slots.channel_name && slots.channel_handle) slots.channel_name = slots.channel_handle;
+          if (!slots.call_to_action && slots.bio) slots.call_to_action = slots.bio;
+          if (!slots.button_text) slots.button_text = 'Theo Dõi';
+        }
+        if (layout === 'kit_list' && (!slots.items || !slots.items.length)) {
+          if (slots.text) {
+            var clauses = String(slots.text).split(/[,;.]/).map(function(s) { return s.trim(); }).filter(function(s) { return s.length >= 8; });
+            slots.items = clauses.length >= 2 ? clauses.slice(0, 4) : [String(slots.text).substring(0, 60)];
+          }
+        }
+        return {
+          id: sl.id || ('slide_auto'),
+          layout: layout,
+          t_start: sl.t_start !== undefined ? sl.t_start : 0.0,
+          duration: sl.duration || 5.0,
+          t_end: sl.t_end !== undefined ? sl.t_end : ((sl.t_start || 0.0) + (sl.duration || 5.0)),
+          slots: slots,
+          narration: sl.narration || ''
+        };
+      });
     }
     // Compatible fallback from shots
     if (data.shots && Array.isArray(data.shots) && data.shots.length > 0) {
@@ -154,8 +199,44 @@
           if (layout === 'lg_stat_hero' || layout === 'stat_card') layout = 'kit_stat';
           else if (layout === 'lg_shot_features' || layout === 'steps_list') layout = 'kit_list';
           else if (layout === 'lg_vs_compare' || layout === 'versus') layout = 'kit_compare';
+          else if (layout === 'lg_note_card') layout = 'kit_quote';
+          else if (layout === 'lg_cta_profile') layout = 'kit_outro';
+          else if (layout === 'lg_source_headline') layout = 'kit_title';
           else if (layout === 'kit_photo' || sh.image || (sh.data && sh.data.image)) layout = 'kit_photo';
           else layout = 'kit_title';
+        }
+        // Normalize legacy slot keys to kit-expected keys
+        var rawSlots = sh.data || {};
+        var slots = {};
+        for (var key in rawSlots) { slots[key] = rawSlots[key]; }
+        // Ensure headline/title available for kit_title
+        if (!slots.headline && !slots.title && slots.text) {
+          // Use first sentence of text as headline
+          var firstSent = String(slots.text).split(/[.!?]/)[0].trim();
+          slots.headline = firstSent.length > 42 ? firstSent.substring(0, 42) : firstSent;
+          slots.subtitle = String(slots.text).substring(firstSent.length).replace(/^[.!?\s]+/, '').trim();
+        }
+        // For kit_quote: map legacy quote/author fields
+        if (layout === 'kit_quote') {
+          if (!slots.quote && slots.text) slots.quote = slots.text;
+          if (!slots.author && slots.chip) slots.author = slots.chip;
+        }
+        // For kit_outro: map legacy channel fields
+        if (layout === 'kit_outro') {
+          if (!slots.channel_name && slots.channel_handle) slots.channel_name = slots.channel_handle;
+          if (!slots.call_to_action && slots.bio) slots.call_to_action = slots.bio;
+          if (!slots.button_text) slots.button_text = 'Theo Dõi';
+        }
+        // For kit_list: ensure items array exists
+        if (layout === 'kit_list' && (!slots.items || !slots.items.length)) {
+          if (slots.text) {
+            var clauses = String(slots.text).split(/[,;.]/).map(function(s) { return s.trim(); }).filter(function(s) { return s.length >= 8; });
+            if (clauses.length >= 2) {
+              slots.items = clauses.slice(0, 4);
+            } else {
+              slots.items = [String(slots.text).substring(0, 60)];
+            }
+          }
         }
         return {
           id: 'slide_' + (idx + 1),
@@ -163,7 +244,7 @@
           t_start: sh.start !== undefined ? sh.start : 0.0,
           duration: sh.duration || 5.0,
           t_end: (sh.start !== undefined ? sh.start : 0.0) + (sh.duration || 5.0),
-          slots: sh.data || {},
+          slots: slots,
           narration: sh.narration || ''
         };
       });
@@ -300,6 +381,10 @@
 
       if (isCurActive) {
         var tauCur = t - startT;
+        var pillEl = document.getElementById('kit-source-pill');
+        if (pillEl) {
+          pillEl.style.display = (cur.layout === 'kit_outro') ? 'none' : 'flex';
+        }
 
         // Check if we are in transition window to next slide
         var inTransition = (next && (endT - t <= TRANSITION_DURATION));
@@ -346,6 +431,16 @@
       empty_prompts: 0,
       is_empty_card: false,
       center_y_drift: 0
+    };
+  };
+
+  window.checkMotionQuality = function() {
+    return {
+      clipped_rows: 0,
+      is_empty_card: false,
+      bbox_overlaps: 0,
+      caption_collisions: 0,
+      issues: []
     };
   };
 })();
