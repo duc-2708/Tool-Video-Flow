@@ -105,3 +105,55 @@ def test_audit_failing_scenario_leaked_debug_and_fabrication(tmp_path):
     viol_str = " ".join(res["violations"])
     assert "undefined" in viol_str
     assert "Slide count 2 outside [5, 10]" in viol_str
+
+
+def test_audit_video_with_two_seconds_blank_fails(tmp_path, monkeypatch):
+    """Video with >= 2.0 seconds of blank frames must strictly FAIL the audit."""
+    import numpy as np
+    from tools import audit_style
+
+    # Create 5 valid slides
+    slides = [
+        SlideItem(
+            id=f"slide_{i}",
+            layout=["kit_title", "kit_list", "kit_quote", "kit_stat", "kit_outro"][i],
+            sentence_ids=[i + 1],
+            slots={"headline": f"Tiêu đề {i}", "value": 100, "unit": "%"} if i == 3 else {"headline": f"Tiêu đề {i}"},
+            t_start=float(i * 5.0),
+            t_end=float((i + 1) * 5.0),
+            duration=5.0,
+            narration=f"Nội dung cảnh {i} phát triển công nghệ.",
+        )
+        for i in range(5)
+    ]
+    script = SlideScript(topic="Test 2s Blank", total_duration=25.0, slides=slides)
+    (tmp_path / "slide_script.json").write_text(json.dumps(script.model_dump(mode="json")), encoding="utf-8")
+    dummy_video = tmp_path / "test.mp4"
+    dummy_video.write_bytes(b"dummy")
+
+    # Generate 100 frames at 4 fps (25 seconds total).
+    # Normal frames have content (high std dev).
+    # Frames from t=10.0 to t=14.0 (17 frames = 4.0s, > 2.5s in hold interval > 2.0s threshold) are blank.
+    normal_frame = np.full((960, 540, 3), 245, dtype=np.uint8)
+    normal_frame[200:400, 100:400] = 15  # text box with contrast
+    blank_frame = np.full((960, 540, 3), 245, dtype=np.uint8)  # empty solid card
+
+    fake_frames = []
+    fps = 4.0
+    for idx in range(100):
+        t = idx / fps
+        if 10.0 <= t <= 14.0:
+            fake_frames.append((t, blank_frame.copy()))
+        else:
+            fake_frames.append((t, normal_frame.copy()))
+
+    monkeypatch.setattr(audit_style, "extract_video_frames", lambda path, fps=4.0: fake_frames)
+
+    res = audit_style.audit_kit_project(tmp_path, video_path=dummy_video, slide_script=script)
+    assert res["passed"] is False, "Video with >= 2.0s blank frames must fail"
+    pixel_check = res["checks"]["pixel_audit"]
+    assert pixel_check["passed"] is False
+    assert pixel_check["has_2s_blank"] is True
+    assert pixel_check["max_consecutive_blank_sec"] >= 2.0
+    assert any(">= 2.0s threshold" in v for v in res["violations"])
+

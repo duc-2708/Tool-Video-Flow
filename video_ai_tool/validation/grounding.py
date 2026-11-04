@@ -723,16 +723,23 @@ def repair_visual_grounding(scene: Any, shot: Any, brief: Any, settings: Any = N
     # 1. Repair numeric values in visual data
     if data.value is not None:
         # Check against facts
-        v_num = normalize_number(f"{data.value:.8f}".rstrip("0").rstrip(".") + (data.unit or ""))
-        match = match_to_facts(v_num, facts)
-        if match.matched:
+        try:
+            val_flt = float(data.value)
+            val_base = f"{val_flt:.8f}".rstrip("0").rstrip(".")
+        except (ValueError, TypeError):
+            val_base = str(data.value).strip()
+        unit_str = f" {data.unit.strip()}" if getattr(data, "unit", None) and str(data.unit).strip() else ""
+        v_num = normalize_number(val_base + unit_str)
+        v_repr = v_num.canonical_str() if v_num else val_base
+        match = match_to_facts(v_num, facts) if v_num else None
+        if match and match.matched:
             # (i) Exact/compatible match: adopt canonical fact representation
             canon = match.canonical_value or ""
             parsed_canon = normalize_number(canon)
             if parsed_canon and parsed_canon.unit and data.unit != parsed_canon.unit:
                 data.unit = parsed_canon.unit
                 repaired = True
-                notes.append(f"'{v_num.canonical_str()}' -> '{parsed_canon.canonical_str()}' (fact #{match.matched_fact_id})")
+                notes.append(f"'{v_repr}' -> '{parsed_canon.canonical_str()}' (fact #{match.matched_fact_id})")
         else:
             # (iii) No match: convert to qualitative / neutral version
             if mode != "block":
@@ -740,7 +747,7 @@ def repair_visual_grounding(scene: Any, shot: Any, brief: Any, settings: Any = N
                 neutral = neutral_visual(scene, shot)
                 shot.visual = neutral
                 repaired = True
-                notes.append(f"số liệu '{v_num.canonical_str()}' không có căn cứ -> chuyển sang đồ họa định tính trung tính")
+                notes.append(f"số liệu '{v_repr}' không có căn cứ -> chuyển sang đồ họa định tính trung tính")
 
     # 2. Repair comparison bars
     if getattr(data, "bars", None):

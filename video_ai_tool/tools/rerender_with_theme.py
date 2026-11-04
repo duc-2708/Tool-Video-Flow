@@ -40,7 +40,7 @@ def rerender_project_with_theme(
     theme: str = "light_glass",
     use_slide_script: bool = True,
     confirm_cost: bool = False,
-    scale: float = 0.5,
+    scale: float = 1.0,
     fps: int = 30,
     run_audit: bool = True,
 ) -> dict[str, Any]:
@@ -145,16 +145,16 @@ def rerender_project_with_theme(
                 # Distribute remaining captures to other slides (e.g. slide 3, 4)
                 if len(captures_list) > 1 and len(slide_script_obj.slides) > 3:
                     target_slide = slide_script_obj.slides[3]
-                    if not target_slide.slots.get("image_url") and target_slide.layout in ("lg_source_headline", "lg_shot_features", "lg_stat_hero", "lg_note_card"):
+                    if not target_slide.slots.get("image_url") and target_slide.layout in ("lg_source_headline", "lg_shot_features", "lg_stat_hero", "lg_note_card", "kit_title", "kit_photo", "kit_list", "kit_stat", "kit_quote"):
                         target_slide.slots["image_url"] = str(captures_list[1])
                 if len(captures_list) > 2 and len(slide_script_obj.slides) > 4:
                     target_slide = slide_script_obj.slides[4]
-                    if not target_slide.slots.get("image_url") and target_slide.layout in ("lg_source_headline", "lg_shot_features", "lg_stat_hero"):
+                    if not target_slide.slots.get("image_url") and target_slide.layout in ("lg_source_headline", "lg_shot_features", "lg_stat_hero", "kit_title", "kit_photo", "kit_list", "kit_stat", "kit_compare"):
                         target_slide.slots["image_url"] = str(captures_list[2])
 
         # Synthesize & resolve high-contrast cinematic imagery for all slides
         from pipeline.slide_image_resolver import resolve_images_for_slide_script
-        resolved_imgs = resolve_images_for_slide_script(p_dir, slide_script_obj, force_refresh=True)
+        resolved_imgs = resolve_images_for_slide_script(p_dir, slide_script_obj, force_refresh=False)
         logger.info("Resolved %d visual graphic assets for slides", len(resolved_imgs))
 
         # Save slide_script.json
@@ -200,7 +200,7 @@ if __name__ == "__main__":
     parser.add_argument("--theme", default="light_glass", help="Motion theme (default: light_glass)")
     parser.add_argument("--slide-script", action="store_true", default=True, help="Enable SlideScript flow")
     parser.add_argument("--confirm-cost", action="store_true", default=False, help="Explicit confirmation for remote LLM API calls")
-    parser.add_argument("--scale", type=float, default=0.5, choices=[0.25, 0.5, 1.0], help="Render scale")
+    parser.add_argument("--scale", type=float, default=1.0, choices=[0.25, 0.5, 1.0], help="Render scale")
     parser.add_argument("--fps", type=int, default=30, choices=[24, 30], help="Render FPS")
     parser.add_argument("--no-audit", action="store_true", help="Disable post-render audit")
 

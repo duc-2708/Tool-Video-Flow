@@ -313,6 +313,21 @@
         outroWrap.appendChild(btn);
       }
 
+      var sourceText = slots.source || slots.source_name || '';
+      if (sourceText) {
+        var srcEl = document.createElement('div');
+        srcEl.className = 'kit-outro-source';
+        var cleanSrc = String(sourceText).trim();
+        if (cleanSrc.indexOf('Nguồn:') !== 0 && cleanSrc.indexOf('Nguồn :') !== 0) {
+          cleanSrc = 'Nguồn: ' + cleanSrc;
+        }
+        if (slots.source_date && cleanSrc.indexOf(slots.source_date) === -1) {
+          cleanSrc += ' (' + slots.source_date + ')';
+        }
+        srcEl.textContent = cleanSrc;
+        outroWrap.appendChild(srcEl);
+      }
+
       card.appendChild(outroWrap);
 
       var pEnter = Math.min(1.0, Math.max(0.0, tau / 0.7));

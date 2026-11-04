@@ -296,6 +296,11 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                                     clean_slots = m_slide.slots.copy()
                                     if "winner" in clean_slots and clean_slots["winner"] is not None:
                                         clean_slots["winner"] = str(clean_slots["winner"])
+                                    if "value" in clean_slots and clean_slots["value"] is not None:
+                                        try:
+                                            clean_slots["value"] = float(str(clean_slots["value"]).replace(",", "").replace("%", "").strip())
+                                        except Exception:
+                                            pass
                                     valid_vkeys = set(VisualData.model_fields.keys())
                                     shot_data = VisualData(**{k: v for k, v in clean_slots.items() if k in valid_vkeys and v is not None})
                                     beats = [
