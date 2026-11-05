@@ -1,4 +1,5 @@
 """Pydantic schema for Slide Script (Motion Kit v2 presentation flow)."""
+import re
 from typing import Annotated, Any, Literal
 from pydantic import Field, field_validator, model_validator
 from schemas.base import StrictModel, NonEmptyText
@@ -96,10 +97,31 @@ class EmphasisItem(StrictModel):
     end_sec: float | None = None
 
 
+DANGLING_END_WORDS = {
+    "đòi", "kỹ", "của", "và", "là", "để", "với", "cho", "trong", "khi", "tại", "từ",
+    "ở", "về", "có", "các", "những", "làm", "được", "bị", "do", "bởi", "ra",
+    "vào", "lên", "xuống", "đầu", "như", "theo", "giúp", "rằng", "thì", "mà", "bằng",
+    "hay", "hoặc", "tới", "đến", "qua", "sau", "trước", "cùng", "nhất", "rất", "quá",
+    "tầm", "mức", "chủ", "hỏi", "nhận", "đặt", "tạo", "mang", "coi", "tính", "biết",
+    "thấy", "khiến", "nhằm", "gồm", "thuộc", "cần", "phía", "vận", "độ", "bậc", "đằng",
+}
+
+
+def clean_trailing_dangling(text: str) -> str:
+    """Trim any trailing dangling words or incomplete particles from text."""
+    if not text:
+        return ""
+    words = text.strip().split()
+    while words and words[-1].lower().strip(".,;:?!\"'") in DANGLING_END_WORDS:
+        words.pop()
+    return " ".join(words).strip()
+
+
 def wrap_text_greedy(text: str, max_chars_per_line: int = 14, max_lines: int = 3) -> list[str]:
     """Wrap text at word boundaries without breaking words.
     
-    Ensures no orphaned words on lines when possible.
+    Ensures no orphaned words on lines when possible, and trims trailing
+    dangling words/prepositions/particles when text is truncated.
     """
     if not text:
         return []
@@ -109,16 +131,19 @@ def wrap_text_greedy(text: str, max_chars_per_line: int = 14, max_lines: int = 3
     
     lines: list[str] = []
     current_line = ""
+    words_consumed = 0
     for w in words:
         candidate = f"{current_line} {w}".strip() if current_line else w
         if len(candidate) <= max_chars_per_line:
             current_line = candidate
+            words_consumed += 1
         else:
             if current_line:
                 lines.append(current_line)
             current_line = w
             if len(lines) >= max_lines:
                 break
+            words_consumed += 1
     if current_line and len(lines) < max_lines:
         lines.append(current_line)
 
@@ -133,7 +158,75 @@ def wrap_text_greedy(text: str, max_chars_per_line: int = 14, max_lines: int = 3
                 lines[-2] = new_prev
                 lines[-1] = new_last
 
+    # If text was truncated (not all words consumed), ensure the ending is not a dangling word
+    if words_consumed < len(words) and lines:
+        while lines:
+            line_words = lines[-1].split()
+            if line_words and line_words[-1].lower().strip(".,;:—?!") in DANGLING_END_WORDS:
+                line_words.pop()
+                if line_words:
+                    lines[-1] = " ".join(line_words)
+                    break
+                else:
+                    lines.pop()
+            else:
+                break
+
     return lines[:max_lines]
+
+
+def extract_clean_headline(sentence: str, max_chars: int = 56) -> str:
+    """Extract a complete, grammatically sound headline phrase from a sentence without cutting words."""
+    if not sentence:
+        return ""
+    clean = re.sub(r"\s+", " ", sentence.strip())
+
+    # Special handling for questions: "Làm sao để ... giúp Việt Nam tự chủ hạ tầng hoàn toàn?"
+    if re.search(r"làm sao để|làm thế nào để", clean, re.I):
+        m_goal = re.search(r"giúp\s+([^?]+)", clean, re.I)
+        if m_goal:
+            goal_text = clean_trailing_dangling(m_goal.group(1).strip())
+            if 10 <= len(goal_text) <= max_chars:
+                return goal_text[0].upper() + goal_text[1:]
+        m_q = re.search(r"(tự chủ [^?]+)", clean, re.I)
+        if m_q:
+            q_text = clean_trailing_dangling(m_q.group(1).strip())
+            if 8 <= len(q_text) <= max_chars:
+                return q_text[0].upper() + q_text[1:]
+
+    # 1. Check natural punctuation clause boundary (comma, semicolon, dash, colon)
+    parts = re.split(r"[,;:\-—]", clean)
+    if parts:
+        first_part = parts[0].strip()
+        words = first_part.split()
+        if 3 <= len(words) <= 8 and len(first_part) <= max_chars:
+            cleaned = clean_trailing_dangling(first_part)
+            if len(cleaned.split()) >= 3:
+                return cleaned
+
+    # 2. Split on common predicate/verb connectors to extract full subject noun phrase
+    verb_parts = re.split(r"\s+(?:đòi hỏi|yêu cầu|cho thấy|đóng vai trò|giúp|khiến|nhằm|mang lại)\s+", clean, flags=re.I)
+    if verb_parts:
+        subj = clean_trailing_dangling(verb_parts[0].strip())
+        w_subj = subj.split()
+        if 3 <= len(w_subj) <= 8 and len(subj) <= max_chars:
+            return subj
+
+    # 3. Split on common subordinate connectors (cho thấy, nhằm, để, giúp, khiến)
+    sub_parts = re.split(r"\s+(?:cho thấy|nhằm|để|giúp|khiến)\s+", clean, flags=re.I)
+    if sub_parts and len(sub_parts[0].split()) >= 3 and len(sub_parts[0].strip()) <= max_chars:
+        cand = clean_trailing_dangling(sub_parts[0].strip())
+        if len(cand.split()) >= 3:
+            return cand
+
+    # 4. Otherwise wrap greedily and join lines respecting max_chars
+    max_lines = 1 if max_chars <= 30 else 2
+    chars_per_line = min(max_chars, 24)
+    lines = wrap_text_greedy(clean, max_chars_per_line=chars_per_line, max_lines=max_lines)
+    joined = clean_trailing_dangling(" ".join(lines).strip())
+    if len(joined) > max_chars:
+        joined = clean_trailing_dangling(joined[:max_chars])
+    return joined
 
 
 class SlideItem(StrictModel):
@@ -189,22 +282,24 @@ class SlideItem(StrictModel):
         """Validate and clamp slot limits according to layout rules."""
         cleaned = dict(slots)
 
-        # Pill limit <= 28 chars
+        # Pill limit <= 28 chars, trimmed of trailing dangling words
         for pill_key in ("pill", "badge", "chip", "kicker", "sub_pill"):
             if pill_key in cleaned and cleaned[pill_key]:
                 val = str(cleaned[pill_key]).strip()
                 if len(val) > 28:
                     wrapped = wrap_text_greedy(val, max_chars_per_line=28, max_lines=1)
-                    cleaned[pill_key] = wrapped[0] if wrapped else val[:28]
+                    cleaned[pill_key] = clean_trailing_dangling(wrapped[0] if wrapped else val[:28])
+                else:
+                    cleaned[pill_key] = clean_trailing_dangling(val)
 
-        # Headline / title: max 3 lines x 14 chars/line
+        # Headline / title: max 2 lines x 24 chars/line, trimmed of dangling words
         for title_key in ("title", "headline"):
             if title_key in cleaned and cleaned[title_key]:
                 val = str(cleaned[title_key]).strip()
-                lines = wrap_text_greedy(val, max_chars_per_line=14, max_lines=3)
-                cleaned[title_key] = " ".join(lines) if lines else val[:42]
+                lines = wrap_text_greedy(val, max_chars_per_line=24, max_lines=2)
+                cleaned[title_key] = clean_trailing_dangling(" ".join(lines) if lines else val[:48])
 
-        # Features items: max 4 items, each <= 40 chars
+        # Features items: max 4 items, each <= 40 chars, no dangling words
         if "items" in cleaned and isinstance(cleaned["items"], list):
             items_list = []
             for item in cleaned["items"][:4]:
@@ -212,19 +307,23 @@ class SlideItem(StrictModel):
                 if len(item_str) > 40:
                     wrapped = wrap_text_greedy(item_str, max_chars_per_line=40, max_lines=1)
                     item_str = wrapped[0] if wrapped else item_str[:40]
-                items_list.append(item_str)
+                item_str = clean_trailing_dangling(item_str)
+                if item_str:
+                    items_list.append(item_str)
             cleaned["items"] = items_list
 
-        # Compare: left & right labels / text <= 2 lines of 14 chars each (<= 28 chars)
+        # Compare: left & right labels / text <= 2 lines of 18 chars each (<= 36 chars)
         for side in ("left", "right"):
             if side in cleaned and isinstance(cleaned[side], dict):
                 side_dict = dict(cleaned[side])
                 for k in ("title", "text", "label"):
                     if k in side_dict and side_dict[k]:
                         s_val = str(side_dict[k]).strip()
-                        if len(s_val) > 28:
-                            w = wrap_text_greedy(s_val, max_chars_per_line=14, max_lines=2)
-                            side_dict[k] = " ".join(w) if w else s_val[:28]
+                        if len(s_val) > 36:
+                            w = wrap_text_greedy(s_val, max_chars_per_line=18, max_lines=2)
+                            side_dict[k] = clean_trailing_dangling(" ".join(w) if w else s_val[:36])
+                        else:
+                            side_dict[k] = clean_trailing_dangling(s_val)
                 cleaned[side] = side_dict
 
         return cleaned

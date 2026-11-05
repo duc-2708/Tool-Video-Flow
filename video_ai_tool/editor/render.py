@@ -216,45 +216,92 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                 except Exception as vp_err:
                     diagnostics.record_exception(vp_err, "Tự bổ sung visual_plan v3 khi render lỗi")
 
-            # Light Glass / Slide Script Resolution
-            is_light_glass = (settings.motion_theme == "light_glass") or (getattr(getattr(timeline.plan, "render_style", None), "theme", None) == "light_glass") or (getattr(getattr(timeline.plan, "style_profile", None), "category_id", None) == "cong-nghe" and settings.motion_theme in ("auto", "light_glass"))
+            # Motion Kit v2 / Slide Script Resolution
+            is_slide_motion = (
+                (settings.motion_theme in ("auto", "light_glass", "kit", "motion_kit_v2"))
+                or getattr(settings, "motion_enabled", False)
+                or (getattr(getattr(timeline.plan, "render_style", None), "theme", None) in ("light_glass", "kit", "motion_kit_v2"))
+                or (getattr(getattr(timeline.plan, "style_profile", None), "category_id", None) == "cong-nghe")
+                or (timeline.project / "slide_script.json").is_file()
+            )
             slide_script_file = timeline.project / "slide_script.json"
-            if is_light_glass or slide_script_file.is_file():
+            if is_slide_motion:
                 try:
                     import json
                     from schemas.slide_script import SlideScript
                     from schemas.motion_scene import MotionScenePlan
-                    from schemas.visual import VisualBeat, VisualData
+                    from schemas.visual import VisualBeat, VisualData, Visual
+                    from schemas.edit_plan import Scene, Shot
+                    from editor.timeline import TimelineScene, TimelineShot
+                    from imageio_ffmpeg import get_ffmpeg_exe
+                    from utils.word_timing import read_words
+
                     slide_script_obj = None
                     if slide_script_file.is_file():
                         try:
-                            slide_script_obj = SlideScript.model_validate_json(slide_script_file.read_text(encoding="utf-8"))
+                            cand = SlideScript.model_validate_json(slide_script_file.read_text(encoding="utf-8"))
+                            if cand and cand.slides:
+                                all_valid_durations = all(
+                                    3.0 <= (s.duration if s.duration > 0 else (s.t_end - s.t_start)) <= 7.0
+                                    for s in cand.slides
+                                )
+                                if all_valid_durations and len(cand.slides) >= max(4, round(timeline.duration / 6.5)):
+                                    slide_script_obj = cand
                         except Exception as e:
                             diagnostics.record_exception(e, "Lỗi đọc slide_script.json")
-                    if not slide_script_obj:
+
+                    if not slide_script_obj or not slide_script_obj.slides:
                         from editor.motion.light_glass_slots import create_heuristic_slide_script
                         from editor.motion.slide_grounding import verify_and_ground_slides
+
                         sentences = []
                         cur_t = 0.0
                         for sc in timeline.scenes:
-                            sentences.append({
-                                "id": sc.spec.id,
-                                "text": sc.spec.narration,
-                                "start": cur_t,
-                                "end": cur_t + sc.duration,
-                            })
+                            w_file = timeline.project / "audio" / f"scene_{sc.spec.id}.words.json"
+                            sc_words = read_words(w_file) if w_file.is_file() else []
+                            if sc.spec.sentences and len(sc.spec.sentences) > 1:
+                                w_idx = 0
+                                sent_starts = []
+                                for s_idx, sent in enumerate(sc.spec.sentences):
+                                    s_words = sent.text.split()
+                                    w_start = sc_words[w_idx]["start"] if w_idx < len(sc_words) else 0.0
+                                    sent_starts.append(w_start)
+                                    w_idx = min(len(sc_words), w_idx + len(s_words))
+
+                                for s_idx, sent in enumerate(sc.spec.sentences):
+                                    w_start = 0.0 if s_idx == 0 else sent_starts[s_idx]
+                                    w_end = sc.duration if s_idx == len(sc.spec.sentences) - 1 else sent_starts[s_idx + 1]
+                                    sentences.append({
+                                        "id": len(sentences) + 1,
+                                        "scene_id": sc.spec.id,
+                                        "text": sent.text,
+                                        "start": cur_t + w_start,
+                                        "end": cur_t + w_end,
+                                        "duration": max(0.1, w_end - w_start),
+                                    })
+                            else:
+                                sentences.append({
+                                    "id": len(sentences) + 1,
+                                    "scene_id": sc.spec.id,
+                                    "text": sc.spec.narration,
+                                    "start": cur_t,
+                                    "end": cur_t + sc.duration,
+                                    "duration": sc.duration,
+                                })
                             cur_t += sc.duration
+
                         brief_data = {}
                         if (timeline.project / "brief.json").is_file():
                             try:
                                 brief_data = json.loads((timeline.project / "brief.json").read_text(encoding="utf-8"))
                             except Exception:
                                 pass
+
                         slide_script_obj = create_heuristic_slide_script(
                             sentences=sentences,
                             brief=brief_data,
                             total_duration=timeline.duration,
-                            brand_name=getattr(settings, "brand_name", "TIN CÔNG NGHỆ"),
+                            brand_name=getattr(settings, "brand_name", ""),
                         )
                         slide_script_obj = verify_and_ground_slides(slide_script_obj, {s["id"]: s for s in sentences}, brief_data)
                         try:
@@ -268,85 +315,153 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                             resolve_images_for_slide_script(timeline.project, slide_script_obj)
                         except Exception as res_err:
                             diagnostics.record_exception(res_err, "Lỗi resolve images cho slide_script")
+
                         settings = settings.model_copy(update={"motion_enabled": True, "motion_theme": "light_glass"})
                         if timeline.plan.render_style:
                             timeline.plan.render_style.theme = "light_glass"
-                        from editor.timeline import TimelineShot
+
+                        from editor.timeline import TimelineScene, TimelineShot
                         from schemas.motion_scene import MotionScenePlan
                         from schemas.visual import VisualBeat, VisualData, Visual
+                        from schemas.edit_plan import Scene, Shot
+                        from imageio_ffmpeg import get_ffmpeg_exe
+                        from utils.word_timing import read_words
 
-                        for sc_idx, sc in enumerate(timeline.scenes):
-                            try:
-                                matching_slides = [sl for sl in slide_script_obj.slides if sc.spec.id in sl.sentence_ids]
-                                if not matching_slides and len(slide_script_obj.slides) >= len(timeline.scenes) * 2:
-                                    matching_slides = [
-                                        slide_script_obj.slides[sc_idx * 2],
-                                        slide_script_obj.slides[sc_idx * 2 + 1]
-                                    ]
-                                elif not matching_slides:
-                                    sl_idx = min(len(slide_script_obj.slides) - 1, sc_idx)
-                                    matching_slides = [slide_script_obj.slides[sl_idx]]
+                        # Gather all words from all original scenes with global timestamps
+                        all_global_words = []
+                        for sc in timeline.scenes:
+                            w_file = timeline.project / "audio" / f"scene_{sc.spec.id}.words.json"
+                            sc_words = read_words(w_file) if w_file.is_file() else []
+                            for w in sc_words:
+                                all_global_words.append({
+                                    "text": w["text"],
+                                    "start": round(sc.start + float(w["start"]), 3),
+                                    "end": round(sc.start + float(w["end"]), 3),
+                                })
 
-                                num_slides = len(matching_slides)
-                                dur_per_shot = sc.duration / num_slides
-                                new_shots = []
-                                first_vp_obj = None
+                        slide_audio_dir = timeline.project / "render" / "slide_audio"
+                        slide_audio_dir.mkdir(parents=True, exist_ok=True)
+                        master_audio_path = slide_audio_dir / "master_narration.wav"
+                        ffmpeg_bin = get_ffmpeg_exe()
+                        concat_txt = slide_audio_dir / "concat_scenes.txt"
+                        concat_lines = ["ffconcat version 1.0"]
+                        for sc in timeline.scenes:
+                            p_clean = str(sc.audio.resolve()).replace("\\", "/").replace("'", "'\\''")
+                            concat_lines.extend([f"file '{p_clean}'", f"duration {sc.duration:.9f}"])
+                        concat_txt.write_text("\n".join(concat_lines) + "\n", encoding="utf-8")
+                        try:
+                            subprocess.run(
+                                [ffmpeg_bin, "-hide_banner", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(concat_txt), "-ac", "2", "-ar", "44100", str(master_audio_path)],
+                                check=True, capture_output=True, timeout=120
+                            )
+                        except Exception as cat_err:
+                            diagnostics.record_exception(cat_err, "Concat audio for slides")
 
-                                for m_idx, m_slide in enumerate(matching_slides):
-                                    clean_slots = m_slide.slots.copy()
-                                    if "winner" in clean_slots and clean_slots["winner"] is not None:
-                                        clean_slots["winner"] = str(clean_slots["winner"])
-                                    if "value" in clean_slots and clean_slots["value"] is not None:
-                                        try:
-                                            clean_slots["value"] = float(str(clean_slots["value"]).replace(",", "").replace("%", "").strip())
-                                        except Exception:
-                                            pass
-                                    valid_vkeys = set(VisualData.model_fields.keys())
-                                    shot_data = VisualData(**{k: v for k, v in clean_slots.items() if k in valid_vkeys and v is not None})
-                                    beats = [
-                                        VisualBeat(at_sec=0.35, action=f"enter_{m_slide.layout}"),
-                                        VisualBeat(at_sec=1.5, action=f"action_{m_slide.layout}_step"),
-                                    ]
-                                    vp_obj = MotionScenePlan(
-                                        scene_type=m_slide.layout,
-                                        layout=m_slide.layout,
-                                        theme="light_glass",
-                                        data=shot_data,
-                                        beats=beats,
-                                        transition="morph_anchor",
-                                    )
-                                    if first_vp_obj is None:
-                                        first_vp_obj = vp_obj
+                        new_timeline_scenes = []
+                        valid_vkeys = set(VisualData.model_fields.keys())
+                        cur_clock = 0.0
 
-                                    base_spec = sc.shots[min(m_idx, len(sc.shots) - 1)].spec if sc.shots else sc.spec.shots[0]
-                                    new_vis = Visual(template=m_slide.layout, data=shot_data, beats=beats)
-                                    sh_spec = base_spec.model_copy(update={"visual_plan": vp_obj, "visual": new_vis})
-                                    sh_dur = dur_per_shot if m_idx < num_slides - 1 else (sc.duration - dur_per_shot * (num_slides - 1))
-                                    sh_start = sc.start + dur_per_shot * m_idx
-                                    sh_path = sc.shots[min(m_idx, len(sc.shots) - 1)].path if sc.shots else None
+                        for k, slide in enumerate(slide_script_obj.slides):
+                            s_audio_path = slide_audio_dir / f"slide_{k+1}.mp3"
+                            s_words_path = slide_audio_dir / f"slide_{k+1}.words.json"
 
-                                    tl_shot = TimelineShot(
-                                        scene_id=sc.spec.id,
-                                        shot_id=m_idx + 1,
-                                        start=sh_start,
-                                        duration=sh_dur,
-                                        spec=sh_spec,
-                                        path=sh_path,
-                                        fallback=False,
-                                    )
-                                    new_shots.append(tl_shot)
-
-                                sc.shots = new_shots
-                                sc.spec.shots = [s.spec for s in new_shots]
-                                sc.spec.visual_plan = first_vp_obj
-                                sc.visual_plan = first_vp_obj
+                            if master_audio_path.is_file():
                                 try:
-                                    timeline.plan.scenes[sc_idx].visual_plan = first_vp_obj
-                                    timeline.plan.scenes[sc_idx].shots = [s.spec for s in new_shots]
+                                    subprocess.run(
+                                        [ffmpeg_bin, "-hide_banner", "-loglevel", "error", "-y", "-ss", f"{slide.t_start:.3f}", "-t", f"{slide.duration:.3f}", "-i", str(master_audio_path), "-c:a", "libmp3lame", "-q:a", "2", str(s_audio_path)],
+                                        check=True, capture_output=True, timeout=60
+                                    )
+                                except Exception as slice_err:
+                                    diagnostics.record_exception(slice_err, f"Slice audio slide {k+1}")
+                            if not s_audio_path.is_file():
+                                s_audio_path = timeline.scenes[min(k, len(timeline.scenes)-1)].audio
+
+                            # Filter and offset words for this slide
+                            slide_words = []
+                            for w in all_global_words:
+                                if slide.t_start - 0.05 <= w["start"] < slide.t_end:
+                                    slide_words.append({
+                                        "text": w["text"],
+                                        "start": max(0.0, round(w["start"] - slide.t_start, 3)),
+                                        "end": min(slide.duration, round(w["end"] - slide.t_start, 3)),
+                                    })
+                            if not slide_words:
+                                narr_tokens = slide.narration.split()
+                                dur_per_token = slide.duration / max(1, len(narr_tokens))
+                                for t_i, tok in enumerate(narr_tokens):
+                                    slide_words.append({
+                                        "text": tok,
+                                        "start": round(t_i * dur_per_token, 3),
+                                        "end": round((t_i + 1) * dur_per_token, 3),
+                                    })
+                            s_words_path.write_text(json.dumps(slide_words, ensure_ascii=False, indent=2), encoding="utf-8")
+
+                            clean_slots = slide.slots.copy()
+                            if "winner" in clean_slots and clean_slots["winner"] is not None:
+                                clean_slots["winner"] = str(clean_slots["winner"])
+                            if "value" in clean_slots and clean_slots["value"] is not None:
+                                try:
+                                    clean_slots["value"] = float(str(clean_slots["value"]).replace(",", "").replace("%", "").strip())
                                 except Exception:
                                     pass
-                            except Exception as sc_err:
-                                diagnostics.record_exception(sc_err, f"Lỗi gắn visual plan cảnh {sc.spec.id}")
+
+                            shot_data = VisualData(**{key: v for key, v in clean_slots.items() if key in valid_vkeys and v is not None})
+                            beats = [
+                                VisualBeat(at_sec=0.35, action=f"enter_{slide.layout}"),
+                                VisualBeat(at_sec=1.5, action=f"action_{slide.layout}_step"),
+                            ]
+                            vp_obj = MotionScenePlan(
+                                scene_type=slide.layout,
+                                layout=slide.layout,
+                                theme="light_glass",
+                                data=shot_data,
+                                beats=beats,
+                                transition="morph_anchor",
+                            )
+                            new_vis = Visual(template=slide.layout, data=shot_data, beats=beats)
+                            sh_spec = Shot(
+                                type="text_card",
+                                query=slide.layout or "motion slide",
+                                effect="none",
+                                text_overlay=None,
+                                planning_duration=True,
+                                duration_sec=slide.duration,
+                                card_text=slide.narration,
+                                visual=new_vis,
+                                visual_plan=vp_obj,
+                            )
+                            tl_shot = TimelineShot(
+                                scene_id=k + 1,
+                                shot_id=1,
+                                start=cur_clock,
+                                duration=slide.duration,
+                                spec=sh_spec,
+                                path=None,
+                                fallback=False,
+                            )
+                            role = "hook" if k == 0 else "cta" if k == len(slide_script_obj.slides) - 1 else "body"
+                            sc_spec = Scene(
+                                id=k + 1,
+                                role=role,
+                                narration=slide.narration,
+                                visual_plan=vp_obj,
+                                transition_out="fade",
+                                sfx="none",
+                                shots=[sh_spec],
+                            )
+                            tl_scene = TimelineScene(
+                                spec=sc_spec,
+                                start=cur_clock,
+                                duration=slide.duration,
+                                audio=s_audio_path,
+                                shots=[tl_shot],
+                            )
+                            cur_clock += slide.duration
+                            new_timeline_scenes.append(tl_scene)
+
+                        timeline.scenes = new_timeline_scenes
+                        timeline.plan.scenes = [s.spec for s in new_timeline_scenes]
+                        timeline.duration = cur_clock
                 except Exception as lg_err:
                     diagnostics.record_exception(lg_err, "Lỗi kích hoạt SlideScript Light Glass khi render")
 

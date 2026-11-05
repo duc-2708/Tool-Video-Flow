@@ -49,15 +49,18 @@ def build_audio(timeline, assets_dir, resources, *, motion=False):
             raise ValueError(f"Audio không có mẫu âm thanh: {Path(path).name}")
         return samples
 
-    narration = np.zeros((int(np.ceil(timeline.duration * rate)) + 1, 2), dtype=np.float32)
+    total_dur = max(float(timeline.duration), max((float(s.start + s.duration) for s in timeline.scenes), default=0.0))
+    narration = np.zeros((int(np.ceil(total_dur * rate)) + 1, 2), dtype=np.float32)
     for scene in timeline.scenes:
         samples = read(scene.audio)
         peak = float(np.max(np.abs(samples)))
         if peak > 1e-6:
             samples *= min(8.0, 0.85 / peak)
         start = round(scene.start * rate)
-        length = min(len(samples), round(scene.duration * rate), len(narration) - start)
-        narration[start : start + length] += samples[:length]
+        if start < len(narration):
+            length = max(0, min(len(samples), round(scene.duration * rate), len(narration) - start))
+            if length > 0:
+                narration[start : start + length] += samples[:length]
     mix = narration.copy()
     music_files = local_media(Path(assets_dir) / "music", {".mp3", ".wav", ".m4a", ".ogg"})
     mood = timeline.plan.music.mood if hasattr(timeline.plan.music, "mood") else ""

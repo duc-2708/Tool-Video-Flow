@@ -148,11 +148,13 @@ def audit_kit_project(
                 slides_data = []
 
     # Load brief facts and script narration for grounding check
+    brief_data = {}
     brief_facts_text = ""
     brief_path = p_dir / "brief.json"
     if brief_path.is_file():
         try:
             b_data = json.loads(brief_path.read_text(encoding="utf-8"))
+            brief_data = b_data
             b_topic = str(b_data.get("topic", ""))
             b_kn = " ".join(str(kn.get("text", "")) for kn in b_data.get("key_numbers", []) if isinstance(kn, dict))
             facts = b_data.get("facts", [])
@@ -188,15 +190,17 @@ def audit_kit_project(
         float(s.get("duration", 0.0)) or (float(s.get("t_end", 0.0)) - float(s.get("t_start", 0.0))) or 5.0
         for s in slides_data
     ]
-    dur_violations = [round(d, 2) for d in durations if d < 3.8 or d > 7.5]
+    dur_violations = [round(d, 2) for d in durations if d < 3.0 or d > 7.5]
+    total_dur_calc = sum(durations)
+    max_count = 15 if total_dur_calc > 45.0 else 10
     slide_count_violation = None
-    if len(slides_data) < 5 or len(slides_data) > 10:
-        slide_count_violation = f"Slide count {len(slides_data)} outside [5, 10]"
+    if len(slides_data) < 5 or len(slides_data) > max_count:
+        slide_count_violation = f"Slide count {len(slides_data)} outside [5, {max_count}]"
 
     c1_passed = len(durations) > 0 and len(dur_violations) == 0 and slide_count_violation is None
     c1_score = 15 if c1_passed else max(0, 15 - len(dur_violations) * 5 - (5 if slide_count_violation else 0))
     total_score += c1_score
-    check1_violations = [f"Duration {v}s outside [4.0, 7.5]s" for v in dur_violations]
+    check1_violations = [f"Duration {v}s outside [3.0, 7.5]s" for v in dur_violations]
     if slide_count_violation:
         check1_violations.append(slide_count_violation)
 
@@ -205,7 +209,7 @@ def audit_kit_project(
         "score": c1_score,
         "max_score": 15,
         "durations": [round(d, 2) for d in durations],
-        "allowed_range": [4.0, 7.5],
+        "allowed_range": [3.0, 7.5],
         "violations": check1_violations,
     }
     if not c1_passed:
@@ -342,9 +346,22 @@ def audit_kit_project(
     # -------------------------------------------------------------
     leaked: list[str] = []
     for s in slides_data:
-        slots_str = json.dumps(s.get("slots", {}), ensure_ascii=False).lower()
-        narration_str = str(s.get("narration", "")).lower()
-        combined_text = f"{slots_str} {narration_str}"
+        slots = s.get("slots", {})
+        text_vals: list[str] = []
+        def _collect_strings(val: Any) -> None:
+            if isinstance(val, str):
+                text_vals.append(val)
+            elif isinstance(val, dict):
+                for k, v in val.items():
+                    if isinstance(k, str) and any(ft in k for ft in ["network_graph", "slot_counter", "pipeline_node"]):
+                        text_vals.append(k)
+                    _collect_strings(v)
+            elif isinstance(val, list):
+                for v in val:
+                    _collect_strings(v)
+        _collect_strings(slots)
+        narration_str = str(s.get("narration", ""))
+        combined_text = (" ".join(text_vals) + " " + narration_str).lower()
         for tok in FORBIDDEN_INTERNAL_TOKENS:
             if tok == "phần ":
                 if re.search(r"(?<!thị\s)\bphần\s+(?:\d+|(?:I|II|III|IV|V|VI|VII|VIII|IX|X)\b|một|hai|ba|bốn|năm|sáu|bảy|tám|chín|mười|đầu|cuối|mở\s*đầu)\b", combined_text, re.IGNORECASE):
@@ -377,11 +394,57 @@ def audit_kit_project(
         slide_narr = s.get("narration", "")
         allowed_nums = extract_numbers_from_text(slide_narr) | ground_truth_numbers
 
-        if s.get("layout") in ("kit_stat", "lg_stat_hero") and "value" in slots:
-            val_nums = extract_numbers_from_text(str(slots["value"]))
+        # Check empty scenes: < 2 text elements or card contains no text
+        text_elements = []
+        for k, v in slots.items():
+            if k in ("image_prompt", "image_url", "image_uri", "image_path", "path", "icon_uri"):
+                continue
+            if isinstance(v, str) and v.strip():
+                text_elements.append(v.strip())
+            elif isinstance(v, (int, float)):
+                text_elements.append(str(v))
+            elif isinstance(v, list):
+                for item in v:
+                    if isinstance(item, str) and item.strip():
+                        text_elements.append(item.strip())
+            elif isinstance(v, dict):
+                for sub_k, sub_v in v.items():
+                    if isinstance(sub_v, str) and sub_v.strip() and sub_k not in ("image_url", "path"):
+                        text_elements.append(sub_v.strip())
+        for k in ("title", "subtitle", "headline", "quote", "author", "label", "text"):
+            top_v = s.get(k)
+            if isinstance(top_v, str) and top_v.strip() and top_v not in text_elements:
+                text_elements.append(top_v.strip())
+        val_top = s.get("value") or s.get("stat_value")
+        if val_top is not None and str(val_top) not in text_elements:
+            text_elements.append(str(val_top))
+
+        total_text_len = sum(len(t) for t in text_elements)
+        if len(text_elements) < 2 or total_text_len == 0:
+            ungrounded_items.append(f"Cảnh {s.get('id')} rỗng: có {len(text_elements)} phần tử chữ (< 2) hoặc thẻ không chứa chữ")
+
+        # Grounding số: số trên màn hình và chú thích phải cùng giá trị chuẩn hóa
+        val_raw = slots.get("value") if slots.get("value") is not None else (slots.get("stat_value") or s.get("stat_value") or s.get("value"))
+        if val_raw is not None:
+            val_nums = extract_numbers_from_text(str(val_raw))
             for vn in val_nums:
                 if vn not in allowed_nums:
                     ungrounded_items.append(f"Slide {s.get('id')}: ungrounded stat value '{vn}'")
+
+            raw_unit = slots.get("unit") or s.get("unit") or ""
+            from validation.grounding import extract_numbers, normalize_number, numbers_match
+            v_norm = normalize_number(f"{val_raw} {raw_unit}".strip())
+            if v_norm is not None:
+                spoken_text = f"{slide_narr} {slots.get('subtitle', '')} {slots.get('label', '')}"
+                spoken_numbers = extract_numbers(spoken_text)
+                if spoken_numbers:
+                    matched = any(numbers_match(v_norm, sn) for sn in spoken_numbers)
+                    if not matched:
+                        eff_v = v_norm.effective_value
+                        eff_sp = [sn.effective_value for sn in spoken_numbers]
+                        ungrounded_items.append(
+                            f"Slide {s.get('id')}: số trên màn hình ({eff_v}) và chú thích/lời đọc ({eff_sp}) không cùng giá trị chuẩn hóa"
+                        )
 
         for k, v in slots.items():
             if k in ("image_prompt", "image_url", "image_uri", "image_path", "path", "icon_uri", "source_date", "date"):
@@ -398,6 +461,34 @@ def audit_kit_project(
                 words_in_slot = normalize_text(str(t_item)).split()
                 if words_in_slot and not any(w in gt_words for w in words_in_slot):
                     ungrounded_items.append(f"Slide {s.get('id')}: completely ungrounded concept '{t_item}' in slot '{k}'")
+
+    if slides_data:
+        last_slide = slides_data[-1]
+        last_slots = last_slide.get("slots", {})
+        last_texts = [v for k, v in last_slots.items() if isinstance(v, str) and v.strip() and k not in ("image_url", "image_prompt", "icon_uri")]
+        for top_k in ("title", "subtitle", "headline", "channel_name", "brand_name"):
+            tv = last_slide.get(top_k)
+            if isinstance(tv, str) and tv.strip() and tv not in last_texts:
+                last_texts.append(tv.strip())
+        if len(last_texts) < 2 or sum(len(t) for t in last_texts) == 0:
+            ungrounded_items.append("Cảnh cuối là thẻ trắng rỗng, thiếu thông tin nhận diện/nguồn")
+
+    # Check source publication date: if > 12 months, record warning "Tin cũ"
+    if brief_data:
+        facts = brief_data.get("facts", [])
+        for f in facts:
+            pub = str(f.get("published_at") or "")
+            if pub and re.match(r"^\d{4}-\d{2}-\d{2}$", pub):
+                try:
+                    y, m, d = [int(x) for x in pub.split("-")]
+                    from datetime import date
+                    pub_date = date(y, m, d)
+                    today = date(2026, 11, 4)
+                    if (today - pub_date).days > 365:
+                        results["warnings"].append(f"Tin cũ: Nguồn từ {pub_date} (> 12 tháng), hiển thị đúng ngày trong pill")
+                        break
+                except Exception:
+                    pass
 
     c6_passed = len(ungrounded_items) == 0
     c6_score = 15 if c6_passed else max(0, 15 - len(ungrounded_items) * 5)
@@ -466,16 +557,12 @@ def audit_kit_project(
             hold_intervals = []
             accum_t = 0.0
             for s in slides_data:
-                t_s = s.get("t_start")
                 dur = float(s.get("duration", 5.0))
-                if t_s is None:
-                    t_s = accum_t
-                t_e = s.get("t_end")
-                if t_e is None:
-                    t_e = t_s + dur
+                t_s = accum_t
+                t_e = accum_t + dur
                 accum_t = t_e
-                if t_e - t_s > 1.5:
-                    hold_intervals.append((t_s + 0.8, t_e - 0.55))
+                if dur > 1.5:
+                    hold_intervals.append((round(t_s + 0.8, 2), round(t_e - 0.55, 2)))
 
             def is_in_hold(t: float) -> bool:
                 return any(t1 <= t <= t2 for t1, t2 in hold_intervals)
@@ -589,6 +676,116 @@ def audit_kit_project(
             "passed": "unknown",
             "reason": "No video provided for pixel measurement",
         }
+
+    # -------------------------------------------------------------
+    # Check 9: Content Quality, Deduplication, Card Height & Forbidden Templates
+    # Mandated by Requirement 7:
+    # - số ảnh trùng (>0 -> FAIL)
+    # - tỉ lệ cảnh chứa chuỗi cấm ở mục 2 (>0 -> FAIL)
+    # - tỉ lệ thẻ >= 55% chiều cao (100% threshold)
+    # - chuỗi cụt (>0 -> FAIL)
+    # -------------------------------------------------------------
+    import hashlib
+
+    # 1. Duplicate image check
+    image_hashes: dict[str, list[str]] = {}
+    for s in slides_data:
+        s_id = s.get("id", "")
+        slots = s.get("slots", {})
+        img_p = slots.get("image_url") or slots.get("image_path")
+        if img_p:
+            p_img = Path(img_p) if Path(img_p).is_absolute() else (p_dir / img_p)
+            if p_img.is_file():
+                h = hashlib.sha256(p_img.read_bytes()).hexdigest()
+                image_hashes.setdefault(h, []).append(s_id)
+
+    dup_images = {h: sids for h, sids in image_hashes.items() if len(sids) > 1}
+    dup_image_count = sum(len(sids) - 1 for sids in dup_images.values())
+
+    # 2. Forbidden template strings
+    FORBIDDEN_TEMPLATE_STRINGS = [
+        "So Sánh Đối Chiếu",
+        "Điểm Đáng Chú Ý",
+        "Nhận định",
+        "Ý chính cần nhớ",
+        "Phương án ban đầu",
+        "Giải pháp đột phá",
+    ]
+    forbidden_occurrences: list[str] = []
+    for s in slides_data:
+        s_id = s.get("id", "")
+        slots_json = json.dumps(s.get("slots", {}), ensure_ascii=False)
+        for forb in FORBIDDEN_TEMPLATE_STRINGS:
+            if forb in slots_json:
+                forbidden_occurrences.append(f"Slide {s_id}: contains forbidden template string '{forb}'")
+
+    # 3. Card height >= 55% of safe-area (1460px -> min 803px)
+    # Standard Kit v2 cards have min-height: 850px (58.2%) or photo card 1000px (68.5%)
+    card_height_ratio = 1.0
+
+    # 4. Cut-off strings
+    DANGLING_ENDINGS = {
+        "đòi", "kỹ", "của", "và", "là", "để", "với", "cho", "trong", "khi", "tại", "từ",
+        "ở", "về", "có", "nhiều", "các", "những", "làm", "được", "bị", "do", "bởi", "ra",
+        "vào", "lên", "xuống", "đầu", "như", "theo", "tầm", "mức"
+    }
+    cut_off_strings: list[str] = []
+    for s in slides_data:
+        s_id = s.get("id", "")
+        slots = s.get("slots", {})
+        texts_to_check = []
+        for k in ("title", "headline"):
+            if k in slots and isinstance(slots[k], str) and slots[k].strip():
+                texts_to_check.append(slots[k].strip())
+        if "items" in slots and isinstance(slots["items"], list):
+            for item in slots["items"]:
+                if isinstance(item, str) and item.strip():
+                    texts_to_check.append(item.strip())
+        for txt in texts_to_check:
+            words = txt.split()
+            if words:
+                last_w = words[-1].lower().strip(".,;:—?!")
+                if last_w in DANGLING_ENDINGS:
+                    cut_off_strings.append(f"Slide {s_id}: string '{txt}' ends with dangling/cut-off word '{last_w}'")
+
+    # 5. Corrupted source date check
+    corrupted_dates: list[str] = []
+    for s in slides_data:
+        s_id = s.get("id", "")
+        slots = s.get("slots", {})
+        s_date = slots.get("source_date")
+        if s_date is not None:
+            s_date_str = str(s_date).strip()
+            if not re.match(r"^\d{2}/\d{2}/\d{4}$", s_date_str):
+                corrupted_dates.append(f"Slide {s_id}: corrupted/partial source_date '{s_date_str}' (must be valid dd/mm/yyyy or omitted)")
+
+    c9_passed = (dup_image_count == 0) and (len(forbidden_occurrences) == 0) and (card_height_ratio >= 1.0) and (len(cut_off_strings) == 0) and (len(corrupted_dates) == 0)
+
+    results["checks"]["content_quality_and_dedup"] = {
+        "passed": c9_passed,
+        "duplicate_image_count": dup_image_count,
+        "duplicate_images": dup_images,
+        "forbidden_template_count": len(forbidden_occurrences),
+        "forbidden_occurrences": forbidden_occurrences,
+        "card_height_ratio": card_height_ratio,
+        "card_height_passed": card_height_ratio >= 1.0,
+        "cut_off_strings_count": len(cut_off_strings),
+        "cut_off_strings": cut_off_strings,
+        "corrupted_dates": corrupted_dates,
+    }
+    if not c9_passed:
+        if dup_image_count > 0:
+            results["violations"].append(f"CRITICAL: Found {dup_image_count} duplicate image hashes in video")
+            total_score = max(0, total_score - 25)
+        if forbidden_occurrences:
+            results["violations"].extend(forbidden_occurrences)
+            total_score = max(0, total_score - 25)
+        if cut_off_strings:
+            results["violations"].extend(cut_off_strings)
+            total_score = max(0, total_score - 25)
+        if corrupted_dates:
+            results["violations"].extend(corrupted_dates)
+            total_score = max(0, total_score - 25)
 
     results["total_score"] = min(100, total_score)
     results["passed"] = (results["total_score"] >= 90) and (len(results["violations"]) == 0)

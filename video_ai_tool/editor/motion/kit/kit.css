@@ -7,7 +7,7 @@
   --kit-card-border: #E5E7EB;
   --kit-card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
   --kit-text: #0F172A;
-  --kit-text-muted: #64748B;
+  --kit-text-muted: #334155;
   --kit-accent: #2563EB;
   --kit-secondary: #7C3AED;
   --kit-positive: #059669;
@@ -182,13 +182,15 @@ html, body {
 .kit-card {
   width: 940px;
   min-width: 800px;
+  min-height: 850px;
   background: var(--kit-card-bg);
   border: 1px solid var(--kit-card-border);
   border-radius: 36px;
-  padding: 56px 48px;
+  padding: 64px 56px;
   box-shadow: var(--kit-card-shadow);
   display: flex;
   flex-direction: column;
+  justify-content: center;
   position: relative;
   overflow: hidden;
 }
@@ -241,7 +243,7 @@ html, body {
 }
 
 .kit-caption {
-  font-size: 36px;
+  font-size: 44px;
   font-weight: 500;
   line-height: 1.4;
   color: var(--kit-text-muted);
@@ -341,15 +343,15 @@ html, body {
 }
 
 .kit-photo-role {
-  font-size: 40px;
-  font-weight: 500;
+  font-size: 44px;
+  font-weight: 600;
   color: #E2E8F0;
 }
 
 .kit-photo-credit {
-  font-size: 28px;
-  font-weight: 400;
-  color: #94A3B8;
+  font-size: 36px;
+  font-weight: 500;
+  color: #CBD5E1;
   margin-top: 6px;
 }
 
@@ -393,6 +395,8 @@ html, body {
   font-weight: 600;
   line-height: 1.35;
   color: var(--kit-text);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Component: kit_compare */
@@ -419,7 +423,7 @@ html, body {
 }
 
 .kit-compare-title {
-  font-size: 40px;
+  font-size: 44px;
   font-weight: 700;
   color: var(--kit-text-muted);
   margin-bottom: 16px;
@@ -435,6 +439,8 @@ html, body {
   font-weight: 600;
   line-height: 1.35;
   color: var(--kit-text);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Component: kit_quote */
@@ -465,8 +471,8 @@ html, body {
 }
 
 .kit-quote-role {
-  font-size: 36px;
-  font-weight: 500;
+  font-size: 44px;
+  font-weight: 600;
   color: var(--kit-text-muted);
   margin-top: 4px;
 }
@@ -580,7 +586,7 @@ html, body {
 }
 
 .kit-outro-source {
-  font-size: 32px;
+  font-size: 40px;
   font-weight: 600;
   color: var(--kit-text-muted);
   margin-top: 28px;

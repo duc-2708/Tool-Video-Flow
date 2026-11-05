@@ -157,3 +157,132 @@ def test_audit_video_with_two_seconds_blank_fails(tmp_path, monkeypatch):
     assert pixel_check["max_consecutive_blank_sec"] >= 2.0
     assert any(">= 2.0s threshold" in v for v in res["violations"])
 
+
+def test_audit_fails_on_duplicate_images(tmp_path):
+    img_file = tmp_path / "img1.png"
+    img_file.write_bytes(b"duplicate_content_bytes")
+
+    slides = [
+        SlideItem(
+            id=f"slide_{i}",
+            layout=["kit_title", "kit_list", "kit_stat", "kit_title", "kit_outro"][i],
+            sentence_ids=[i + 1],
+            slots={"title": f"Cảnh {i} hợp lệ", "text": "Nội dung đầy đủ", "image_url": str(img_file)} if i in (0, 1) else {"title": f"Cảnh {i} hợp lệ", "text": "Nội dung đầy đủ"},
+            duration=5.0,
+            narration="Nội dung cảnh hợp lệ.",
+        )
+        for i in range(5)
+    ]
+    script = SlideScript(topic="Test Dup Images", total_duration=25.0, slides=slides)
+    (tmp_path / "slide_script.json").write_text(json.dumps(script.model_dump(mode="json")), encoding="utf-8")
+
+    res = audit_light_glass_project(tmp_path, slide_script=script)
+    assert res["passed"] is False
+    assert res["checks"]["content_quality_and_dedup"]["duplicate_image_count"] > 0
+    assert any("duplicate image" in v.lower() for v in res["violations"])
+
+
+def test_audit_fails_on_forbidden_template_strings(tmp_path):
+    slides = [
+        SlideItem(
+            id="slide_1",
+            layout="kit_compare",
+            sentence_ids=[1],
+            slots={"title": "So Sánh Đối Chiếu", "left": {"text": "Phương án ban đầu"}, "right": {"text": "Giải pháp đột phá"}},
+            duration=5.0,
+            narration="So sánh các phương án.",
+        ),
+        SlideItem(
+            id="slide_2",
+            layout="kit_list",
+            sentence_ids=[2],
+            slots={"title": "Điểm Đáng Chú Ý", "items": ["Một điểm"]},
+            duration=5.0,
+            narration="Các điểm đáng chú ý.",
+        ),
+        SlideItem(
+            id="slide_3",
+            layout="kit_quote",
+            sentence_ids=[3],
+            slots={"quote": "Câu trích", "author": "Nhận định"},
+            duration=5.0,
+            narration="Lời trích dẫn nhận định.",
+        ),
+        SlideItem(
+            id="slide_4",
+            layout="kit_title",
+            sentence_ids=[4],
+            slots={"title": "Tiêu đề hợp lệ", "text": "Nội dung đầy đủ"},
+            duration=5.0,
+            narration="Nội dung chi tiết.",
+        ),
+        SlideItem(
+            id="slide_5",
+            layout="kit_outro",
+            sentence_ids=[5],
+            slots={"title": "Tổng kết hợp lệ", "text": "Nội dung đầy đủ"},
+            duration=5.0,
+            narration="Tổng kết cuối video.",
+        ),
+    ]
+    script = SlideScript(topic="Test Forbidden", total_duration=25.0, slides=slides)
+    (tmp_path / "slide_script.json").write_text(json.dumps(script.model_dump(mode="json")), encoding="utf-8")
+
+    res = audit_light_glass_project(tmp_path, slide_script=script)
+    assert res["passed"] is False
+    assert res["checks"]["content_quality_and_dedup"]["forbidden_template_count"] >= 3
+    assert any("forbidden template string" in v.lower() for v in res["violations"])
+
+
+def test_audit_fails_on_cutoff_and_corrupted_date(tmp_path):
+    slides = [
+        SlideItem.model_construct(
+            id="slide_1",
+            layout="kit_title",
+            sentence_ids=[1],
+            slots={"title": "Địa chất đô thị đan xen nhiều tầng đòi", "text": "Nội dung"},
+            duration=5.0,
+            narration="Địa chất đô thị đan xen nhiều tầng đòi hỏi thiết bị cao.",
+        ),
+        SlideItem.model_construct(
+            id="slide_2",
+            layout="kit_title",
+            sentence_ids=[2],
+            slots={"title": "Làm sao để tiêu chuẩn kỹ", "text": "Nội dung"},
+            duration=5.0,
+            narration="Làm sao để tiêu chuẩn kỹ thuật giúp tự chủ.",
+        ),
+        SlideItem.model_construct(
+            id="slide_3",
+            layout="kit_stat",
+            sentence_ids=[3],
+            slots={"value": 1541, "unit": "km", "label": "Chiều dài", "text": "Đoạn đường sắt"},
+            duration=5.0,
+            narration="Tuyến đường dài 1541 km.",
+        ),
+        SlideItem.model_construct(
+            id="slide_4",
+            layout="kit_list",
+            sentence_ids=[4],
+            slots={"title": "Chi tiết kỹ thuật", "items": ["Hệ thống chuẩn"]},
+            duration=5.0,
+            narration="Hệ thống chuẩn đồng bộ.",
+        ),
+        SlideItem.model_construct(
+            id="slide_5",
+            layout="kit_outro",
+            sentence_ids=[5],
+            slots={"title": "Tổng kết", "text": "Nội dung", "source_date": "01/01/"},
+            duration=5.0,
+            narration="Tổng kết bài học.",
+        ),
+    ]
+    script = SlideScript.model_construct(topic="Test Cutoff Date", total_duration=25.0, slides=slides)
+    (tmp_path / "slide_script.json").write_text(json.dumps(script.model_dump(mode="json")), encoding="utf-8")
+
+    res = audit_light_glass_project(tmp_path, slide_script=script)
+    assert res["passed"] is False
+    cq = res["checks"]["content_quality_and_dedup"]
+    assert cq["cut_off_strings_count"] >= 2
+    assert len(cq["corrupted_dates"]) >= 1
+

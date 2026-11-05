@@ -169,6 +169,7 @@ def test_audit_kit_project_synthetic(tmp_path):
                 layout="kit_compare",
                 narration="So sánh giải pháp cũ và công nghệ mới vượt trội.",
                 title="So sánh giải pháp",
+                subtitle="Giải pháp cũ và công nghệ mới",
             ),
             SlideScene(
                 scene_idx=5,
@@ -177,6 +178,7 @@ def test_audit_kit_project_synthetic(tmp_path):
                 layout="kit_outro",
                 narration="Theo dõi kênh để nhận thông tin cập nhật công nghệ mới.",
                 title="Đăng ký theo dõi",
+                subtitle="Cập nhật công nghệ mới",
             ),
         ]
     )
