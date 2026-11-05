@@ -1,0 +1,131 @@
+{
+  "project": "output\\cach-ky-su-viet-lam-chu-cong-nghe-thi-cong-duoi-long-do-thi-da831eb8",
+  "checks": {
+    "scene_duration": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "durations": [
+        4.97,
+        3.71,
+        6.0,
+        4.13,
+        5.08,
+        4.43,
+        5.3,
+        3.51,
+        4.7,
+        4.42
+      ],
+      "allowed_range": [
+        3.0,
+        7.5
+      ],
+      "violations": []
+    },
+    "transition_continuity": {
+      "passed": true,
+      "score": 10,
+      "max_score": 10,
+      "transition_duration": 0.55,
+      "allowed_duration_range": [
+        0.4,
+        0.7
+      ],
+      "assigned_modes": [
+        "dissolve_rise",
+        "push_x",
+        "scale_through",
+        "dissolve_rise",
+        "push_x",
+        "scale_through",
+        "dissolve_rise",
+        "push_x",
+        "scale_through"
+      ],
+      "consecutive_repeat": false
+    },
+    "counter_monotonicity": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "stat_slides_count": 1,
+      "notes": [
+        "Slide slide_9: counter target 1541.0 (monotonic count up in <= 1.2s)"
+      ],
+      "violations": []
+    },
+    "text_contrast_and_font": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "computed_contrast": 12.02,
+      "contrast_source": "real_video_pixels",
+      "min_contrast_threshold": 4.5,
+      "min_headline_px": 64,
+      "font_passed": true,
+      "violations": []
+    },
+    "internal_tokens_leak": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "leaked_count": 0,
+      "leaked": []
+    },
+    "grounding": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "ungrounded_count": 0,
+      "violations": []
+    },
+    "layout_diversity": {
+      "passed": true,
+      "score": 15,
+      "max_score": 15,
+      "distinct_count": 5,
+      "distinct_layouts": [
+        "kit_list",
+        "lg_source_headline",
+        "kit_stat",
+        "kit_title",
+        "lg_cta_profile"
+      ],
+      "adjacent_duplicate": false,
+      "max_repetition_ratio": 0.4,
+      "excessive_repetition": false
+    },
+    "pixel_audit": {
+      "passed": true,
+      "blank_frame_ratio": 0.0,
+      "blank_frames": 0,
+      "max_consecutive_blank_sec": 0.0,
+      "total_blank_sec": 0.0,
+      "has_2s_blank": false,
+      "evaluated_frames": 133,
+      "total_frames": 185,
+      "median_mad": 0.63,
+      "flicker_spikes": 0,
+      "avg_sampled_contrast": 12.02,
+      "avg_text_coverage": 0.506,
+      "text_coverage_passed": true
+    },
+    "content_quality_and_dedup": {
+      "passed": true,
+      "duplicate_image_count": 0,
+      "duplicate_images": {},
+      "forbidden_template_count": 0,
+      "forbidden_occurrences": [],
+      "card_height_ratio": 1.0,
+      "card_height_passed": true,
+      "cut_off_strings_count": 0,
+      "cut_off_strings": [],
+      "corrupted_dates": []
+    }
+  },
+  "total_score": 100,
+  "max_score": 100,
+  "passed": true,
+  "violations": []
+}

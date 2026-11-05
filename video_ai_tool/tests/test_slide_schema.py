@@ -109,3 +109,30 @@ def test_slide_script_serialization():
     assert data["slides"][0]["layout"] == "kit_title"
     assert data["slides"][0]["source_ref"]["domain"] == "vnexpress.net"
     assert data["slides"][0]["emphasis"][0]["phrase"] == "trí tuệ nhân tạo"
+
+
+def test_wrap_text_greedy_trims_dangling_words():
+    # Text ending in trailing dangling words like "đòi" or "kỹ" when truncated
+    text_doi = "Địa chất đô thị đan xen nhiều tầng đòi hỏi thiết bị độ chính xác cao."
+    lines_doi = wrap_text_greedy(text_doi, max_chars_per_line=14, max_lines=3)
+    joined_doi = " ".join(lines_doi)
+    assert not joined_doi.endswith("đòi")
+    assert joined_doi.endswith("nhiều tầng")
+
+    text_ky = "Làm sao để tiêu chuẩn kỹ thuật giúp Việt Nam tự chủ hạ tầng hoàn toàn?"
+    lines_ky = wrap_text_greedy(text_ky, max_chars_per_line=14, max_lines=2)
+    joined_ky = " ".join(lines_ky)
+    assert not joined_ky.endswith("kỹ")
+
+
+def test_extract_clean_headline_no_cutoff():
+    from schemas.slide_script import extract_clean_headline
+    sent1 = "Sự cố sụt lún tại Singapore cho thấy tầm quan trọng của việc xử lý kịp thời cảnh báo địa kỹ thuật."
+    hl1 = extract_clean_headline(sent1)
+    assert hl1 == "Sự cố sụt lún tại Singapore"
+    assert not hl1.endswith(("tầm", "cho", "của", "tại"))
+
+    sent2 = "Địa chất đô thị đan xen nhiều tầng đòi hỏi thiết bị độ chính xác cao."
+    hl2 = extract_clean_headline(sent2)
+    assert not hl2.endswith(("đòi", "kỹ", "của"))
+    assert "địa chất" in hl2.lower()

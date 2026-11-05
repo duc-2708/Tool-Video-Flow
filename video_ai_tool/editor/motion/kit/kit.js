@@ -73,27 +73,29 @@
       blob2.id = 'kit-blob-2';
       frame.appendChild(blob2);
 
-      // Brand Chip (top-left)
-      var brandChip = document.createElement('div');
-      brandChip.className = 'kit-brand-chip';
+      // Brand Chip (top-left) - only render if brand_name is configured
+      if (data.brand_name) {
+        var brandChip = document.createElement('div');
+        brandChip.className = 'kit-brand-chip';
 
-      var brandLogo = document.createElement('div');
-      brandLogo.className = 'kit-brand-logo';
-      if (data.brand_logo_data_uri) {
-        var logoImg = document.createElement('img');
-        logoImg.src = data.brand_logo_data_uri;
-        brandLogo.appendChild(logoImg);
-      } else {
-        brandLogo.textContent = (data.brand_name || 'AI').charAt(0);
+        var brandLogo = document.createElement('div');
+        brandLogo.className = 'kit-brand-logo';
+        if (data.brand_logo_data_uri) {
+          var logoImg = document.createElement('img');
+          logoImg.src = data.brand_logo_data_uri;
+          brandLogo.appendChild(logoImg);
+        } else {
+          brandLogo.textContent = String(data.brand_name).charAt(0);
+        }
+        brandChip.appendChild(brandLogo);
+
+        var brandName = document.createElement('div');
+        brandName.className = 'kit-brand-name';
+        brandName.textContent = String(data.brand_name);
+        brandChip.appendChild(brandName);
+
+        frame.appendChild(brandChip);
       }
-      brandChip.appendChild(brandLogo);
-
-      var brandName = document.createElement('div');
-      brandName.className = 'kit-brand-name';
-      brandName.textContent = String(data.brand_name || 'TIN CÔNG NGHỆ');
-      brandChip.appendChild(brandName);
-
-      frame.appendChild(brandChip);
 
       // Source Pill (bottom-center)
       if (data.source_domain) {
@@ -107,7 +109,11 @@
 
         var srcText = document.createElement('span');
         srcText.id = 'kit-source-text';
-        srcText.textContent = String(data.source_domain);
+        var txt = String(data.source_domain);
+        if (data.source_date) {
+          txt += ' (' + data.source_date + ')';
+        }
+        srcText.textContent = txt;
         sourcePill.appendChild(srcText);
 
         frame.appendChild(sourcePill);
@@ -171,7 +177,6 @@
         if (layout === 'kit_outro') {
           if (!slots.channel_name && slots.channel_handle) slots.channel_name = slots.channel_handle;
           if (!slots.call_to_action && slots.bio) slots.call_to_action = slots.bio;
-          if (!slots.button_text) slots.button_text = 'Theo Dõi';
         }
         if (layout === 'kit_list' && (!slots.items || !slots.items.length)) {
           if (slots.text) {
@@ -225,7 +230,6 @@
         if (layout === 'kit_outro') {
           if (!slots.channel_name && slots.channel_handle) slots.channel_name = slots.channel_handle;
           if (!slots.call_to_action && slots.bio) slots.call_to_action = slots.bio;
-          if (!slots.button_text) slots.button_text = 'Theo Dõi';
         }
         // For kit_list: ensure items array exists
         if (layout === 'kit_list' && (!slots.items || !slots.items.length)) {

@@ -22,6 +22,10 @@ class VisualCompareSide(StrictModel):
     label: str = ""
     sub: str = ""
     points: list[str] = Field(default_factory=list)
+    title: str = ""
+    text: str = ""
+    winner: bool | str | int | None = None
+    highlight: list[str] = Field(default_factory=list)
 
 
 class VisualSeriesItem(StrictModel):

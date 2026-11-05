@@ -17,6 +17,8 @@ from schemas.slide_script import (
     SlideScript,
     SlideItem,
     wrap_text_greedy,
+    extract_clean_headline,
+    clean_trailing_dangling,
 )
 
 
@@ -143,15 +145,19 @@ def verify_and_ground_slides(
                 repair_notes.append(note)
                 s_layout = target_downgrade
                 s_slots = {
-                    "chip": "THÔNG TIN ĐÁNG CHÚ Ý",
-                    "title": slide_narration[:60] if slide_narration else "Thông tin ghi nhận.",
+                    "chip": "TIÊU ĐIỂM",
+                    "title": extract_clean_headline(slide_narration) or (slide_narration[:60] if slide_narration else "Thông tin ghi nhận."),
                     "subtitle": slide_narration[60:120] if len(slide_narration) > 60 else "",
                     "text": slide_narration[:120] if slide_narration else "Thông tin ghi nhận.",
                 }
 
-        # Check all string slots for ungrounded numbers
+        # Check all string slots for ungrounded numbers (skip and validate date fields)
         if s_layout not in ("lg_note_card", "kit_title"):
             for k, v in list(s_slots.items()):
+                if k in ("source_date", "date"):
+                    if not (isinstance(v, str) and re.match(r"^\d{2}/\d{2}/\d{4}$", v.strip())):
+                        del s_slots[k]
+                    continue
                 if isinstance(v, str):
                     slot_nums = extract_numbers_from_text(v)
                     for sn in slot_nums:
@@ -179,13 +185,11 @@ def verify_and_ground_slides(
         if s_layout in ("lg_source_headline", "kit_title"):
             title_raw = str(s_slots.get("title") or s_slots.get("headline") or "").strip()
             if not title_raw:
-                # Missing headline: extract 3-5 words from narration
-                words = slide_narration.split()[:5]
-                title_raw = " ".join(words) if words else "Tin Công Nghệ"
+                # Missing headline: extract clean phrase from narration
+                title_raw = extract_clean_headline(slide_narration) or "Tin Công Nghệ"
                 repair_notes.append(f"[grounding_heal_headline, nhóm 2] Slide {slide.id}: tự bổ sung tiêu đề từ câu đọc ('{title_raw}').")
-            # Enforce line wrap: max 3 lines x 14 chars
-            wrapped_lines = wrap_text_greedy(title_raw, max_chars_per_line=14, max_lines=3)
-            s_slots["title"] = " ".join(wrapped_lines) if wrapped_lines else title_raw[:42]
+            # Enforce clean phrase boundary without cut-off words
+            s_slots["title"] = extract_clean_headline(title_raw) or title_raw[:42]
 
         # Grounding Rule C: Emphasis verification
         # Every emphasis phrase MUST be a verbatim substring of slide_narration
@@ -198,25 +202,31 @@ def verify_and_ground_slides(
                 repair_notes.append(f"[grounding_drop_emphasis, nhóm 2] Slide {slide.id}: bỏ cụm nhấn '{emp.phrase}' do không có trong lời đọc.")
 
         # Grounding Rule D: Slot character limits
-        # Pill <= 28 chars
+        # Pill <= 28 chars, trimmed of trailing dangling words
         for p_key in ("pill", "badge", "chip", "kicker", "sub_pill"):
             if p_key in s_slots and s_slots[p_key]:
                 p_val = str(s_slots[p_key]).strip()
                 if len(p_val) > 28:
                     w = wrap_text_greedy(p_val, max_chars_per_line=28, max_lines=1)
-                    s_slots[p_key] = w[0] if w else p_val[:28]
+                    s_slots[p_key] = clean_trailing_dangling(w[0] if w else p_val[:28])
+                else:
+                    s_slots[p_key] = clean_trailing_dangling(p_val)
 
-        # Features items <= 40 chars, max 4 items
+        # Features items <= 60 chars, max 4 items, trimmed of trailing dangling words
         if "items" in s_slots and isinstance(s_slots["items"], list):
-            s_slots["items"] = [str(x)[:40].strip() for x in s_slots["items"][:4] if str(x).strip()]
+            s_slots["items"] = [
+                clean_trailing_dangling(str(x)[:65].strip())
+                for x in s_slots["items"][:4]
+                if clean_trailing_dangling(str(x)[:65].strip())
+            ]
 
-        # Compare sides <= 28 chars
+        # Compare sides <= 36 chars
         for side in ("left", "right"):
             if side in s_slots and isinstance(s_slots[side], dict):
                 s_dict = dict(s_slots[side])
                 for sub_k in ("label", "text", "title"):
                     if sub_k in s_dict and s_dict[sub_k]:
-                        s_dict[sub_k] = str(s_dict[sub_k])[:28].strip()
+                        s_dict[sub_k] = clean_trailing_dangling(str(s_dict[sub_k])[:36].strip())
                 s_slots[side] = s_dict
 
         s_image_prompt = getattr(slide, "image_prompt", "") or str(s_slots.get("image_prompt", ""))

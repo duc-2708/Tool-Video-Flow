@@ -116,7 +116,7 @@ def rerender_project_with_theme(
                     sentences=sentences,
                     brief=brief_data,
                     total_duration=total_duration,
-                    brand_name=getattr(settings, "brand_name", "TIN CÔNG NGHỆ"),
+                    brand_name=getattr(settings, "brand_name", ""),
                 )
                 slide_script_obj = verify_and_ground_slides(slide_script_obj, {s["id"]: s for s in sentences}, brief_data)
         else:
@@ -132,7 +132,7 @@ def rerender_project_with_theme(
                 total_duration=total_duration,
                 settings=settings,
                 diagnostics=diagnostics,
-                brand_name=getattr(settings, "brand_name", "TIN CÔNG NGHỆ"),
+                brand_name=getattr(settings, "brand_name", ""),
             )
 
         # Attach captured images across slides

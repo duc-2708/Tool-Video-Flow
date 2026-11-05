@@ -116,7 +116,7 @@ def plan_slides(
     settings: Any = None,
     diagnostics: Diagnostics | None = None,
     llm_client: Any = None,
-    brand_name: str = "TIN CÔNG NGHỆ",
+    brand_name: str = "",
 ) -> SlideScript:
     """Plan SlideScript with target ~5.0s per slide (n = round(duration / 5)).
     

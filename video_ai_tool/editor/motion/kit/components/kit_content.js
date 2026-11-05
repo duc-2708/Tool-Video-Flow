@@ -281,16 +281,25 @@
       var outroWrap = document.createElement('div');
       outroWrap.className = 'kit-outro-container';
 
-      var logo = document.createElement('div');
-      logo.className = 'kit-outro-logo';
-      if (slots.logo_url) {
-        var img = document.createElement('img');
-        img.src = slots.logo_url;
-        logo.appendChild(img);
-      } else {
-        logo.textContent = String(slots.channel_name || 'AI').charAt(0);
+      if (slots.pill) {
+        var pill = document.createElement('div');
+        pill.className = 'kit-pill';
+        pill.textContent = String(slots.pill);
+        outroWrap.appendChild(pill);
       }
-      outroWrap.appendChild(logo);
+
+      if (slots.logo_url || slots.channel_name) {
+        var logo = document.createElement('div');
+        logo.className = 'kit-outro-logo';
+        if (slots.logo_url) {
+          var img = document.createElement('img');
+          img.src = slots.logo_url;
+          logo.appendChild(img);
+        } else if (slots.channel_name) {
+          logo.textContent = String(slots.channel_name).charAt(0);
+        }
+        outroWrap.appendChild(logo);
+      }
 
       if (slots.channel_name) {
         var chEl = document.createElement('div');
@@ -299,18 +308,19 @@
         outroWrap.appendChild(chEl);
       }
 
+      var titleText = slots.title || slots.headline;
+      if (titleText) {
+        var titleEl = document.createElement('div');
+        titleEl.className = 'kit-title-lg';
+        titleEl.textContent = String(titleText);
+        outroWrap.appendChild(titleEl);
+      }
+
       if (slots.call_to_action || slots.cta || slots.text) {
         var ctaEl = document.createElement('div');
         ctaEl.className = 'kit-outro-cta';
         ctaEl.textContent = String(slots.call_to_action || slots.cta || slots.text);
         outroWrap.appendChild(ctaEl);
-      }
-
-      if (slots.button_text) {
-        var btn = document.createElement('div');
-        btn.className = 'kit-outro-btn';
-        btn.textContent = String(slots.button_text);
-        outroWrap.appendChild(btn);
       }
 
       var sourceText = slots.source || slots.source_name || '';
@@ -321,8 +331,9 @@
         if (cleanSrc.indexOf('Nguồn:') !== 0 && cleanSrc.indexOf('Nguồn :') !== 0) {
           cleanSrc = 'Nguồn: ' + cleanSrc;
         }
-        if (slots.source_date && cleanSrc.indexOf(slots.source_date) === -1) {
-          cleanSrc += ' (' + slots.source_date + ')';
+        var dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+        if (slots.source_date && dateRegex.test(String(slots.source_date).trim()) && cleanSrc.indexOf(slots.source_date) === -1) {
+          cleanSrc += ' (' + String(slots.source_date).trim() + ')';
         }
         srcEl.textContent = cleanSrc;
         outroWrap.appendChild(srcEl);

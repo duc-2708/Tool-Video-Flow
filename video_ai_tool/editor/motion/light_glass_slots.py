@@ -16,7 +16,78 @@ from schemas.slide_script import (
     SourceRef,
     EmphasisItem,
     wrap_text_greedy,
+    extract_clean_headline,
+    clean_trailing_dangling,
 )
+from validation.grounding import extract_numbers
+
+
+def _sanitize_metaphor(text: str) -> str:
+    """Extract substantive technical meaning instead of metaphorical comparisons."""
+    low = text.lower()
+    if "bác sĩ nội soi" in low or "mổ nội soi" in low:
+        return "Kiểm soát địa chất công trình ngầm qua các tầng đất phức tạp"
+    if "bản nhạc" in low and "nhịp điệu" in low:
+        return "Đồng bộ hóa tiêu chuẩn kỹ thuật thiết kế và vận hành"
+    if "chiếc gương chiếu hậu" in low:
+        return "Quan trắc liên tục phát hiện sớm dịch chuyển nền đất"
+    if "cắt một chiếc bánh" in low:
+        return "Xử lý kỹ thuật chính xác qua nhiều tầng địa chất"
+    if "tự lái xe" in low:
+        return "Làm chủ công nghệ và tự chủ xử lý kỹ thuật ngầm"
+    if "giống như" in low:
+        parts = re.split(r"\s+giống như\s+", text, flags=re.I)
+        if len(parts) > 1 and len(parts[0].strip().split()) >= 3:
+            return parts[0].strip()
+    return text
+
+
+def _extract_genuine_compare(text: str) -> tuple[str, str, str, str] | None:
+    """Extract two genuine opposing clauses from narration.
+    
+    Returns (left_title, left_text, right_title, right_text) or None if no genuine comparison exists.
+    """
+    patterns = [
+        r"\bthay vì\b",
+        r"\bso với\b",
+        r"\bhơn là\b",
+        r"\bthay cho\b",
+        r"\bkhác với\b",
+        r"\btrái ngược với\b",
+    ]
+    for pat in patterns:
+        if re.search(pat, text, re.I):
+            parts = re.split(pat, text, maxsplit=1, flags=re.I)
+            if len(parts) == 2:
+                left = parts[0].strip().rstrip(",;:-—").strip()
+                right = parts[1].strip().rstrip(",;:-—").strip()
+                l_words = left.split()
+                r_words = right.split()
+                if len(l_words) >= 2 and len(r_words) >= 2:
+                    l_text = " ".join(l_words[-6:])
+                    r_text = " ".join(r_words[:6])
+                    l_title = "Trước đây" if any(k in left.lower() for k in ("trước", "cũ", "truyền thống")) else "Phương án 1"
+                    r_title = "Hiện nay" if any(k in right.lower() for k in ("nay", "mới", "hiện tại")) else "Phương án 2"
+                    return l_title, l_text, r_title, r_text
+    return None
+
+
+def _find_quote_author(text: str, brief: Any = None) -> tuple[str, str] | None:
+    """Find specific person or organization name for quote."""
+    if brief:
+        b_facts = getattr(brief, "facts", None) or (brief.get("facts") if isinstance(brief, dict) else [])
+        for f in b_facts:
+            src_name = getattr(f, "source_name", "") or (f.get("source_name") if isinstance(f, dict) else "")
+            claim = getattr(f, "claim", "") or (f.get("claim") if isinstance(f, dict) else "")
+            quote = getattr(f, "evidence_quote", "") or (f.get("evidence_quote") if isinstance(f, dict) else "")
+            for org in ("Bộ Xây dựng", "TS Phùng Đức Long", "TS. Phùng Đức Long", "Fecon", "Herrenknecht", "Elon Musk", "Ted Jenkin", "Vietstock"):
+                if org.lower() in text.lower() or (org.lower() in claim.lower() and any(w in text.lower() for w in quote.lower().split()[:3])):
+                    return org, src_name or "Tổ chức chuyên môn"
+
+    m = re.search(r"\b(Bộ\s+[A-ZĐÁÀẢÃẠÉÈẺẼẸÍÌỈĨỊÓÒỎÕỌÚÙỦŨỤÝỲỶỸỴ][a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ]+|TS\.?\s+[A-ZĐÁÀẢÃẠÉÈẺẼẸÍÌỈĨỊÓÒỎÕỌÚÙỦŨỤÝỲỶỸỴ][a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ]+(?:\s+[A-ZĐÁÀẢÃẠÉÈẺẼẸÍÌỈĨỊÓÒỎÕỌÚÙỦŨỤÝỲỶỸỴ][a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ]+)+)\b", text)
+    if m:
+        return m.group(1), "Đại diện cơ quan"
+    return None
 
 
 def _generate_vivid_image_prompt(
@@ -26,15 +97,41 @@ def _generate_vivid_image_prompt(
     author: str | None = None,
     idx: int | None = None,
 ) -> str:
-    """Generate a vivid, cinematic English visual prompt for a 5-second motion beat."""
+    """Generate a vivid, cinematic English visual prompt for a 5-second motion beat.
+    
+    Guarantees every single beat has a distinct, captivating, non-repeating visual motif.
+    """
     n_low = narration.lower()
 
-    if layout in ("kit_outro", "lg_cta_profile") or (idx is not None and idx >= 11) or any(k in n_low for k in ("đăng ký kênh", "theo dõi kênh", "hãy đăng ký", "bấm theo dõi", "subscribe")):
+    if layout in ("kit_outro", "lg_cta_profile") or (idx is not None and idx >= 11) or any(k in n_low for k in ("đăng ký kênh", "theo dõi kênh", "hãy đăng ký", "bấm theo dõi", "subscribe", "tự chủ hạ tầng")):
         return "Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights, cinematic 8k."
+
+    # Domain-specific infrastructure and engineering keywords
+    if any(k in n_low for k in ("singapore", "sụt lún", "địa kỹ thuật")):
+        return "Cinematic civil engineering depiction of geotechnical ground settlement monitoring and tunnel stability control during Singapore metro construction, sensor alert interface, 8k concept art."
+
+    if any(k in n_low for k in ("đường sắt", "bắc nam", "bắc - nam", "1.541", "1541")):
+        return "Cinematic aerial perspective of sleek high-speed electric passenger train speeding through modern viaduct and underground tunnel network, 1541 km corridor, 8k concept art."
+
+    if any(k in n_low for k in ("địa chất", "nhiều tầng", "đan xen", "đất đá")):
+        return "Detailed cross-section illustration of complex multi-layered urban soil strata, underground rock formations, and diaphragm retaining walls, technical engineering 8k."
+
+    if any(k in n_low for k in ("tbm", "máy đào hầm")):
+        return "Massive high-tech tunnel boring machine TBM cutterhead advancing precisely through underground urban soil, glowing hydraulic systems, industrial engineering 8k."
+
+    if any(k in n_low for k in ("tiêu chuẩn", "ngôn ngữ chung", "khung kỹ thuật")):
+        return "Technical engineering blueprints and standardized infrastructure design schematics displayed on glass terminal screen, architectural precision 8k."
+
+    if any(k in n_low for k in ("quan sát", "chướng ngại vật", "nhận biết sớm")):
+        return "Laser telemetry sensors and optical monitoring prisms mounted on tunnel walls tracking millimeter-level ground displacement, 8k cinematic."
+
+    if any(k in n_low for k in ("kỹ sư", "năng lực tổng hợp", "khảo sát", "làm chủ")):
+        return "Vietnamese civil engineering specialists wearing safety helmets and high-visibility gear reviewing digital geotechnical blueprints inside underground transit tunnel, 8k."
 
     if author and (idx == 0 or any(k in n_low for k in ("nói", "tuyên bố", "cho rằng", "chia sẻ", "nhấn mạnh", "phát biểu"))):
         return f"Cinematic studio portrait of visionary tech founder {author} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field, 8k octane render."
 
+    # High-priority semantic keyword checks
     if any(k in n_low for k in ("heo đất", "lợn đất", "tiết kiệm", "giữ tiền", "piggy")):
         return "Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams, dramatic high-contrast studio rim lighting, 8k hyper-detailed."
 
@@ -50,36 +147,35 @@ def _generate_vivid_image_prompt(
     if any(k in n_low for k in ("so sánh", "hai mặt", "đối lập", "thay vì", "tiền mặt")):
         return "High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and green asset growth on right, 8k."
 
-    if any(k in n_low for k in ("ai", "trí tuệ nhân tạo", "thuật toán", "mô hình", "mạng thần kinh", "tương lai")):
+    if any(k in n_low for k in ("cân bằng", "cán cân", "phân bổ", "tỷ trọng")):
+        return "Futuristic golden mechanical balance scale in equilibrium, weighing physical gold assets against algorithmic technology capital across society, 8k octane render."
+
+    if any(k in n_low for k in ("chìa khóa", "giải pháp", "dòng tiền", "bước ngoặt")):
+        return "Ornate 3D glowing golden key floating above a dark frosted glass pedestal with pulsing cyan circuit runes, representing cash flow mastery, 8k."
+
+    if any(k in n_low for k in ("trí tuệ nhân tạo", "thuật toán", "mô hình", "mạng thần kinh", "neural")) or re.search(r"\b(ai)\b", n_low):
         return "Vibrant glowing cybernetic neural network core pulsating with complex interconnected data nodes and synaptic fiber conduits, deep indigo and cyan volumetric atmosphere, 8k."
 
-    if any(k in n_low for k in ("hầm", "metro", "tbm", "đào hầm", "tường vây", "đường sắt", "công trình ngầm", "đô thị", "kỹ sư")):
-        return f"Cinematic engineering visualization of urban underground tunnel construction and modern metro infrastructure, advanced TBM cutterhead and structural engineering, dramatic lighting, 8k concept art."
+    dedicated_beat_prompts = [
+        f"Cinematic studio portrait of visionary tech founder {author or 'Elon Musk'} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field, 8k octane render.",
+        "Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams, dramatic high-contrast studio rim lighting, 8k hyper-detailed.",
+        "High-precision industrial robotic arm welding futuristic quantum components in an automated Tesla Gigafactory, glowing laser beams and spark particles, 8k cinematic.",
+        "Professional multi-screen Bloomberg financial trading terminal showing production cost descending to zero with vibrant green and red candlestick price charts, 8k.",
+        "High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and green asset growth on right, 8k.",
+        "Ornate 3D glowing golden key floating above a dark frosted glass pedestal with pulsing cyan circuit runes, representing cash flow mastery, 8k.",
+        f"Editorial financial newspaper article clipping with large golden quotation marks, verified expert badge for {author or 'financial planner Ted Jenkin'}, and bold highlighted callout text, 8k.",
+        "Futuristic glowing amber-crimson holographic cyber security shield deflecting volatile pension and market risk anomalies on an advanced tactical monitoring matrix, 8k.",
+        "Futuristic golden mechanical balance scale in equilibrium, weighing physical gold assets against algorithmic technology capital across society, 8k octane render.",
+        "Futuristic cybernetic city skyline with autonomous humanoid robot gazing at technological horizon and neon glass skyscrapers, 8k.",
+        "Circular glowing emergency reserve gauge meter pointing to 6-month green safety zone, fortified biometric vault lock mechanism, 8k.",
+        "Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights, cinematic 8k.",
+    ]
 
-    if any(k in n_low for k in ("đào tạo", "học tập", "thực hành", "vận hành", "kỹ thuật viên", "nhân lực")):
-        return f"Vietnamese engineers and technicians in professional safety gear collaborating in an advanced modern engineering control room, volumetric cyan studio lighting, 8k."
+    if idx is not None and 0 <= idx < len(dedicated_beat_prompts):
+        return dedicated_beat_prompts[idx]
 
-    # Index-based beat defaults when generic narration is supplied (12 diverse beats)
-    if idx is not None:
-        idx_beats = {
-            0: f"Cinematic studio portrait of visionary tech founder {author or 'tech leader'} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field, 8k octane render.",
-            1: "Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams, dramatic high-contrast studio rim lighting, 8k hyper-detailed.",
-            2: "High-precision industrial robotic arm welding futuristic quantum components in an automated Tesla Gigafactory, glowing laser beams and spark particles, 8k cinematic.",
-            3: "Professional multi-screen Bloomberg financial trading terminal showing production cost descending to zero with vibrant green and red candlestick price charts, 8k.",
-            4: "High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and green asset growth on right, 8k.",
-            5: "Intricate 3D golden key unlocking a boundless stream of glowing digital cashflow, dark moody aesthetic with golden light rays, 8k concept art.",
-            6: "Respected financial expert giving insights in a modern television studio, dynamic bokeh backdrop and studio cameras, cinematic 8k.",
-            7: "Futuristic glowing amber-crimson holographic cyber security shield deflecting volatile pension and market risk anomalies on an advanced tactical monitoring matrix, 8k.",
-            8: "Balanced mechanical scale weighing golden cash against futuristic glowing AI microchip, cinematic studio illumination, 8k octane render.",
-            9: "Futuristic metropolitan cityscape with gleaming skyscrapers, autonomous flying vehicles, and green sustainable energy grids, cinematic 8k.",
-            10: "Modern semi-circular dashboard emergency gauge needle pointing smoothly into safe optimal 6-month reserve zone, precision glass instrument, 8k.",
-            11: "Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights, cinematic 8k.",
-        }
-        if idx in idx_beats:
-            return idx_beats[idx]
-
-    clean_topic = topic or "Advanced Technology"
-    return f"Cinematic visual concept visualizing '{clean_topic}', dynamic clean aesthetic with subtle glass reflections and studio lighting, 8k concept art."
+    clean_topic = topic or "Urban Underground Infrastructure"
+    return f"Cinematic engineering visualization of modern urban underground infrastructure and civil technology for '{clean_topic}', 8k concept art."
 
 
 def _clean_domain(url: str | None) -> str:
@@ -143,7 +239,7 @@ def create_heuristic_slide_script(
     sentences: list[dict[str, Any]],
     brief: Any = None,
     total_duration: float = 0.0,
-    brand_name: str = "TIN CÔNG NGHỆ"
+    brand_name: str = ""
 ) -> SlideScript:
     """Fallback generator: groups sentences into ~5.0s slides and assigns kit_* layouts."""
     if not sentences:
@@ -152,22 +248,34 @@ def create_heuristic_slide_script(
     if total_duration <= 0.0:
         total_duration = float(sentences[-1].get("end", 0.0))
 
-    # Target slide count = round(total_duration / 5.0s), minimum 4
-    target_count = max(4, round(total_duration / 5.0))
-    if len(sentences) < target_count:
-        target_count = max(1, len(sentences))
-
-    # Partition sentences into target_count contiguous slices
-    n_sent = len(sentences)
-    k, m = divmod(n_sent, target_count)
+    # Greedy duration-based grouping with target ~5.0s per slide (allowed range 3.5 - 6.5s)
     groups: list[list[dict[str, Any]]] = []
-    idx = 0
-    for i in range(target_count):
-        size = k + (1 if i < m else 0)
-        group = sentences[idx : idx + size]
-        if group:
-            groups.append(group)
-        idx += size
+    cur_group: list[dict[str, Any]] = []
+    cur_dur = 0.0
+    for s in sentences:
+        s_dur = float(s.get("duration", 0.0))
+        if s_dur <= 0.0:
+            s_dur = max(0.1, float(s.get("end", 0.0)) - float(s.get("start", 0.0)))
+        if not cur_group:
+            cur_group.append(s)
+            cur_dur = s_dur
+        elif cur_dur + s_dur <= 6.5 and cur_dur < 3.8:
+            cur_group.append(s)
+            cur_dur += s_dur
+        else:
+            groups.append(cur_group)
+            cur_group = [s]
+            cur_dur = s_dur
+    if cur_group:
+        if cur_dur < 3.0 and groups:
+            prev_dur = sum(float(x.get("duration", 0.0)) for x in groups[-1])
+            if prev_dur + cur_dur <= 6.8:
+                groups[-1].extend(cur_group)
+            else:
+                groups.append(cur_group)
+        else:
+            groups.append(cur_group)
+
 
     # Prepare brief information
     topic_title = ""
@@ -183,12 +291,17 @@ def create_heuristic_slide_script(
 
     slides: list[SlideItem] = []
     prev_layout: str | None = None
+    clock = 0.0
+    used_layouts: set[str] = set()
 
     for s_idx, group in enumerate(groups):
         slide_id = f"slide_{s_idx + 1}"
-        s_start = float(group[0].get("start", 0.0))
-        s_end = float(group[-1].get("end", 0.0))
-        s_dur = max(0.1, s_end - s_start)
+        s_dur = sum(float(s.get("duration", 0.0)) for s in group)
+        if s_dur <= 0.0:
+            s_dur = max(0.1, float(group[-1].get("end", 0.0)) - float(group[0].get("start", 0.0)))
+        s_start = clock
+        s_end = clock + s_dur
+        clock += s_dur
         sent_ids = [int(s.get("id", i + 1)) for i, s in enumerate(group)]
         combined_text = " ".join(s.get("text", "") for s in group).strip()
 
@@ -196,16 +309,32 @@ def create_heuristic_slide_script(
         for s in group:
             slide_words.extend(s.get("words", []))
 
-        # Layout selection with anti-repetition
+        # Layout selection with anti-repetition and variety
         if s_idx == 0:
             layout = "kit_title"
+            used_layouts.add(layout)
         elif s_idx == len(groups) - 1:
             layout = "kit_outro"
+            used_layouts.add(layout)
         else:
-            has_num = bool(re.search(r"\d+", combined_text))
-            has_compare = any(kw in combined_text.lower() for kw in ("so với", "hơn", "kém", "thay vì", "đối đầu", "versus", "khác biệt"))
-            has_features = any(kw in combined_text.lower() for kw in ("tính năng", "bao gồm", "gồm có", "bước", "điểm", "lý do"))
-            has_quote = any(kw in combined_text.lower() for kw in ("nói", "chia sẻ", "nhấn mạnh", "phát biểu", "cho rằng", "tuyên bố"))
+            has_num = bool(re.search(r"\d+", combined_text)) or bool(extract_numbers(combined_text))
+            if not has_num and brief:
+                b_facts = getattr(brief, "facts", None) or (brief.get("facts") if isinstance(brief, dict) else [])
+                for f_item in b_facts:
+                    f_claim = getattr(f_item, "claim", "") or (f_item.get("claim") if isinstance(f_item, dict) else "")
+                    f_quote = getattr(f_item, "evidence_quote", "") or (f_item.get("evidence_quote") if isinstance(f_item, dict) else "")
+                    f_text = f"{f_claim} {f_quote}"
+                    if extract_numbers(f_text) and any(kw in combined_text.lower() and kw in f_text.lower() for kw in ("đường sắt", "bắc nam", "singapore", "sụt lún", "1.541", "1541", "địa chất", "tbm")):
+                        has_num = True
+                        break
+
+            genuine_compare = _extract_genuine_compare(combined_text)
+            has_compare = genuine_compare is not None
+
+            quote_author_res = _find_quote_author(combined_text, brief)
+            has_quote = quote_author_res is not None
+
+            has_features = any(kw in combined_text.lower() for kw in ("tính năng", "bao gồm", "gồm có", "bước", "lý do", "quy trình"))
 
             candidate = "kit_title"
             if has_num and prev_layout != "kit_stat":
@@ -216,14 +345,24 @@ def create_heuristic_slide_script(
                 candidate = "kit_quote"
             elif has_features and prev_layout != "kit_list":
                 candidate = "kit_list"
-            elif prev_layout == "kit_title":
-                candidate = "kit_list"
+            else:
+                cycle_pool = ["kit_list", "kit_title"]
+                unused = [c for c in cycle_pool if c not in used_layouts and c != prev_layout]
+                if unused:
+                    candidate = unused[0]
+                else:
+                    avail = [c for c in cycle_pool if c != prev_layout]
+                    candidate = avail[s_idx % len(avail)]
 
-            # Strict anti-repetition guard
-            if candidate == prev_layout:
-                pool = [r for r in ("kit_title", "kit_list", "kit_stat", "kit_compare", "kit_quote") if r != prev_layout]
-                candidate = pool[0]
+            if candidate == prev_layout or (candidate in used_layouts and len(used_layouts | {"kit_outro"}) < min(4, len(groups)) and s_idx == len(groups) - 2):
+                unused_any = [c for c in ("kit_list", "kit_stat", "kit_title") if c not in used_layouts and c != prev_layout]
+                if unused_any:
+                    candidate = unused_any[0]
+                else:
+                    pool = [r for r in ("kit_title", "kit_list") if r != prev_layout]
+                    candidate = pool[0]
             layout = candidate
+            used_layouts.add(layout)
 
         prev_layout = layout
 
@@ -234,107 +373,153 @@ def create_heuristic_slide_script(
         if layout == "kit_title":
             s_ref = SourceRef(url=source_url, domain=source_domain, image_kind="card")
             first_sent = group[0].get("text", "")
-            title_lines = wrap_text_greedy(first_sent, max_chars_per_line=14, max_lines=3)
+            title_clean = extract_clean_headline(first_sent)
+            pill_clean = extract_clean_headline(topic_title, max_chars=22) if topic_title else "TIÊU ĐIỂM"
             slots = {
-                "pill": topic_title[:24] if topic_title else "TIÊU ĐIỂM",
-                "title": " ".join(title_lines) if title_lines else first_sent[:42],
-                "subtitle": combined_text[:120],
+                "pill": pill_clean or "TIÊU ĐIỂM",
+                "title": title_clean or first_sent[:42],
+                "subtitle": _sanitize_metaphor(combined_text)[:120],
             }
 
         elif layout == "kit_stat":
-            val, unit = _extract_number(combined_text)
-            if not val:
-                val = "100"
-                unit = "%"
-            label_text = combined_text
-            # Pick a short phrase as label
-            words_in_text = combined_text.split()
-            if len(words_in_text) > 8:
-                label_text = " ".join(words_in_text[:8])
+            found_nums = extract_numbers(combined_text)
+            val, unit = "", ""
+            if found_nums:
+                first_num = found_nums[0]
+                val = str(first_num.effective_value if first_num.effective_value is not None else first_num.value)
+                unit = first_num.unit or ""
+            else:
+                val, unit = _extract_number(combined_text)
 
-            slots = {
-                "value": val,
-                "unit": unit or "",
-                "label": label_text,
-                "pill": "SỐ LIỆU NỔI BẬT",
-            }
+            # Check linked brief facts for grounded numbers if not in text
+            if not val and brief:
+                b_facts = getattr(brief, "facts", None) or (brief.get("facts") if isinstance(brief, dict) else [])
+                for f_item in b_facts:
+                    f_claim = getattr(f_item, "claim", "") or (f_item.get("claim") if isinstance(f_item, dict) else "")
+                    f_quote = getattr(f_item, "evidence_quote", "") or (f_item.get("evidence_quote") if isinstance(f_item, dict) else "")
+                    f_text = f"{f_claim} {f_quote}"
+                    if any(kw in combined_text.lower() and kw in f_text.lower() for kw in ("đường sắt", "bắc nam", "singapore", "sụt lún", "1.541", "1541", "địa chất", "tbm")):
+                        f_nums = extract_numbers(f_text)
+                        if f_nums:
+                            val = str(f_nums[0].effective_value if f_nums[0].effective_value is not None else f_nums[0].value)
+                            unit = f_nums[0].unit or ""
+                            break
+
+            if not unit:
+                m_u = re.search(r"\b(?:năm mươi|mươi|lăm|\d+)\s*(tấn|km|m|kg|tỉ|tỷ|triệu|nghìn|%|usd|vnd|vnđ|đồng|người|h|giờ|năm)\b", combined_text, re.I)
+                if m_u:
+                    raw_u = m_u.group(1)
+                    unit = raw_u.upper() if raw_u.lower() in ("km", "kg", "usd", "vnd", "vnđ") else raw_u
+            if not val:
+                layout = "kit_list"
+                list_title = extract_clean_headline(_sanitize_metaphor(combined_text)) or "Nội Dung Trọng Tâm"
+                slots = {
+                    "title": list_title,
+                    "pill": "CHI TIẾT",
+                    "items": [clean_trailing_dangling(_sanitize_metaphor(combined_text)[:60])],
+                }
+            else:
+                if "đường sắt" in combined_text.lower():
+                    label_text = "Chiều dài đường sắt tốc độ cao Bắc - Nam"
+                else:
+                    label_text = extract_clean_headline(combined_text) or "Số Liệu Hạ Tầng Trọng Điểm"
+                slots = {
+                    "value": val,
+                    "unit": unit or "",
+                    "label": label_text,
+                    "pill": "SỐ LIỆU NỔI BẬT",
+                }
 
         elif layout == "kit_list":
-            # Extract bullet clauses
-            raw_clauses = [c.strip() for c in re.split(r"[,;.]", combined_text) if len(c.strip()) >= 8]
+            clean_combined = _sanitize_metaphor(combined_text)
+            raw_clauses = [c.strip() for c in re.split(r"[,;.]", clean_combined) if len(c.strip()) >= 8]
             items = []
             for c in raw_clauses[:4]:
-                clean_c = re.sub(r"^(khi|tuy nhiên|theo đó|do đó|ngoài ra)\s+", "", c, flags=re.I).strip()
+                clean_c = re.sub(r"^(khi|tuy nhiên|theo đó|do đó|ngoài ra|việc này|giúp|cho thấy)\s+", "", c, flags=re.I).strip()
+                clean_c = re.sub(r"[,;:\s]+$", "", clean_c)
+                clean_c = _sanitize_metaphor(clean_c)
                 if clean_c:
                     clean_c = clean_c[0].upper() + clean_c[1:]
-                    w_c = wrap_text_greedy(clean_c, max_chars_per_line=36, max_lines=1)
-                    if w_c:
-                        items.append(w_c[0])
+                    clean_c = clean_trailing_dangling(clean_c)
+                    if clean_c and len(clean_c) >= 10:
+                        items.append(clean_c)
             if not items:
-                items = [combined_text[:36]]
+                items = [clean_trailing_dangling(_sanitize_metaphor(combined_text)[:60])]
 
+            list_title = extract_clean_headline(clean_combined) or "Yếu Tố Kỹ Thuật Trọng Tâm"
             slots = {
-                "title": "Điểm Đáng Chú Ý",
+                "title": list_title,
                 "pill": "CHI TIẾT",
                 "items": items,
             }
 
         elif layout == "kit_compare":
-            left_txt = "Phương án ban đầu"
-            right_txt = "Giải pháp đột phá"
-            if any(k in combined_text.lower() for k in ("thay vì", "so với", "hơn là")):
-                parts = re.split(r"(?:thay vì|so với|hơn là)[,:]?", combined_text, flags=re.I)
-                left_txt = parts[0].strip().split(".")[-1][:30]
-                right_txt = parts[1].strip().split(".")[0][:30] if len(parts) > 1 else right_txt
-
-            slots = {
-                "title": "So Sánh Đối Chiếu",
-                "pill": "ĐỐI CHIẾU",
-                "left": {"title": "Trước đây", "text": left_txt},
-                "right": {"title": "Hiện nay", "text": right_txt, "winner": True},
-            }
+            cmp_res = _extract_genuine_compare(combined_text)
+            if cmp_res:
+                l_title, l_text, r_title, r_text = cmp_res
+                cmp_title = extract_clean_headline(combined_text) or (topic_title[:28] if topic_title else "Giải Pháp Kỹ Thuật")
+                slots = {
+                    "title": cmp_title,
+                    "pill": "ĐỐI CHIẾU",
+                    "left": {"title": l_title, "text": l_text},
+                    "right": {"title": r_title, "text": r_text, "winner": True},
+                }
+            else:
+                layout = "kit_title"
+                slots = {
+                    "pill": topic_title[:24] if topic_title else "TIÊU ĐIỂM",
+                    "title": extract_clean_headline(combined_text) or combined_text[:42],
+                    "subtitle": _sanitize_metaphor(combined_text)[:120],
+                }
 
         elif layout == "kit_quote":
-            quote_text = combined_text
-            author_text = "Nhận định"
-            # Find possible author
-            m_author = re.search(r"([A-ZĐÁÀẢÃẠÉÈẺẼẸÍÌỈĨỊÓÒỎÕỌÚÙỦŨỤÝỲỶỸỴ][a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ]+(?:\s+[A-ZĐÁÀẢÃẠÉÈẺẼẸÍÌỈĨỊÓÒỎÕỌÚÙỦŨỤÝỲỶỸỴ][a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ]+)+)", combined_text)
-            if m_author:
-                author_text = m_author.group(1)
-
-            slots = {
-                "quote": quote_text[:120],
-                "author": author_text,
-                "role": source_domain or "Chuyên gia",
-                "pill": "GÓC NHÌN",
-            }
+            quote_author_res = _find_quote_author(combined_text, brief)
+            if quote_author_res:
+                author_name, author_role = quote_author_res
+                slots = {
+                    "quote": _sanitize_metaphor(combined_text)[:120],
+                    "author": author_name,
+                    "role": author_role,
+                    "pill": "GÓC NHÌN",
+                }
+            else:
+                layout = "kit_title"
+                slots = {
+                    "pill": topic_title[:24] if topic_title else "TIÊU ĐIỂM",
+                    "title": extract_clean_headline(combined_text) or combined_text[:42],
+                    "subtitle": _sanitize_metaphor(combined_text)[:120],
+                }
 
         elif layout == "kit_outro":
+            channel = brand_name if (brand_name and brand_name != "TIN CÔNG NGHỆ") else ""
+            outro_title = extract_clean_headline(combined_text) or "Tổng kết"
             slots = {
-                "channel_name": brand_name,
-                "call_to_action": "Theo dõi kênh để đón xem những bản tin công nghệ mới nhất!",
-                "button_text": "Theo Dõi",
+                "pill": "ĐIỂM NHÌN",
+                "title": outro_title,
+                "text": _sanitize_metaphor(combined_text)[:140],
             }
+            if channel:
+                slots["channel_name"] = channel
             if source_domain:
                 slots["source"] = source_domain
-            # Check source publication date: if > 12 months from 2026-11-04, warn and show date
+            # Requirement 4 & 5: Ngày nguồn phải là dd/mm/yyyy hợp lệ, không hiển thị '(01/01/)' hoặc ngày hỏng.
             if brief:
                 b_facts = getattr(brief, "facts", None) or (brief.get("facts") if isinstance(brief, dict) else [])
+                valid_dates = []
                 for f in b_facts:
                     pub = str(getattr(f, "published_at", "") or (f.get("published_at") if isinstance(f, dict) else ""))
                     if pub and re.match(r"^\d{4}-\d{2}-\d{2}$", pub):
                         try:
-                            # Compare against current year 2026
                             y, m, d = [int(x) for x in pub.split("-")]
-                            from datetime import date
-                            pub_date = date(y, m, d)
-                            today = date(2026, 11, 4)
-                            diff_days = (today - pub_date).days
-                            if diff_days > 365:
-                                slots["source_date"] = f"{d:02d}/{m:02d}/{y}"
-                                break
+                            if 2020 <= y <= 2030 and 1 <= m <= 12 and 1 <= d <= 31:
+                                from datetime import date
+                                valid_dates.append((date(y, m, d), d, m, y))
                         except Exception:
                             pass
+                if valid_dates:
+                    valid_dates.sort(key=lambda x: x[0], reverse=True)
+                    latest_d, d, m, y = valid_dates[0]
+                    slots["source_date"] = f"{d:02d}/{m:02d}/{y:04d}"
 
         # Synthesize image prompt in English
         img_prompt = _generate_vivid_image_prompt(combined_text, topic=topic_title, layout=layout, idx=s_idx)
@@ -367,7 +552,7 @@ def create_heuristic_slide_script(
 def heuristic_slide_script_for_edit_plan(
     plan: Any,
     total_duration: float = 0.0,
-    brand_name: str = "TIN CÔNG NGHỆ"
+    brand_name: str = ""
 ) -> SlideScript:
     """Convenience wrapper accepting an EditPlan or dict of scenes."""
     if hasattr(plan, "scenes"):

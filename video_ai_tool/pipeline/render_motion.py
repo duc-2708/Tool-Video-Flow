@@ -190,7 +190,7 @@ def scene_payload(scene,size,caption_style,options=None):
         }
     from config.settings import get_settings
     settings = get_settings()
-    payload['brand_name'] = getattr(settings, 'brand_name', 'TIN CÔNG NGHỆ')
+    payload['brand_name'] = getattr(settings, 'brand_name', '')
     b_path = getattr(settings, 'brand_logo_path', '')
     payload['brand_logo_path'] = b_path
     if b_path and Path(b_path).is_file():

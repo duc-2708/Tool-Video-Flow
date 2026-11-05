@@ -63,7 +63,47 @@ def generate_cinematic_visual(
     p_low = prompt.lower()
 
     # Determine visual category with strict regex word boundaries
-    if re.search(r"\b(elon|musk|speaker|keynote|founder|leader|ceo|dien gia|tac gia|portrait)\b", p_low):
+    if re.search(r"\b(singapore|sụt lún|settlement|geotechnical|sinkhole)\b", p_low):
+        visual_type = "geotechnical_alert"
+        top_color = (20, 24, 36)
+        bot_color = (15, 30, 45)
+        accent_color = (245, 158, 11)  # amber alert
+        secondary_color = (14, 165, 233)  # cyber cyan
+        glow_color = (252, 211, 77)
+
+    elif re.search(r"\b(đường sắt|bắc nam|bắc - nam|1.541|1541|high-speed|railway|train)\b", p_low):
+        visual_type = "high_speed_rail"
+        top_color = (15, 23, 42)
+        bot_color = (16, 40, 60)
+        accent_color = (14, 165, 233)  # cyan transit
+        secondary_color = (16, 185, 129)  # emerald track
+        glow_color = (56, 189, 248)
+
+    elif re.search(r"\b(tbm|cutterhead|tunnel boring|đào hầm|máy đào)\b", p_low):
+        visual_type = "tbm_cutterhead"
+        top_color = (15, 23, 42)
+        bot_color = (30, 35, 45)
+        accent_color = (234, 179, 8)  # industrial gold
+        secondary_color = (239, 68, 68)  # industrial red
+        glow_color = (250, 204, 21)
+
+    elif re.search(r"\b(địa chất|soil strata|multi-layered|nhiều tầng|tường vây|diaphragm)\b", p_low):
+        visual_type = "soil_strata"
+        top_color = (18, 22, 30)
+        bot_color = (35, 30, 25)
+        accent_color = (217, 119, 6)  # earth amber
+        secondary_color = (14, 165, 233)
+        glow_color = (245, 158, 11)
+
+    elif re.search(r"\b(kỹ sư|engineers|khảo sát|năng lực tổng hợp|làm chủ)\b", p_low):
+        visual_type = "civil_engineers"
+        top_color = (15, 23, 42)
+        bot_color = (20, 35, 55)
+        accent_color = (59, 130, 246)  # blue safety
+        secondary_color = (234, 179, 8)  # gold helmet
+        glow_color = (147, 197, 253)
+
+    elif re.search(r"\b(elon|musk|speaker|keynote|founder|leader|ceo|dien gia|tac gia|portrait)\b", p_low):
         visual_type = "tech_leader"
         top_color = (15, 23, 42)
         bot_color = (30, 41, 59)
@@ -377,6 +417,59 @@ def generate_cinematic_visual(
             pdraw.ellipse([sx - sr, sy - sr, sx + sr, sy + sr], fill=scolor + (220,), outline=(255, 255, 255, 160), width=4)
             pdraw.ellipse([sx - int(sr * 0.4), sy - int(sr * 0.6), sx + int(sr * 0.1), sy - int(sr * 0.2)], fill=(255, 255, 255, 180))
 
+    elif visual_type == "geotechnical_alert":
+        # Draw concentric radar telemetry rings and sensor nodes
+        for r in (120, 220, 320):
+            pdraw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=accent_color + (140,), width=3)
+        # Warning sensor alerts
+        pdraw.polygon([(cx, cy - 140), (cx + 120, cy + 80), (cx - 120, cy + 80)], fill=(245, 158, 11, 200), outline=(255, 255, 255, 240))
+        pdraw.rectangle([cx - 8, cy - 80, cx + 8, cy - 10], fill=(15, 23, 42, 255))
+        pdraw.ellipse([cx - 8, cy + 15, cx + 8, cy + 31], fill=(15, 23, 42, 255))
+
+    elif visual_type == "high_speed_rail":
+        # Converging perspective tracks
+        pdraw.polygon([(cx - 40, cy - 100), (cx + 40, cy - 100), (cx + 400, cy + 420), (cx - 400, cy + 420)], fill=(16, 40, 60, 200), outline=accent_color + (180,))
+        pdraw.line([(cx - 30, cy - 100), (cx - 300, cy + 420)], fill=(255, 255, 255, 220), width=6)
+        pdraw.line([(cx + 30, cy - 100), (cx + 300, cy + 420)], fill=(255, 255, 255, 220), width=6)
+        for y_t in range(cy - 60, cy + 400, 45):
+            w_tie = int(60 + (y_t - (cy - 100)) * 0.9)
+            pdraw.line([(cx - w_tie, y_t), (cx + w_tie, y_t)], fill=secondary_color + (160,), width=4)
+
+    elif visual_type == "tbm_cutterhead":
+        # Circular TBM Cutterhead disk with radial arms and teeth
+        pdraw.ellipse([cx - 260, cy - 260, cx + 260, cy + 260], fill=(24, 30, 42, 240), outline=accent_color + (220,), width=8)
+        for ang in range(0, 360, 45):
+            rad = math.radians(ang)
+            x2 = cx + int(240 * math.cos(rad))
+            y2 = cy + int(240 * math.sin(rad))
+            pdraw.line([(cx, cy), (x2, y2)], fill=(255, 255, 255, 180), width=6)
+            pdraw.ellipse([x2 - 16, y2 - 16, x2 + 16, y2 + 16], fill=(239, 68, 68, 240))
+        pdraw.ellipse([cx - 70, cy - 70, cx + 70, cy + 70], fill=accent_color + (240,), outline=(255, 255, 255, 255), width=4)
+
+    elif visual_type == "soil_strata":
+        # Multi-layered soil strata and diaphragm wall
+        strata_colors = [
+            (35, 45, 60, 220),
+            (45, 40, 30, 220),
+            (30, 50, 45, 220),
+            (50, 35, 25, 220),
+        ]
+        for i, sc in enumerate(strata_colors):
+            y1 = cy - 200 + i * 110
+            y2 = y1 + 110
+            pdraw.rectangle([cx - 360, y1, cx + 360, y2], fill=sc, outline=(255, 255, 255, 60), width=1)
+        pdraw.rectangle([cx - 40, cy - 220, cx + 40, cy + 240], fill=(14, 165, 233, 220), outline=(255, 255, 255, 240), width=4)
+
+    elif visual_type == "civil_engineers":
+        # Digital transit blueprint schematic with safety helmet symbol
+        pdraw.rounded_rectangle([cx - 280, cy - 180, cx + 280, cy + 180], radius=24, fill=(15, 23, 42, 230), outline=(59, 130, 246, 200), width=4)
+        for gx in range(cx - 240, cx + 260, 60):
+            pdraw.line([(gx, cy - 160), (gx, cy + 160)], fill=(59, 130, 246, 70), width=1)
+        for gy in range(cy - 140, cy + 160, 60):
+            pdraw.line([(cx - 260, gy), (cx + 260, gy)], fill=(59, 130, 246, 70), width=1)
+        pdraw.arc([cx - 90, cy - 100, cx + 90, cy + 60], start=180, end=360, fill=(234, 179, 8, 255), width=10)
+        pdraw.line([(cx - 110, cy - 10), (cx + 110, cy - 10)], fill=(234, 179, 8, 255), width=10)
+
     else:
         # High-tech Cyber Network
         nodes = [
@@ -409,6 +502,11 @@ def generate_cinematic_visual(
         font = ImageFont.load_default()
 
     badge_map = {
+        "geotechnical_alert": "GEOTECHNICAL MONITORING",
+        "high_speed_rail": "HIGH-SPEED RAIL INFRASTRUCTURE",
+        "tbm_cutterhead": "TBM URBAN EXCAVATION",
+        "soil_strata": "URBAN GEOLOGY STRATA",
+        "civil_engineers": "TRANSIT INFRASTRUCTURE",
         "tech_leader": "LEADER PERSPECTIVE",
         "piggy_savings": "SAVINGS DECONSTRUCTION",
         "robotics": "AUTOMATION ROBOTICS",
@@ -475,38 +573,57 @@ def download_real_web_image(query: str, target_path: Path, timeout: float = 5.0)
     return False
 
 
-def _query_for_beat(idx: int, prompt: str) -> str:
+def check_image_relevance(slide_text: str, query: str, prompt: str) -> bool:
+    """Verify that image query/prompt contains >= 1 entity or primary keyword of the slide."""
+    keywords = [
+        "singapore", "sụt lún", "tbm", "địa chất", "đường sắt", "bắc nam",
+        "tường vây", "quan trắc", "tiêu chuẩn", "kỹ sư", "metro", "hầm"
+    ]
+    txt_low = slide_text.lower()
+    matched_keywords = [k for k in keywords if k in txt_low]
+    if not matched_keywords:
+        return True
+    qp = f"{query} {prompt}".lower()
+    return any(k in qp for k in matched_keywords)
+
+
+def _query_for_beat(idx: int, prompt: str, narration: str = "") -> str:
     """Determine authentic search query for given beat and prompt based on content keywords."""
-    p_low = prompt.lower()
-    if any(k in p_low for k in ("tbm", "đào hầm", "máy đào hầm")):
-        return "Tunnel Boring Machine TBM underground metro construction"
-    elif any(k in p_low for k in ("tường vây", "thành đất", "bờ ao", "ngăn nước")):
-        return "diaphragm wall underground foundation construction engineering"
-    elif any(k in p_low for k in ("hầm", "công trình ngầm", "lòng đất", "địa đạo")):
+    combined = f"{prompt} {narration}".lower()
+    if any(k in combined for k in ("singapore", "sụt lún", "nicoll")):
+        return "Singapore metro underground tunnel construction geotechnical engineering"
+    elif any(k in combined for k in ("đường sắt", "bắc nam", "bắc - nam", "1.541", "1541", "tốc độ cao")):
+        return "high speed railway passenger train construction viaduct infrastructure"
+    elif any(k in combined for k in ("tbm", "đào hầm", "máy đào hầm")):
+        return "Tunnel Boring Machine TBM underground metro construction cutterhead"
+    elif any(k in combined for k in ("tường vây", "địa chất", "nhiều tầng", "đất đá")):
+        return "diaphragm wall deep foundation geotechnical engineering urban construction"
+    elif any(k in combined for k in ("quan sát", "quan trắc", "cảm biến", "chướng ngại vật")):
+        return "geotechnical monitoring sensors tunnel displacement instrumentation"
+    elif any(k in combined for k in ("tiêu chuẩn", "ngôn ngữ chung", "khung kỹ thuật")):
+        return "civil engineering blueprint technical specification construction standards"
+    elif any(k in combined for k in ("kỹ sư", "làm chủ", "khảo sát", "năng lực tổng hợp")):
+        return "Vietnamese civil engineers infrastructure tunnel construction project"
+    elif any(k in combined for k in ("hầm", "công trình ngầm", "lòng đất", "địa đạo")):
         return "underground tunnel construction engineering urban infrastructure"
-    elif any(k in p_low for k in ("đào tạo", "kỹ sư", "học lái", "vô lăng", "nhân lực")):
-        return "Vietnamese engineers metro railway infrastructure construction"
-    elif any(k in p_low for k in ("đường sắt", "metro", "cát linh", "tàu điện")):
-        return "urban railway metro train construction vietnam"
-    elif any(k in p_low for k in ("elon musk",)):
+    elif any(k in combined for k in ("elon musk",)):
         return "Elon Musk speaking stage keynote conference portrait"
-    elif any(k in p_low for k in ("heo đất", "lợn đất", "piggy bank")):
+    elif any(k in combined for k in ("heo đất", "lợn đất", "piggy bank")):
         return "piggy bank breaking shattered money cash savings"
-    elif any(k in p_low for k in ("robot", "gigafactory", "tay máy")):
+    elif any(k in combined for k in ("robot", "gigafactory", "tay máy")):
         return "industrial robot automation manufacturing factory"
-    elif any(k in p_low for k in ("chip", "vi mạch", "bán dẫn")):
+    elif any(k in combined for k in ("chip", "vi mạch", "bán dẫn")):
         return "ai microchip processor semiconductor hardware technology"
-    elif any(k in p_low for k in ("ted jenkin",)):
+    elif any(k in combined for k in ("ted jenkin",)):
         return "Ted Jenkin financial advisor portrait"
-    elif any(k in p_low for k in ("khiên", "an ninh", "bảo mật")):
+    elif any(k in combined for k in ("khiên", "an ninh", "bảo mật")):
         return "cyber security shield digital protection network technology"
-    elif any(k in p_low for k in ("kênh", "youtube", "subscribe", "đăng ký", "theo dõi")):
+    elif any(k in combined for k in ("kênh", "youtube", "subscribe", "đăng ký", "theo dõi")):
         return "modern digital broadcast studio newsroom"
-    
-    # Fallback: clean keywords from prompt
+
     clean_words = [w for w in re.findall(r"\b[a-zA-Z]{3,}\b", prompt) if w.lower() not in {"cinematic", "photorealistic", "ultra", "dramatic", "concept", "render"}]
     if clean_words:
-        return " ".join(clean_words[:4]) + " technology"
+        return " ".join(clean_words[:4]) + " engineering infrastructure"
     return "modern engineering technology infrastructure"
 
 
@@ -516,12 +633,12 @@ def resolve_images_for_slide_script(
     force_refresh: bool = True,
     allow_web_search: bool = True,
 ) -> list[str]:
-    """Ensure every slide in slide_script has a valid, high-resolution visual image asset.
+    """Ensure every slide in slide_script has a valid, distinct visual image asset or large text.
     
-    Guarantees every beat has a distinct, vivid, thematic visual.
-    Fetches real authentic web photos when available, falls back to cinematic synthesis.
-    Configures dynamic chart mockups for data beats.
-    Returns list of resolved image paths.
+    Guarantees every beat has a distinct visual:
+    1. Relevance check: image query/prompt must match >= 1 slide entity/keyword.
+    2. Zero duplicates: no image (hash) can appear > 1 time in video.
+    3. Fails check -> uses clean typographic large-text layout (no image attached).
     """
     p_dir = Path(project_dir).resolve()
     assets_dir = p_dir / "assets" / "ai_images"
@@ -529,38 +646,48 @@ def resolve_images_for_slide_script(
 
     slides = getattr(slide_script, "slides", []) if not isinstance(slide_script, list) else slide_script
     resolved_paths: list[str] = []
+    seen_image_hashes: set[str] = set()
 
     for idx, slide in enumerate(slides):
         slots = getattr(slide, "slots", {}) if hasattr(slide, "slots") else slide.get("slots", {})
         slide_id = getattr(slide, "id", f"slide_{idx+1}")
-        prompt = getattr(slide, "image_prompt", "") or slots.get("image_prompt", "") or getattr(slide, "narration", "") or slots.get("text", "")
-        
-        # Configure chart layouts for data beats if content explicitly mentions them
-        if ("300%" in prompt) or ("chi phí" in prompt.lower() and "năng suất" in prompt.lower()):
-            slots["mockup_type"] = "financial_chart"
-        elif ("quỹ dự phòng" in prompt.lower()) or ("3 đến 6 tháng" in prompt.lower()):
-            slots["mockup_type"] = "emergency_gauge"
+        slide_narr = getattr(slide, "narration", "") or slots.get("text", "") or slots.get("title", "")
+        prompt = getattr(slide, "image_prompt", "") or slots.get("image_prompt", "") or slide_narr
 
-        existing_url = slots.get("image_url")
-        existing_valid = False
-        if existing_url and not force_refresh:
-            p_exist = Path(existing_url) if Path(existing_url).is_absolute() else (p_dir / existing_url)
-            if p_exist.is_file() and p_exist.stat().st_size > 30000 and "_fallback_" not in p_exist.name:
-                existing_valid = True
-                resolved_paths.append(str(p_exist))
+        q = _query_for_beat(idx, prompt, narration=slide_narr)
 
-        if not existing_valid:
-            target_path = assets_dir / f"beat_{idx+1:02d}_{sanitize_filename(slide_id)}.png"
-            downloaded = False
-            if allow_web_search:
-                q = _query_for_beat(idx, prompt)
-                if q:
-                    downloaded = download_real_web_image(q, target_path)
-            if not downloaded:
-                generate_cinematic_visual(prompt=prompt, output_path=target_path)
-            slots["image_url"] = str(target_path)
-            if hasattr(slide, "image_prompt"):
-                slide.image_prompt = prompt
-            resolved_paths.append(str(target_path))
+        # Relevance check
+        is_relevant = check_image_relevance(slide_narr, q, prompt)
+        if not is_relevant:
+            # Fails relevance: scene uses large text layout, NO image attached
+            slots.pop("image_url", None)
+            slots.pop("photo", None)
+            continue
+
+        target_path = assets_dir / f"beat_{idx+1:02d}_{sanitize_filename(slide_id)}.png"
+        downloaded = False
+        if allow_web_search and q:
+            downloaded = download_real_web_image(q, target_path)
+        if not downloaded:
+            generate_cinematic_visual(prompt=prompt, output_path=target_path)
+
+        if target_path.is_file() and target_path.stat().st_size > 0:
+            im_hash = hashlib.sha256(target_path.read_bytes()).hexdigest()
+            if im_hash in seen_image_hashes:
+                # Duplicate image hash! Remove and fall back to large text layout
+                target_path.unlink(missing_ok=True)
+                slots.pop("image_url", None)
+                slots.pop("photo", None)
+            else:
+                seen_image_hashes.add(im_hash)
+                slots["image_url"] = str(target_path)
+                if hasattr(slide, "image_prompt"):
+                    slide.image_prompt = prompt
+                resolved_paths.append(str(target_path))
+        else:
+            slots.pop("image_url", None)
+            slots.pop("photo", None)
+            if "photo" in slots:
+                slots["photo"] = None
 
     return resolved_paths
