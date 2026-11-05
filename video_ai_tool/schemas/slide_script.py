@@ -104,6 +104,7 @@ DANGLING_END_WORDS = {
     "hay", "hoặc", "tới", "đến", "qua", "sau", "trước", "cùng", "nhất", "rất", "quá",
     "tầm", "mức", "chủ", "hỏi", "nhận", "đặt", "tạo", "mang", "coi", "tính", "biết",
     "thấy", "khiến", "nhằm", "gồm", "thuộc", "cần", "phía", "vận", "độ", "bậc", "đằng",
+    "nhưng", "song", "tuy", "dù", "nếu", "vì",
 }
 
 
@@ -175,8 +176,31 @@ def wrap_text_greedy(text: str, max_chars_per_line: int = 14, max_lines: int = 3
     return lines[:max_lines]
 
 
+INCOMPLETE_HEADLINE_PATTERNS = [
+    r"^làm\s+(?:thế\s+nào|sao)(?:\s+để)?$",
+    r"^cách\s+(?:các\s+)?kỹ\s+sư(?:\s+việt)?$",
+    r"^cách\s+[a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ\s]{2,18}$",
+    r"^(?:đây|đó)\s+là(?:\s+bước\s+đi(?:\s+thiết\s+thực)?)?$",
+    r"^quá\s+trình\s+này$",
+    r"^phương\s+án(?:\s+\d+|\s+1/2)?$",
+    r"^ý\s+chính(?:\s+cần\s+nhớ)?$",
+]
+
+
+def is_incomplete_phrase(phrase: str) -> bool:
+    """Check if a phrase is grammatically incomplete or a prohibited cut-off template fragment."""
+    p_clean = re.sub(r"[^\w\s]", "", phrase.lower()).strip()
+    for pat in INCOMPLETE_HEADLINE_PATTERNS:
+        if re.match(pat, p_clean):
+            return True
+    return False
+
+
 def extract_clean_headline(sentence: str, max_chars: int = 56) -> str:
-    """Extract a complete, grammatically sound headline phrase from a sentence without cutting words."""
+    """Extract a complete, grammatically sound headline phrase from a sentence without cutting words.
+    
+    If text cannot be cleanly shortened to a complete grammatical clause, returns the full sentence.
+    """
     if not sentence:
         return ""
     clean = re.sub(r"\s+", " ", sentence.strip())
@@ -186,22 +210,29 @@ def extract_clean_headline(sentence: str, max_chars: int = 56) -> str:
         m_goal = re.search(r"giúp\s+([^?]+)", clean, re.I)
         if m_goal:
             goal_text = clean_trailing_dangling(m_goal.group(1).strip())
-            if 10 <= len(goal_text) <= max_chars:
+            if 10 <= len(goal_text) <= max_chars and not is_incomplete_phrase(goal_text):
                 return goal_text[0].upper() + goal_text[1:]
         m_q = re.search(r"(tự chủ [^?]+)", clean, re.I)
         if m_q:
             q_text = clean_trailing_dangling(m_q.group(1).strip())
-            if 8 <= len(q_text) <= max_chars:
+            if 8 <= len(q_text) <= max_chars and not is_incomplete_phrase(q_text):
                 return q_text[0].upper() + q_text[1:]
+
+    # Special handling for "Cách ... làm chủ ...": ensure we keep the complete predicate
+    m_cach = re.search(r"(cách\s+[^,;:\-—.]+?\s+làm\s+chủ\s+[^,;:\-—.]+)", clean, re.I)
+    if m_cach:
+        cach_cand = clean_trailing_dangling(m_cach.group(1).strip())
+        if len(cach_cand) <= max_chars:
+            return cach_cand[0].upper() + cach_cand[1:]
 
     # 1. Check natural punctuation clause boundary (comma, semicolon, dash, colon)
     parts = re.split(r"[,;:\-—]", clean)
     if parts:
         first_part = parts[0].strip()
         words = first_part.split()
-        if 3 <= len(words) <= 8 and len(first_part) <= max_chars:
+        if 3 <= len(words) <= 10 and len(first_part) <= max_chars:
             cleaned = clean_trailing_dangling(first_part)
-            if len(cleaned.split()) >= 3:
+            if len(cleaned.split()) >= 3 and not is_incomplete_phrase(cleaned):
                 return cleaned
 
     # 2. Split on common predicate/verb connectors to extract full subject noun phrase
@@ -209,24 +240,26 @@ def extract_clean_headline(sentence: str, max_chars: int = 56) -> str:
     if verb_parts:
         subj = clean_trailing_dangling(verb_parts[0].strip())
         w_subj = subj.split()
-        if 3 <= len(w_subj) <= 8 and len(subj) <= max_chars:
+        if 3 <= len(w_subj) <= 8 and len(subj) <= max_chars and not is_incomplete_phrase(subj):
             return subj
 
     # 3. Split on common subordinate connectors (cho thấy, nhằm, để, giúp, khiến)
     sub_parts = re.split(r"\s+(?:cho thấy|nhằm|để|giúp|khiến)\s+", clean, flags=re.I)
     if sub_parts and len(sub_parts[0].split()) >= 3 and len(sub_parts[0].strip()) <= max_chars:
         cand = clean_trailing_dangling(sub_parts[0].strip())
-        if len(cand.split()) >= 3:
+        if len(cand.split()) >= 3 and not is_incomplete_phrase(cand):
             return cand
 
-    # 4. Otherwise wrap greedily and join lines respecting max_chars
+    # 4. Try wrapping greedily if it yields a complete phrase
     max_lines = 1 if max_chars <= 30 else 2
     chars_per_line = min(max_chars, 24)
     lines = wrap_text_greedy(clean, max_chars_per_line=chars_per_line, max_lines=max_lines)
     joined = clean_trailing_dangling(" ".join(lines).strip())
-    if len(joined) > max_chars:
-        joined = clean_trailing_dangling(joined[:max_chars])
-    return joined
+    if len(joined) <= max_chars and not is_incomplete_phrase(joined):
+        return joined
+
+    # If shortening breaks clause completeness or yields a cut-off phrase, USE THE FULL SENTENCE!
+    return clean_trailing_dangling(clean)
 
 
 class SlideItem(StrictModel):
@@ -282,15 +315,18 @@ class SlideItem(StrictModel):
         """Validate and clamp slot limits according to layout rules."""
         cleaned = dict(slots)
 
-        # Pill limit <= 28 chars, trimmed of trailing dangling words
+        # Pill limit <= 28 chars, trimmed of trailing dangling words and incomplete phrases
         for pill_key in ("pill", "badge", "chip", "kicker", "sub_pill"):
             if pill_key in cleaned and cleaned[pill_key]:
                 val = str(cleaned[pill_key]).strip()
                 if len(val) > 28:
                     wrapped = wrap_text_greedy(val, max_chars_per_line=28, max_lines=1)
-                    cleaned[pill_key] = clean_trailing_dangling(wrapped[0] if wrapped else val[:28])
+                    val = clean_trailing_dangling(wrapped[0] if wrapped else val[:28])
                 else:
-                    cleaned[pill_key] = clean_trailing_dangling(val)
+                    val = clean_trailing_dangling(val)
+                if is_incomplete_phrase(val):
+                    val = "TIÊU ĐIỂM"
+                cleaned[pill_key] = val
 
         # Headline / title: max 2 lines x 24 chars/line, trimmed of dangling words
         for title_key in ("title", "headline"):
@@ -306,9 +342,10 @@ class SlideItem(StrictModel):
                 item_str = str(item).strip()
                 if len(item_str) > 40:
                     wrapped = wrap_text_greedy(item_str, max_chars_per_line=40, max_lines=1)
-                    item_str = wrapped[0] if wrapped else item_str[:40]
-                item_str = clean_trailing_dangling(item_str)
-                if item_str:
+                    item_str = clean_trailing_dangling(wrapped[0] if wrapped else item_str[:40])
+                else:
+                    item_str = clean_trailing_dangling(item_str)
+                if item_str and not is_incomplete_phrase(item_str):
                     items_list.append(item_str)
             cleaned["items"] = items_list
 

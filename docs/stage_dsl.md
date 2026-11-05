@@ -108,3 +108,29 @@ Khác với mô hình chuyển cảnh cũ (mỗi cảnh dựng lại từ đầu
   "required": ["hud", "actors", "scenes"]
 }
 ```
+
+---
+
+## 4. Nguồn Sự thật Danh mục (Catalog Single Source of Truth)
+
+Từ **Giai đoạn 8-W2b-1**, toàn bộ danh mục diễn viên và thế giới isometric được quản lý thống nhất tại một nguồn duy nhất: `editor/stage/catalog.json`.
+Cả Python (schema Pydantic `StageScript`, `ActorDef`, Visual Bible `schemas/visual_bible.py`, `agents/visual_bible.py`) và runtime JavaScript (`editor/stage/engine/stage.js`) đều đọc và đối chiếu trực tiếp từ file catalog này.
+
+### 4.1 Danh mục Diễn viên (28 Actors)
+- **Thiết bị & Giao diện**: `laptop`, `terminal_window`, `browser_window`, `note_board`.
+- **Hạ tầng & Đám mây**: `vps_server`, `docker_container`, `container_box`, `cloud`, `datacenter`.
+- **Dữ liệu & Luồng**: `code_repo`, `git_repo`, `pipeline_node`, `clock_timer`, `database_cylinder`, `gauge_meter`.
+- **An ninh & Bảo mật**: `lock_shield`, `bug_virus`, `key_vault`, `firewall_wall`, `alert_beacon`, `magnifier_scan`, `shield_broken`.
+- **Pháp lý & Tư pháp**: `balance_scale`, `document_paper`, `folder_stack`, `gavel_court`.
+- **Nhân vật & Mascot**: `user_figure`, `mascot` (Robot trợ lý isometric với 4 trạng thái: `idle`, `pointing`, `wave`, `alert`).
+
+Mỗi diễn viên có $\ge 3$ trạng thái hiển thị, kích thước mặc định 3D, các cổng kết nối dữ liệu `ports`, nhãn chữ lớn $\ge 36$px và đảm bảo nằm an toàn trong khung $[70, 1010] 	imes [240, 1330]$.
+
+### 4.2 Danh mục Thế giới (7 Worlds)
+- `secure_building`: Tòa nhà An ninh & Trung tâm Dữ liệu (Sàn lưới cyber, ranh giới an toàn Level 4, 3 zones: cổng an ninh, phòng máy chủ, khu quản trị).
+- `data_pipeline`: Hạ tầng Luồng Dữ liệu & Mạng (Ống dẫn cáp quang, trạm API, bể dữ liệu).
+- `courtroom`: Khán phòng Tòa án & Pháp lý (Bục gỗ tư pháp, vành móng ngựa, bàn thẩm phán, khu tranh tụng).
+- `city_road`: Đại lộ Đô thị & Giao thông (Đường băng nhựa đường 3D, vạch kẻ đường, trạm dừng).
+- `generic_stage`: Sân khấu Isometric Đa năng (Lưới neon không gian).
+- `workshop`: Xưởng Chế tạo Kỹ thuật.
+- `lab`: Phòng Thí nghiệm & Nghiên cứu.

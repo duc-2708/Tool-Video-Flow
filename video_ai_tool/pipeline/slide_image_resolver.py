@@ -531,8 +531,242 @@ def generate_cinematic_visual(
     return output_path
 
 
-def download_real_web_image(query: str, target_path: Path, timeout: float = 5.0) -> bool:
-    """Download an authentic high-resolution web photo matching query, center-crop to 1080x1080."""
+STOPWORDS_VI = {
+    "các", "những", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
+    "để", "và", "là", "của", "trong", "khi", "tại", "từ", "ở", "về", "có", "làm", "được", "bị",
+    "do", "bởi", "ra", "vào", "lên", "xuống", "đầu", "như", "theo", "giúp", "rằng", "thì", "mà",
+    "bằng", "hay", "hoặc", "tới", "đến", "qua", "sau", "trước", "cùng", "nhất", "rất", "quá",
+    "tầm", "mức", "chủ", "hỏi", "nhận", "đặt", "tạo", "mang", "coi", "tính", "biết", "thấy",
+    "khiến", "nhằm", "gồm", "thuộc", "cần", "phía", "vận", "độ", "bậc", "đằng", "này", "đó",
+    "kia", "đây", "thế", "sao", "gì", "nào", "ai", "đâu", "nhiều", "ít", "tất", "cả", "mọi",
+    "chỉ", "vẫn", "đang", "đã", "sẽ", "phải", "nên", "với", "cho", "lại", "thêm", "bớt",
+    "khỏi", "ngay", "liền", "luôn", "nữa", "rồi", "xong", "chưa", "không", "chẳng", "hẳn",
+    "thực", "sự", "việc", "cách", "quá_trình", "phương_án", "bước_đi", "ý_chính", "điều",
+    "vấn_đề", "người", "ta", "mình", "chúng_tôi", "bạn", "họ", "nó", "chúng_ta", "chúng",
+    "thực_hiện", "tiến_hành", "áp_dụng", "sử_dụng", "đưa_ra", "đạt_được", "bước", "điểm",
+}
+
+STOPWORDS_EN = {
+    "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with", "by",
+    "from", "up", "about", "into", "over", "after", "is", "are", "was", "were", "be", "been",
+    "being", "have", "has", "had", "do", "does", "did", "this", "that", "these", "those",
+    "it", "its", "they", "them", "their", "we", "us", "our", "you", "your", "he", "him", "his",
+    "she", "her", "how", "what", "which", "who", "whom", "where", "when", "why", "all", "any",
+    "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only",
+    "own", "same", "so", "than", "too", "very", "can", "will", "just", "should", "now"
+}
+
+PERSON_TAGS = {
+    "person", "people", "man", "woman", "men", "women", "human", "humans",
+    "politician", "politicians", "celebrity", "celebrities", "portrait", "portraits",
+    "face", "faces", "headshot", "president", "prime minister", "minister", "senator",
+    "spokesperson", "người", "chân dung", "gương mặt", "chính trị gia", "người nổi tiếng",
+    "tổng thống", "thủ tướng", "bộ trưởng", "đại biểu"
+}
+
+FAMOUS_PERSON_NAMES = {
+    "trump", "donald trump", "musk", "elon musk", "biden", "joe biden", "obama", "barack obama",
+    "putin", "vladimir putin", "xi jinping", "tập cận bình", "macron", "modi", "scholz",
+    "zuckerberg", "mark zuckerberg", "tim cook", "sam altman", "jensen huang"
+}
+
+STOCK_GENERIC_TECH_TAGS = {
+    "chip", "microchip", "ai chip", "semiconductor", "processor", "cpu", "gpu",
+    "robot", "robotics", "robotic arm", "industrial robot", "humanoid",
+    "laptop", "keyboard", "computer keyboard", "technology background", "tech background",
+    "motherboard", "circuit board", "abstract technology", "cyber network", "futuristic background",
+    "vi mạch", "bán dẫn", "tay máy", "bàn phím"
+}
+
+GENUINE_TECH_ENTITIES = {
+    "ai", "artificial intelligence", "trí tuệ nhân tạo", "mạng thần kinh", "neural",
+    "chip", "microchip", "vi mạch", "bán dẫn", "semiconductor", "processor",
+    "robot", "robotics", "tự động hóa", "automation", "humanoid", "thuật toán"
+}
+
+DEFAULT_DOMAIN_SYNONYMS: dict[str, list[str]] = {
+    "đường ống": ["pipeline", "pipe", "pipes", "plumbing", "water pipe", "drainage"],
+    "đường ống ngầm": ["underground pipeline", "underground pipe", "pipeline", "subsurface pipe"],
+    "hầm": ["tunnel", "underground tunnel", "metro tunnel"],
+    "đào hầm": ["tunnel excavation", "tunnel boring", "tbm"],
+    "tbm": ["tunnel boring machine", "tbm", "cutterhead"],
+    "địa chất": ["geology", "geotechnical", "soil strata", "strata"],
+    "sụt lún": ["settlement", "subsidence", "ground displacement"],
+    "đường sắt": ["railway", "railroad", "train", "high-speed rail"],
+    "bắc nam": ["north south", "vietnam rail"],
+    "phẫu thuật": ["surgery", "surgical", "operation", "surgeon"],
+    "nội soi": ["endoscopy", "endoscopic", "laparoscopy", "laparoscopic"],
+    "phẫu thuật nội soi": ["laparoscopic surgery", "endoscopy", "endoscopic surgery", "laparoscopy"],
+    "y tế": ["medical", "hospital", "clinic", "healthcare"],
+    "bác sĩ": ["doctor", "surgeon", "physician"],
+    "đào đất": ["excavation", "digging", "earthmoving", "soil digging"],
+    "trồng cây": ["tree planting", "planting trees", "gardening", "reforestation", "agriculture"],
+    "đất": ["soil", "ground", "earth", "land"],
+    "cây": ["tree", "trees", "plant", "plants"],
+    "nông nghiệp": ["agriculture", "farming", "crop"],
+    "chip": ["microchip", "semiconductor", "processor", "integrated circuit", "wafer"],
+    "vi mạch": ["microchip", "semiconductor", "integrated circuit"],
+    "bán dẫn": ["semiconductor", "silicon wafer", "fab"],
+    "trí tuệ nhân tạo": ["artificial intelligence", "ai", "machine learning", "neural network"],
+    "ai": ["artificial intelligence", "ai model", "neural network"],
+    "robot": ["robot", "robotics", "robotic arm", "automation"],
+    "năng suất": ["productivity", "output", "efficiency", "financial"],
+}
+
+
+def extract_scene_entities(slide_text: str, headline: str = "", synonyms_map: dict[str, list[str]] | None = None) -> list[str]:
+    """Extract substantive noun phrases, key entities and synonyms from slide text without stopwords."""
+    combined = f"{headline} {slide_text}".lower()
+    clean_text = re.sub(r"[^\w\s]", " ", combined)
+    tokens = clean_text.split()
+    
+    entities: list[str] = []
+    
+    # 1. Multi-word phrases (2-grams, 3-grams) with at least 1 non-stopword
+    for n in (3, 2):
+        for i in range(len(tokens) - n + 1):
+            gram_tokens = tokens[i:i + n]
+            if any(t not in STOPWORDS_VI and t not in STOPWORDS_EN for t in gram_tokens):
+                phrase = " ".join(gram_tokens)
+                if len(phrase) >= 4 and phrase not in entities:
+                    entities.append(phrase)
+                    
+    # 2. Single substantive words (len >= 3)
+    for t in tokens:
+        if t not in STOPWORDS_VI and t not in STOPWORDS_EN and len(t) >= 3:
+            if t not in entities:
+                entities.append(t)
+
+    # 3. Add synonyms
+    domain_map = dict(DEFAULT_DOMAIN_SYNONYMS)
+    if synonyms_map:
+        for k, v in synonyms_map.items():
+            domain_map.setdefault(k.lower(), []).extend(v)
+
+    expanded: list[str] = list(entities)
+    for ent in entities:
+        for k_term, syn_list in domain_map.items():
+            if k_term in ent or ent in k_term:
+                for syn in syn_list:
+                    syn_low = syn.lower()
+                    if syn_low not in expanded:
+                        expanded.append(syn_low)
+
+    expanded.sort(key=lambda s: len(s), reverse=True)
+    return expanded
+
+
+def check_image_relevance(
+    slide_text: str,
+    image_metadata: dict[str, Any] | str | None = None,
+    prompt: str = "",
+    synonyms_map: dict[str, list[str]] | None = None,
+    headline: str = "",
+) -> bool:
+    """Verify that actual image metadata matches >= 1 entity of the scene (FAIL-CLOSED).
+    
+    Rules:
+    1. Fail-closed: returns False if image_metadata is missing, empty, or ungrounded.
+    2. Prohibit real people unless that person's exact name appears verbatim in slide narration.
+    3. Prohibit stock generic tech (chips, robots, laptops, keyboards) unless scene entity is genuinely AI/chip/robot.
+    4. Must match >= 1 substantive scene entity or planner synonym.
+    """
+    if image_metadata is None:
+        return False
+
+    meta_parts: list[str] = []
+    if isinstance(image_metadata, dict):
+        for k in ("title", "alt", "tags", "caption", "description", "url", "source"):
+            val = image_metadata.get(k)
+            if isinstance(val, list):
+                meta_parts.extend(str(v) for v in val if v)
+            elif val:
+                meta_parts.append(str(val))
+    elif isinstance(image_metadata, str):
+        meta_parts.append(image_metadata)
+    else:
+        return False
+
+    if prompt:
+        meta_parts.append(prompt)
+
+    meta_text = " ".join(meta_parts).strip().lower()
+    if not meta_text:
+        return False
+
+    narr_low = slide_text.lower()
+    head_low = headline.lower()
+    scene_full = f"{narr_low} {head_low}"
+
+    # RULE 2: Cấm ảnh có người thật trừ khi tên người đó xuất hiện nguyên văn trong narration
+    for p_name in FAMOUS_PERSON_NAMES:
+        if re.search(rf"\b{re.escape(p_name)}\b", meta_text):
+            if not re.search(rf"\b{re.escape(p_name)}\b", narr_low):
+                return False
+
+    has_person_tag = any(re.search(rf"\b{re.escape(pt)}\b", meta_text) for pt in PERSON_TAGS)
+    if has_person_tag:
+        has_named_speaker = any(
+            re.search(rf"\b{re.escape(n)}\b", narr_low)
+            for n in ("ông", "bà", "tiến sĩ", "ts", "chuyên gia", "bác sĩ", "kỹ sư", "tác giả", "giám đốc")
+        ) or any(re.search(rf"\b{re.escape(p)}\b", narr_low) for p in FAMOUS_PERSON_NAMES)
+        if not has_named_speaker:
+            return False
+
+    # RULE 3: Cấm ảnh stock chung chung trừ khi chủ đề cảnh thật sự là AI/chip/robot
+    scene_has_tech = any(re.search(rf"\b{re.escape(k)}\b", scene_full) for k in GENUINE_TECH_ENTITIES)
+    has_generic_stock = any(re.search(rf"\b{re.escape(st)}\b", meta_text) for st in STOCK_GENERIC_TECH_TAGS)
+    if has_generic_stock and not scene_has_tech:
+        return False
+
+    # RULE 1: Metadata ảnh thật phải chứa >= 1 thực thể chính của cảnh hoặc từ đồng nghĩa
+    entities = extract_scene_entities(slide_text, headline, synonyms_map=synonyms_map)
+    if not entities:
+        return False
+
+    matched = False
+    for ent in entities:
+        if re.search(rf"\b{re.escape(ent)}\b", meta_text):
+            matched = True
+            break
+
+    return matched
+
+
+def _query_for_beat(idx: int, prompt: str, narration: str = "", headline: str = "") -> str:
+    """Determine authentic search query for given beat based on scene entities without hardcoding."""
+    entities = extract_scene_entities(narration, headline)
+    clean_words = [
+        w for w in re.findall(r"\b[a-zA-Z]{3,}\b", prompt)
+        if w.lower() not in {
+            "cinematic", "photorealistic", "ultra", "dramatic", "concept", "render",
+            "detailed", "hyper", "lighting", "ambient", "depth", "field", "octane", "volumetric"
+        }
+    ]
+    # Filter English-friendly entities or Latin tokens
+    latin_ents = [e for e in entities if re.match(r"^[a-zA-Z\s]+$", e)]
+    top_ents = latin_ents[:2] if latin_ents else entities[:2]
+
+    parts: list[str] = []
+    for ent in top_ents:
+        parts.append(ent)
+    for cw in clean_words[:3]:
+        if cw.lower() not in " ".join(parts).lower():
+            parts.append(cw)
+
+    q = " ".join(parts).strip()
+    return q if len(q) >= 4 else "infrastructure technology"
+
+
+def download_real_web_image(
+    query: str,
+    target_path: Path,
+    slide_text: str = "",
+    headline: str = "",
+    synonyms_map: dict[str, list[str]] | None = None,
+    timeout: float = 5.0,
+) -> bool:
+    """Download an authentic high-resolution web photo with verified relevant metadata, center-crop to 1080x1080."""
     if not query:
         return False
     try:
@@ -541,8 +775,17 @@ def download_real_web_image(query: str, target_path: Path, timeout: float = 5.0)
         import io
         
         ddgs = DDGS()
-        results = list(ddgs.images(query, max_results=5))
+        results = list(ddgs.images(query, max_results=8))
         for r in results:
+            if slide_text or headline:
+                if not check_image_relevance(
+                    slide_text=slide_text,
+                    image_metadata=r,
+                    synonyms_map=synonyms_map,
+                    headline=headline,
+                ):
+                    continue
+
             url = r.get("image")
             if not url or not url.startswith("http"):
                 continue
@@ -573,60 +816,6 @@ def download_real_web_image(query: str, target_path: Path, timeout: float = 5.0)
     return False
 
 
-def check_image_relevance(slide_text: str, query: str, prompt: str) -> bool:
-    """Verify that image query/prompt contains >= 1 entity or primary keyword of the slide."""
-    keywords = [
-        "singapore", "sụt lún", "tbm", "địa chất", "đường sắt", "bắc nam",
-        "tường vây", "quan trắc", "tiêu chuẩn", "kỹ sư", "metro", "hầm"
-    ]
-    txt_low = slide_text.lower()
-    matched_keywords = [k for k in keywords if k in txt_low]
-    if not matched_keywords:
-        return True
-    qp = f"{query} {prompt}".lower()
-    return any(k in qp for k in matched_keywords)
-
-
-def _query_for_beat(idx: int, prompt: str, narration: str = "") -> str:
-    """Determine authentic search query for given beat and prompt based on content keywords."""
-    combined = f"{prompt} {narration}".lower()
-    if any(k in combined for k in ("singapore", "sụt lún", "nicoll")):
-        return "Singapore metro underground tunnel construction geotechnical engineering"
-    elif any(k in combined for k in ("đường sắt", "bắc nam", "bắc - nam", "1.541", "1541", "tốc độ cao")):
-        return "high speed railway passenger train construction viaduct infrastructure"
-    elif any(k in combined for k in ("tbm", "đào hầm", "máy đào hầm")):
-        return "Tunnel Boring Machine TBM underground metro construction cutterhead"
-    elif any(k in combined for k in ("tường vây", "địa chất", "nhiều tầng", "đất đá")):
-        return "diaphragm wall deep foundation geotechnical engineering urban construction"
-    elif any(k in combined for k in ("quan sát", "quan trắc", "cảm biến", "chướng ngại vật")):
-        return "geotechnical monitoring sensors tunnel displacement instrumentation"
-    elif any(k in combined for k in ("tiêu chuẩn", "ngôn ngữ chung", "khung kỹ thuật")):
-        return "civil engineering blueprint technical specification construction standards"
-    elif any(k in combined for k in ("kỹ sư", "làm chủ", "khảo sát", "năng lực tổng hợp")):
-        return "Vietnamese civil engineers infrastructure tunnel construction project"
-    elif any(k in combined for k in ("hầm", "công trình ngầm", "lòng đất", "địa đạo")):
-        return "underground tunnel construction engineering urban infrastructure"
-    elif any(k in combined for k in ("elon musk",)):
-        return "Elon Musk speaking stage keynote conference portrait"
-    elif any(k in combined for k in ("heo đất", "lợn đất", "piggy bank")):
-        return "piggy bank breaking shattered money cash savings"
-    elif any(k in combined for k in ("robot", "gigafactory", "tay máy")):
-        return "industrial robot automation manufacturing factory"
-    elif any(k in combined for k in ("chip", "vi mạch", "bán dẫn")):
-        return "ai microchip processor semiconductor hardware technology"
-    elif any(k in combined for k in ("ted jenkin",)):
-        return "Ted Jenkin financial advisor portrait"
-    elif any(k in combined for k in ("khiên", "an ninh", "bảo mật")):
-        return "cyber security shield digital protection network technology"
-    elif any(k in combined for k in ("kênh", "youtube", "subscribe", "đăng ký", "theo dõi")):
-        return "modern digital broadcast studio newsroom"
-
-    clean_words = [w for w in re.findall(r"\b[a-zA-Z]{3,}\b", prompt) if w.lower() not in {"cinematic", "photorealistic", "ultra", "dramatic", "concept", "render"}]
-    if clean_words:
-        return " ".join(clean_words[:4]) + " engineering infrastructure"
-    return "modern engineering technology infrastructure"
-
-
 def resolve_images_for_slide_script(
     project_dir: Path | str,
     slide_script: Any,
@@ -636,9 +825,9 @@ def resolve_images_for_slide_script(
     """Ensure every slide in slide_script has a valid, distinct visual image asset or large text.
     
     Guarantees every beat has a distinct visual:
-    1. Relevance check: image query/prompt must match >= 1 slide entity/keyword.
+    1. Relevance check (FAIL-CLOSED): real image metadata must match >= 1 slide entity.
     2. Zero duplicates: no image (hash) can appear > 1 time in video.
-    3. Fails check -> uses clean typographic large-text layout (no image attached).
+    3. Missing metadata or failed relevance -> NO image attached, falls back to typographic layout.
     """
     p_dir = Path(project_dir).resolve()
     assets_dir = p_dir / "assets" / "ai_images"
@@ -652,26 +841,24 @@ def resolve_images_for_slide_script(
         slots = getattr(slide, "slots", {}) if hasattr(slide, "slots") else slide.get("slots", {})
         slide_id = getattr(slide, "id", f"slide_{idx+1}")
         slide_narr = getattr(slide, "narration", "") or slots.get("text", "") or slots.get("title", "")
+        headline = getattr(slide, "headline", "") or slots.get("headline", "") or slots.get("title", "")
         prompt = getattr(slide, "image_prompt", "") or slots.get("image_prompt", "") or slide_narr
+        synonyms_map = getattr(slide, "synonyms_map", None) or slots.get("synonyms_map", None)
 
-        q = _query_for_beat(idx, prompt, narration=slide_narr)
-
-        # Relevance check
-        is_relevant = check_image_relevance(slide_narr, q, prompt)
-        if not is_relevant:
-            # Fails relevance: scene uses large text layout, NO image attached
-            slots.pop("image_url", None)
-            slots.pop("photo", None)
-            continue
-
+        q = _query_for_beat(idx, prompt, narration=slide_narr, headline=headline)
         target_path = assets_dir / f"beat_{idx+1:02d}_{sanitize_filename(slide_id)}.png"
         downloaded = False
         if allow_web_search and q:
-            downloaded = download_real_web_image(q, target_path)
-        if not downloaded:
-            generate_cinematic_visual(prompt=prompt, output_path=target_path)
+            downloaded = download_real_web_image(
+                q,
+                target_path,
+                slide_text=slide_narr,
+                headline=headline,
+                synonyms_map=synonyms_map,
+            )
 
-        if target_path.is_file() and target_path.stat().st_size > 0:
+        # FAIL-CLOSED: If not downloaded or no image with verified metadata -> DO NOT ATTACH IMAGE
+        if downloaded and target_path.is_file() and target_path.stat().st_size > 0:
             im_hash = hashlib.sha256(target_path.read_bytes()).hexdigest()
             if im_hash in seen_image_hashes:
                 # Duplicate image hash! Remove and fall back to large text layout
@@ -685,6 +872,7 @@ def resolve_images_for_slide_script(
                     slide.image_prompt = prompt
                 resolved_paths.append(str(target_path))
         else:
+            target_path.unlink(missing_ok=True)
             slots.pop("image_url", None)
             slots.pop("photo", None)
             if "photo" in slots:

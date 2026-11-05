@@ -250,23 +250,133 @@ def verify_and_ground_slides(
 
     # 3. Structural Healing: enforce layout rules
     if healed_slides:
-        # First slide MUST be lg_source_headline or lg_note_card
-        if healed_slides[0].layout not in ("lg_source_headline", "lg_note_card"):
-            repair_notes.append(f"[layout_structure, nhóm 2] Slide đầu đổi từ '{healed_slides[0].layout}' sang 'lg_source_headline'.")
-            healed_slides[0] = healed_slides[0].model_copy(update={"layout": "lg_source_headline"})
+        # First slide MUST be kit_title or lg_source_headline or lg_note_card
+        if healed_slides[0].layout not in ("kit_title", "lg_source_headline", "lg_note_card"):
+            repair_notes.append(f"[layout_structure, nhóm 2] Slide đầu đổi từ '{healed_slides[0].layout}' sang 'kit_title'.")
+            healed_slides[0] = healed_slides[0].model_copy(update={"layout": "kit_title"})
 
-        # Last slide MUST be lg_cta_profile
-        if len(healed_slides) >= 2 and healed_slides[-1].layout != "lg_cta_profile":
-            repair_notes.append(f"[layout_structure, nhóm 2] Slide cuối đổi từ '{healed_slides[-1].layout}' sang 'lg_cta_profile'.")
-            healed_slides[-1] = healed_slides[-1].model_copy(update={"layout": "lg_cta_profile"})
+        # Last slide MUST be kit_outro or lg_cta_profile
+        if len(healed_slides) >= 2 and healed_slides[-1].layout not in ("kit_outro", "lg_cta_profile"):
+            repair_notes.append(f"[layout_structure, nhóm 2] Slide cuối đổi từ '{healed_slides[-1].layout}' sang 'kit_outro'.")
+            healed_slides[-1] = healed_slides[-1].model_copy(update={"layout": "kit_outro"})
 
         # Anti-repetition: no adjacent slides with identical layout
-        available_layouts = ["lg_stat_hero", "lg_shot_features", "lg_vs_compare", "lg_note_card"]
         for i in range(1, len(healed_slides) - 1):
             if healed_slides[i].layout == healed_slides[i - 1].layout:
-                alt = next((l for l in available_layouts if l != healed_slides[i - 1].layout and l != healed_slides[min(len(healed_slides)-1, i + 1)].layout), "lg_note_card")
+                curr_slots = healed_slides[i].slots or {}
+                has_stat = bool(curr_slots.get("value") or curr_slots.get("stat_value"))
+                has_compare = bool(curr_slots.get("left") and curr_slots.get("right"))
+                is_kit = str(healed_slides[i].layout).startswith("kit_")
+
+                if is_kit:
+                    candidates = []
+                    if has_stat:
+                        candidates.append("kit_stat")
+                    if has_compare:
+                        candidates.append("kit_compare")
+                    candidates.extend(["kit_title", "kit_list"])
+                    default_layout = "kit_title"
+                else:
+                    candidates = []
+                    if has_stat:
+                        candidates.append("lg_stat_hero")
+                    if has_compare:
+                        candidates.append("lg_vs_compare")
+                    candidates.extend(["lg_note_card", "lg_shot_features"])
+                    default_layout = "lg_note_card"
+
+                prev_l = healed_slides[i - 1].layout
+                next_l = healed_slides[min(len(healed_slides) - 1, i + 1)].layout
+                alt = next((l for l in candidates if l != prev_l and l != next_l), None)
+                if not alt:
+                    alt = next((l for l in candidates if l != prev_l), default_layout)
+
+                new_slots = dict(curr_slots)
+                t_clean = str(new_slots.get("title") or "").strip()
+                if alt in ("kit_list", "lg_shot_features"):
+                    sub = new_slots.get("subtitle") or healed_slides[i].narration
+                    clean_sub = clean_trailing_dangling(sub)
+                    if t_clean and clean_sub.lower().startswith(t_clean.lower()):
+                        remainder = clean_sub[len(t_clean):].strip()
+                        remainder = re.sub(r"^(?:giúp|khiến|để|nhằm|cho thấy|và|là|có|trong|với|tại|ở|đòi hỏi)\s+", "", remainder, flags=re.I).strip()
+                        remainder = re.sub(r"^[,;:\-—]\s*", "", remainder).strip()
+                        if len(remainder.split()) >= 3:
+                            clean_sub = remainder[0].upper() + remainder[1:]
+                        else:
+                            clean_sub = ""
+                    from editor.motion.light_glass_slots import text_similarity
+                    if not clean_sub or (t_clean and text_similarity(clean_sub, t_clean) >= 0.70):
+                        supp_text = ""
+                        if i + 1 < len(healed_slides):
+                            cand_supp = clean_trailing_dangling(healed_slides[i + 1].narration)
+                            if cand_supp and text_similarity(cand_supp, t_clean) < 0.70:
+                                supp_text = cand_supp
+                        clean_sub = supp_text
+                    if not clean_sub:
+                        alt = "kit_title" if is_kit else "lg_note_card"
+                        if not new_slots.get("subtitle"):
+                            new_slots["subtitle"] = healed_slides[i].narration[:120]
+                    else:
+                        new_slots["items"] = [clean_trailing_dangling(clean_sub[:40])]
+                elif alt in ("kit_title", "lg_note_card") and not new_slots.get("subtitle"):
+                    items = new_slots.get("items", [])
+                    new_slots["subtitle"] = items[0] if items else healed_slides[i].narration[:120]
+
                 repair_notes.append(f"[layout_anti_repeat, nhóm 2] Slide {healed_slides[i].id}: đổi layout lặp '{healed_slides[i].layout}' sang '{alt}'.")
-                healed_slides[i] = healed_slides[i].model_copy(update={"layout": alt})
+                healed_slides[i] = healed_slides[i].model_copy(update={"layout": alt, "slots": new_slots})
+
+        # Balance layout frequency: ensure no single layout exceeds 40% of total slides when len >= 5
+        from collections import Counter
+        layout_counts = Counter(s.layout for s in healed_slides)
+        max_allowed = int(len(healed_slides) * 0.40)
+        for dom_layout, count in list(layout_counts.items()):
+            if len(healed_slides) >= 5 and count > max_allowed:
+                for i in range(1, len(healed_slides) - 1):
+                    if healed_slides[i].layout == dom_layout:
+                        prev_l = healed_slides[i - 1].layout
+                        next_l = healed_slides[i + 1].layout
+                        is_kit = str(dom_layout).startswith("kit_")
+                        if is_kit:
+                            alt_candidates = ["kit_list", "kit_title"] if dom_layout != "kit_list" else ["kit_title"]
+                        else:
+                            alt_candidates = ["lg_shot_features", "lg_note_card"] if dom_layout != "lg_shot_features" else ["lg_note_card"]
+                        alt = next((c for c in alt_candidates if c != dom_layout and c != prev_l and c != next_l), None)
+                        if alt:
+                            curr_slots = dict(healed_slides[i].slots or {})
+                            t_clean = str(curr_slots.get("title") or "").strip()
+                            if alt in ("kit_list", "lg_shot_features"):
+                                sub = curr_slots.get("subtitle") or healed_slides[i].narration
+                                clean_sub = clean_trailing_dangling(sub)
+                                if t_clean and clean_sub.lower().startswith(t_clean.lower()):
+                                    remainder = clean_sub[len(t_clean):].strip()
+                                    remainder = re.sub(r"^(?:giúp|khiến|để|nhằm|cho thấy|và|là|có|trong|với|tại|ở|đòi hỏi)\s+", "", remainder, flags=re.I).strip()
+                                    remainder = re.sub(r"^[,;:\-—]\s*", "", remainder).strip()
+                                    if len(remainder.split()) >= 3:
+                                        clean_sub = remainder[0].upper() + remainder[1:]
+                                    else:
+                                        clean_sub = ""
+                                from editor.motion.light_glass_slots import text_similarity
+                                if not clean_sub or (t_clean and text_similarity(clean_sub, t_clean) >= 0.70):
+                                    supp_text = ""
+                                    if i + 1 < len(healed_slides):
+                                        cand_supp = clean_trailing_dangling(healed_slides[i + 1].narration)
+                                        if cand_supp and text_similarity(cand_supp, t_clean) < 0.70:
+                                            supp_text = cand_supp
+                                    clean_sub = supp_text
+                                if not clean_sub:
+                                    alt = "kit_title" if is_kit else "lg_note_card"
+                                    if not curr_slots.get("subtitle"):
+                                        curr_slots["subtitle"] = healed_slides[i].narration[:120]
+                                else:
+                                    curr_slots["items"] = [clean_trailing_dangling(clean_sub[:40])]
+                            elif alt in ("kit_title", "lg_note_card") and not curr_slots.get("subtitle"):
+                                items = curr_slots.get("items", [])
+                                curr_slots["subtitle"] = items[0] if items else healed_slides[i].narration[:120]
+                            healed_slides[i] = healed_slides[i].model_copy(update={"layout": alt, "slots": curr_slots})
+                            repair_notes.append(f"[layout_diversity, nhóm 2] Slide {healed_slides[i].id}: đổi từ '{dom_layout}' sang '{alt}' để cân bằng tỷ lệ lặp ({count}/{len(healed_slides)}).")
+                            count -= 1
+                            if count <= max_allowed:
+                                break
 
     return SlideScript(
         topic=slide_script.topic,
