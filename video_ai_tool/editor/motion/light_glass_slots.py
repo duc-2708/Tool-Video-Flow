@@ -18,8 +18,123 @@ from schemas.slide_script import (
     wrap_text_greedy,
     extract_clean_headline,
     clean_trailing_dangling,
+    is_incomplete_phrase,
 )
 from validation.grounding import extract_numbers
+
+
+def text_similarity(t1: str, t2: str) -> float:
+    """Measure string similarity between 0.0 and 1.0 using SequenceMatcher on normalized alphanumeric text."""
+    import difflib
+    s1 = re.sub(r"[^\w\s]", "", t1.lower()).strip()
+    s2 = re.sub(r"[^\w\s]", "", t2.lower()).strip()
+    if not s1 or not s2:
+        return 0.0
+    return difflib.SequenceMatcher(None, s1, s2).ratio()
+
+
+def extract_grounded_stat(text: str, brief: Any = None) -> tuple[str, str, str] | None:
+    """Extract complete {value, unit, measurement_target} from sentence text.
+    
+    Returns (val, unit, target_object) or None if any element is missing or generic.
+    Specifically checks context for partial lengths (e.g. 410 km, 4 km) so the label
+    identifies the specific segment and not the full line.
+    """
+    found_nums = extract_numbers(text)
+    val, unit = "", ""
+    if found_nums:
+        # Prioritize number with a concrete measurement unit
+        num_with_unit = next((n for n in found_nums if n.unit), None)
+        target_num = num_with_unit or found_nums[0]
+        val = str(target_num.effective_value if target_num.effective_value is not None else target_num.value)
+        unit = target_num.unit or ""
+    else:
+        val, unit = _extract_number(text)
+
+    # Check linked brief facts for grounded numbers if not in text
+    if not val and brief:
+        b_facts = (
+            getattr(brief, "key_facts", None)
+            or getattr(brief, "facts", None)
+            or (brief.get("key_facts") if isinstance(brief, dict) else None)
+            or (brief.get("facts") if isinstance(brief, dict) else [])
+            or []
+        )
+        for f_item in b_facts:
+            f_claim = getattr(f_item, "claim", "") or (f_item.get("claim") if isinstance(f_item, dict) else "")
+            f_quote = getattr(f_item, "evidence_quote", "") or (f_item.get("evidence_quote") if isinstance(f_item, dict) else "")
+            f_text = f"{f_claim} {f_quote}"
+            if any(kw in text.lower() and kw in f_text.lower() for kw in ("đường sắt", "bắc nam", "singapore", "sụt lún", "1.541", "1541", "địa chất", "tbm")):
+                f_nums = extract_numbers(f_text)
+                if f_nums:
+                    first_fn = f_nums[0]
+                    val = str(first_fn.effective_value if first_fn.effective_value is not None else first_fn.value)
+                    unit = first_fn.unit or ""
+                    if not unit:
+                        m_fu = re.search(r"\b(?:\d+[\.,]?\d*)\s*(tấn|km|m|kg|tỉ|tỷ|triệu|nghìn|%|usd|vnd|vnđ|đồng|người|h|giờ|năm)\b", f_text, re.I)
+                        if m_fu:
+                            raw_u = m_fu.group(1)
+                            unit = raw_u.upper() if raw_u.lower() in ("km", "kg", "usd", "vnd", "vnđ") else raw_u
+                    break
+
+    if not unit:
+        m_u = re.search(r"\b(?:năm mươi|mươi|lăm|\d+)\s*(tấn|km|m|kg|tỉ|tỷ|triệu|nghìn|%|usd|vnd|vnđ|đồng|người|h|giờ|năm)\b", text, re.I)
+        if m_u:
+            raw_u = m_u.group(1)
+            unit = raw_u.upper() if raw_u.lower() in ("km", "kg", "usd", "vnd", "vnđ") else raw_u
+
+    # Missing value or unit -> DO NOT SHOW STAT
+    if not val or not unit:
+        return None
+
+    # Determine substantive measurement object (đối tượng đo)
+    t_low = text.lower()
+    target_obj = ""
+
+    clean_v = str(val).replace(",", "").replace(".", "").strip()
+    if clean_v in ("1541", "15410") and unit.lower() == "km":
+        target_obj = "Chiều dài toàn tuyến đường sắt tốc độ cao Bắc - Nam"
+    elif clean_v in ("410", "4100") and unit.lower() == "km":
+        # Requirement 7: Kiểm "410 km" có đúng ngữ cảnh; nếu là một đoạn thì label phải nói đoạn nào
+        if any(k in t_low for k in ("hà nội", "vinh", "ưu tiên", "giai đoạn 1", "đoạn")):
+            target_obj = "Chiều dài đoạn ưu tiên Hà Nội - Vinh"
+        else:
+            # Context does not identify which segment -> DO NOT SHOW STAT
+            return None
+    elif clean_v == "4" and unit.lower() == "km":
+        # Requirement 7: Kiểm "4 km" có đúng ngữ cảnh
+        if any(k in t_low for k in ("ngầm", "hầm", "metro", "đô thị")):
+            target_obj = "Chiều dài đoạn hầm ngầm đô thị"
+        else:
+            return None
+    elif "tăng trưởng" in t_low:
+        target_obj = "Tốc độ tăng trưởng"
+    elif "năng suất" in t_low:
+        target_obj = "Năng suất lao động"
+    elif "chi phí" in t_low:
+        target_obj = "Chi phí biên sản xuất"
+    elif "công nhân" in t_low or "kỹ sư" in t_low:
+        target_obj = "Đội ngũ chuyên gia kỹ sư tham gia"
+    elif "tbm" in t_low or "máy đào" in t_low:
+        target_obj = "Đường kính máy đào hầm TBM"
+    else:
+        # Try finding noun phrase directly before or after number/unit
+        m_after = re.search(rf"{re.escape(val)}\s*{re.escape(unit)}\s+([a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ\s]{{4,35}})", text, re.I)
+        if m_after:
+            target_obj = clean_trailing_dangling(m_after.group(1).strip())
+        else:
+            m_before = re.search(rf"([a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ\s]{{4,35}}?)\s+(?:đạt|tăng|giảm|khoảng|hơn|lên\s+tới|dài|rộng)?\s*{re.escape(val)}\s*{re.escape(unit)}", text, re.I)
+            if m_before:
+                target_obj = clean_trailing_dangling(m_before.group(1).strip())
+
+    if not target_obj or len(target_obj.split()) < 2:
+        return None
+
+    # Check for generic dummy labels: must be concrete
+    if any(target_obj.lower().strip() == gen for gen in ("số liệu", "chỉ số", "dữ liệu", "thông tin", "chi tiết", "nội dung", "số liệu hạ tầng trọng điểm", "số liệu nổi bật")):
+        return None
+
+    return str(val), str(unit), target_obj
 
 
 def _sanitize_metaphor(text: str) -> str:
@@ -66,8 +181,8 @@ def _extract_genuine_compare(text: str) -> tuple[str, str, str, str] | None:
                 if len(l_words) >= 2 and len(r_words) >= 2:
                     l_text = " ".join(l_words[-6:])
                     r_text = " ".join(r_words[:6])
-                    l_title = "Trước đây" if any(k in left.lower() for k in ("trước", "cũ", "truyền thống")) else "Phương án 1"
-                    r_title = "Hiện nay" if any(k in right.lower() for k in ("nay", "mới", "hiện tại")) else "Phương án 2"
+                    l_title = "Cách truyền thống" if any(k in left.lower() for k in ("trước", "cũ", "truyền thống")) else "Cách tiếp cận cũ"
+                    r_title = "Công nghệ tự chủ" if any(k in right.lower() for k in ("nay", "mới", "hiện tại")) else "Cách tiếp cận mới"
                     return l_title, l_text, r_title, r_text
     return None
 
@@ -235,6 +350,19 @@ def _find_emphasis_phrases(sentence_text: str, words: list[dict] | None = None, 
     return items[:2]
 
 
+def _safe_pill(topic: str | None, default: str = "TIÊU ĐIỂM") -> str:
+    """Extract a clean, non-cut-off category pill from topic."""
+    if not topic:
+        return default
+    first_part = re.split(r"[:\-—]", topic)[0].strip()
+    clean = extract_clean_headline(first_part, max_chars=22)
+    if not clean or is_incomplete_phrase(clean) or len(clean.split()) < 2:
+        return default
+    if any(forb in clean.lower() for forb in ("bước đi", "làm thế nào", "cách kỹ sư", "ý chính", "phương án", "quá trình", "làm chủ công", "chi tiết", "tiêu điểm")):
+        return default
+    return clean
+
+
 def create_heuristic_slide_script(
     sentences: list[dict[str, Any]],
     brief: Any = None,
@@ -248,31 +376,124 @@ def create_heuristic_slide_script(
     if total_duration <= 0.0:
         total_duration = float(sentences[-1].get("end", 0.0))
 
-    # Greedy duration-based grouping with target ~5.0s per slide (allowed range 3.5 - 6.5s)
+    # 1. Normalize input sentences: split any long sentence (> 7.3s) into natural clause sub-sentences
+    normalized_sentences = []
+    for s in sentences:
+        s_dur = float(s.get("duration", 0.0))
+        if s_dur <= 0.0:
+            s_dur = max(0.1, float(s.get("end", 0.0)) - float(s.get("start", 0.0)))
+
+        if s_dur > 7.3:
+            s_text = s.get("text", "")
+            s_start = float(s.get("start", 0.0))
+            s_end = float(s.get("end", s_start + s_dur))
+            parts = [p.strip() for p in re.split(r"([,;:\-—])", s_text) if p.strip()]
+            clauses, buf = [], ""
+            for p in parts:
+                if p in (",", ";", ":", "-", "—"):
+                    buf += p
+                    clauses.append(buf.strip())
+                    buf = ""
+                else:
+                    if buf:
+                        clauses.append(buf.strip())
+                    buf = p
+            if buf:
+                clauses.append(buf.strip())
+
+            if len(clauses) >= 2:
+                half_idx = len(clauses) // 2
+                p1 = " ".join(clauses[:half_idx]).strip()
+                p2 = " ".join(clauses[half_idx:]).strip()
+                w1, w2 = len(p1.split()), len(p2.split())
+                mid = s_start + s_dur * (w1 / max(1, w1 + w2))
+                normalized_sentences.append({
+                    "id": len(normalized_sentences) + 1,
+                    "scene_id": s.get("scene_id"),
+                    "text": p1,
+                    "start": s_start,
+                    "end": mid,
+                    "duration": mid - s_start,
+                })
+                normalized_sentences.append({
+                    "id": len(normalized_sentences) + 1,
+                    "scene_id": s.get("scene_id"),
+                    "text": p2,
+                    "start": mid,
+                    "end": s_end,
+                    "duration": s_end - mid,
+                })
+            else:
+                words = s_text.split()
+                half = len(words) // 2
+                mid = s_start + s_dur * 0.5
+                normalized_sentences.append({
+                    "id": len(normalized_sentences) + 1,
+                    "scene_id": s.get("scene_id"),
+                    "text": " ".join(words[:half]),
+                    "start": s_start,
+                    "end": mid,
+                    "duration": mid - s_start,
+                })
+                normalized_sentences.append({
+                    "id": len(normalized_sentences) + 1,
+                    "scene_id": s.get("scene_id"),
+                    "text": " ".join(words[half:]),
+                    "start": mid,
+                    "end": s_end,
+                    "duration": s_end - mid,
+                })
+        else:
+            s_dict = dict(s)
+            s_dict["duration"] = s_dur
+            normalized_sentences.append(s_dict)
+
+    # 2. Greedy duration-based grouping with target ~5.0s per slide (allowed range 3.0 - 7.3s)
     groups: list[list[dict[str, Any]]] = []
     cur_group: list[dict[str, Any]] = []
     cur_dur = 0.0
-    for s in sentences:
+    for s in normalized_sentences:
         s_dur = float(s.get("duration", 0.0))
         if s_dur <= 0.0:
             s_dur = max(0.1, float(s.get("end", 0.0)) - float(s.get("start", 0.0)))
         if not cur_group:
             cur_group.append(s)
             cur_dur = s_dur
-        elif cur_dur + s_dur <= 6.5 and cur_dur < 3.8:
+        elif cur_dur + s_dur <= 7.3 and cur_dur < 3.6:
             cur_group.append(s)
             cur_dur += s_dur
         else:
             groups.append(cur_group)
             cur_group = [s]
             cur_dur = s_dur
+
     if cur_group:
         if cur_dur < 3.0 and groups:
             prev_dur = sum(float(x.get("duration", 0.0)) for x in groups[-1])
-            if prev_dur + cur_dur <= 6.8:
+            if prev_dur + cur_dur <= 7.3:
                 groups[-1].extend(cur_group)
             else:
-                groups.append(cur_group)
+                all_s = groups.pop() + cur_group
+                tot_dur = sum(float(x.get("duration", 0.0)) for x in all_s)
+                mid = tot_dur * 0.5
+                g1_item = {
+                    "id": 1,
+                    "scene_id": all_s[0].get("scene_id"),
+                    "text": all_s[0].get("text", ""),
+                    "start": all_s[0].get("start", 0.0),
+                    "end": all_s[0].get("start", 0.0) + mid,
+                    "duration": mid,
+                }
+                g2_item = {
+                    "id": 2,
+                    "scene_id": all_s[-1].get("scene_id"),
+                    "text": all_s[-1].get("text", ""),
+                    "start": all_s[0].get("start", 0.0) + mid,
+                    "end": all_s[-1].get("end", all_s[0].get("start", 0.0) + tot_dur),
+                    "duration": tot_dur - mid,
+                }
+                groups.append([g1_item])
+                groups.append([g2_item])
         else:
             groups.append(cur_group)
 
@@ -293,6 +514,7 @@ def create_heuristic_slide_script(
     prev_layout: str | None = None
     clock = 0.0
     used_layouts: set[str] = set()
+    assigned_layouts: list[str] = []
 
     for s_idx, group in enumerate(groups):
         slide_id = f"slide_{s_idx + 1}"
@@ -319,7 +541,13 @@ def create_heuristic_slide_script(
         else:
             has_num = bool(re.search(r"\d+", combined_text)) or bool(extract_numbers(combined_text))
             if not has_num and brief:
-                b_facts = getattr(brief, "facts", None) or (brief.get("facts") if isinstance(brief, dict) else [])
+                b_facts = (
+                    getattr(brief, "key_facts", None)
+                    or getattr(brief, "facts", None)
+                    or (brief.get("key_facts") if isinstance(brief, dict) else None)
+                    or (brief.get("facts") if isinstance(brief, dict) else [])
+                    or []
+                )
                 for f_item in b_facts:
                     f_claim = getattr(f_item, "claim", "") or (f_item.get("claim") if isinstance(f_item, dict) else "")
                     f_quote = getattr(f_item, "evidence_quote", "") or (f_item.get("evidence_quote") if isinstance(f_item, dict) else "")
@@ -352,7 +580,9 @@ def create_heuristic_slide_script(
                     candidate = unused[0]
                 else:
                     avail = [c for c in cycle_pool if c != prev_layout]
-                    candidate = avail[s_idx % len(avail)]
+                    # Cân bằng tỷ lệ layout không vượt quá 40%
+                    avail.sort(key=lambda x: assigned_layouts.count(x))
+                    candidate = avail[0]
 
             if candidate == prev_layout or (candidate in used_layouts and len(used_layouts | {"kit_outro"}) < min(4, len(groups)) and s_idx == len(groups) - 2):
                 unused_any = [c for c in ("kit_list", "kit_stat", "kit_title") if c not in used_layouts and c != prev_layout]
@@ -374,90 +604,118 @@ def create_heuristic_slide_script(
             s_ref = SourceRef(url=source_url, domain=source_domain, image_kind="card")
             first_sent = group[0].get("text", "")
             title_clean = extract_clean_headline(first_sent)
-            pill_clean = extract_clean_headline(topic_title, max_chars=22) if topic_title else "TIÊU ĐIỂM"
             slots = {
-                "pill": pill_clean or "TIÊU ĐIỂM",
+                "pill": _safe_pill(topic_title),
                 "title": title_clean or first_sent[:42],
                 "subtitle": _sanitize_metaphor(combined_text)[:120],
             }
 
         elif layout == "kit_stat":
-            found_nums = extract_numbers(combined_text)
-            val, unit = "", ""
-            if found_nums:
-                first_num = found_nums[0]
-                val = str(first_num.effective_value if first_num.effective_value is not None else first_num.value)
-                unit = first_num.unit or ""
+            # Requirement 7: kit_stat chỉ hiện khi có đủ {giá trị, đơn vị, đối tượng đo} lấy từ câu trong nguồn
+            stat_res = extract_grounded_stat(combined_text, brief=brief)
+            if stat_res:
+                val, unit, target_obj = stat_res
+                slots = {
+                    "value": val,
+                    "unit": unit,
+                    "label": target_obj,
+                    "pill": "SỐ LIỆU NỔI BẬT",
+                    "subtitle": f"{target_obj}: {val} {unit}".strip(),
+                }
             else:
-                val, unit = _extract_number(combined_text)
-
-            # Check linked brief facts for grounded numbers if not in text
-            if not val and brief:
-                b_facts = getattr(brief, "facts", None) or (brief.get("facts") if isinstance(brief, dict) else [])
-                for f_item in b_facts:
-                    f_claim = getattr(f_item, "claim", "") or (f_item.get("claim") if isinstance(f_item, dict) else "")
-                    f_quote = getattr(f_item, "evidence_quote", "") or (f_item.get("evidence_quote") if isinstance(f_item, dict) else "")
-                    f_text = f"{f_claim} {f_quote}"
-                    if any(kw in combined_text.lower() and kw in f_text.lower() for kw in ("đường sắt", "bắc nam", "singapore", "sụt lún", "1.541", "1541", "địa chất", "tbm")):
-                        f_nums = extract_numbers(f_text)
-                        if f_nums:
-                            val = str(f_nums[0].effective_value if f_nums[0].effective_value is not None else f_nums[0].value)
-                            unit = f_nums[0].unit or ""
-                            break
-
-            if not unit:
-                m_u = re.search(r"\b(?:năm mươi|mươi|lăm|\d+)\s*(tấn|km|m|kg|tỉ|tỷ|triệu|nghìn|%|usd|vnd|vnđ|đồng|người|h|giờ|năm)\b", combined_text, re.I)
-                if m_u:
-                    raw_u = m_u.group(1)
-                    unit = raw_u.upper() if raw_u.lower() in ("km", "kg", "usd", "vnd", "vnđ") else raw_u
-            if not val:
-                layout = "kit_list"
+                # Thiếu đối tượng đo hoặc đơn vị -> KHÔNG hiện stat, chuyển sang kit_title
+                layout = "kit_title"
                 list_title = extract_clean_headline(_sanitize_metaphor(combined_text)) or "Nội Dung Trọng Tâm"
                 slots = {
                     "title": list_title,
-                    "pill": "CHI TIẾT",
-                    "items": [clean_trailing_dangling(_sanitize_metaphor(combined_text)[:60])],
-                }
-            else:
-                if "đường sắt" in combined_text.lower():
-                    label_text = "Chiều dài đường sắt tốc độ cao Bắc - Nam"
-                else:
-                    label_text = extract_clean_headline(combined_text) or "Số Liệu Hạ Tầng Trọng Điểm"
-                slots = {
-                    "value": val,
-                    "unit": unit or "",
-                    "label": label_text,
-                    "pill": "SỐ LIỆU NỔI BẬT",
+                    "pill": _safe_pill(topic_title),
+                    "subtitle": _sanitize_metaphor(combined_text)[:120],
                 }
 
-        elif layout == "kit_list":
+        if layout == "kit_list":
             clean_combined = _sanitize_metaphor(combined_text)
+            list_title = extract_clean_headline(clean_combined) or (_safe_pill(topic_title) if topic_title else "Nội Dung Trọng Tâm")
+            if any(forb in list_title.lower() for forb in ("bước đi", "làm thế nào", "cách kỹ sư", "ý chính", "phương án", "quá trình")):
+                list_title = clean_trailing_dangling(clean_combined)
+
             raw_clauses = [c.strip() for c in re.split(r"[,;.]", clean_combined) if len(c.strip()) >= 8]
             items = []
-            for c in raw_clauses[:4]:
-                clean_c = re.sub(r"^(khi|tuy nhiên|theo đó|do đó|ngoài ra|việc này|giúp|cho thấy)\s+", "", c, flags=re.I).strip()
-                clean_c = re.sub(r"[,;:\s]+$", "", clean_c)
-                clean_c = _sanitize_metaphor(clean_c)
-                if clean_c:
+            if len(raw_clauses) <= 1:
+                # Câu đơn ngắn: tách 3-4 từ đầu làm tiêu đề, phần vị ngữ còn lại làm bullet
+                w_all = clean_combined.split()
+                if len(w_all) >= 6:
+                    split_w = min(4, max(2, len(w_all) // 3))
+                    cand_t = clean_trailing_dangling(" ".join(w_all[:split_w]))
+                    cand_it = clean_trailing_dangling(" ".join(w_all[split_w:]))
+                    cand_it = re.sub(r"^(?:với|có|là|được|và|để)\s+", "", cand_it, flags=re.I).strip()
+                    if len(cand_t.split()) >= 2 and len(cand_it.split()) >= 3 and not is_incomplete_phrase(cand_it):
+                        list_title = cand_t[0].upper() + cand_t[1:]
+                        items = [cand_it[0].upper() + cand_it[1:]]
+
+            if not items:
+                for c in raw_clauses[:4]:
+                    clean_c = re.sub(r"^(khi|tuy nhiên|theo đó|do đó|ngoài ra|việc này|giúp|cho thấy)\s+", "", c, flags=re.I).strip()
+                    clean_c = re.sub(r"[,;:\s]+$", "", clean_c)
+                    clean_c = _sanitize_metaphor(clean_c)
+                    if not clean_c:
+                        continue
+
+                    # Strip headline prefix if clean_c starts with or contains the list_title
+                    if clean_c.lower().startswith(list_title.lower()):
+                        remainder = clean_c[len(list_title):].strip()
+                        remainder = re.sub(r"^(?:giúp|khiến|để|nhằm|cho thấy|và|là|có|trong|với|tại|ở)\s+", "", remainder, flags=re.I).strip()
+                        clean_c = remainder
+                    elif list_title.lower() in clean_c.lower():
+                        idx = clean_c.lower().find(list_title.lower())
+                        remainder = (clean_c[:idx] + " " + clean_c[idx + len(list_title):]).strip()
+                        clean_c = remainder
+
+                    if not clean_c or len(clean_c.split()) < 3:
+                        continue
+
                     clean_c = clean_c[0].upper() + clean_c[1:]
                     clean_c = clean_trailing_dangling(clean_c)
-                    if clean_c and len(clean_c) >= 10:
-                        items.append(clean_c)
-            if not items:
-                items = [clean_trailing_dangling(_sanitize_metaphor(combined_text)[:60])]
 
-            list_title = extract_clean_headline(clean_combined) or "Yếu Tố Kỹ Thuật Trọng Tâm"
-            slots = {
-                "title": list_title,
-                "pill": "CHI TIẾT",
-                "items": items,
-            }
+                    if clean_c and len(clean_c) >= 10 and not is_incomplete_phrase(clean_c):
+                        # Requirement 5: Bullet không được trùng >= 70% với headline
+                        if text_similarity(clean_c, list_title) < 0.70:
+                            items.append(clean_c)
+
+            # Requirement 5: Nếu trùng -> bỏ bullet và để headline + 1 câu bổ sung MỚI lấy từ câu kế tiếp trong narration
+            if not items:
+                supp_text = ""
+                if s_idx + 1 < len(groups):
+                    next_sent = " ".join(s.get("text", "") for s in groups[s_idx + 1]).strip()
+                    next_clean = clean_trailing_dangling(_sanitize_metaphor(next_sent))
+                    if next_clean and text_similarity(next_clean, list_title) < 0.70:
+                        supp_clauses = [sc.strip() for sc in re.split(r"[,;.]", next_clean) if len(sc.strip()) >= 12]
+                        cand_supp = supp_clauses[0] if supp_clauses else next_clean
+                        cand_supp = clean_trailing_dangling(cand_supp)
+                        if text_similarity(cand_supp, list_title) < 0.70 and not is_incomplete_phrase(cand_supp):
+                            supp_text = cand_supp
+                if supp_text:
+                    items = [supp_text]
+
+            if not items:
+                # Cảnh không còn nội dung -> chuyển sang kit_title
+                layout = "kit_title"
+                slots = {
+                    "pill": _safe_pill(topic_title),
+                    "title": list_title,
+                    "subtitle": _sanitize_metaphor(combined_text)[:120],
+                }
+            else:
+                slots = {
+                    "title": list_title,
+                    "pill": "CHI TIẾT",
+                    "items": items,
+                }
 
         elif layout == "kit_compare":
             cmp_res = _extract_genuine_compare(combined_text)
             if cmp_res:
                 l_title, l_text, r_title, r_text = cmp_res
-                cmp_title = extract_clean_headline(combined_text) or (topic_title[:28] if topic_title else "Giải Pháp Kỹ Thuật")
+                cmp_title = extract_clean_headline(combined_text) or (_safe_pill(topic_title) if topic_title else "Giải Pháp Kỹ Thuật")
                 slots = {
                     "title": cmp_title,
                     "pill": "ĐỐI CHIẾU",
@@ -467,7 +725,7 @@ def create_heuristic_slide_script(
             else:
                 layout = "kit_title"
                 slots = {
-                    "pill": topic_title[:24] if topic_title else "TIÊU ĐIỂM",
+                    "pill": _safe_pill(topic_title),
                     "title": extract_clean_headline(combined_text) or combined_text[:42],
                     "subtitle": _sanitize_metaphor(combined_text)[:120],
                 }
@@ -485,7 +743,7 @@ def create_heuristic_slide_script(
             else:
                 layout = "kit_title"
                 slots = {
-                    "pill": topic_title[:24] if topic_title else "TIÊU ĐIỂM",
+                    "pill": _safe_pill(topic_title),
                     "title": extract_clean_headline(combined_text) or combined_text[:42],
                     "subtitle": _sanitize_metaphor(combined_text)[:120],
                 }
@@ -540,6 +798,7 @@ def create_heuristic_slide_script(
             image_prompt=img_prompt,
         )
         slides.append(slide_item)
+        assigned_layouts.append(layout)
 
     return SlideScript(
         topic=topic_title or "Bản tin công nghệ",
@@ -576,6 +835,7 @@ def heuristic_slide_script_for_edit_plan(
             "text": narr,
             "start": t,
             "end": t + dur,
+            "duration": dur,
         })
         t += dur
     if total_duration <= 0.0:

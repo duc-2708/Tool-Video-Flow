@@ -10,7 +10,7 @@
 - Mọi luật validation mới phải có (a) nhóm 1/2/3, (b) đường tự sửa, (c) ca hồi quy trong grounding_cases.yaml; không thêm luật chặn mới thiếu đường tự sửa; mọi luật căn cứ phải dùng validation/grounding.py.
 - Tách event có căn cứ khỏi explain/opinion/cta; không dùng luật chất lượng để chặn ngoài nhóm đã công bố.
 - Mọi sửa lỗi phải có test hồi quy; dùng mock API, giữ fixture thật khi có, không bịa dữ liệu đã mất.
-- Chạy pytest trước khi báo xong: từ `video_ai_tool/`, dùng `.\.venv\Scripts\python.exe -m pytest -q --basetemp=.pytest_tmp -p no:cacheprovider`.
+- Chạy pytest và kiểm tra tĩnh trước khi báo xong: từ `video_ai_tool/`, dùng `.\.venv\Scripts\ruff.exe check --select F821 .` (không báo xong khi ruff F821 còn lỗi) và `.\.venv\Scripts\python.exe -m pytest -q --basetemp=.pytest_tmp -p no:cacheprovider`.
 - Báo đúng kết quả, giới hạn kiểm chứng và các mục CHƯA XÁC NHẬN; không nhận test mock là API thật thành công.
 - Không thay đổi hành vi ngoài phạm vi yêu cầu; tái sử dụng module/hàm có sẵn.
 - Không tự tạo request trả phí; không gửi lại POST/job chưa rõ remote ID để thử lỗi.

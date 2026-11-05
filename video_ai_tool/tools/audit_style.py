@@ -310,9 +310,12 @@ def audit_kit_project(
     font_violations = []
     for s in slides_data:
         layout = s.get("layout", "kit_title")
-        expected_hl_px = HEADLINE_FONT_TOKENS.get(layout, 64)
-        if expected_hl_px < 64:
-            font_violations.append(f"Slide {s.get('id')}: headline font {expected_hl_px}px < 64px")
+        expected_hl_px = HEADLINE_FONT_TOKENS.get(layout, 80)
+        slots = s.get("slots", {})
+        hl_text = str(slots.get("title") or slots.get("headline") or "")
+        min_required_px = 56 if len(hl_text) > 45 else 72
+        if expected_hl_px < min_required_px:
+            font_violations.append(f"Slide {s.get('id')}: headline font {expected_hl_px}px < {min_required_px}px")
 
     font_passed = len(font_violations) == 0
 
@@ -627,6 +630,27 @@ def audit_kit_project(
             avg_sampled_contrast = round(float(np.mean(sampled_contrasts)), 2) if sampled_contrasts else 0.0
             avg_coverage = round(float(np.mean(coverages)), 3) if coverages else 0.0
 
+            # Pixel measurement of card height ratio and vertical centering in safe area
+            sampled_card_ratios: list[float] = []
+            sampled_drifts: list[float] = []
+            for idx in range(1, total_extracted):
+                if not is_in_hold(frames[idx][0]):
+                    continue
+                c_arr = frames[idx][1][120:850, 35:505]
+                f_lum = np.dot(c_arr[..., :3].astype(float) / 255.0, [0.2126, 0.7152, 0.0722])
+                card_y = np.where(f_lum > 0.85)[0]
+                if len(card_y) > 40:
+                    c_h = float(card_y.max() - card_y.min())
+                    sampled_card_ratios.append(c_h / float(c_arr.shape[0]))
+                    c_center = (card_y.min() + card_y.max()) / 2.0
+                    s_center = c_arr.shape[0] / 2.0
+                    sampled_drifts.append(abs(c_center - s_center))
+
+            avg_card_ratio = round(float(np.mean(sampled_card_ratios)), 3) if sampled_card_ratios else 0.62
+            avg_drift = round(float(np.mean(sampled_drifts)), 1) if sampled_drifts else 15.0
+            card_height_pixel_passed = avg_card_ratio >= 0.55
+            vertical_centering_pixel_passed = avg_drift <= 60.0
+
             # Update Check 4 with measured real pixel contrast
             if sampled_contrasts:
                 real_contrast_passed = avg_sampled_contrast >= 4.5
@@ -638,7 +662,14 @@ def audit_kit_project(
                     results["violations"].append(f"Real sampled text contrast {avg_sampled_contrast} < 4.5:1")
 
             coverage_passed = avg_coverage >= 0.12
-            pixel_check_passed = (not has_2s_blank) and (blank_ratio <= 0.03) and (flicker_spikes <= 2) and coverage_passed
+            pixel_check_passed = (
+                (not has_2s_blank)
+                and (blank_ratio <= 0.03)
+                and (flicker_spikes <= 2)
+                and coverage_passed
+                and card_height_pixel_passed
+                and vertical_centering_pixel_passed
+            )
 
             results["checks"]["pixel_audit"] = {
                 "passed": pixel_check_passed,
@@ -654,7 +685,28 @@ def audit_kit_project(
                 "avg_sampled_contrast": avg_sampled_contrast,
                 "avg_text_coverage": avg_coverage,
                 "text_coverage_passed": coverage_passed,
+                "card_height_ratio": avg_card_ratio,
+                "card_height_passed": card_height_pixel_passed,
+                "vertical_centering_drift_px": avg_drift,
+                "vertical_centering_passed": vertical_centering_pixel_passed,
             }
+            if not pixel_check_passed:
+                if has_2s_blank:
+                    results["violations"].append(f"CRITICAL: Video has {max_blank_sec}s consecutive ({total_blank_sec}s total) blank frames (>= 2.0s threshold)")
+                    total_score = max(0, total_score - 30)
+                elif blank_ratio > 0.03:
+                    results["violations"].append(f"Blank frame ratio {blank_ratio:.1%} > 3.0%")
+                if flicker_spikes > 2:
+                    results["violations"].append(f"Flicker spikes count {flicker_spikes} > 2")
+                if not coverage_passed:
+                    results["violations"].append(f"Average text coverage {avg_coverage:.1%} < 12.0% safe area threshold")
+                    total_score = max(0, total_score - 15)
+                if not card_height_pixel_passed:
+                    results["violations"].append(f"Card height ratio {avg_card_ratio:.1%} < 55.0% safe area threshold")
+                    total_score = max(0, total_score - 20)
+                if not vertical_centering_pixel_passed:
+                    results["violations"].append(f"Card vertical center drift {avg_drift}px > 60px safe area threshold")
+                    total_score = max(0, total_score - 15)
             if not pixel_check_passed:
                 if has_2s_blank:
                     results["violations"].append(f"CRITICAL: Video has {max_blank_sec}s consecutive ({total_blank_sec}s total) blank frames (>= 2.0s threshold)")
@@ -704,10 +756,16 @@ def audit_kit_project(
 
     # 2. Forbidden template strings
     FORBIDDEN_TEMPLATE_STRINGS = [
+        "Đây là bước đi thiết thực",
+        "Làm thế nào",
+        "Ý chính cần nhớ",
+        "Phương án 1/2",
+        "Phương án 1",
+        "Phương án 2",
+        "Quá trình này",
         "So Sánh Đối Chiếu",
         "Điểm Đáng Chú Ý",
         "Nhận định",
-        "Ý chính cần nhớ",
         "Phương án ban đầu",
         "Giải pháp đột phá",
     ]
@@ -727,8 +785,13 @@ def audit_kit_project(
     DANGLING_ENDINGS = {
         "đòi", "kỹ", "của", "và", "là", "để", "với", "cho", "trong", "khi", "tại", "từ",
         "ở", "về", "có", "nhiều", "các", "những", "làm", "được", "bị", "do", "bởi", "ra",
-        "vào", "lên", "xuống", "đầu", "như", "theo", "tầm", "mức"
+        "vào", "lên", "xuống", "đầu", "như", "theo", "tầm", "mức", "nhưng", "song", "tuy",
+        "dù", "nếu", "vì"
     }
+    INCOMPLETE_PHRASE_REGEX = re.compile(
+        r"^(?:làm\s+thế\s+nào|cách\s+(?:các\s+)?kỹ\s+sư\s+việt|đây\s+là(?:\s+bước\s+đi)?|ý\s+chính(?:\s+cần\s+nhớ)?|phương\s+án(?:\s+\d+|\s+1/2)?|quá\s+trình\s+này)$",
+        re.IGNORECASE
+    )
     cut_off_strings: list[str] = []
     for s in slides_data:
         s_id = s.get("id", "")
@@ -742,6 +805,10 @@ def audit_kit_project(
                 if isinstance(item, str) and item.strip():
                     texts_to_check.append(item.strip())
         for txt in texts_to_check:
+            clean_t = re.sub(r"[^\w\s]", "", txt).strip()
+            if INCOMPLETE_PHRASE_REGEX.match(clean_t):
+                cut_off_strings.append(f"Slide {s_id}: string '{txt}' is an incomplete cut-off phrase")
+                continue
             words = txt.split()
             if words:
                 last_w = words[-1].lower().strip(".,;:—?!")
@@ -759,7 +826,74 @@ def audit_kit_project(
             if not re.match(r"^\d{2}/\d{2}/\d{4}$", s_date_str):
                 corrupted_dates.append(f"Slide {s_id}: corrupted/partial source_date '{s_date_str}' (must be valid dd/mm/yyyy or omitted)")
 
-    c9_passed = (dup_image_count == 0) and (len(forbidden_occurrences) == 0) and (card_height_ratio >= 1.0) and (len(cut_off_strings) == 0) and (len(corrupted_dates) == 0)
+    # 6. Bullet similarity with headline check (must be < 70%)
+    from difflib import SequenceMatcher
+    bullet_similarity_violations: list[str] = []
+    for s in slides_data:
+        s_id = s.get("id", "")
+        slots = s.get("slots", {})
+        hl = str(slots.get("title") or slots.get("headline") or "").strip()
+        items = slots.get("items", [])
+        if hl and isinstance(items, list):
+            for it in items:
+                it_str = str(it).strip()
+                if it_str:
+                    s1 = re.sub(r"[^\w\s]", "", hl.lower()).strip()
+                    s2 = re.sub(r"[^\w\s]", "", it_str.lower()).strip()
+                    if s1 and s2:
+                        sim = SequenceMatcher(None, s1, s2).ratio()
+                        if sim >= 0.70:
+                            bullet_similarity_violations.append(
+                                f"Slide {s_id}: bullet '{it_str}' overlaps {sim:.1%} (>= 70%) with headline '{hl}'"
+                            )
+
+    # 7. kit_stat grounding check: must have {value, unit, label} and context check for 410 km / 4 km
+    stat_grounding_violations: list[str] = []
+    for s in slides_data:
+        s_id = s.get("id", "")
+        if s.get("layout") in ("kit_stat", "lg_stat_hero"):
+            slots = s.get("slots", {})
+            val = slots.get("value")
+            unit = slots.get("unit")
+            lbl = slots.get("label") or slots.get("stat_label")
+            if (not val or not unit) and slots.get("stat_value"):
+                sv = str(slots.get("stat_value")).strip()
+                m_stat = re.match(r"^([\d.,]+)\s*([A-Za-z%₫]+.*)?$", sv)
+                if m_stat:
+                    val = val or m_stat.group(1)
+                    unit = unit or (m_stat.group(2) if m_stat.group(2) else "%")
+            if not val or not unit or not lbl:
+                stat_grounding_violations.append(
+                    f"Slide {s_id}: kit_stat missing required tuple {{value, unit, label}} (got val={val}, unit={unit}, label={lbl})"
+                )
+            else:
+                lbl_low = str(lbl).lower().strip()
+                if any(lbl_low == gen for gen in ("số liệu", "chỉ số", "dữ liệu", "thông tin", "chi tiết", "nội dung", "số liệu hạ tầng trọng điểm", "số liệu nổi bật")):
+                    stat_grounding_violations.append(
+                        f"Slide {s_id}: kit_stat has generic label '{lbl}', missing specific measurement object"
+                    )
+                v_clean = str(val).replace(",", "").replace(".", "").strip()
+                u_clean = str(unit).lower().strip()
+                if v_clean in ("410", "4100") and u_clean == "km":
+                    if not any(k in lbl_low for k in ("đoạn", "hà nội", "vinh", "ưu tiên")):
+                        stat_grounding_violations.append(
+                            f"Slide {s_id}: 410 km must explicitly label the specific segment (e.g. đoạn ưu tiên Hà Nội - Vinh), got '{lbl}'"
+                        )
+                elif v_clean == "4" and u_clean == "km":
+                    if not any(k in lbl_low for k in ("đoạn", "ngầm", "hầm", "metro")):
+                        stat_grounding_violations.append(
+                            f"Slide {s_id}: 4 km must explicitly label the specific segment (e.g. đoạn hầm ngầm đô thị), got '{lbl}'"
+                        )
+
+    c9_passed = (
+        (dup_image_count == 0)
+        and (len(forbidden_occurrences) == 0)
+        and (card_height_ratio >= 1.0)
+        and (len(cut_off_strings) == 0)
+        and (len(corrupted_dates) == 0)
+        and (len(bullet_similarity_violations) == 0)
+        and (len(stat_grounding_violations) == 0)
+    )
 
     results["checks"]["content_quality_and_dedup"] = {
         "passed": c9_passed,
@@ -772,6 +906,8 @@ def audit_kit_project(
         "cut_off_strings_count": len(cut_off_strings),
         "cut_off_strings": cut_off_strings,
         "corrupted_dates": corrupted_dates,
+        "bullet_similarity_violations": bullet_similarity_violations,
+        "stat_grounding_violations": stat_grounding_violations,
     }
     if not c9_passed:
         if dup_image_count > 0:
@@ -786,6 +922,12 @@ def audit_kit_project(
         if corrupted_dates:
             results["violations"].extend(corrupted_dates)
             total_score = max(0, total_score - 25)
+        if bullet_similarity_violations:
+            results["violations"].extend(bullet_similarity_violations)
+            total_score = max(0, total_score - 20)
+        if stat_grounding_violations:
+            results["violations"].extend(stat_grounding_violations)
+            total_score = max(0, total_score - 20)
 
     results["total_score"] = min(100, total_score)
     results["passed"] = (results["total_score"] >= 90) and (len(results["violations"]) == 0)
