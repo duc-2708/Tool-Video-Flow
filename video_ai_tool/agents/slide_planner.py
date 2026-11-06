@@ -61,6 +61,8 @@ QUY TẮC BẮT BUỘC (TUÂN THỦ 100%):
    - compare: mỗi bên <= 2 dòng x 14 ký tự.
 6. Trích xuất 1-2 cụm từ nhấn (emphasis): mỗi cụm <= 3 từ, PHẢI xuất hiện NGUYÊN VĂN trong câu đọc của slide đó.
 7. Với MỖI slide, viết một 'image_prompt' bằng tiếng Anh, mô tả chi tiết hình ảnh trực quan 5s sát ý nghĩa câu đọc.
+8. CẤM câu ví von/ẩn dụ làm tiêu đề hoặc chữ trên thẻ ('giống như...', 'được ví như...', 'như bác sĩ/đầu bếp/ngôi nhà/cỗ máy...'). Mỗi cảnh PHẢI chứa ít nhất 1 sự kiện kiểm chứng được.
+9. CẤM các nhãn mẫu sáo rỗng: 'Ý chính cần nhớ', 'Tác động công nghệ', 'Đây là bước đi thiết thực', 'Làm thế nào', 'Cách tiếp cận cũ/mới', 'Phương án 1/2', 'Quá trình này'. Dòng phụ chỉ hiển thị khi là mệnh đề mới (>= 6 từ, <= 70% trùng tiêu đề).
 
 ĐẦU RA CHỈ LÀ JSON HỢP LỆ VỚI CẤU TRÚC:
 {{

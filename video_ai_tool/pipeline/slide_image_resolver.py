@@ -837,9 +837,12 @@ def detect_text_slide_document(im_or_path: Path | Image.Image | str | Any) -> tu
         if bright_ratio >= 0.45 and text_like_boxes >= 60:
             is_text_heavy = True
             reasons.append(f"bright_bg={bright_ratio:.1%} & mser_boxes={text_like_boxes}")
-        elif text_like_boxes >= 160:
+        elif bright_ratio >= 0.35 and text_like_boxes >= 160:
             is_text_heavy = True
-            reasons.append(f"dense_mser_boxes={text_like_boxes}")
+            reasons.append(f"dense_mser_boxes={text_like_boxes} & bright_bg={bright_ratio:.1%}")
+        elif text_like_boxes >= 1500:
+            is_text_heavy = True
+            reasons.append(f"massive_mser_boxes={text_like_boxes}")
         elif bright_ratio >= 0.55 and h_v_edge_density >= 0.04:
             is_text_heavy = True
             reasons.append(f"bright_bg={bright_ratio:.1%} & edge_density={h_v_edge_density:.2%}")
@@ -1178,6 +1181,17 @@ def resolve_images_for_slide_script(
     assets_dir = p_dir / "assets" / "ai_images"
     assets_dir.mkdir(parents=True, exist_ok=True)
 
+    brief_data: dict[str, Any] = {}
+    brief_file = p_dir / "brief.json"
+    if brief_file.is_file():
+        try:
+            brief_data = json.loads(brief_file.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+
+    from agents.photo_finder import PhotoFinder
+    photo_finder = PhotoFinder(p_dir)
+
     if isinstance(slide_script, dict):
         slides = slide_script.get("slides", [])
     elif isinstance(slide_script, list):
@@ -1196,6 +1210,67 @@ def resolve_images_for_slide_script(
         prompt = getattr(slide, "image_prompt", "") or slots.get("image_prompt", "") or slide_narr
         synonyms_map = getattr(slide, "synonyms_map", None) or slots.get("synonyms_map", None)
 
+        scene_entities = extract_scene_entities(slide_narr, headline=headline, synonyms_map=synonyms_map)
+
+        # 1. Try finding authentic photo via PhotoFinder (Wikidata person or Wikimedia Commons landmark/machine)
+        photo_res = None
+        if allow_web_search and photo_finder.resolved_count < 4:
+            photo_res = photo_finder.find_photo_for_scene(
+                slide_id=slide_id,
+                narration=slide_narr,
+                brief=brief_data,
+                headline=headline,
+                scene_entities=scene_entities,
+            )
+
+        if photo_res:
+            p_path = Path(photo_res["image_path"])
+            im_hash = hashlib.sha256(p_path.read_bytes()).hexdigest()
+            if im_hash not in seen_image_hashes:
+                seen_image_hashes.add(im_hash)
+                slots["image_url"] = str(p_path)
+                slots["path"] = str(p_path)
+                slots["caption"] = photo_res.get("caption", "")
+                slots["credit"] = photo_res.get("caption", "")
+                slots["author"] = photo_res.get("author", "")
+                if photo_res.get("name"):
+                    slots["name"] = photo_res["name"]
+                slots["photo"] = {
+                    "path": str(p_path),
+                    "caption": photo_res.get("caption", ""),
+                    "author": photo_res.get("author", ""),
+                    "license": photo_res.get("license", ""),
+                }
+                match_reason_str = photo_res.get("reason", "Khớp ảnh thật có bản quyền mở")
+                slots["image_match_reason"] = match_reason_str
+
+                cur_layout = getattr(slide, "layout", "kit_title") if hasattr(slide, "layout") else slide.get("layout", "kit_title")
+                if cur_layout in ("kit_title", "kit_photo", "lg_note_card", "lg_source_headline"):
+                    if hasattr(slide, "layout"):
+                        slide.layout = "kit_photo"
+                    elif isinstance(slide, dict):
+                        slide["layout"] = "kit_photo"
+
+                resolved_paths.append(str(p_path))
+                image_report.append({
+                    "slide_id": slide_id,
+                    "attached": True,
+                    "source": "Wikimedia Commons / Wikidata",
+                    "image_path": str(p_path),
+                    "caption": photo_res.get("caption", ""),
+                    "license": photo_res.get("license", ""),
+                    "reason": match_reason_str,
+                    "face_count": 1 if photo_res.get("type") == "person" else 0,
+                    "text_density": 0,
+                    "entity_matched": [photo_res.get("entity", "")],
+                })
+                continue
+
+        # 2. Check conceptual scene fallback via DDGS / web search
+        narr_lower = f"{slide_narr} {headline}".lower()
+        has_named_person = any(re.search(rf"\b{re.escape(p)}\b", narr_lower) for p in FAMOUS_PERSON_NAMES)
+        is_concept_only = not has_named_person and not any(kw in narr_lower for kw in ("đường hầm", "metro", "singapore", "tbm", "ga ngầm", "cọc khoan", "tường vây"))
+
         q = _query_for_beat(idx, prompt, narration=slide_narr, headline=headline)
         target_path = assets_dir / f"beat_{idx+1:02d}_{sanitize_filename(slide_id)}.png"
         downloaded = False
@@ -1204,7 +1279,7 @@ def resolve_images_for_slide_script(
         if force_refresh:
             target_path.unlink(missing_ok=True)
 
-        if allow_web_search and q:
+        if allow_web_search and q and is_concept_only:
             downloaded = download_real_web_image(
                 q,
                 target_path,
@@ -1304,6 +1379,12 @@ def resolve_images_for_slide_script(
             target_path.unlink(missing_ok=True)
             slots.pop("image_url", None)
             slots.pop("photo", None)
+            slots.pop("caption", None)
+            if getattr(slide, "layout", "") == "kit_photo":
+                if hasattr(slide, "layout"):
+                    slide.layout = "kit_title"
+                elif isinstance(slide, dict):
+                    slide["layout"] = "kit_title"
             if "photo" in slots:
                 slots["photo"] = None
             image_report.append({

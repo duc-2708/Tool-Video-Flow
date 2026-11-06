@@ -98,6 +98,8 @@ class VisualData(StrictModel):
     delta_type: str = ""
     delta_dir: str = ""
     source_date: str = ""
+    caption: str = ""
+    credit: str = ""
     repair_notes: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)
 
 

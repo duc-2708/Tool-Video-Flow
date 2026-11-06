@@ -59,6 +59,7 @@ def test_rerender_dry_run_slide_script(tmp_path, monkeypatch):
     # Mock run_render and measured_audio_duration to avoid full Playwright/FFmpeg render in quick unit test
     monkeypatch.setattr("editor.timeline.measured_audio_duration", lambda path: 5.0)
     monkeypatch.setattr("utils.media.measured_audio_duration", lambda path: 5.0)
+    monkeypatch.setattr("pipeline.slide_image_resolver.resolve_images_for_slide_script", lambda p, s, **kw: [])
 
     def mock_run_render(plan_path, *args, **kwargs):
         dest_path = Path(plan_path).parent / "render" / "mock_video.mp4"

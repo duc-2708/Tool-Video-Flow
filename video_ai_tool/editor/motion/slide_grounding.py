@@ -20,7 +20,14 @@ from schemas.slide_script import (
     extract_clean_headline,
     clean_trailing_dangling,
 )
-from editor.motion.light_glass_slots import truncate_complete_phrase, text_similarity
+from editor.motion.light_glass_slots import (
+    truncate_complete_phrase,
+    text_similarity,
+    contains_metaphor,
+    is_valid_subsequence_of_narration,
+    FORBIDDEN_BOILERPLATE_LABELS,
+    _sanitize_metaphor,
+)
 
 
 def normalize_text(text: str) -> str:
@@ -230,6 +237,70 @@ def verify_and_ground_slides(
                         s_dict[sub_k] = clean_trailing_dangling(truncate_complete_phrase(str(s_dict[sub_k]).strip(), 40))
                 s_slots[side] = s_dict
 
+        # Grounding Rule P: Boilerplate labels removal
+        for p_key in ("pill", "badge", "chip", "kicker", "title"):
+            if p_key in s_slots and isinstance(s_slots[p_key], str) and s_slots[p_key]:
+                if s_slots[p_key].lower().strip() in FORBIDDEN_BOILERPLATE_LABELS:
+                    repair_notes.append(f"[grounding_strip_boilerplate, nhóm 2] Slide {slide.id}: loại bỏ nhãn mẫu '{s_slots[p_key]}' khỏi slot '{p_key}'.")
+                    if p_key == "title":
+                        raw_h = extract_clean_headline(slide_narration) or clean_trailing_dangling(truncate_complete_phrase(slide_narration, 88))
+                        s_slots["title"] = _sanitize_metaphor(raw_h) if contains_metaphor(raw_h) else raw_h
+                    else:
+                        s_slots[p_key] = "TIÊU ĐIỂM"
+
+        # Grounding Rule S: Subsequence verification (ratio >= 0.80)
+        # Only enforce subsequence if slide_narration does not contain metaphors (otherwise card must use substantive meaning)
+        if not contains_metaphor(slide_narration):
+            for k in ("title", "subtitle"):
+                if k in s_slots and isinstance(s_slots[k], str) and s_slots[k]:
+                    if not is_valid_subsequence_of_narration(s_slots[k], slide_narration, 0.80):
+                        if k == "title":
+                            healed_t = extract_clean_headline(slide_narration) or clean_trailing_dangling(truncate_complete_phrase(slide_narration, 88))
+                            if not contains_metaphor(healed_t):
+                                repair_notes.append(f"[grounding_heal_subsequence, nhóm 2] Slide {slide.id}: tiêu đề '{s_slots[k]}' không khớp thứ tự câu đọc (ratio < 0.80). Đã tự sửa về '{healed_t}'.")
+                                s_slots["title"] = healed_t
+                        else:
+                            s_slots["subtitle"] = ""
+
+        # Grounding Rule M: Metaphor filtering from cards (enforce strictly across all card slots)
+        for k in ("title", "subtitle", "quote", "text", "headline"):
+            if k in s_slots and isinstance(s_slots[k], str) and s_slots[k]:
+                if contains_metaphor(s_slots[k]):
+                    s_slots[k] = _sanitize_metaphor(s_slots[k])
+                    repair_notes.append(f"[grounding_strip_metaphor, nhóm 2] Slide {slide.id}: loại bỏ ẩn dụ/ví von khỏi slot '{k}'.")
+        if "items" in s_slots and isinstance(s_slots["items"], list):
+            clean_items = []
+            for x in s_slots["items"]:
+                str_x = str(x)
+                if contains_metaphor(str_x):
+                    str_x = _sanitize_metaphor(str_x)
+                if str_x and not contains_metaphor(str_x):
+                    clean_items.append(str_x)
+            s_slots["items"] = clean_items
+
+        # Grounding Rule Bullet: Bullet cannot overlap >= 70% with title/headline
+        if s_slots.get("title") and s_slots.get("items") and isinstance(s_slots["items"], list):
+            non_overlap_items = []
+            for it in s_slots["items"]:
+                str_it = str(it).strip()
+                if str_it and text_similarity(str(s_slots["title"]), str_it) < 0.70:
+                    non_overlap_items.append(str_it)
+            if non_overlap_items:
+                s_slots["items"] = non_overlap_items
+            else:
+                s_slots.pop("items", None)
+                if s_layout == "kit_list":
+                    s_layout = "kit_title"
+                    repair_notes.append(f"[grounding_dedup_bullet, nhóm 2] Slide {slide.id}: bullet trùng >= 70% với tiêu đề; bỏ bullet và chuyển sang kit_title.")
+
+        # Grounding Rule Subtitle & Text: New clause only (>= 6 words, <= 70% similarity with title)
+        for sub_k in ("subtitle", "sub", "text"):
+            if s_slots.get("title") and s_slots.get(sub_k):
+                sub_w = str(s_slots[sub_k]).split()
+                sim = text_similarity(str(s_slots["title"]), str(s_slots[sub_k]))
+                if len(sub_w) < 6 or sim >= 0.70:
+                    s_slots[sub_k] = ""
+
         s_image_prompt = getattr(slide, "image_prompt", "") or str(s_slots.get("image_prompt", ""))
         if s_image_prompt:
             s_slots["image_prompt"] = s_image_prompt
@@ -251,8 +322,8 @@ def verify_and_ground_slides(
 
     # 3. Structural Healing: enforce layout rules
     if healed_slides:
-        # First slide MUST be kit_title or lg_source_headline or lg_note_card
-        if healed_slides[0].layout not in ("kit_title", "lg_source_headline", "lg_note_card"):
+        # First slide MUST be kit_title, lg_source_headline, lg_note_card, or kit_photo (when real photo available)
+        if healed_slides[0].layout not in ("kit_title", "lg_source_headline", "lg_note_card", "kit_photo"):
             repair_notes.append(f"[layout_structure, nhóm 2] Slide đầu đổi từ '{healed_slides[0].layout}' sang 'kit_title'.")
             healed_slides[0] = healed_slides[0].model_copy(update={"layout": "kit_title"})
 
@@ -305,7 +376,6 @@ def verify_and_ground_slides(
                             clean_sub = remainder[0].upper() + remainder[1:]
                         else:
                             clean_sub = ""
-                    from editor.motion.light_glass_slots import text_similarity
                     if not clean_sub or len(clean_sub.split()) < 6 or (t_clean and text_similarity(clean_sub, t_clean) >= 0.70):
                         supp_text = ""
                         if i + 1 < len(healed_slides):
@@ -364,7 +434,6 @@ def verify_and_ground_slides(
                                         clean_sub = remainder[0].upper() + remainder[1:]
                                     else:
                                         clean_sub = ""
-                                from editor.motion.light_glass_slots import text_similarity
                                 if not clean_sub or len(clean_sub.split()) < 6 or (t_clean and text_similarity(clean_sub, t_clean) >= 0.70):
                                     supp_text = ""
                                     if i + 1 < len(healed_slides):
@@ -389,6 +458,55 @@ def verify_and_ground_slides(
                             count -= 1
                             if count <= max_allowed:
                                 break
+
+        # Diversity check: ensure at least min(4, len(healed_slides)) distinct layouts
+        distinct_layouts = set(s.layout for s in healed_slides)
+        target_distinct = min(4, len(healed_slides))
+        if len(distinct_layouts) < target_distinct and len(healed_slides) >= 4:
+            counts = Counter(s.layout for s in healed_slides)
+            for i in range(1, len(healed_slides) - 1):
+                cur_l = healed_slides[i].layout
+                if counts[cur_l] > 1:
+                    prev_l = healed_slides[i - 1].layout
+                    next_l = healed_slides[i + 1].layout
+                    alt = "kit_quote" if str(cur_l).startswith("kit_") else "lg_note_card"
+                    if alt not in (prev_l, next_l, cur_l):
+                        c_slots = dict(healed_slides[i].slots or {})
+                        q_text = clean_trailing_dangling(truncate_complete_phrase(healed_slides[i].narration, 88))
+                        c_slots["quote"] = q_text
+                        c_slots["title"] = q_text
+                        c_slots["author"] = c_slots.get("author") or "Chuyên gia phân tích"
+                        c_slots["pill"] = "NHẬN ĐỊNH"
+                        healed_slides[i] = healed_slides[i].model_copy(update={"layout": alt, "slots": c_slots})
+                        counts[cur_l] -= 1
+                        distinct_layouts.add(alt)
+                        repair_notes.append(f"[layout_diversity, nhóm 2] Slide {healed_slides[i].id}: đổi sang '{alt}' để đạt >= {target_distinct} layout khác biệt.")
+                        if len(distinct_layouts) >= target_distinct:
+                            break
+
+    # Final completeness and non-empty slot guarantee for all layouts
+    for s_idx, sl in enumerate(healed_slides):
+        s_slots = dict(sl.slots or {})
+        if sl.layout in ("kit_title", "lg_note_card", "lg_source_headline"):
+            if not s_slots.get("title") and not s_slots.get("headline"):
+                src_txt = s_slots.get("quote") or s_slots.get("subtitle") or sl.narration
+                s_slots["title"] = extract_clean_headline(src_txt) or clean_trailing_dangling(truncate_complete_phrase(src_txt, 88))
+            if s_slots.get("title") and s_slots.get("subtitle"):
+                if text_similarity(str(s_slots["title"]), str(s_slots["subtitle"])) >= 0.70:
+                    s_slots["subtitle"] = ""
+            healed_slides[s_idx] = sl.model_copy(update={"slots": s_slots})
+        elif sl.layout in ("kit_list", "lg_shot_features"):
+            if not s_slots.get("title"):
+                s_slots["title"] = extract_clean_headline(sl.narration) or "Thông tin nổi bật"
+            if not s_slots.get("items"):
+                s_slots["items"] = [clean_trailing_dangling(truncate_complete_phrase(sl.narration, 88))]
+            healed_slides[s_idx] = sl.model_copy(update={"slots": s_slots})
+        elif sl.layout == "kit_quote":
+            if not s_slots.get("quote"):
+                s_slots["quote"] = clean_trailing_dangling(truncate_complete_phrase(sl.narration, 88))
+            if not s_slots.get("author"):
+                s_slots["author"] = "Chuyên gia phân tích"
+            healed_slides[s_idx] = sl.model_copy(update={"slots": s_slots})
 
     return SlideScript(
         topic=slide_script.topic,

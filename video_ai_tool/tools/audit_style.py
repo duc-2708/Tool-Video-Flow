@@ -60,6 +60,26 @@ FORBIDDEN_INTERNAL_TOKENS = [
     "[object",
 ]
 
+FORBIDDEN_CARD_TOKENS = [
+    "ý chính cần nhớ",
+    "tác động công nghệ",
+    "đây là bước đi thiết thực",
+    "cách tiếp cận cũ",
+    "cách tiếp cận mới",
+    "phương án 1/2",
+    "giống như",
+    "giống bản nhạc",
+    "được ví như",
+    "ví như",
+    "như một",
+    "như bác sĩ",
+    "như đầu bếp",
+    "như ngôi nhà",
+    "như chiếc gương",
+    "như cỗ máy",
+    "tựa như",
+]
+
 STANDARD_CARD_UI_TOKENS = {
     "tin", "nóng", "tiêu", "điểm", "công", "nghệ", "bản", "tức", "nguồn", "ngày",
     "theo", "dõi", "đăng", "ký", "ngay", "kênh", "để", "không", "bỏ", "lỡ",
@@ -114,6 +134,44 @@ def extract_video_frames(video_path: Path, fps: float = 4.0) -> list[tuple[float
                 arr = np.array(im.convert("RGB"))
                 frames.append((t_sec, arr))
         return frames
+
+
+def generate_contact_sheet(video_path: Path | str, output_path: Path | str, fps: float = 2.0) -> Path | None:
+    """Extract frames at 1 frame / 0.5s (fps=2.0) and tile them into a contact sheet grid."""
+    from PIL import ImageDraw
+    v_path = Path(video_path).resolve()
+    out_path = Path(output_path).resolve()
+    if not v_path.is_file():
+        return None
+    frames = extract_video_frames(v_path, fps=fps)
+    if not frames:
+        return None
+    n_contact = len(frames)
+    cols = 10
+    rows = math.ceil(n_contact / cols)
+    thumb_w, thumb_h = 180, 320
+    header_h = 36
+    cell_w = thumb_w + 10
+    cell_h = thumb_h + header_h + 10
+
+    sheet_w = cols * cell_w + 20
+    sheet_h = rows * cell_h + 30
+    sheet_img = Image.new("RGB", (sheet_w, sheet_h), color=(15, 23, 42))
+    sheet_draw = ImageDraw.Draw(sheet_img)
+
+    for idx, (t_sec, arr) in enumerate(frames):
+        col = idx % cols
+        row = idx // cols
+        x = 20 + col * cell_w
+        y = 15 + row * cell_h
+
+        im_thumb = Image.fromarray(arr).resize((thumb_w, thumb_h), Image.Resampling.LANCZOS)
+        sheet_img.paste(im_thumb, (x, y + header_h))
+        sheet_draw.text((x + 6, y + 8), f"t={t_sec:.1f}s", fill=(241, 245, 249))
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    sheet_img.save(out_path, format="JPEG", quality=90)
+    return out_path
 
 
 def audit_kit_project(
@@ -354,20 +412,26 @@ def audit_kit_project(
     for s in slides_data:
         slots = s.get("slots", {})
         text_vals: list[str] = []
-        def _collect_strings(val: Any) -> None:
+        def _collect_strings(val: Any, key: str = "") -> None:
+            if key in ("image_prompt", "image_url", "path", "image_match_reason", "synonyms_map", "image"):
+                return
             if isinstance(val, str):
                 text_vals.append(val)
             elif isinstance(val, dict):
                 for k, v in val.items():
                     if isinstance(k, str) and any(ft in k for ft in ["network_graph", "slot_counter", "pipeline_node"]):
                         text_vals.append(k)
-                    _collect_strings(v)
+                    _collect_strings(v, key=str(k))
             elif isinstance(val, list):
                 for v in val:
-                    _collect_strings(v)
+                    _collect_strings(v, key=key)
         _collect_strings(slots)
+        card_text = " ".join(text_vals).lower()
         narration_str = str(s.get("narration", ""))
-        combined_text = (" ".join(text_vals) + " " + narration_str).lower()
+        combined_text = (card_text + " " + narration_str).lower()
+        for tok in FORBIDDEN_CARD_TOKENS:
+            if tok in card_text:
+                leaked.append(f"Slide {s.get('id')}: leaked forbidden card token '{tok}' on card/slots")
         for tok in FORBIDDEN_INTERNAL_TOKENS:
             if tok == "phần ":
                 if re.search(r"(?<!thị\s)\bphần\s+(?:\d+|(?:I|II|III|IV|V|VI|VII|VIII|IX|X)\b|một|hai|ba|bốn|năm|sáu|bảy|tám|chín|mười|đầu|cuối|mở\s*đầu)\b", combined_text, re.IGNORECASE):
@@ -453,7 +517,7 @@ def audit_kit_project(
                         )
 
         for k, v in slots.items():
-            if k in ("image_prompt", "image_url", "image_uri", "image_path", "path", "icon_uri", "source_date", "date"):
+            if k in ("image_prompt", "image_url", "image_uri", "image_path", "path", "icon_uri", "source_date", "date", "caption", "credit", "author", "license", "image_match_reason"):
                 continue
             if isinstance(v, str):
                 for sn in extract_numbers_from_text(v):
@@ -582,9 +646,14 @@ def audit_kit_project(
                 evaluated_frames += 1
                 prev_arr = frames[idx - 1][1]
                 cur_arr = frames[idx][1]
-                # Crop safe content card area [70, 1010] x [240, 1700] scaled to 540x960:
-                crop_prev = prev_arr[120:850, 35:505]
-                crop_cur = cur_arr[120:850, 35:505]
+                # Crop safe content card area [70, 1010] x [240, 1700] adapting to video resolution:
+                H_c, W_c = cur_arr.shape[:2]
+                if H_c >= 1400:
+                    crop_prev = prev_arr[240:1700, 70:1010]
+                    crop_cur = cur_arr[240:1700, 70:1010]
+                else:
+                    crop_prev = prev_arr[120:850, 35:505]
+                    crop_cur = cur_arr[120:850, 35:505]
 
                 # Check stddev for blank/empty frame outside transition (< 15.0)
                 std_dev = float(np.std(crop_cur))
@@ -640,7 +709,11 @@ def audit_kit_project(
             for idx in range(1, total_extracted):
                 if not is_in_hold(frames[idx][0]):
                     continue
-                c_arr = frames[idx][1][120:850, 35:505]
+                H_f, W_f = frames[idx][1].shape[:2]
+                if H_f >= 1400:
+                    c_arr = frames[idx][1][240:1700, 70:1010]
+                else:
+                    c_arr = frames[idx][1][120:850, 35:505]
                 f_lum = np.dot(c_arr[..., :3].astype(float) / 255.0, [0.2126, 0.7152, 0.0722])
                 card_y = np.where(f_lum > 0.85)[0]
                 if len(card_y) > 40:
@@ -1005,8 +1078,14 @@ def audit_kit_project(
     results["total_score"] = min(100, total_score)
     results["passed"] = (results["total_score"] >= 90) and (len(results["violations"]) == 0)
     if p_dir.is_dir():
+        if video_path and Path(video_path).is_file():
+            cs_path = p_dir / "contact_sheet.jpg"
+            generate_contact_sheet(video_path, cs_path, fps=2.0)
+            results["contact_sheet"] = str(cs_path)
         try:
-            (p_dir / "audit_style.json").write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+            audit_json = json.dumps(results, ensure_ascii=False, indent=2)
+            (p_dir / "audit_style.json").write_text(audit_json, encoding="utf-8")
+            (p_dir / "audit_result.json").write_text(audit_json, encoding="utf-8")
         except Exception:
             pass
     return results
