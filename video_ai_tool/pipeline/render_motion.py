@@ -113,7 +113,7 @@ def _inline_image_paths_to_data_uri(obj: Any) -> Any:
     if isinstance(obj, dict):
         res = {}
         for k, v in obj.items():
-            if k in ("image_url", "image_uri", "image_path", "image", "clip_url", "chart_image", "ui_image", "source_image") and isinstance(v, str) and v and not v.startswith("data:"):
+            if k in ("path", "image_url", "image_uri", "image_path", "image", "clip_url", "chart_image", "ui_image", "source_image") and isinstance(v, str) and v and not v.startswith("data:"):
                 p = Path(v)
                 if not p.is_file():
                     cand = Path.cwd() / v
@@ -151,6 +151,58 @@ def scene_payload(scene,size,caption_style,options=None):
             }
         } for s in scene.shots]}
     payload.update(options or {})
+
+    # Map slide_script slides into scene-local timeline for Motion Kit v2
+    raw_slides = payload.get("slides")
+    if not raw_slides:
+        ss_obj = (options.get("slide_script") if options else None)
+        if not ss_obj:
+            try:
+                p_cand = getattr(scene, "project", None)
+                if not p_cand and hasattr(scene, "audio") and scene.audio:
+                    if scene.audio.parent.name == "slide_audio":
+                        p_cand = scene.audio.parents[2]
+                    else:
+                        p_cand = scene.audio.parents[1]
+                if p_cand:
+                    ss_file = Path(p_cand) / "slide_script.json"
+                    if ss_file.is_file():
+                        from schemas.slide_script import SlideScript
+                        ss_obj = SlideScript.model_validate_json(ss_file.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        if ss_obj and getattr(ss_obj, "slides", None):
+            raw_slides = [s.model_dump(mode="json") if hasattr(s, "model_dump") else dict(s) for s in ss_obj.slides]
+
+    if raw_slides and isinstance(raw_slides, list):
+        sc_start = float(scene.start)
+        sc_dur = float(scene.duration)
+        sc_end = sc_start + sc_dur
+
+        matching = []
+        for s in raw_slides:
+            s_dict = dict(s) if isinstance(s, dict) else (s.model_dump(mode="json") if hasattr(s, "model_dump") else {})
+            s_start = float(s_dict.get("t_start", 0.0))
+            s_end = float(s_dict.get("t_end", 0.0)) or (s_start + float(s_dict.get("duration", 5.0)))
+            if s_start < sc_end - 0.05 and s_end > sc_start + 0.05:
+                loc_start = max(0.0, round(s_start - sc_start, 3))
+                loc_end = min(sc_dur, round(s_end - sc_start, 3))
+                loc_dur = max(0.1, round(loc_end - loc_start, 3))
+                s_copy = dict(s_dict)
+                s_copy["t_start"] = loc_start
+                s_copy["t_end"] = loc_end
+                s_copy["duration"] = loc_dur
+                matching.append(s_copy)
+
+        if matching:
+            matching[0]["t_start"] = 0.0
+            for mi in range(len(matching) - 1):
+                matching[mi + 1]["t_start"] = matching[mi]["t_end"]
+            matching[-1]["t_end"] = max(matching[-1]["t_end"], sc_dur)
+            matching[-1]["duration"] = round(matching[-1]["t_end"] - matching[-1]["t_start"], 3)
+            payload["slides"] = matching
+        else:
+            payload.pop("slides", None)
     # Intercept MOTION_FORCE_RECIPES override for recipe path verification
     import os
     force_env = os.environ.get("MOTION_FORCE_RECIPES", "").strip()

@@ -23,6 +23,62 @@ from schemas.slide_script import (
 )
 from validation.grounding import extract_numbers
 from pipeline.slide_image_resolver import STOPWORDS_VI_EXTENDED
+from schemas.fact_number import (
+    FactNumber,
+    extract_facts_from_brief,
+    select_chart_for_facts,
+)
+
+METAPHOR_REGEX = re.compile(
+    r"\b(giống như|giống bản nhạc|giống bản|giống một|giống chiếc|được ví như|ví như|như một|như bác sĩ|như đầu bếp|như ngôi nhà|như chiếc gương|như cỗ máy|như việc|ví von|ẩn dụ|tựa như)\b",
+    re.IGNORECASE,
+)
+
+FORBIDDEN_BOILERPLATE_LABELS = {
+    "ý chính cần nhớ",
+    "tác động công nghệ",
+    "đây là bước đi thiết thực",
+    "làm thế nào",
+    "cách kỹ sư việt",
+    "cách tiếp cận cũ/mới",
+    "cách tiếp cận mới",
+    "cách tiếp cận cũ",
+    "phương án 1/2",
+    "phương án 1",
+    "phương án 2",
+    "quá trình này",
+    "đất phức tạp",
+}
+
+
+def contains_metaphor(text: str) -> bool:
+    """Check if text contains simile or metaphor expressions."""
+    if not text:
+        return False
+    return bool(METAPHOR_REGEX.search(text))
+
+
+def is_valid_subsequence_of_narration(displayed_text: str, narration: str, min_ratio: float = 0.80) -> bool:
+    """Check if displayed_text words appear in narration in relative order with match ratio >= 0.80."""
+    if not displayed_text or not narration:
+        return True
+    disp_words = re.findall(r"\w+", displayed_text.lower())
+    narr_words = re.findall(r"\w+", narration.lower())
+    if not disp_words:
+        return True
+    n_idx = 0
+    matched = 0
+    for w in disp_words:
+        while n_idx < len(narr_words):
+            if narr_words[n_idx] == w:
+                matched += 1
+                n_idx += 1
+                break
+            n_idx += 1
+        if n_idx >= len(narr_words):
+            break
+    ratio = matched / len(disp_words)
+    return ratio >= min_ratio
 
 
 def text_similarity(t1: str, t2: str) -> float:
@@ -157,6 +213,8 @@ def extract_grounded_stat(text: str, brief: Any = None) -> tuple[str, str, str] 
 
 def _sanitize_metaphor(text: str) -> str:
     """Extract substantive technical meaning instead of metaphorical comparisons."""
+    if not text:
+        return ""
     low = text.lower()
     if "bác sĩ nội soi" in low or "mổ nội soi" in low:
         return "Kiểm soát địa chất công trình ngầm qua các tầng đất phức tạp"
@@ -168,11 +226,21 @@ def _sanitize_metaphor(text: str) -> str:
         return "Xử lý kỹ thuật chính xác qua nhiều tầng địa chất"
     if "tự lái xe" in low:
         return "Làm chủ công nghệ và tự chủ xử lý kỹ thuật ngầm"
+    if "được ví như" in low:
+        parts = re.split(r"\s+được ví như\s+", text, flags=re.I)
+        if len(parts) > 1 and len(parts[0].strip().split()) >= 3:
+            return parts[0].strip()
     if "giống như" in low:
         parts = re.split(r"\s+giống như\s+", text, flags=re.I)
         if len(parts) > 1 and len(parts[0].strip().split()) >= 3:
             return parts[0].strip()
-    return text
+    if "như một" in low:
+        parts = re.split(r"\s+như một\s+", text, flags=re.I)
+        if len(parts) > 1 and len(parts[0].strip().split()) >= 3:
+            return parts[0].strip()
+    cleaned = METAPHOR_REGEX.sub("", text).strip()
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned if len(cleaned.split()) >= 3 else text
 
 
 def _extract_genuine_compare(text: str) -> tuple[str, str, str, str] | None:
@@ -548,6 +616,10 @@ def create_heuristic_slide_script(
     topic_title = ""
     source_url = None
     source_domain = None
+    all_brief_facts: list[FactNumber] = []
+    chart_candidate: dict[str, Any] | None = None
+    chart_placed = False
+
     if brief:
         topic_title = getattr(brief, "topic", "") or (brief.get("topic") if isinstance(brief, dict) else "")
         b_facts = getattr(brief, "facts", None) or (brief.get("facts") if isinstance(brief, dict) else [])
@@ -555,6 +627,8 @@ def create_heuristic_slide_script(
             first_fact = b_facts[0]
             source_url = str(getattr(first_fact, "source_url", "") or (first_fact.get("source_url") if isinstance(first_fact, dict) else ""))
             source_domain = _clean_domain(source_url)
+        all_brief_facts = extract_facts_from_brief(brief)
+        chart_candidate = select_chart_for_facts(all_brief_facts)
 
     slides: list[SlideItem] = []
     prev_layout: str | None = None
@@ -611,7 +685,16 @@ def create_heuristic_slide_script(
             has_features = any(kw in combined_text.lower() for kw in ("tính năng", "bao gồm", "gồm có", "bước", "lý do", "quy trình"))
 
             candidate = "kit_title"
-            if has_num and prev_layout != "kit_stat":
+            if (
+                chart_candidate
+                and not chart_placed
+                and chart_candidate.get("layout") in ("kit_chart_bar", "kit_chart_line", "kit_chart_donut")
+                and (s_idx == max(1, len(groups) // 2) or has_num)
+                and prev_layout not in ("kit_chart_bar", "kit_chart_line", "kit_chart_donut")
+            ):
+                candidate = str(chart_candidate["layout"])
+                chart_placed = True
+            elif has_num and prev_layout != "kit_stat":
                 candidate = "kit_stat"
             elif has_compare and prev_layout != "kit_compare":
                 candidate = "kit_compare"
@@ -687,7 +770,18 @@ def create_heuristic_slide_script(
                 if sub_final:
                     slots["subtitle"] = sub_final
 
-        if layout == "kit_list":
+        elif layout in ("kit_chart_bar", "kit_chart_line", "kit_chart_donut"):
+            chart_t = chart_candidate.get("title", "Biểu Đồ Số Liệu") if chart_candidate else "Biểu Đồ Số Liệu"
+            chart_u = chart_candidate.get("unit", "") if chart_candidate else ""
+            chart_s = chart_candidate.get("series", []) if chart_candidate else []
+            slots = {
+                "title": chart_t,
+                "unit": chart_u,
+                "series": chart_s,
+                "pill": "SỐ LIỆU ĐỐI CHIẾU",
+            }
+
+        elif layout == "kit_list":
             clean_combined = _sanitize_metaphor(combined_text)
             list_title = extract_clean_headline(clean_combined) or (_safe_pill(topic_title) if topic_title else "Nội Dung Trọng Tâm")
             if any(forb in list_title.lower() for forb in ("bước đi", "làm thế nào", "cách kỹ sư", "ý chính", "phương án", "quá trình", "đất phức tạp", "ý chính cần nhớ")):
@@ -759,15 +853,7 @@ def create_heuristic_slide_script(
                 if supp_text:
                     items = [supp_text]
 
-            # If still no items but the sentence itself is a complete clause >= 6 words,
-            # use a concise heading and keep the full clause as the bullet item
-            if not items and len(clean_combined.split()) >= 6:
-                clean_full = clean_trailing_dangling(_sanitize_metaphor(clean_combined))
-                if len(clean_full.split()) >= 6 and not is_incomplete_phrase(clean_full):
-                    list_title = "Thông tin nổi bật"
-                    items = [clean_full]
-
-            # Requirement 4: Nếu không đủ bullet >= 6 từ -> BỎ bullet, chuyển sang layout kit_title!
+            # Requirement 4 & 5: Nếu không đủ bullet >= 6 từ hoặc trùng -> BỎ bullet, chuyển sang layout kit_title!
             if not items:
                 layout = "kit_title"
                 clean_title = extract_clean_headline(clean_combined) or clean_trailing_dangling(clean_combined)
@@ -891,9 +977,58 @@ def create_heuristic_slide_script(
                     valid_dates.sort(key=lambda x: x[0], reverse=True)
                     latest_d, d, m, y = valid_dates[0]
                     slots["source_date"] = f"{d:02d}/{m:02d}/{y:04d}"
+                    from datetime import date
+                    if (date.today() - latest_d).days > 365:
+                        slots["pill"] = "NGUỒN CŨ"
+                        slots["note"] = f"Nguồn cũ ({d:02d}/{m:02d}/{y:04d})"
 
-        # Synthesize image prompt in English
-        img_prompt = _generate_vivid_image_prompt(combined_text, topic=topic_title, layout=layout, idx=s_idx)
+        # Enforce anti-boilerplate, metaphor filtering, and subsequence check on slots
+        if "title" in slots and slots["title"]:
+            t_str = str(slots["title"]).strip()
+            if t_str.lower() in FORBIDDEN_BOILERPLATE_LABELS or contains_metaphor(t_str):
+                clean_t = _sanitize_metaphor(combined_text)
+                clean_h = extract_clean_headline(clean_trailing_dangling(clean_t))
+                if contains_metaphor(clean_h):
+                    clean_h = _sanitize_metaphor(clean_h)
+                slots["title"] = clean_h or "Kiểm Soát Địa Chất Ngầm"
+            if contains_metaphor(str(slots["title"])):
+                slots["title"] = _sanitize_metaphor(str(slots["title"]))
+
+        if "subtitle" in slots and slots["subtitle"]:
+            sub_str = str(slots["subtitle"]).strip()
+            if (
+                sub_str.lower() in FORBIDDEN_BOILERPLATE_LABELS
+                or contains_metaphor(sub_str)
+                or len(sub_str.split()) < 6
+                or text_similarity(str(slots.get("title", "")), sub_str) >= 0.70
+            ):
+                slots.pop("subtitle", None)
+
+        if "items" in slots and isinstance(slots["items"], list):
+            clean_it = []
+            for it in slots["items"]:
+                it_s = str(it).strip()
+                if contains_metaphor(it_s):
+                    it_s = _sanitize_metaphor(it_s)
+                if (
+                    len(it_s.split()) >= 6
+                    and it_s.lower() not in FORBIDDEN_BOILERPLATE_LABELS
+                    and not contains_metaphor(it_s)
+                    and text_similarity(str(slots.get("title", "")), it_s) < 0.70
+                ):
+                    clean_it.append(it_s)
+            if clean_it:
+                slots["items"] = clean_it
+            else:
+                layout = "kit_title"
+                slots = {
+                    "pill": _safe_pill(topic_title),
+                    "title": extract_clean_headline(_sanitize_metaphor(combined_text)) or clean_trailing_dangling(_sanitize_metaphor(combined_text)),
+                }
+
+        # Synthesize image prompt in English (strictly sanitized of metaphors)
+        clean_text_for_prompt = _sanitize_metaphor(combined_text)
+        img_prompt = _generate_vivid_image_prompt(clean_text_for_prompt, topic=topic_title, layout=layout, idx=s_idx)
 
         emphasis = _find_emphasis_phrases(combined_text, slide_words, slide_start=s_start)
 
@@ -913,11 +1048,17 @@ def create_heuristic_slide_script(
         slides.append(slide_item)
         assigned_layouts.append(layout)
 
+    repair_notes = ["Sinh bằng heuristic fallback Motion Kit v2."]
+    if chart_placed and chart_candidate:
+        repair_notes.append(f"[chart_grounding, nhóm 2] Đã gắn biểu đồ '{chart_candidate.get('layout')}' từ số liệu kiểm chứng trong brief.")
+    elif not all_brief_facts:
+        repair_notes.append("[chart_grounding, nhóm 2] Bài viết không có số liệu (no_numbers), không vẽ biểu đồ giả.")
+
     return SlideScript(
         topic=topic_title or "Bản tin công nghệ",
         total_duration=round(total_duration, 3),
         slides=slides,
-        repair_notes=["Sinh bằng heuristic fallback Motion Kit v2."],
+        repair_notes=repair_notes,
     )
 
 

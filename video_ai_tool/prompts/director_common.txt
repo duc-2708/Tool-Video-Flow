@@ -109,3 +109,9 @@ MẪU ĐỒ HỌA: mỗi shot có thể chứa visual {template, data}. template
 data chỉ lấy từ fact_ids trong brief: text, highlight[], value, number_text, label, unit, source, source_url, date, title, items[], bars[{label,value,unit,fact_id}], fact_ids[]. Không thêm số, đơn vị, nguồn, ngày, phát biểu hoặc quan hệ so sánh ngoài fact.
 Chỉ dùng source_card một lần gần đầu và một lần cuối; không mở mọi cảnh bằng "Theo ..." khi thẻ nguồn đã ghi đúng nguồn. Code chọn mẫu khi thiếu visual. Không tạo dữ liệu mẫu minh họa như fact thật.
 Nhịp hình: đổi mẫu hoặc hiện phần tử mới mỗi 2.5–3.5 giây, không giữ khung tĩnh quá 4 giây. Stock là nền mờ/tối, chữ và đồ họa là nội dung chính.
+
+YÊU CẦU SỰ KIỆN VÀ CẤM ẨN DỤ TRÊN THẺ:
+Mỗi cảnh PHẢI chứa ít nhất 1 sự kiện hoặc số liệu kiểm chứng được từ brief.
+TUYỆT ĐỐI CẤM câu ví von/ẩn dụ làm tiêu đề hoặc chữ trên thẻ: cấm "giống như...", "được ví như...", "như bác sĩ...", "như đầu bếp...", "như ngôi nhà...", "như chiếc gương...", "như cỗ máy...", "ví von", "ẩn dụ" xuất hiện trên tiêu đề hay nội dung thẻ.
+TUYỆT ĐỐI CẤM các nhãn mẫu sáo rỗng: "Ý chính cần nhớ", "Tác động công nghệ", "Đây là bước đi thiết thực", "Làm thế nào", "Cách tiếp cận cũ/mới", "Phương án 1/2", "Quá trình này". Dòng phụ chỉ hiển thị khi là mệnh đề mới (>= 6 từ, <= 70% trùng tiêu đề).
+Nguồn cũ > 12 tháng: không dùng làm nguồn chính cho tin công nghệ (ưu tiên nguồn <= 90 ngày; nếu bắt buộc phải dùng nguồn cũ thì gắn nhãn cảnh báo nguồn cũ kèm ngày tháng chính xác).

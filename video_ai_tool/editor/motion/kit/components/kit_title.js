@@ -22,6 +22,9 @@
       // Idea 1: Large Headline / Title
       // Requirement 5: headline >= 88px (tối đa 3 dòng via kit-title-lg); cảnh không ảnh thì headline phóng lớn >= 104px (kit-title-hero)
       var headline = slots.headline || slots.title || '';
+      if (!headline) {
+        headline = slots.quote || slots.subtitle || slots.sub || slots.narration || '';
+      }
       if (headline) {
         var title = document.createElement('div');
         title.className = hasImage ? 'kit-title-lg' : 'kit-title-hero';
@@ -42,7 +45,7 @@
       if (sub && sub !== headline) {
         var normH = String(headline).toLowerCase().replace(/[^\w\s]/g, '').trim();
         var normS = String(sub).toLowerCase().replace(/[^\w\s]/g, '').trim();
-        if (normH !== normS && !normH.includes(normS) && !normS.includes(normH)) {
+        if (!normH || (normH !== normS && !normH.includes(normS) && !normS.includes(normH))) {
           var subEl = document.createElement('div');
           subEl.className = 'kit-subtitle';
           subEl.textContent = String(sub);

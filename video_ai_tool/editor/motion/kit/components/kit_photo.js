@@ -4,7 +4,10 @@
     render: function(container, slots, tau, duration) {
       if (!slots) return "unavailable";
 
-      var photoSrc = slots.path || slots.image_url || slots.image || slots.image_path || slots.image_uri;
+      var photoSrc = slots.image_url || slots.image_uri || slots.image_path || slots.image || slots.path;
+      if (!photoSrc && slots.photo && typeof slots.photo === 'object') {
+        photoSrc = slots.photo.image_url || slots.photo.path || slots.photo.url;
+      }
       if (!photoSrc || typeof photoSrc !== 'string' || !photoSrc.trim()) {
         // Return unavailable status so caller can fallback to kit_title
         return "unavailable";
@@ -29,10 +32,10 @@
         var overlay = document.createElement('div');
         overlay.className = 'kit-photo-overlay';
 
-        if (slots.name || slots.caption) {
+        if (slots.name) {
           var nameEl = document.createElement('div');
           nameEl.className = 'kit-photo-name';
-          nameEl.textContent = String(slots.name || slots.caption);
+          nameEl.textContent = String(slots.name);
           overlay.appendChild(nameEl);
         }
 
@@ -43,10 +46,11 @@
           overlay.appendChild(roleEl);
         }
 
-        if (slots.credit) {
+        var creditText = slots.credit || slots.caption;
+        if (creditText && creditText !== slots.name) {
           var creditEl = document.createElement('div');
           creditEl.className = 'kit-photo-credit';
-          creditEl.textContent = String(slots.credit);
+          creditEl.textContent = String(creditText);
           overlay.appendChild(creditEl);
         }
 

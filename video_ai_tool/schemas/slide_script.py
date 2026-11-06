@@ -120,7 +120,7 @@ VIETNAMESE_COMPOUND_WORDS = {
     "nội địa", "nguồn lực", "máy móc", "chủ thể", "quyết định", "con người", "nhúng tay",
     "nhân lên", "bước đầu", "khâu đầu", "cuối cùng", "nghiên cứu", "phức tạp",
     "hoàn toàn", "hoàn chỉnh", "hoàn thành", "hoàn mỹ", "mở rộng", "dẫn đầu", "từng bước",
-    "dựa trên", "nguồn dữ", "dữ liệu", "khác biệt"
+    "dựa trên", "nguồn dữ", "dữ liệu", "khác biệt", "dường như"
 }
 
 COMPOUND_WORD_FIRST_SYLLABLES = {
@@ -135,7 +135,7 @@ COMPOUND_WORD_FIRST_SYLLABLES = {
     "phương", "triển", "đảm", "bảo", "an", "chính", "hiệu", "linh", "nhiệm",
     "quy", "nguyên", "tổng", "cơ", "nền", "tuyến", "cao", "tốc", "tường", "cọc",
     "áp", "cân", "sỏi", "cát", "bùn", "nước", "xuyên", "chuỗi", "ranh", "nội",
-    "máy", "quyết", "con", "nhúng", "phức", "hoàn", "mở", "dẫn"
+    "máy", "quyết", "con", "nhúng", "phức", "hoàn", "mở", "dẫn", "dường"
 }
 
 COMPOUND_WORD_SECOND_SYLLABLES = {
@@ -152,7 +152,7 @@ COMPOUND_WORD_SECOND_SYLLABLES = {
     "hoạt", "lập", "vụ", "tắc", "nhân", "học", "ngoặt", "điểm", "lai", "tại",
     "khứ", "thể", "sở", "tảng", "nghệ", "bị", "trường", "thị", "hầm", "ngầm",
     "sắt", "độ", "vây", "khoan", "bằng", "yếu", "cuội", "chảy", "lỏng", "suốt",
-    "việc", "giới", "địa", "lực", "móc", "thể", "định", "người", "tay", "lên", "cùng", "tạp", "chỉnh"
+    "việc", "giới", "địa", "lực", "móc", "thể", "định", "người", "tay", "lên", "cùng", "tạp", "chỉnh", "như"
 }
 
 
@@ -175,7 +175,7 @@ DANGLING_END_WORDS = {
     "tầm", "mức", "chủ", "hỏi", "nhận", "đặt", "tạo", "mang", "coi", "tính", "biết",
     "thấy", "khiến", "nhằm", "gồm", "thuộc", "cần", "phía", "vận", "độ", "bậc", "đằng",
     "nhưng", "song", "tuy", "dù", "nếu", "vì",
-    "thể", "nhiều", "ít", "đang", "sẽ", "đã", "tự", "bộ", "điều", "này", "kia", "đó", "nguồn", "lõi", "tiêu"
+    "thể", "nhiều", "ít", "đang", "sẽ", "đã", "tự", "bộ", "điều", "này", "kia", "đó", "nguồn", "lõi", "tiêu", "dường"
 }
 
 
@@ -291,6 +291,7 @@ INCOMPLETE_HEADLINE_PATTERNS = [
     r"^quá\s+trình\s+này$",
     r"^phương\s+án(?:\s+\d+|\s+1/2)?$",
     r"^ý\s+chính(?:\s+cần\s+nhớ)?$",
+    r"^điều\s+này(?:\s+dường(?:\s+như)?)?$",
 ]
 
 

@@ -146,7 +146,7 @@ def rerender_project_with_theme(
 
         # Synthesize & resolve imagery with fail-closed CV filters (face detection + text/slide rejection)
         from pipeline.slide_image_resolver import resolve_images_for_slide_script
-        resolved_imgs = resolve_images_for_slide_script(p_dir, slide_script_obj, force_refresh=True)
+        resolved_imgs = resolve_images_for_slide_script(p_dir, slide_script_obj, force_refresh=force_plan)
         logger.info("Resolved %d visual graphic assets for slides", len(resolved_imgs))
 
         # Save slide_script.json
@@ -192,7 +192,7 @@ if __name__ == "__main__":
     parser.add_argument("--theme", default="light_glass", help="Motion theme (default: light_glass)")
     parser.add_argument("--slide-script", action="store_true", default=True, help="Enable SlideScript flow")
     parser.add_argument("--confirm-cost", action="store_true", default=False, help="Explicit confirmation for remote LLM API calls")
-    parser.add_argument("--force-plan", action="store_true", default=True, help="Force regenerate SlideScript")
+    parser.add_argument("--force-plan", action=argparse.BooleanOptionalAction, default=False, help="Force regenerate SlideScript")
     parser.add_argument("--scale", type=float, default=1.0, choices=[0.25, 0.5, 1.0], help="Render scale")
     parser.add_argument("--fps", type=int, default=30, choices=[24, 30], help="Render FPS")
     parser.add_argument("--no-audit", action="store_true", help="Disable post-render audit")
