@@ -546,6 +546,45 @@ STOPWORDS_VI = {
     "thực_hiện", "tiến_hành", "áp_dụng", "sử_dụng", "đưa_ra", "đạt_được", "bước", "điểm",
 }
 
+GENERIC_TECHNICAL_STOPWORDS_EN = {
+    "system", "systems", "standard", "standards", "failure", "failures", "project", "projects",
+    "technology", "technologies", "engineer", "engineers", "engineering", "experience", "experiences",
+    "process", "processes", "method", "methods", "management", "development", "solution", "solutions",
+    "issue", "issues", "problem", "problems", "challenge", "challenges", "result", "results",
+    "report", "reports", "study", "studies", "analysis", "case", "cases", "data", "application",
+    "work", "job", "field", "area", "phase", "step", "model", "concept", "plan", "operation",
+    "activity", "level", "factor", "feature", "requirement", "practice", "overview", "lesson",
+    "role", "background", "article", "news", "information", "detail", "summary", "construction",
+    "implementation", "execution", "technique", "techniques", "structure", "structures",
+    "modern", "new", "old", "key", "important", "future", "world", "national", "global",
+    "high", "low", "great", "main", "major", "different", "general", "specific",
+    "reality", "contractor", "adjustment", "accuracy", "precise", "layer", "layers", "complex",
+    "comparison", "value", "unit", "demand", "require", "condition", "status", "stage"
+}
+
+GENERIC_TECHNICAL_STOPWORDS_VI = {
+    "hệ thống", "tiêu chuẩn", "sự cố", "dự án", "công nghệ", "kỹ sư", "kinh nghiệm", "quá trình",
+    "phương pháp", "quản lý", "phát triển", "giải pháp", "vấn đề", "thách thức", "kết quả",
+    "báo cáo", "nghiên cứu", "phân tích", "trường hợp", "dữ liệu", "ứng dụng", "công việc",
+    "lĩnh vực", "giai đoạn", "bước", "mô hình", "khái niệm", "kế hoạch", "vận hành", "hoạt động",
+    "mức độ", "yếu tố", "tính năng", "yêu cầu", "thực tiễn", "thực tế", "tổng quan", "bài học", "năng lực",
+    "vai trò", "thông tin", "chi tiết", "tóm tắt", "bài viết", "tin tức", "thi công", "xây dựng",
+    "kỹ thuật", "kết cấu", "bước tiến", "thực hiện", "hiện đại", "mới", "cũ", "quan trọng",
+    "tương lai", "thế giới", "quốc gia", "toàn cầu", "lớn", "nhỏ", "khác", "chung", "cụ thể",
+    "bước đi", "ý chính", "phương án", "điểm nhìn", "tiêu điểm", "chi tiết", "nhà thầu", "điều chỉnh",
+    "chính xác", "đan xen", "đòi hỏi", "nhiều", "tầng", "tầng đất", "nền đất", "phức tạp",
+    "đối chiếu", "so sánh", "chỉ số", "giá trị", "đơn vị", "nội dung", "khả năng", "thời gian"
+}
+
+# Documents, schematics, textbook pages, patents, medical diagrams blacklist
+DOCUMENT_SCHEMATIC_BLACKLIST = {
+    "diagram", "patent", "anatomy", "illustration", "medical", "schematic", "page",
+    "document", "pdf", "sketch", "paper", "scan", "textbook", "drawing", "graph",
+    "chart", "infographic", "manuscript", "x-ray", "mri", "ct-scan", "ultrasound",
+    "histology", "pathology", "surgical", "clinical", "eye", "retina", "skull",
+    "brain scan", "organ", "cardiology", "neurology", "biology", "specimen"
+}
+
 STOPWORDS_EN = {
     "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with", "by",
     "from", "up", "about", "into", "over", "after", "is", "are", "was", "were", "be", "been",
@@ -554,7 +593,12 @@ STOPWORDS_EN = {
     "she", "her", "how", "what", "which", "who", "whom", "where", "when", "why", "all", "any",
     "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only",
     "own", "same", "so", "than", "too", "very", "can", "will", "just", "should", "now"
-}
+} | GENERIC_TECHNICAL_STOPWORDS_EN
+
+STOPWORDS_VI_EXTENDED = set(STOPWORDS_VI)
+for phrase in GENERIC_TECHNICAL_STOPWORDS_VI:
+    for w in phrase.split():
+        STOPWORDS_VI_EXTENDED.add(w)
 
 PERSON_TAGS = {
     "person", "people", "man", "woman", "men", "women", "human", "humans",
@@ -586,12 +630,16 @@ GENUINE_TECH_ENTITIES = {
 
 DEFAULT_DOMAIN_SYNONYMS: dict[str, list[str]] = {
     "đường ống": ["pipeline", "pipe", "pipes", "plumbing", "water pipe", "drainage"],
-    "đường ống ngầm": ["underground pipeline", "underground pipe", "pipeline", "subsurface pipe"],
+    "đường ống ngầm": ["underground pipeline", "underground pipe", "subsurface pipe"],
     "hầm": ["tunnel", "underground tunnel", "metro tunnel"],
     "đào hầm": ["tunnel excavation", "tunnel boring", "tbm"],
-    "tbm": ["tunnel boring machine", "tbm", "cutterhead"],
+    "tbm": ["tunnel boring machine", "tbm", "cutterhead", "slurry tbm", "earth pressure balance"],
     "địa chất": ["geology", "geotechnical", "soil strata", "strata"],
+    "địa kỹ thuật": ["geotechnical engineering", "geotechnical", "soil mechanics"],
     "sụt lún": ["settlement", "subsidence", "ground displacement"],
+    "singapore": ["singapore metro", "singapore", "nicoll highway"],
+    "tường vây": ["diaphragm wall", "slurry wall", "retaining wall"],
+    "cọc khoan nhồi": ["bored pile", "drilled shaft", "foundation pile"],
     "đường sắt": ["railway", "railroad", "train", "high-speed rail"],
     "bắc nam": ["north south", "vietnam rail"],
     "phẫu thuật": ["surgery", "surgical", "operation", "surgeon"],
@@ -611,7 +659,198 @@ DEFAULT_DOMAIN_SYNONYMS: dict[str, list[str]] = {
     "ai": ["artificial intelligence", "ai model", "neural network"],
     "robot": ["robot", "robotics", "robotic arm", "automation"],
     "năng suất": ["productivity", "output", "efficiency", "financial"],
+    "tài chính": ["finance", "financial", "treasury", "banking"],
+    "lãi suất": ["interest rate", "central bank", "federal reserve"],
+    "lạm phát": ["inflation", "consumer price", "macroeconomics"],
+    "chứng khoán": ["stock market", "trading", "equity", "wall street"],
 }
+
+
+def is_document_or_schematic_image(im_or_path: Path | Image.Image | bytes) -> tuple[bool, str]:
+    """Detect document / schematic / book / patent / medical diagram images via local pixel measurement (no API).
+    
+    Rules:
+    1. White/bright background ratio >= 60% (R,G,B all >= 225 or Luminance >= 225)
+    2. High edge density >= 3.5% (printed text lines, technical blueprint schematics, line graphs)
+    """
+    try:
+        from PIL import ImageFilter
+        import numpy as np
+
+        if isinstance(im_or_path, (str, Path)):
+            p = Path(im_or_path)
+            if not p.is_file() or p.stat().st_size == 0:
+                return False, "file_missing"
+            im = Image.open(str(p)).convert("RGB")
+        elif isinstance(im_or_path, bytes):
+            import io
+            im = Image.open(io.BytesIO(im_or_path)).convert("RGB")
+        elif isinstance(im_or_path, Image.Image):
+            im = im_or_path.convert("RGB")
+        else:
+            return False, "invalid_image_type"
+
+        arr = np.array(im)
+        # Check white / near-white background pixels (R, G, B all >= 225)
+        bright_mask = (arr[..., 0] >= 225) & (arr[..., 1] >= 225) & (arr[..., 2] >= 225)
+        bright_ratio = float(np.mean(bright_mask))
+
+        if bright_ratio >= 0.60:
+            # Measure edge density on grayscale image
+            gray = im.convert("L")
+            edges = gray.filter(ImageFilter.FIND_EDGES)
+            arr_edges = np.array(edges)
+            edge_density = float(np.mean(arr_edges >= 35))
+            if edge_density >= 0.035:
+                return True, f"Tài liệu/sơ đồ/trang sách (nền sáng {bright_ratio:.1%}, mật độ cạnh {edge_density:.2%})"
+        return False, "ok"
+    except Exception as e:
+        return False, f"error: {e}"
+
+
+_YUNET_DETECTOR = None
+
+
+def _get_face_detector():
+    """Lazily load OpenCV FaceDetectorYN using local YuNet ONNX model (no API)."""
+    global _YUNET_DETECTOR
+    if _YUNET_DETECTOR is not None:
+        return _YUNET_DETECTOR
+    try:
+        import cv2
+        for cand in [
+            Path(__file__).resolve().parent.parent / "assets" / "models" / "face_detection_yunet_2023mar.onnx",
+            Path("assets/models/face_detection_yunet_2023mar.onnx").resolve(),
+            Path("video_ai_tool/assets/models/face_detection_yunet_2023mar.onnx").resolve(),
+        ]:
+            if cand.is_file() and cand.stat().st_size > 10000:
+                _YUNET_DETECTOR = cv2.FaceDetectorYN.create(str(cand), "", (320, 320), score_threshold=0.6)
+                break
+    except Exception:
+        _YUNET_DETECTOR = None
+    return _YUNET_DETECTOR
+
+
+def detect_faces(im_or_path: Path | Image.Image | str | Any) -> tuple[int, list]:
+    """Detect human faces locally using YuNet DNN (no API).
+    Returns (face_count, faces_list).
+    """
+    try:
+        import cv2
+        import numpy as np
+
+        detector = _get_face_detector()
+        if detector is None:
+            return 0, []
+
+        if isinstance(im_or_path, (str, Path)):
+            p = Path(im_or_path)
+            if not p.is_file():
+                return 0, []
+            img = cv2.imread(str(p))
+        elif isinstance(im_or_path, np.ndarray):
+            img = im_or_path
+        elif isinstance(im_or_path, Image.Image):
+            arr = np.array(im_or_path.convert("RGB"))
+            img = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+        else:
+            return 0, []
+
+        if img is None or img.size == 0:
+            return 0, []
+
+        h, w = img.shape[:2]
+        scale = 640.0 / max(w, h)
+        new_w, new_h = max(16, int(w * scale)), max(16, int(h * scale))
+        resized = cv2.resize(img, (new_w, new_h))
+        detector.setInputSize((new_w, new_h))
+        _, faces = detector.detect(resized)
+        if faces is not None and len(faces) > 0:
+            return len(faces), list(faces)
+        return 0, []
+    except Exception:
+        return 0, []
+
+
+def detect_text_slide_document(im_or_path: Path | Image.Image | str | Any) -> tuple[bool, int, str]:
+    """Detect whether an image is a slide, presentation, document, table, paper page, or schematic.
+    Uses local OpenCV MSER, brightness, and horizontal/vertical edge density (no API).
+    Returns (is_text_heavy, text_boxes_count, reason_str).
+    """
+    try:
+        import cv2
+        import numpy as np
+
+        if isinstance(im_or_path, (str, Path)):
+            p = Path(im_or_path)
+            if not p.is_file():
+                return False, 0, "file_missing"
+            img = cv2.imread(str(p))
+        elif isinstance(im_or_path, np.ndarray):
+            img = im_or_path
+        elif isinstance(im_or_path, Image.Image):
+            arr = np.array(im_or_path.convert("RGB"))
+            img = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+        else:
+            return False, 0, "invalid_type"
+
+        if img is None or img.size == 0:
+            return False, 0, "cannot_read"
+
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # 1. Background brightness ratio: fraction of bright/light grey pixels (>= 185)
+        bright_mask = gray >= 185
+        bright_ratio = float(np.mean(bright_mask))
+
+        # 2. Text-sized connected components / MSER & contours
+        mser = cv2.MSER_create()
+        regions, _ = mser.detectRegions(gray)
+        text_like_boxes = 0
+        for p_region in regions:
+            _, _, bw, bh = cv2.boundingRect(p_region)
+            if 8 <= bh <= 80 and 4 <= bw <= 120 and 0.15 <= bw / float(bh) <= 4.0:
+                text_like_boxes += 1
+
+        thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
+        contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contour_boxes = 0
+        for cnt in contours:
+            _, _, cw, ch = cv2.boundingRect(cnt)
+            if 6 <= ch <= 100 and 4 <= cw <= 150 and 0.1 <= cw / float(ch) <= 5.0:
+                contour_boxes += 1
+        text_like_boxes = max(text_like_boxes, contour_boxes)
+
+        # 3. Horizontal and vertical edge density (Sobel)
+        sobel_x = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
+        sobel_y = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
+        h_v_edge_density = float(np.mean((np.abs(sobel_x) > 35) | (np.abs(sobel_y) > 35)))
+
+        # 4. Morphological gradient for horizontal text lines
+        kernel_h = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 1))
+        grad = cv2.morphologyEx(gray, cv2.MORPH_GRADIENT, kernel_h)
+        text_line_density = float(np.mean(grad > 40))
+
+        reasons = []
+        is_text_heavy = False
+
+        if bright_ratio >= 0.45 and text_like_boxes >= 60:
+            is_text_heavy = True
+            reasons.append(f"bright_bg={bright_ratio:.1%} & mser_boxes={text_like_boxes}")
+        elif text_like_boxes >= 160:
+            is_text_heavy = True
+            reasons.append(f"dense_mser_boxes={text_like_boxes}")
+        elif bright_ratio >= 0.55 and h_v_edge_density >= 0.04:
+            is_text_heavy = True
+            reasons.append(f"bright_bg={bright_ratio:.1%} & edge_density={h_v_edge_density:.2%}")
+        elif text_line_density >= 0.08 and bright_ratio >= 0.40:
+            is_text_heavy = True
+            reasons.append(f"text_lines={text_line_density:.2%} & bright_bg={bright_ratio:.1%}")
+
+        reason_str = "; ".join(reasons) if is_text_heavy else "natural_photo"
+        return is_text_heavy, text_like_boxes, reason_str
+    except Exception as e:
+        return False, 0, f"error: {e}"
 
 
 def extract_scene_entities(slide_text: str, headline: str = "", synonyms_map: dict[str, list[str]] | None = None) -> list[str]:
@@ -622,77 +861,103 @@ def extract_scene_entities(slide_text: str, headline: str = "", synonyms_map: di
     
     entities: list[str] = []
     
-    # 1. Multi-word phrases (2-grams, 3-grams) with at least 1 non-stopword
+    # 1. Multi-word phrases (2-grams, 3-grams) where not all tokens are generic stopwords
     for n in (3, 2):
         for i in range(len(tokens) - n + 1):
             gram_tokens = tokens[i:i + n]
-            if any(t not in STOPWORDS_VI and t not in STOPWORDS_EN for t in gram_tokens):
-                phrase = " ".join(gram_tokens)
+            phrase = " ".join(gram_tokens)
+            # Skip if whole phrase is in generic technical stoplist
+            if phrase in GENERIC_TECHNICAL_STOPWORDS_VI or phrase in GENERIC_TECHNICAL_STOPWORDS_EN:
+                continue
+            # Ensure at least 1 token is a distinctive non-stopword
+            if any(t not in STOPWORDS_VI_EXTENDED and t not in STOPWORDS_EN for t in gram_tokens):
                 if len(phrase) >= 4 and phrase not in entities:
                     entities.append(phrase)
                     
-    # 2. Single substantive words (len >= 3)
+    # 2. Single substantive words (len >= 4, not in extended stoplist)
     for t in tokens:
-        if t not in STOPWORDS_VI and t not in STOPWORDS_EN and len(t) >= 3:
+        if t not in STOPWORDS_VI_EXTENDED and t not in STOPWORDS_EN and len(t) >= 4:
             if t not in entities:
                 entities.append(t)
 
-    # 3. Add synonyms
+    # 3. Add synonyms using strict word-boundary matching on combined text
     domain_map = dict(DEFAULT_DOMAIN_SYNONYMS)
     if synonyms_map:
         for k, v in synonyms_map.items():
             domain_map.setdefault(k.lower(), []).extend(v)
 
     expanded: list[str] = list(entities)
-    for ent in entities:
-        for k_term, syn_list in domain_map.items():
-            if k_term in ent or ent in k_term:
-                for syn in syn_list:
-                    syn_low = syn.lower()
-                    if syn_low not in expanded:
-                        expanded.append(syn_low)
+    for k_term, syn_list in domain_map.items():
+        # Match only whole word/phrase boundaries in combined text
+        if re.search(rf"\b{re.escape(k_term)}\b", combined, re.IGNORECASE):
+            for syn in syn_list:
+                syn_low = syn.lower()
+                if (
+                    syn_low not in expanded
+                    and syn_low not in GENERIC_TECHNICAL_STOPWORDS_EN
+                    and syn_low not in GENERIC_TECHNICAL_STOPWORDS_VI
+                ):
+                    expanded.append(syn_low)
 
     expanded.sort(key=lambda s: len(s), reverse=True)
     return expanded
 
 
-def check_image_relevance(
+def explain_image_relevance(
     slide_text: str,
     image_metadata: dict[str, Any] | str | None = None,
     prompt: str = "",
     synonyms_map: dict[str, list[str]] | None = None,
     headline: str = "",
-) -> bool:
-    """Verify that actual image metadata matches >= 1 entity of the scene (FAIL-CLOSED).
+) -> tuple[bool, dict[str, Any]]:
+    """Explain and verify whether image metadata matches scene substantive entities (FAIL-CLOSED).
     
     Rules:
-    1. Fail-closed: returns False if image_metadata is missing, empty, or ungrounded.
-    2. Prohibit real people unless that person's exact name appears verbatim in slide narration.
-    3. Prohibit stock generic tech (chips, robots, laptops, keyboards) unless scene entity is genuinely AI/chip/robot.
-    4. Must match >= 1 substantive scene entity or planner synonym.
+    1a. Only distinctive substantive entities (proper nouns, engineering terms: Singapore, TBM, tunnel, metro, etc.).
+        Generic words (system, standard, failure, project, technology, engineer...) are in stoplist and do NOT count as matches.
+    1b. Must match >= 2 distinctive entities/synonyms across metadata, OR >= 1 distinctive entity inside title or caption.
+    1c. Reject documents / schematics / book pages / patents / medical diagrams:
+        - Metadata blacklist: diagram, patent, anatomy, illustration, medical, schematic, page, document, pdf, etc.
+    1d. Return exact match reason (entities, fields) for reporting.
+    2. Prohibit real people unless name appears verbatim in slide narration.
+    3. Prohibit stock generic tech unless scene is genuinely AI/chip/robot.
     """
     if image_metadata is None:
-        return False
+        return False, {"reason": "Metadata ảnh bị thiếu hoặc rỗng (fail-closed)"}
 
     meta_parts: list[str] = []
+    title_caption_parts: list[str] = []
+    field_map: dict[str, str] = {}
+
     if isinstance(image_metadata, dict):
-        for k in ("title", "alt", "tags", "caption", "description", "url", "source"):
+        for k in ("title", "caption"):
+            v = image_metadata.get(k)
+            if v:
+                title_caption_parts.append(str(v))
+        for k in ("title", "alt", "tags", "caption", "description", "url", "source", "image"):
             val = image_metadata.get(k)
             if isinstance(val, list):
-                meta_parts.extend(str(v) for v in val if v)
+                s_val = " ".join(str(v) for v in val if v)
+                meta_parts.append(s_val)
+                field_map[k] = s_val
             elif val:
-                meta_parts.append(str(val))
+                s_val = str(val)
+                meta_parts.append(s_val)
+                field_map[k] = s_val
     elif isinstance(image_metadata, str):
         meta_parts.append(image_metadata)
+        title_caption_parts.append(image_metadata)
+        field_map["text"] = image_metadata
     else:
-        return False
+        return False, {"reason": "Kiểu dữ liệu metadata không hợp lệ"}
 
     if prompt:
         meta_parts.append(prompt)
 
     meta_text = " ".join(meta_parts).strip().lower()
+    title_caption_text = " ".join(title_caption_parts).strip().lower()
     if not meta_text:
-        return False
+        return False, {"reason": "Nội dung metadata rỗng"}
 
     narr_low = slide_text.lower()
     head_low = headline.lower()
@@ -702,7 +967,7 @@ def check_image_relevance(
     for p_name in FAMOUS_PERSON_NAMES:
         if re.search(rf"\b{re.escape(p_name)}\b", meta_text):
             if not re.search(rf"\b{re.escape(p_name)}\b", narr_low):
-                return False
+                return False, {"reason": f"Chứa tên người nổi tiếng '{p_name}' không có trong lời đọc cảnh"}
 
     has_person_tag = any(re.search(rf"\b{re.escape(pt)}\b", meta_text) for pt in PERSON_TAGS)
     if has_person_tag:
@@ -711,26 +976,80 @@ def check_image_relevance(
             for n in ("ông", "bà", "tiến sĩ", "ts", "chuyên gia", "bác sĩ", "kỹ sư", "tác giả", "giám đốc")
         ) or any(re.search(rf"\b{re.escape(p)}\b", narr_low) for p in FAMOUS_PERSON_NAMES)
         if not has_named_speaker:
-            return False
+            return False, {"reason": "Chứa tag người thật nhưng lời đọc cảnh không nhắc đến nhân vật cụ thể"}
 
     # RULE 3: Cấm ảnh stock chung chung trừ khi chủ đề cảnh thật sự là AI/chip/robot
     scene_has_tech = any(re.search(rf"\b{re.escape(k)}\b", scene_full) for k in GENUINE_TECH_ENTITIES)
     has_generic_stock = any(re.search(rf"\b{re.escape(st)}\b", meta_text) for st in STOCK_GENERIC_TECH_TAGS)
     if has_generic_stock and not scene_has_tech:
-        return False
+        return False, {"reason": "Chứa ảnh stock công nghệ chung (chip, robot, laptop) trong khi cảnh không phải chủ đề AI/chip/robot"}
 
-    # RULE 1: Metadata ảnh thật phải chứa >= 1 thực thể chính của cảnh hoặc từ đồng nghĩa
+    # RULE 1c: Cấm ảnh dạng tài liệu/sơ đồ/trang sách/bằng sáng chế/ảnh y khoa
+    for b_term in DOCUMENT_SCHEMATIC_BLACKLIST:
+        if re.search(rf"\b{re.escape(b_term)}\b", meta_text):
+            if b_term in ("medical", "surgical", "clinical"):
+                is_medical_scene = any(k in scene_full for k in ("y tế", "bác sĩ", "phẫu thuật", "nội soi", "bệnh viện", "y khoa", "medical", "surgery"))
+                if not is_medical_scene:
+                    return False, {"reason": f"Chứa từ khóa y tế/y khoa bị cấm cho cảnh phi y tế: '{b_term}'"}
+            else:
+                if not re.search(rf"\b{re.escape(b_term)}\b", scene_full):
+                    return False, {"reason": f"Chứa từ khóa tài liệu/sơ đồ/y khoa bị cấm: '{b_term}'"}
+
+    # RULE 1a & 1b: Khớp thực thể đặc trưng của cảnh
     entities = extract_scene_entities(slide_text, headline, synonyms_map=synonyms_map)
     if not entities:
-        return False
+        return False, {"reason": "Không bóc tách được thực thể đặc trưng nào từ lời đọc cảnh"}
 
-    matched = False
+    matched_in_title_caption: list[str] = []
+    matched_all: list[str] = []
+    matched_fields: list[str] = []
+
     for ent in entities:
-        if re.search(rf"\b{re.escape(ent)}\b", meta_text):
-            matched = True
-            break
+        ent_re = rf"\b{re.escape(ent)}\b"
+        if re.search(ent_re, title_caption_text):
+            if ent not in matched_in_title_caption:
+                matched_in_title_caption.append(ent)
+        if re.search(ent_re, meta_text):
+            if ent not in matched_all:
+                matched_all.append(ent)
+            for f_name, f_val in field_map.items():
+                if re.search(ent_re, f_val.lower()) and f_name not in matched_fields:
+                    matched_fields.append(f_name)
 
-    return matched
+    # Condition 1b: Phải khớp >= 2 thực thể/synonym đặc trưng, HOẶC >= 1 thực thể nằm trong title/caption của ảnh
+    has_valid_match = (len(matched_in_title_caption) >= 1) or (len(matched_all) >= 2)
+    if not has_valid_match:
+        return False, {
+            "reason": f"Chưa đạt ngưỡng khớp: khớp {len(matched_in_title_caption)} ở title/caption, {len(matched_all)} tổng cộng (yêu cầu >= 1 ở title/caption hoặc >= 2 ở toàn bộ metadata)",
+            "matched_entities": matched_all,
+            "matched_fields": matched_fields,
+            "matched_in_title_caption": matched_in_title_caption,
+        }
+
+    return True, {
+        "reason": f"Khớp thực thể '{', '.join(matched_all)}' ở trường {', '.join(matched_fields)}",
+        "matched_entities": matched_all,
+        "matched_fields": matched_fields,
+        "matched_in_title_caption": matched_in_title_caption,
+    }
+
+
+def check_image_relevance(
+    slide_text: str,
+    image_metadata: dict[str, Any] | str | None = None,
+    prompt: str = "",
+    synonyms_map: dict[str, list[str]] | None = None,
+    headline: str = "",
+) -> bool:
+    """Verify that actual image metadata matches scene substantive entities (FAIL-CLOSED)."""
+    is_rel, _ = explain_image_relevance(
+        slide_text=slide_text,
+        image_metadata=image_metadata,
+        prompt=prompt,
+        synonyms_map=synonyms_map,
+        headline=headline,
+    )
+    return is_rel
 
 
 def _query_for_beat(idx: int, prompt: str, narration: str = "", headline: str = "") -> str:
@@ -765,6 +1084,7 @@ def download_real_web_image(
     headline: str = "",
     synonyms_map: dict[str, list[str]] | None = None,
     timeout: float = 5.0,
+    out_match_info: dict[str, Any] | None = None,
 ) -> bool:
     """Download an authentic high-resolution web photo with verified relevant metadata, center-crop to 1080x1080."""
     if not query:
@@ -778,13 +1098,16 @@ def download_real_web_image(
         results = list(ddgs.images(query, max_results=8))
         for r in results:
             if slide_text or headline:
-                if not check_image_relevance(
+                is_rel, match_info = explain_image_relevance(
                     slide_text=slide_text,
                     image_metadata=r,
                     synonyms_map=synonyms_map,
                     headline=headline,
-                ):
+                )
+                if not is_rel:
                     continue
+                if out_match_info is not None:
+                    out_match_info.update(match_info)
 
             url = r.get("image")
             if not url or not url.startswith("http"):
@@ -800,6 +1123,24 @@ def download_real_web_image(
                     w, h = im.size
                     if w < 250 or h < 250:
                         continue
+
+                    # RULE 1c: Loại bỏ ảnh tài liệu/sơ đồ/trang sách/y khoa bằng đo pixel cục bộ
+                    is_doc, doc_reason = is_document_or_schematic_image(im)
+                    if is_doc:
+                        continue
+
+                    # RULE 1: Cổng phát hiện khuôn mặt cục bộ - loại nếu có >= 1 mặt mà không có tên trong lời đọc
+                    narr_lower = f"{slide_text} {headline}".lower()
+                    has_named_person = any(re.search(rf"\b{re.escape(p)}\b", narr_lower) for p in FAMOUS_PERSON_NAMES)
+                    face_count, _ = detect_faces(im)
+                    if face_count >= 1 and not has_named_person:
+                        continue
+
+                    # RULE 1: Cổng phát hiện chữ/slide/bảng/tài liệu cục bộ
+                    is_text_heavy, mser_count, cv_reason = detect_text_slide_document(im)
+                    if is_text_heavy:
+                        continue
+
                     # Center crop to 1:1 square
                     min_dim = min(w, h)
                     left = (w - min_dim) // 2
@@ -828,14 +1169,24 @@ def resolve_images_for_slide_script(
     1. Relevance check (FAIL-CLOSED): real image metadata must match >= 1 slide entity.
     2. Zero duplicates: no image (hash) can appear > 1 time in video.
     3. Missing metadata or failed relevance -> NO image attached, falls back to typographic layout.
+    4. Document/schematic/textbook/medical images rejected via local pixel measurement.
+    5. Local CV face detection (YuNet) rejects faces without person name in narration.
+    6. Local CV text/slide detection (MSER + brightness) rejects slide/table/document images.
+    7. Match reason recorded for reporting.
     """
     p_dir = Path(project_dir).resolve()
     assets_dir = p_dir / "assets" / "ai_images"
     assets_dir.mkdir(parents=True, exist_ok=True)
 
-    slides = getattr(slide_script, "slides", []) if not isinstance(slide_script, list) else slide_script
+    if isinstance(slide_script, dict):
+        slides = slide_script.get("slides", [])
+    elif isinstance(slide_script, list):
+        slides = slide_script
+    else:
+        slides = getattr(slide_script, "slides", [])
     resolved_paths: list[str] = []
     seen_image_hashes: set[str] = set()
+    image_report: list[dict[str, Any]] = []
 
     for idx, slide in enumerate(slides):
         slots = getattr(slide, "slots", {}) if hasattr(slide, "slots") else slide.get("slots", {})
@@ -848,6 +1199,11 @@ def resolve_images_for_slide_script(
         q = _query_for_beat(idx, prompt, narration=slide_narr, headline=headline)
         target_path = assets_dir / f"beat_{idx+1:02d}_{sanitize_filename(slide_id)}.png"
         downloaded = False
+        match_info: dict[str, Any] = {}
+
+        if force_refresh:
+            target_path.unlink(missing_ok=True)
+
         if allow_web_search and q:
             downloaded = download_real_web_image(
                 q,
@@ -855,27 +1211,117 @@ def resolve_images_for_slide_script(
                 slide_text=slide_narr,
                 headline=headline,
                 synonyms_map=synonyms_map,
+                out_match_info=match_info,
             )
 
         # FAIL-CLOSED: If not downloaded or no image with verified metadata -> DO NOT ATTACH IMAGE
         if downloaded and target_path.is_file() and target_path.stat().st_size > 0:
+            narr_lower = f"{slide_narr} {headline}".lower()
+            has_named_person = any(re.search(rf"\b{re.escape(p)}\b", narr_lower) for p in FAMOUS_PERSON_NAMES)
+            face_cnt, _ = detect_faces(target_path)
+            if face_cnt >= 1 and not has_named_person:
+                target_path.unlink(missing_ok=True)
+                slots.pop("image_url", None)
+                slots.pop("photo", None)
+                image_report.append({
+                    "slide_id": slide_id,
+                    "attached": False,
+                    "source": q,
+                    "reason": f"Bị loại vì phát hiện {face_cnt} khuôn mặt người thật mà không có tên trong lời đọc",
+                    "face_count": face_cnt,
+                    "text_density": 0,
+                    "entity_matched": match_info.get("matched_entities", []),
+                })
+                continue
+
+            is_slide_doc, mser_cnt, slide_doc_reason = detect_text_slide_document(target_path)
+            if is_slide_doc:
+                target_path.unlink(missing_ok=True)
+                slots.pop("image_url", None)
+                slots.pop("photo", None)
+                image_report.append({
+                    "slide_id": slide_id,
+                    "attached": False,
+                    "source": q,
+                    "reason": f"Bị loại vì là ảnh slide/bảng/tài liệu ({slide_doc_reason})",
+                    "face_count": face_cnt,
+                    "text_density": mser_cnt,
+                    "entity_matched": match_info.get("matched_entities", []),
+                })
+                continue
+
+            is_doc, doc_reason = is_document_or_schematic_image(target_path)
+            if is_doc:
+                target_path.unlink(missing_ok=True)
+                slots.pop("image_url", None)
+                slots.pop("photo", None)
+                image_report.append({
+                    "slide_id": slide_id,
+                    "attached": False,
+                    "source": q,
+                    "reason": f"Bị loại vì {doc_reason}",
+                    "face_count": face_cnt,
+                    "text_density": mser_cnt,
+                    "entity_matched": match_info.get("matched_entities", []),
+                })
+                continue
+
             im_hash = hashlib.sha256(target_path.read_bytes()).hexdigest()
             if im_hash in seen_image_hashes:
                 # Duplicate image hash! Remove and fall back to large text layout
                 target_path.unlink(missing_ok=True)
                 slots.pop("image_url", None)
                 slots.pop("photo", None)
+                image_report.append({
+                    "slide_id": slide_id,
+                    "attached": False,
+                    "source": q,
+                    "reason": "Trùng mã băm ảnh (duplicate hash) với cảnh trước đó",
+                    "face_count": face_cnt,
+                    "text_density": mser_cnt,
+                    "entity_matched": match_info.get("matched_entities", []),
+                })
             else:
                 seen_image_hashes.add(im_hash)
                 slots["image_url"] = str(target_path)
+                match_reason_str = match_info.get("reason", "Khớp thực thể đặc trưng cảnh")
+                slots["image_match_reason"] = match_reason_str
                 if hasattr(slide, "image_prompt"):
                     slide.image_prompt = prompt
                 resolved_paths.append(str(target_path))
+                image_report.append({
+                    "slide_id": slide_id,
+                    "attached": True,
+                    "source": q,
+                    "image_path": str(target_path),
+                    "reason": match_reason_str,
+                    "face_count": face_cnt,
+                    "text_density": mser_cnt,
+                    "entity_matched": match_info.get("matched_entities", []),
+                    "matched_fields": match_info.get("matched_fields", []),
+                })
         else:
             target_path.unlink(missing_ok=True)
             slots.pop("image_url", None)
             slots.pop("photo", None)
             if "photo" in slots:
                 slots["photo"] = None
+            image_report.append({
+                "slide_id": slide_id,
+                "attached": False,
+                "source": q,
+                "reason": "Không tìm thấy ảnh thỏa mãn điều kiện khớp thực thể (dùng layout chữ lớn)",
+                "face_count": 0,
+                "text_density": 0,
+                "entity_matched": [],
+            })
+
+    try:
+        (p_dir / "image_relevance_report.json").write_text(
+            json.dumps(image_report, ensure_ascii=False, indent=2),
+            encoding="utf-8"
+        )
+    except Exception:
+        pass
 
     return resolved_paths

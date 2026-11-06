@@ -263,3 +263,162 @@ def test_kit_stat_grounding_and_context():
     res_no_obj = extract_grounded_stat("Con số đạt được là 850.")
     assert res_no_obj is None
 
+
+def test_regression_singapore_tunnel_rejects_medical_diagram_patent_book():
+    """Requirement 2: Sơ đồ giải phẫu, trang sách, thiết bị y tế, patent phải bị LOẠI cho cảnh hầm/Singapore; ảnh công trường hầm/TBM thật phải được GIỮ."""
+    from pipeline.slide_image_resolver import check_image_relevance, is_document_or_schematic_image
+    from PIL import Image, ImageDraw
+
+    text = "Sự cố sụt lún Singapore và bài học kinh nghiệm về địa kỹ thuật, kiểm soát lún và máy đào TBM."
+    headline = "Sự cố sụt lún Singapore"
+
+    # 1. Ảnh sơ đồ giải phẫu (anatomy / eye / skull) -> BỊ LOẠI
+    meta_anatomy = {
+        "title": "Human cranial nerve and eye anatomy cross section diagram",
+        "tags": ["anatomy", "diagram", "medical", "eye", "failure"],
+        "description": "Schematic diagram of cranial cavity and eye structure.",
+    }
+    assert check_image_relevance(text, image_metadata=meta_anatomy, headline=headline) is False
+
+    # 2. Trang sách / bài báo y tế hoặc tài liệu (textbook page / document) -> BỊ LOẠI
+    meta_book_page = {
+        "title": "Textbook page document analysis of structural standard system failure",
+        "tags": ["page", "document", "pdf", "textbook", "paper", "standard"],
+        "description": "Scanned document page discussing structural engineering theories.",
+    }
+    assert check_image_relevance(text, image_metadata=meta_book_page, headline=headline) is False
+
+    # 3. Minh họa thiết bị y tế (medical device / healthcare) -> BỊ LOẠI
+    meta_medical_device = {
+        "title": "Medical equipment and clinical monitor standard system",
+        "tags": ["medical", "clinical", "standard", "system", "equipment"],
+    }
+    assert check_image_relevance(text, image_metadata=meta_medical_device, headline=headline) is False
+
+    # 4. Bằng sáng chế (patent schematic) -> BỊ LOẠI
+    meta_patent = {
+        "title": "Patent schematic drawing for underground rotary excavation device",
+        "tags": ["patent", "schematic", "drawing", "illustration"],
+    }
+    assert check_image_relevance(text, image_metadata=meta_patent, headline=headline) is False
+
+    # 5. Ảnh công trường hầm / TBM thật -> ĐƯỢC GIỮ
+    meta_real_tunnel = {
+        "title": "Singapore Nicoll Highway metro tunnel TBM excavation site",
+        "tags": ["singapore", "tbm", "tunnel", "metro", "excavation"],
+        "caption": "Civil engineering construction site with massive tunnel boring machine in Singapore metro tunnel.",
+    }
+    assert check_image_relevance(text, image_metadata=meta_real_tunnel, headline=headline) is True
+
+    # 6. Kiểm tra hàm đo pixel cục bộ is_document_or_schematic_image
+    # Ảnh trắng > 60% với nét vẽ/chữ đen (mô phỏng trang sách / sơ đồ) -> BỊ LOẠI
+    white_doc = Image.new("RGB", (400, 400), (250, 250, 250))
+    draw = ImageDraw.Draw(white_doc)
+    for y in range(20, 380, 15):
+        draw.line([(20, y), (380, y)], fill=(10, 10, 10), width=2)
+    is_doc, reason = is_document_or_schematic_image(white_doc)
+    assert is_doc is True
+    assert "Tài liệu/sơ đồ/trang sách" in reason
+
+    # Ảnh chụp công trường (nền tối / phong phú màu sắc, không phải nền trắng >= 60%) -> ĐƯỢC GIỮ
+    real_photo_mock = Image.new("RGB", (400, 400), (50, 60, 75))
+    is_doc_photo, _ = is_document_or_schematic_image(real_photo_mock)
+    assert is_doc_photo is False
+
+
+def test_regression_topic_ai_chip_non_overfit():
+    """Requirement 2: Thêm chủ đề AI/chip chứng minh không overfit."""
+    from pipeline.slide_image_resolver import check_image_relevance
+
+    text = "Sản xuất vi mạch bán dẫn và chip AI thế hệ mới tại các nhà máy fab hiện đại."
+    headline = "Vi mạch bán dẫn và chip AI"
+
+    # Ảnh thật: fab wafer -> GIỮ
+    meta_fab = {
+        "title": "Cleanroom engineer inspecting silicon semiconductor wafer in manufacturing fab",
+        "tags": ["semiconductor", "wafer", "microchip", "fab"],
+        "caption": "High-tech cleanroom semiconductor wafer production line.",
+    }
+    assert check_image_relevance(text, image_metadata=meta_fab, headline=headline) is True
+
+    # Ảnh sai: Sơ đồ y khoa / thiết bị y tế -> LOẠI
+    meta_medical = {
+        "title": "Medical device clinical monitor equipment standard system",
+        "tags": ["medical", "clinical", "system", "standard"],
+    }
+    assert check_image_relevance(text, image_metadata=meta_medical, headline=headline) is False
+
+    # Ảnh sai: Bằng sáng chế trang sách -> LOẠI
+    meta_patent_doc = {
+        "title": "Patent document schematic page on integrated circuit wiring",
+        "tags": ["patent", "document", "schematic", "page"],
+    }
+    assert check_image_relevance(text, image_metadata=meta_patent_doc, headline=headline) is False
+
+
+def test_regression_topic_finance_macroeconomics_non_overfit():
+    """Requirement 2: Thêm chủ đề tài chính / kinh tế vĩ mô chứng minh không overfit."""
+    from pipeline.slide_image_resolver import check_image_relevance
+
+    text = "Ngân hàng trung ương điều chỉnh chính sách lãi suất nhằm kiểm soát lạm phát và ổn định tài chính."
+    headline = "Lãi suất và lạm phát"
+
+    # Ảnh thật: sàn giao dịch / ngân hàng trung ương -> GIỮ
+    meta_finance = {
+        "title": "Central bank headquarters and financial market trading exchange",
+        "tags": ["central bank", "financial", "interest rate", "trading", "finance"],
+        "caption": "Wall street financial trading floor monitoring central bank interest rate decisions.",
+    }
+    assert check_image_relevance(text, image_metadata=meta_finance, headline=headline) is True
+
+    # Ảnh sai: Robot nhà máy chung chung -> LOẠI
+    meta_robot = {
+        "title": "Industrial robotic welding arm in car assembly factory",
+        "tags": ["robot", "robotics", "automation"],
+    }
+    assert check_image_relevance(text, image_metadata=meta_robot, headline=headline) is False
+
+    # Ảnh sai: Sơ đồ giải phẫu mắt / y khoa -> LOẠI
+    meta_eye = {
+        "title": "Human eye anatomy and retina clinical diagram",
+        "tags": ["anatomy", "eye", "diagram", "medical"],
+    }
+    assert check_image_relevance(text, image_metadata=meta_eye, headline=headline) is False
+
+
+def test_cv_detect_faces_local():
+    """Requirement 1: Kiểm tra phát hiện khuôn mặt bằng YuNet DNN không API."""
+    from pipeline.slide_image_resolver import detect_faces
+    from PIL import Image
+
+    # Ảnh trơn không có người
+    blank_im = Image.new("RGB", (320, 320), (40, 50, 60))
+    face_count, faces = detect_faces(blank_im)
+    assert face_count == 0
+    assert len(faces) == 0
+
+
+def test_cv_detect_text_slide_document_local():
+    """Requirement 1: Kiểm tra phát hiện ảnh slide/bảng/tài liệu bằng MSER & brightness không API."""
+    from pipeline.slide_image_resolver import detect_text_slide_document
+    from PIL import Image, ImageDraw
+
+    # Tạo ảnh giả lập slide tài liệu với nền sáng >= 45% và nhiều khối chữ nhỏ
+    slide_im = Image.new("RGB", (600, 600), (240, 240, 245))
+    draw = ImageDraw.Draw(slide_im)
+    # Vẽ các dòng kẻ và khối chữ nhỏ dạng bảng số liệu / slide presentation
+    for y in range(40, 560, 25):
+        for x in range(30, 550, 40):
+            draw.rectangle([x, y, x + 25, y + 14], fill=(20, 25, 30))
+
+    is_text_heavy, boxes_count, reason = detect_text_slide_document(slide_im)
+    assert is_text_heavy is True
+    assert boxes_count >= 60
+    assert "bright_bg=" in reason or "dense_mser_boxes=" in reason
+
+    # Ảnh chụp tự nhiên không phải slide (nền tối, không có cụm chữ dày đặc)
+    photo_im = Image.new("RGB", (400, 400), (30, 40, 50))
+    is_text_heavy_photo, _, _ = detect_text_slide_document(photo_im)
+    assert is_text_heavy_photo is False
+
+

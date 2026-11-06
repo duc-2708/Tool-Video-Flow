@@ -97,6 +97,76 @@ class EmphasisItem(StrictModel):
     end_sec: float | None = None
 
 
+VIETNAMESE_COMPOUND_WORDS = {
+    "cốt lõi", "mục tiêu", "tự hành", "tự chủ", "nhân lực", "nhân tạo", "đồng bộ",
+    "hạ tầng", "tính toán", "công cụ", "sai sót", "chất lượng", "địa chất", "thi công",
+    "tiêu chuẩn", "kinh nghiệm", "năng suất", "giải pháp", "phát triển", "nghiên cứu",
+    "chiến lược", "hệ thống", "quốc gia", "hành động", "phân chia", "kết quả", "định hướng",
+    "hỗ trợ", "tối ưu", "công việc", "trợ lý", "ngày hội", "trí tuệ", "thu hút", "quan tâm",
+    "bối cảnh", "văn hóa", "dài hạn", "đầu tư", "kỹ thuật", "sụt lún", "công trình", "nền đất",
+    "khảo sát", "xử lý", "địa kỹ", "kỹ sư", "vận hành", "độc quyền", "thiết kế", "quan sát",
+    "liên tục", "chướng ngại", "ngôn ngữ", "nhận biết", "điều chỉnh", "biện pháp", "thực tế",
+    "đáp ứng", "yêu cầu", "đòi hỏi", "khác biệt", "thích ứng", "kế hoạch", "hiện đại",
+    "đơn giản", "phần mềm", "phần cứng", "dữ liệu", "mô hình", "thuật toán", "năng lực",
+    "tiến bộ", "nâng cao", "toàn diện", "chuyên môn", "đội ngũ", "nhà thầu", "chủ đầu",
+    "vấn đề", "thách thức", "cơ hội", "tiềm năng", "đột phá", "bước đi", "tầm nhìn", "vai trò",
+    "phương án", "phương pháp", "thực hiện", "triển khai", "đảm bảo", "bảo đảm", "an toàn",
+    "chính xác", "hiệu quả", "linh hoạt", "độc lập", "tự lập", "tự động", "chủ động", "nhiệm vụ",
+    "quy trình", "nguyên tắc", "nguyên nhân", "bài học", "bước ngoặt", "thời điểm", "tương lai",
+    "hiện tại", "quá khứ", "tổng thể", "cơ sở", "nền tảng", "công nghệ", "thiết bị", "vật liệu",
+    "môi trường", "đô thị", "ngầm hóa", "đường hầm", "hầm ngầm", "tuyến metro", "đường sắt",
+    "cao tốc", "tốc độ", "tường vây", "cọc khoan", "áp lực", "cân bằng", "địa tầng", "đất yếu",
+    "sỏi cuội", "cát chảy", "bùn lỏng", "nước ngầm", "xuyên suốt", "chuỗi việc", "ranh giới",
+    "nội địa", "nguồn lực", "máy móc", "chủ thể", "quyết định", "con người", "nhúng tay",
+    "nhân lên", "bước đầu", "khâu đầu", "cuối cùng", "nghiên cứu", "phức tạp",
+    "hoàn toàn", "hoàn chỉnh", "hoàn thành", "hoàn mỹ", "mở rộng", "dẫn đầu", "từng bước",
+    "dựa trên", "nguồn dữ", "dữ liệu", "khác biệt"
+}
+
+COMPOUND_WORD_FIRST_SYLLABLES = {
+    p.split()[0] for p in VIETNAMESE_COMPOUND_WORDS
+} | {
+    "cốt", "mục", "tự", "nhân", "đồng", "hạ", "tính", "công", "sai", "chất",
+    "địa", "thi", "tiêu", "kinh", "năng", "giải", "phát", "nghiên", "chiến",
+    "hệ", "quốc", "hành", "phân", "kết", "định", "hỗ", "tối", "trợ", "trí",
+    "thu", "quan", "bối", "văn", "dài", "đầu", "kỹ", "sụt", "khảo", "xử",
+    "vận", "độc", "thiết", "chướng", "ngôn", "nhận", "điều", "biện", "thực",
+    "đáp", "tiến", "chuyên", "thách", "tiềm", "đột", "bước", "tầm", "vai",
+    "phương", "triển", "đảm", "bảo", "an", "chính", "hiệu", "linh", "nhiệm",
+    "quy", "nguyên", "tổng", "cơ", "nền", "tuyến", "cao", "tốc", "tường", "cọc",
+    "áp", "cân", "sỏi", "cát", "bùn", "nước", "xuyên", "chuỗi", "ranh", "nội",
+    "máy", "quyết", "con", "nhúng", "phức", "hoàn", "mở", "dẫn"
+}
+
+COMPOUND_WORD_SECOND_SYLLABLES = {
+    p.split()[1] for p in VIETNAMESE_COMPOUND_WORDS
+} | {
+    "lõi", "tiêu", "hành", "chủ", "lực", "tạo", "bộ", "tầng", "toán", "cụ",
+    "sót", "lượng", "chất", "chuẩn", "nghiệm", "suất", "pháp", "triển", "cứu",
+    "lược", "thống", "gia", "động", "chia", "quả", "hướng", "trợ", "ưu", "việc",
+    "lý", "hội", "tuệ", "hút", "tâm", "cảnh", "hóa", "hạn", "tư", "thuật", "lún",
+    "trình", "đất", "sát", "quyền", "kế", "tục", "ngại", "ngữ", "biết", "chỉnh",
+    "tế", "ứng", "cầu", "hỏi", "biệt", "hoạch", "đại", "giản", "mềm", "cứng",
+    "liệu", "hình", "toán", "bộ", "cao", "môn", "ngũ", "thầu", "đề", "thức",
+    "năng", "phá", "đi", "nhìn", "trò", "án", "hiện", "khai", "toàn", "xác",
+    "hoạt", "lập", "vụ", "tắc", "nhân", "học", "ngoặt", "điểm", "lai", "tại",
+    "khứ", "thể", "sở", "tảng", "nghệ", "bị", "trường", "thị", "hầm", "ngầm",
+    "sắt", "độ", "vây", "khoan", "bằng", "yếu", "cuội", "chảy", "lỏng", "suốt",
+    "việc", "giới", "địa", "lực", "móc", "thể", "định", "người", "tay", "lên", "cùng", "tạp", "chỉnh"
+}
+
+
+def is_compound_pair(w1: str, w2: str) -> bool:
+    """Check whether two consecutive words form a Vietnamese compound word that cannot be split."""
+    c1 = re.sub(r"[^\w]", "", w1.lower()).strip()
+    c2 = re.sub(r"[^\w]", "", w2.lower()).strip()
+    if not c1 or not c2:
+        return False
+    if f"{c1} {c2}" in VIETNAMESE_COMPOUND_WORDS:
+        return True
+    return c1 in COMPOUND_WORD_FIRST_SYLLABLES and c2 in COMPOUND_WORD_SECOND_SYLLABLES
+
+
 DANGLING_END_WORDS = {
     "đòi", "kỹ", "của", "và", "là", "để", "với", "cho", "trong", "khi", "tại", "từ",
     "ở", "về", "có", "các", "những", "làm", "được", "bị", "do", "bởi", "ra",
@@ -105,6 +175,7 @@ DANGLING_END_WORDS = {
     "tầm", "mức", "chủ", "hỏi", "nhận", "đặt", "tạo", "mang", "coi", "tính", "biết",
     "thấy", "khiến", "nhằm", "gồm", "thuộc", "cần", "phía", "vận", "độ", "bậc", "đằng",
     "nhưng", "song", "tuy", "dù", "nếu", "vì",
+    "thể", "nhiều", "ít", "đang", "sẽ", "đã", "tự", "bộ", "điều", "này", "kia", "đó", "nguồn", "lõi", "tiêu"
 }
 
 
@@ -112,14 +183,23 @@ def clean_trailing_dangling(text: str) -> str:
     """Trim any trailing dangling words or incomplete particles from text."""
     if not text:
         return ""
-    words = text.strip().split()
-    while words and words[-1].lower().strip(".,;:?!\"'") in DANGLING_END_WORDS:
-        words.pop()
+    stripped = text.strip()
+    words = stripped.split()
+    while words:
+        if len(words) >= 2 and is_compound_pair(words[-2], words[-1]):
+            break
+        clean_last = re.sub(r"[^\w]", "", words[-1].lower()).strip()
+        if clean_last in DANGLING_END_WORDS or clean_last in COMPOUND_WORD_FIRST_SYLLABLES:
+            if words[-1][-1] in (".", "?", "!") and clean_last not in {"và", "là", "để", "với", "cho", "của", "trong", "khi", "tại", "nhưng", "vì"}:
+                break
+            words.pop()
+        else:
+            break
     return " ".join(words).strip()
 
 
 def wrap_text_greedy(text: str, max_chars_per_line: int = 14, max_lines: int = 3) -> list[str]:
-    """Wrap text at word boundaries without breaking words.
+    """Wrap text at word boundaries without breaking words or cutting compound pairs.
     
     Ensures no orphaned words on lines when possible, and trims trailing
     dangling words/prepositions/particles when text is truncated.
@@ -133,18 +213,39 @@ def wrap_text_greedy(text: str, max_chars_per_line: int = 14, max_lines: int = 3
     lines: list[str] = []
     current_line = ""
     words_consumed = 0
-    for w in words:
-        candidate = f"{current_line} {w}".strip() if current_line else w
-        if len(candidate) <= max_chars_per_line:
-            current_line = candidate
-            words_consumed += 1
-        else:
-            if current_line:
+    i = 0
+    while i < len(words):
+        w = words[i]
+        # Check if next word forms a compound pair with current word
+        if i + 1 < len(words) and is_compound_pair(w, words[i + 1]):
+            pair = f"{w} {words[i + 1]}"
+            candidate = f"{current_line} {pair}".strip() if current_line else pair
+            if len(candidate) <= max_chars_per_line or not current_line:
+                current_line = candidate
+                words_consumed += 2
+                i += 2
+            else:
                 lines.append(current_line)
-            current_line = w
-            if len(lines) >= max_lines:
-                break
-            words_consumed += 1
+                current_line = pair
+                words_consumed += 2
+                i += 2
+                if len(lines) >= max_lines:
+                    break
+        else:
+            candidate = f"{current_line} {w}".strip() if current_line else w
+            if len(candidate) <= max_chars_per_line:
+                current_line = candidate
+                words_consumed += 1
+                i += 1
+            else:
+                if current_line:
+                    lines.append(current_line)
+                current_line = w
+                words_consumed += 1
+                i += 1
+                if len(lines) >= max_lines:
+                    break
+
     if current_line and len(lines) < max_lines:
         lines.append(current_line)
 
@@ -159,17 +260,23 @@ def wrap_text_greedy(text: str, max_chars_per_line: int = 14, max_lines: int = 3
                 lines[-2] = new_prev
                 lines[-1] = new_last
 
-    # If text was truncated (not all words consumed), ensure the ending is not a dangling word
+    # If text was truncated (not all words consumed), ensure the ending is not a dangling word or compound first syllable
     if words_consumed < len(words) and lines:
         while lines:
             line_words = lines[-1].split()
-            if line_words and line_words[-1].lower().strip(".,;:—?!") in DANGLING_END_WORDS:
-                line_words.pop()
-                if line_words:
-                    lines[-1] = " ".join(line_words)
-                    break
+            if len(line_words) >= 2 and is_compound_pair(line_words[-2], line_words[-1]):
+                break
+            if line_words:
+                last_w = re.sub(r"[^\w]", "", line_words[-1].lower()).strip()
+                if last_w in DANGLING_END_WORDS or last_w in COMPOUND_WORD_FIRST_SYLLABLES:
+                    line_words.pop()
+                    if line_words:
+                        lines[-1] = " ".join(line_words)
+                        break
+                    else:
+                        lines.pop()
                 else:
-                    lines.pop()
+                    break
             else:
                 break
 
@@ -225,41 +332,53 @@ def extract_clean_headline(sentence: str, max_chars: int = 56) -> str:
         if len(cach_cand) <= max_chars:
             return cach_cand[0].upper() + cach_cand[1:]
 
+    # Helper to validate a candidate headline
+    def is_valid_headline(cand: str) -> bool:
+        if not cand or len(cand) > max_chars:
+            return False
+        w = cand.split()
+        if len(w) < 3:
+            return False
+        if is_incomplete_phrase(cand):
+            return False
+        first_clean = re.sub(r"[^\w]", "", w[0].lower()).strip()
+        last_clean = re.sub(r"[^\w]", "", w[-1].lower()).strip()
+        if first_clean in COMPOUND_WORD_SECOND_SYLLABLES or cand[0].islower():
+            return False
+        if cand[-1] in (".", "?", "!") and last_clean not in {"và", "là", "để", "với", "cho", "của", "trong", "khi", "tại", "nhưng", "vì", "cốt", "mục", "đồng", "tự", "hạ"}:
+            pass
+        elif len(w) >= 2 and is_compound_pair(w[-2], w[-1]):
+            pass
+        elif last_clean in DANGLING_END_WORDS or last_clean in COMPOUND_WORD_FIRST_SYLLABLES:
+            return False
+        return True
+
     # 1. Check natural punctuation clause boundary (comma, semicolon, dash, colon)
     parts = re.split(r"[,;:\-—]", clean)
     if parts:
-        first_part = parts[0].strip()
-        words = first_part.split()
-        if 3 <= len(words) <= 10 and len(first_part) <= max_chars:
-            cleaned = clean_trailing_dangling(first_part)
-            if len(cleaned.split()) >= 3 and not is_incomplete_phrase(cleaned):
-                return cleaned
+        first_part = clean_trailing_dangling(parts[0].strip())
+        if is_valid_headline(first_part):
+            return first_part[0].upper() + first_part[1:]
 
     # 2. Split on common predicate/verb connectors to extract full subject noun phrase
     verb_parts = re.split(r"\s+(?:đòi hỏi|yêu cầu|cho thấy|đóng vai trò|giúp|khiến|nhằm|mang lại)\s+", clean, flags=re.I)
     if verb_parts:
         subj = clean_trailing_dangling(verb_parts[0].strip())
-        w_subj = subj.split()
-        if 3 <= len(w_subj) <= 8 and len(subj) <= max_chars and not is_incomplete_phrase(subj):
-            return subj
+        if is_valid_headline(subj):
+            return subj[0].upper() + subj[1:]
 
-    # 3. Split on common subordinate connectors (cho thấy, nhằm, để, giúp, khiến)
-    sub_parts = re.split(r"\s+(?:cho thấy|nhằm|để|giúp|khiến)\s+", clean, flags=re.I)
-    if sub_parts and len(sub_parts[0].split()) >= 3 and len(sub_parts[0].strip()) <= max_chars:
+    # 3. Split on common subordinate connectors (nhưng, và, để, vì, khi, nếu, trong khi, cho thấy, nhằm, giúp)
+    sub_parts = re.split(r"\s+(?:nhưng|cho thấy|nhằm|để|giúp|khiến|trong khi)\s+", clean, flags=re.I)
+    if sub_parts:
         cand = clean_trailing_dangling(sub_parts[0].strip())
-        if len(cand.split()) >= 3 and not is_incomplete_phrase(cand):
-            return cand
-
-    # 4. Try wrapping greedily if it yields a complete phrase
-    max_lines = 1 if max_chars <= 30 else 2
-    chars_per_line = min(max_chars, 24)
-    lines = wrap_text_greedy(clean, max_chars_per_line=chars_per_line, max_lines=max_lines)
-    joined = clean_trailing_dangling(" ".join(lines).strip())
-    if len(joined) <= max_chars and not is_incomplete_phrase(joined):
-        return joined
+        if is_valid_headline(cand):
+            return cand[0].upper() + cand[1:]
 
     # If shortening breaks clause completeness or yields a cut-off phrase, USE THE FULL SENTENCE!
-    return clean_trailing_dangling(clean)
+    full_clean = clean_trailing_dangling(clean)
+    if full_clean:
+        return full_clean[0].upper() + full_clean[1:]
+    return clean
 
 
 class SlideItem(StrictModel):
@@ -328,14 +447,29 @@ class SlideItem(StrictModel):
                     val = "TIÊU ĐIỂM"
                 cleaned[pill_key] = val
 
-        # Headline / title: max 2 lines x 24 chars/line, trimmed of dangling words
+        # Headline / title: max 3 lines x 32 chars/line (<= 96 chars), trimmed of dangling words and compound cuts
         for title_key in ("title", "headline"):
             if title_key in cleaned and cleaned[title_key]:
                 val = str(cleaned[title_key]).strip()
-                lines = wrap_text_greedy(val, max_chars_per_line=24, max_lines=2)
-                cleaned[title_key] = clean_trailing_dangling(" ".join(lines) if lines else val[:48])
+                if len(val) > 96:
+                    lines = wrap_text_greedy(val, max_chars_per_line=32, max_lines=3)
+                    val = clean_trailing_dangling(" ".join(lines) if lines else val[:96])
+                else:
+                    val = clean_trailing_dangling(val)
+                if val:
+                    val = val[0].upper() + val[1:]
+                cleaned[title_key] = val
 
-        # Features items: max 4 items, each <= 40 chars, no dangling words
+        # Subtitle: trimmed of dangling words and ensures starts uppercase
+        for sub_key in ("subtitle", "sub"):
+            if sub_key in cleaned and cleaned[sub_key]:
+                s_val = str(cleaned[sub_key]).strip()
+                s_val = clean_trailing_dangling(s_val)
+                if s_val:
+                    s_val = s_val[0].upper() + s_val[1:]
+                cleaned[sub_key] = s_val
+
+        # Features items: max 4 items, each <= 40 chars
         if "items" in cleaned and isinstance(cleaned["items"], list):
             items_list = []
             for item in cleaned["items"][:4]:
@@ -345,22 +479,26 @@ class SlideItem(StrictModel):
                     item_str = clean_trailing_dangling(wrapped[0] if wrapped else item_str[:40])
                 else:
                     item_str = clean_trailing_dangling(item_str)
-                if item_str and not is_incomplete_phrase(item_str):
-                    items_list.append(item_str)
+                if item_str:
+                    item_str = item_str[0].upper() + item_str[1:]
+                items_list.append(item_str)
             cleaned["items"] = items_list
 
-        # Compare: left & right labels / text <= 2 lines of 18 chars each (<= 36 chars)
+        # Compare: left & right labels / text <= 2 lines of 14 chars each (<= 28 chars)
         for side in ("left", "right"):
             if side in cleaned and isinstance(cleaned[side], dict):
                 side_dict = dict(cleaned[side])
                 for k in ("title", "text", "label"):
                     if k in side_dict and side_dict[k]:
                         s_val = str(side_dict[k]).strip()
-                        if len(s_val) > 36:
-                            w = wrap_text_greedy(s_val, max_chars_per_line=18, max_lines=2)
-                            side_dict[k] = clean_trailing_dangling(" ".join(w) if w else s_val[:36])
+                        if len(s_val) > 28:
+                            w = wrap_text_greedy(s_val, max_chars_per_line=14, max_lines=2)
+                            s_val = clean_trailing_dangling(" ".join(w) if w else s_val[:28])
                         else:
-                            side_dict[k] = clean_trailing_dangling(s_val)
+                            s_val = clean_trailing_dangling(s_val)
+                        if s_val:
+                            s_val = s_val[0].upper() + s_val[1:]
+                        side_dict[k] = s_val
                 cleaned[side] = side_dict
 
         return cleaned

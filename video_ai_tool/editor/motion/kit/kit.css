@@ -182,7 +182,7 @@ html, body {
 .kit-card {
   width: 940px;
   min-width: 800px;
-  min-height: 850px;
+  min-height: 1040px;
   background: var(--kit-card-bg);
   border: 1px solid var(--kit-card-border);
   border-radius: 36px;
@@ -210,7 +210,7 @@ html, body {
 }
 
 .kit-title-hero {
-  font-size: 96px;
+  font-size: 104px;
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.03em;
@@ -220,7 +220,7 @@ html, body {
 }
 
 .kit-title-lg {
-  font-size: 80px;
+  font-size: 88px;
   font-weight: 800;
   line-height: 1.18;
   letter-spacing: -0.025em;
@@ -229,7 +229,7 @@ html, body {
 }
 
 .kit-subtitle {
-  font-size: 48px;
+  font-size: 52px;
   font-weight: 500;
   line-height: 1.4;
   color: var(--kit-text-muted);
@@ -243,7 +243,7 @@ html, body {
 }
 
 .kit-caption {
-  font-size: 44px;
+  font-size: 46px;
   font-weight: 500;
   line-height: 1.4;
   color: var(--kit-text-muted);
@@ -304,9 +304,9 @@ html, body {
 
 /* Component: kit_photo */
 .kit-photo-card {
-  width: 910px;
-  height: 1000px;
-  border-radius: 28px;
+  width: 940px;
+  height: 1040px;
+  border-radius: 36px;
   overflow: hidden;
   position: relative;
   background: #E2E8F0;
@@ -391,7 +391,7 @@ html, body {
 }
 
 .kit-list-text {
-  font-size: 44px;
+  font-size: 48px;
   font-weight: 600;
   line-height: 1.35;
   color: var(--kit-text);
@@ -423,7 +423,7 @@ html, body {
 }
 
 .kit-compare-title {
-  font-size: 44px;
+  font-size: 46px;
   font-weight: 700;
   color: var(--kit-text-muted);
   margin-bottom: 16px;
@@ -435,7 +435,7 @@ html, body {
 }
 
 .kit-compare-text {
-  font-size: 44px;
+  font-size: 48px;
   font-weight: 600;
   line-height: 1.35;
   color: var(--kit-text);
@@ -465,13 +465,13 @@ html, body {
 }
 
 .kit-quote-author {
-  font-size: 44px;
+  font-size: 46px;
   font-weight: 800;
   color: var(--kit-text);
 }
 
 .kit-quote-role {
-  font-size: 44px;
+  font-size: 46px;
   font-weight: 600;
   color: var(--kit-text-muted);
   margin-top: 4px;
@@ -519,7 +519,7 @@ html, body {
 }
 
 .kit-timeline-label {
-  font-size: 44px;
+  font-size: 46px;
   font-weight: 600;
   line-height: 1.35;
   color: var(--kit-text);
@@ -564,10 +564,10 @@ html, body {
 }
 
 .kit-outro-cta {
-  font-size: 44px;
+  font-size: 46px;
   font-weight: 500;
   color: var(--kit-text-muted);
-  max-width: 720px;
+  max-width: 760px;
   line-height: 1.4;
   margin-bottom: 36px;
 }

@@ -20,6 +20,7 @@ from schemas.slide_script import (
     extract_clean_headline,
     clean_trailing_dangling,
 )
+from editor.motion.light_glass_slots import truncate_complete_phrase, text_similarity
 
 
 def normalize_text(text: str) -> str:
@@ -146,9 +147,9 @@ def verify_and_ground_slides(
                 s_layout = target_downgrade
                 s_slots = {
                     "chip": "TIÊU ĐIỂM",
-                    "title": extract_clean_headline(slide_narration) or (slide_narration[:60] if slide_narration else "Thông tin ghi nhận."),
-                    "subtitle": slide_narration[60:120] if len(slide_narration) > 60 else "",
-                    "text": slide_narration[:120] if slide_narration else "Thông tin ghi nhận.",
+                    "title": extract_clean_headline(slide_narration) or clean_trailing_dangling(truncate_complete_phrase(slide_narration, 88)),
+                    "subtitle": clean_trailing_dangling(truncate_complete_phrase(slide_narration, 140)) if slide_narration else "",
+                    "text": clean_trailing_dangling(truncate_complete_phrase(slide_narration, 140)) if slide_narration else "Thông tin ghi nhận.",
                 }
 
         # Check all string slots for ungrounded numbers (skip and validate date fields)
@@ -179,7 +180,7 @@ def verify_and_ground_slides(
                     if clean_items:
                         s_slots["items"] = clean_items
                     else:
-                        s_slots["items"] = [slide_narration[:40]] if slide_narration else ["Điểm chính"]
+                        s_slots["items"] = [clean_trailing_dangling(truncate_complete_phrase(slide_narration, 88))] if slide_narration else ["Nội dung trọng tâm"]
 
         # Grounding Rule B: Headline verification & repair
         if s_layout in ("lg_source_headline", "kit_title"):
@@ -189,7 +190,7 @@ def verify_and_ground_slides(
                 title_raw = extract_clean_headline(slide_narration) or "Tin Công Nghệ"
                 repair_notes.append(f"[grounding_heal_headline, nhóm 2] Slide {slide.id}: tự bổ sung tiêu đề từ câu đọc ('{title_raw}').")
             # Enforce clean phrase boundary without cut-off words
-            s_slots["title"] = extract_clean_headline(title_raw) or title_raw[:42]
+            s_slots["title"] = extract_clean_headline(title_raw) or clean_trailing_dangling(truncate_complete_phrase(title_raw, 88))
 
         # Grounding Rule C: Emphasis verification
         # Every emphasis phrase MUST be a verbatim substring of slide_narration
@@ -208,25 +209,25 @@ def verify_and_ground_slides(
                 p_val = str(s_slots[p_key]).strip()
                 if len(p_val) > 28:
                     w = wrap_text_greedy(p_val, max_chars_per_line=28, max_lines=1)
-                    s_slots[p_key] = clean_trailing_dangling(w[0] if w else p_val[:28])
+                    s_slots[p_key] = clean_trailing_dangling(w[0] if w else truncate_complete_phrase(p_val, 28))
                 else:
                     s_slots[p_key] = clean_trailing_dangling(p_val)
 
-        # Features items <= 60 chars, max 4 items, trimmed of trailing dangling words
+        # Features items <= 88 chars, max 4 items, trimmed of trailing dangling words
         if "items" in s_slots and isinstance(s_slots["items"], list):
             s_slots["items"] = [
-                clean_trailing_dangling(str(x)[:65].strip())
+                clean_trailing_dangling(truncate_complete_phrase(str(x).strip(), 88))
                 for x in s_slots["items"][:4]
-                if clean_trailing_dangling(str(x)[:65].strip())
+                if clean_trailing_dangling(truncate_complete_phrase(str(x).strip(), 88))
             ]
 
-        # Compare sides <= 36 chars
+        # Compare sides <= 40 chars
         for side in ("left", "right"):
             if side in s_slots and isinstance(s_slots[side], dict):
                 s_dict = dict(s_slots[side])
                 for sub_k in ("label", "text", "title"):
                     if sub_k in s_dict and s_dict[sub_k]:
-                        s_dict[sub_k] = clean_trailing_dangling(str(s_dict[sub_k])[:36].strip())
+                        s_dict[sub_k] = clean_trailing_dangling(truncate_complete_phrase(str(s_dict[sub_k]).strip(), 40))
                 s_slots[side] = s_dict
 
         s_image_prompt = getattr(slide, "image_prompt", "") or str(s_slots.get("image_prompt", ""))
@@ -300,27 +301,35 @@ def verify_and_ground_slides(
                         remainder = clean_sub[len(t_clean):].strip()
                         remainder = re.sub(r"^(?:giúp|khiến|để|nhằm|cho thấy|và|là|có|trong|với|tại|ở|đòi hỏi)\s+", "", remainder, flags=re.I).strip()
                         remainder = re.sub(r"^[,;:\-—]\s*", "", remainder).strip()
-                        if len(remainder.split()) >= 3:
+                        if len(remainder.split()) >= 6:
                             clean_sub = remainder[0].upper() + remainder[1:]
                         else:
                             clean_sub = ""
                     from editor.motion.light_glass_slots import text_similarity
-                    if not clean_sub or (t_clean and text_similarity(clean_sub, t_clean) >= 0.70):
+                    if not clean_sub or len(clean_sub.split()) < 6 or (t_clean and text_similarity(clean_sub, t_clean) >= 0.70):
                         supp_text = ""
                         if i + 1 < len(healed_slides):
                             cand_supp = clean_trailing_dangling(healed_slides[i + 1].narration)
-                            if cand_supp and text_similarity(cand_supp, t_clean) < 0.70:
+                            if cand_supp and len(cand_supp.split()) >= 6 and text_similarity(cand_supp, t_clean) < 0.70:
                                 supp_text = cand_supp
                         clean_sub = supp_text
-                    if not clean_sub:
-                        alt = "kit_title" if is_kit else "lg_note_card"
-                        if not new_slots.get("subtitle"):
-                            new_slots["subtitle"] = healed_slides[i].narration[:120]
+                    if not clean_sub or len(clean_sub.split()) < 6:
+                        if len(healed_slides[i].narration.split()) >= 6:
+                            new_slots["title"] = "Thông tin nổi bật"
+                            new_slots["items"] = [clean_trailing_dangling(healed_slides[i].narration)]
+                        else:
+                            alt = "kit_title" if is_kit else "lg_note_card"
+                            if not new_slots.get("subtitle"):
+                                new_slots["subtitle"] = clean_trailing_dangling(truncate_complete_phrase(healed_slides[i].narration, 140))
                     else:
-                        new_slots["items"] = [clean_trailing_dangling(clean_sub[:40])]
+                        new_slots["items"] = [clean_trailing_dangling(clean_sub)]
                 elif alt in ("kit_title", "lg_note_card") and not new_slots.get("subtitle"):
                     items = new_slots.get("items", [])
-                    new_slots["subtitle"] = items[0] if items else healed_slides[i].narration[:120]
+                    new_slots["subtitle"] = items[0] if items else clean_trailing_dangling(truncate_complete_phrase(healed_slides[i].narration, 140))
+
+                if new_slots.get("title") and new_slots.get("subtitle"):
+                    if text_similarity(str(new_slots["title"]), str(new_slots["subtitle"])) >= 0.70:
+                        new_slots["subtitle"] = ""
 
                 repair_notes.append(f"[layout_anti_repeat, nhóm 2] Slide {healed_slides[i].id}: đổi layout lặp '{healed_slides[i].layout}' sang '{alt}'.")
                 healed_slides[i] = healed_slides[i].model_copy(update={"layout": alt, "slots": new_slots})
@@ -351,27 +360,30 @@ def verify_and_ground_slides(
                                     remainder = clean_sub[len(t_clean):].strip()
                                     remainder = re.sub(r"^(?:giúp|khiến|để|nhằm|cho thấy|và|là|có|trong|với|tại|ở|đòi hỏi)\s+", "", remainder, flags=re.I).strip()
                                     remainder = re.sub(r"^[,;:\-—]\s*", "", remainder).strip()
-                                    if len(remainder.split()) >= 3:
+                                    if len(remainder.split()) >= 6:
                                         clean_sub = remainder[0].upper() + remainder[1:]
                                     else:
                                         clean_sub = ""
                                 from editor.motion.light_glass_slots import text_similarity
-                                if not clean_sub or (t_clean and text_similarity(clean_sub, t_clean) >= 0.70):
+                                if not clean_sub or len(clean_sub.split()) < 6 or (t_clean and text_similarity(clean_sub, t_clean) >= 0.70):
                                     supp_text = ""
                                     if i + 1 < len(healed_slides):
                                         cand_supp = clean_trailing_dangling(healed_slides[i + 1].narration)
-                                        if cand_supp and text_similarity(cand_supp, t_clean) < 0.70:
+                                        if cand_supp and len(cand_supp.split()) >= 6 and text_similarity(cand_supp, t_clean) < 0.70:
                                             supp_text = cand_supp
                                     clean_sub = supp_text
-                                if not clean_sub:
+                                if not clean_sub or len(clean_sub.split()) < 6:
                                     alt = "kit_title" if is_kit else "lg_note_card"
                                     if not curr_slots.get("subtitle"):
-                                        curr_slots["subtitle"] = healed_slides[i].narration[:120]
+                                        curr_slots["subtitle"] = clean_trailing_dangling(truncate_complete_phrase(healed_slides[i].narration, 140))
                                 else:
-                                    curr_slots["items"] = [clean_trailing_dangling(clean_sub[:40])]
+                                    curr_slots["items"] = [clean_trailing_dangling(clean_sub)]
                             elif alt in ("kit_title", "lg_note_card") and not curr_slots.get("subtitle"):
                                 items = curr_slots.get("items", [])
-                                curr_slots["subtitle"] = items[0] if items else healed_slides[i].narration[:120]
+                                curr_slots["subtitle"] = items[0] if items else clean_trailing_dangling(truncate_complete_phrase(healed_slides[i].narration, 140))
+                            if curr_slots.get("title") and curr_slots.get("subtitle"):
+                                if text_similarity(str(curr_slots["title"]), str(curr_slots["subtitle"])) >= 0.70:
+                                    curr_slots["subtitle"] = ""
                             healed_slides[i] = healed_slides[i].model_copy(update={"layout": alt, "slots": curr_slots})
                             repair_notes.append(f"[layout_diversity, nhóm 2] Slide {healed_slides[i].id}: đổi từ '{dom_layout}' sang '{alt}' để cân bằng tỷ lệ lặp ({count}/{len(healed_slides)}).")
                             count -= 1

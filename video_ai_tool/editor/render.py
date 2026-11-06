@@ -79,18 +79,18 @@ class Frames:
             return reader.get_frame(min(max(0,t-scene.start),max(0,reader.duration-1/reader.fps)))
         key = (shot.scene_id,shot.shot_id)
         visual=shot.spec.visual
+        text = getattr(shot.spec, "text_overlay", None) or (next((s.spec.narration for s in self.timeline.scenes if s.spec.id == shot.scene_id), "") if getattr(self.timeline, "scenes", None) else "")
         if visual and visual.template!="stock" and (not self.timeline.plan.render_style or self.timeline.plan.render_style.visual_templates):
             # Graphics use the theme by default. Never decode unverified/irrelevant
             # stock (including faces/entertainment) behind factual cards.
             if key in self.failed_cards:
-                return color_card(self.size,shot.spec.card_text or "Ý chính cần nhớ",self.font,shot.scene_id)
+                return color_card(self.size,shot.spec.card_text or text,self.font,shot.scene_id)
             try: return self.graphic_frame(shot,key,visual,None,max(0.,t-shot.start))
             except Exception as error:
                 self.diagnostics.record_exception(error,f"Đồ họa cảnh {shot.scene_id}, shot {shot.shot_id}; nền dự phòng")
                 self.failed_cards.add(key)
                 self.timeline.warnings.append(f"Cảnh {shot.scene_id}, shot {shot.shot_id}: mẫu đồ họa không dựng được, dùng nền màu trung tính.")
-                return color_card(self.size,shot.spec.card_text or "Ý chính cần nhớ",self.font,shot.scene_id)
-        text = shot.spec.text_overlay or next(s.spec.narration for s in self.timeline.scenes if s.spec.id == shot.scene_id)
+                return color_card(self.size,shot.spec.card_text or text,self.font,shot.scene_id)
         if key not in self.cache:
             while len(self.cache) >= 2:
                 _,old = self.cache.popitem(last=False)
@@ -313,6 +313,10 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                         try:
                             from pipeline.slide_image_resolver import resolve_images_for_slide_script
                             resolve_images_for_slide_script(timeline.project, slide_script_obj)
+                            try:
+                                slide_script_file.write_text(slide_script_obj.model_dump_json(indent=2), encoding="utf-8")
+                            except Exception:
+                                pass
                         except Exception as res_err:
                             diagnostics.record_exception(res_err, "Lỗi resolve images cho slide_script")
 

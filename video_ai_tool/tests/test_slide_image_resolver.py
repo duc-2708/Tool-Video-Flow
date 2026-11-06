@@ -56,7 +56,7 @@ def test_path_to_data_uri(tmp_path: Path):
     assert uri.startswith("data:image/png;base64,")
 
 
-def test_resolve_images_for_slide_script(tmp_path: Path):
+def test_resolve_images_for_slide_script(tmp_path: Path, monkeypatch):
     project_dir = tmp_path / "test_project"
     project_dir.mkdir(parents=True, exist_ok=True)
 
@@ -73,18 +73,30 @@ def test_resolve_images_for_slide_script(tmp_path: Path):
             id="slide_2",
             layout="lg_stat_hero",
             sentence_ids=[2],
-            narration="Năng suất lao động tăng 300%",
+            narration="Sản xuất vi mạch bán dẫn và chip AI đạt kỷ lục mới",
             slots={"pill": "SỐ LIỆU", "value": "300", "unit": "%"},
             image_prompt="High-tech financial spline curve plunging to zero cost",
         ),
     ]
     ss = SlideScript(topic="Công nghệ AI", total_duration=10.0, slides=slides)
 
+    call_count = [0]
+    def fake_download(q, target_path, **kwargs):
+        call_count[0] += 1
+        im = Image.new("RGB", (1080, 1080), color=(15 * call_count[0], 20, 30))
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        im.save(target_path, "PNG")
+        if "out_match_info" in kwargs and kwargs["out_match_info"] is not None:
+            kwargs["out_match_info"]["reason"] = "Khớp thực thể test"
+        return True
+
+    monkeypatch.setattr("pipeline.slide_image_resolver.download_real_web_image", fake_download)
+
     resolved = resolve_images_for_slide_script(project_dir, ss)
     assert len(resolved) == 2
     for r in resolved:
         assert Path(r).is_file()
-        assert Path(r).stat().st_size > 5000
+        assert Path(r).stat().st_size > 1000
     assert "image_url" in ss.slides[0].slots
     assert "image_url" in ss.slides[1].slots
 
