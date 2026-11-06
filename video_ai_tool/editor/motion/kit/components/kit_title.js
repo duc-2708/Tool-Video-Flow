@@ -14,23 +14,40 @@
         card.appendChild(pill);
       }
 
+      // 4. Optional Thumbnail / Image (check first to determine typography)
+      var thumbSrc = slots.thumbnail || slots.image || slots.image_url;
+      var hasImage = Boolean(thumbSrc);
+
       // Max 2 ideas per scene: 1 main headline + 1 supporting sub-line
-      // Idea 1: Large Headline / Title (font-size >= 64px via kit-title-hero)
+      // Idea 1: Large Headline / Title
+      // Requirement 5: headline >= 88px (tối đa 3 dòng via kit-title-lg); cảnh không ảnh thì headline phóng lớn >= 104px (kit-title-hero)
       var headline = slots.headline || slots.title || '';
       if (headline) {
         var title = document.createElement('div');
-        title.className = 'kit-title-hero';
+        title.className = hasImage ? 'kit-title-lg' : 'kit-title-hero';
+        if (headline.length > 70) {
+          title.style.fontSize = hasImage ? '76px' : '88px';
+        } else if (headline.length > 50) {
+          title.style.fontSize = hasImage ? '82px' : '96px';
+        }
         title.textContent = String(headline);
         card.appendChild(title);
       }
 
-      // Idea 2: Supporting Sub-line
+      // Idea 2: Supporting Sub-line (câu phụ >= 48px/52px via kit-subtitle)
       var sub = slots.subtitle || slots.sub || slots.text || '';
+      if (!sub && !hasImage) {
+        sub = slots.narration || slots.description || '';
+      }
       if (sub && sub !== headline) {
-        var subEl = document.createElement('div');
-        subEl.className = 'kit-subtitle';
-        subEl.textContent = String(sub);
-        card.appendChild(subEl);
+        var normH = String(headline).toLowerCase().replace(/[^\w\s]/g, '').trim();
+        var normS = String(sub).toLowerCase().replace(/[^\w\s]/g, '').trim();
+        if (normH !== normS && !normH.includes(normS) && !normS.includes(normH)) {
+          var subEl = document.createElement('div');
+          subEl.className = 'kit-subtitle';
+          subEl.textContent = String(sub);
+          card.appendChild(subEl);
+        }
       }
 
       // Explicit Icon ONLY when planner selected icon WITH a reason (no default lightbulb)
@@ -45,15 +62,14 @@
         card.appendChild(iconWrap);
       }
 
-      // 4. Optional Thumbnail
-      var thumbSrc = slots.thumbnail || slots.image || slots.image_url;
-      if (thumbSrc) {
+      // Requirement 3: ảnh nếu có cao >= 520px
+      if (hasImage) {
         var imgWrapper = document.createElement('div');
         imgWrapper.style.width = '100%';
-        imgWrapper.style.height = '340px';
-        imgWrapper.style.borderRadius = '20px';
+        imgWrapper.style.height = '540px';
+        imgWrapper.style.borderRadius = '24px';
         imgWrapper.style.overflow = 'hidden';
-        imgWrapper.style.marginTop = '28px';
+        imgWrapper.style.marginTop = '24px';
         imgWrapper.style.border = '1px solid var(--kit-card-border)';
         var img = document.createElement('img');
         img.src = String(thumbSrc);

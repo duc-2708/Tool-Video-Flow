@@ -40,6 +40,7 @@ def rerender_project_with_theme(
     theme: str = "light_glass",
     use_slide_script: bool = True,
     confirm_cost: bool = False,
+    force_plan: bool = True,
     scale: float = 1.0,
     fps: int = 30,
     run_audit: bool = True,
@@ -76,33 +77,41 @@ def rerender_project_with_theme(
     if use_slide_script and theme == "light_glass":
         logger.info("Building Slide Script for project %s (total duration: %.2fs)", p_dir.name, total_duration)
         
-        # Build sentences
+        # Build sentences by splitting scene narrations into complete grammatical units
+        import re
         sentences: list[dict[str, Any]] = []
         cur_t = 0.0
         for sc in timeline.scenes:
             w_file = p_dir / "audio" / f"scene_{sc.spec.id}.words.json"
             sc_words = read_words(w_file) if w_file.is_file() else []
-            sentences.append({
-                "id": sc.spec.id,
-                "text": sc.spec.narration,
-                "start": cur_t,
-                "end": cur_t + sc.duration,
-                "words": sc_words,
-            })
+            narr = sc.spec.narration.strip()
+            raw_sents = [s.strip() for s in re.split(r"(?<=[.?!])\s+", narr) if s.strip()]
+            if not raw_sents:
+                raw_sents = [narr]
+            tot_words = sum(max(1, len(s.split())) for s in raw_sents)
+            sc_t = cur_t
+            for s_text in raw_sents:
+                w_cnt = max(1, len(s_text.split()))
+                s_dur = sc.duration * (w_cnt / max(1, tot_words))
+                sentences.append({
+                    "id": len(sentences) + 1,
+                    "scene_id": sc.spec.id,
+                    "text": s_text,
+                    "start": round(sc_t, 3),
+                    "end": round(sc_t + s_dur, 3),
+                    "duration": round(s_dur, 3),
+                    "words": sc_words,
+                })
+                sc_t += s_dur
             cur_t += sc.duration
 
         # Capture sources
         source_captures = capture_sources_for_brief(brief_data, p_dir)
-        first_img_path = None
-        if source_captures:
-            first_meta = next(iter(source_captures.values()))
-            first_img_path = first_meta.get("image_path")
 
         # Plan slides
-        # If confirm_cost is False, we pass a mock LLM or let plan_slides use heuristic
-        mock_client = None
+        # If confirm_cost is False, we use deterministic heuristic planner (0 remote API cost)
         if not confirm_cost:
-            if (p_dir / "slide_script.json").is_file():
+            if not force_plan and (p_dir / "slide_script.json").is_file():
                 try:
                     slide_script_obj = SlideScript.model_validate_json((p_dir / "slide_script.json").read_text(encoding="utf-8"))
                     logger.info("Loaded existing slide_script.json (%d slides)", len(slide_script_obj.slides))
@@ -110,7 +119,7 @@ def rerender_project_with_theme(
                     slide_script_obj = None
             if not slide_script_obj:
                 # Safe offline mode: no remote LLM cost
-                logger.info("confirm_cost is False: using deterministic heuristic planner (0 remote API cost)")
+                logger.info("Generating deterministic heuristic planner (0 remote API cost)")
                 from editor.motion.light_glass_slots import create_heuristic_slide_script
                 slide_script_obj = create_heuristic_slide_script(
                     sentences=sentences,
@@ -135,26 +144,9 @@ def rerender_project_with_theme(
                 brand_name=getattr(settings, "brand_name", ""),
             )
 
-        # Attach captured images across slides
-        if source_captures and slide_script_obj.slides:
-            captures_list = [c.get("image_path") for c in source_captures.values() if c.get("image_path")]
-            if captures_list:
-                # Slide 1 gets primary capture if not already set
-                if not slide_script_obj.slides[0].slots.get("image_url"):
-                    slide_script_obj.slides[0].slots["image_url"] = str(captures_list[0])
-                # Distribute remaining captures to other slides (e.g. slide 3, 4)
-                if len(captures_list) > 1 and len(slide_script_obj.slides) > 3:
-                    target_slide = slide_script_obj.slides[3]
-                    if not target_slide.slots.get("image_url") and target_slide.layout in ("lg_source_headline", "lg_shot_features", "lg_stat_hero", "lg_note_card", "kit_title", "kit_photo", "kit_list", "kit_stat", "kit_quote"):
-                        target_slide.slots["image_url"] = str(captures_list[1])
-                if len(captures_list) > 2 and len(slide_script_obj.slides) > 4:
-                    target_slide = slide_script_obj.slides[4]
-                    if not target_slide.slots.get("image_url") and target_slide.layout in ("lg_source_headline", "lg_shot_features", "lg_stat_hero", "kit_title", "kit_photo", "kit_list", "kit_stat", "kit_compare"):
-                        target_slide.slots["image_url"] = str(captures_list[2])
-
-        # Synthesize & resolve high-contrast cinematic imagery for all slides
+        # Synthesize & resolve imagery with fail-closed CV filters (face detection + text/slide rejection)
         from pipeline.slide_image_resolver import resolve_images_for_slide_script
-        resolved_imgs = resolve_images_for_slide_script(p_dir, slide_script_obj, force_refresh=False)
+        resolved_imgs = resolve_images_for_slide_script(p_dir, slide_script_obj, force_refresh=True)
         logger.info("Resolved %d visual graphic assets for slides", len(resolved_imgs))
 
         # Save slide_script.json
@@ -200,6 +192,7 @@ if __name__ == "__main__":
     parser.add_argument("--theme", default="light_glass", help="Motion theme (default: light_glass)")
     parser.add_argument("--slide-script", action="store_true", default=True, help="Enable SlideScript flow")
     parser.add_argument("--confirm-cost", action="store_true", default=False, help="Explicit confirmation for remote LLM API calls")
+    parser.add_argument("--force-plan", action="store_true", default=True, help="Force regenerate SlideScript")
     parser.add_argument("--scale", type=float, default=1.0, choices=[0.25, 0.5, 1.0], help="Render scale")
     parser.add_argument("--fps", type=int, default=30, choices=[24, 30], help="Render FPS")
     parser.add_argument("--no-audit", action="store_true", help="Disable post-render audit")
@@ -210,6 +203,7 @@ if __name__ == "__main__":
         theme=args.theme,
         use_slide_script=args.slide_script,
         confirm_cost=args.confirm_cost,
+        force_plan=args.force_plan,
         scale=args.scale,
         fps=args.fps,
         run_audit=not args.no_audit,

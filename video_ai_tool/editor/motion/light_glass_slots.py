@@ -19,8 +19,10 @@ from schemas.slide_script import (
     extract_clean_headline,
     clean_trailing_dangling,
     is_incomplete_phrase,
+    is_compound_pair,
 )
 from validation.grounding import extract_numbers
+from pipeline.slide_image_resolver import STOPWORDS_VI_EXTENDED
 
 
 def text_similarity(t1: str, t2: str) -> float:
@@ -31,6 +33,22 @@ def text_similarity(t1: str, t2: str) -> float:
     if not s1 or not s2:
         return 0.0
     return difflib.SequenceMatcher(None, s1, s2).ratio()
+
+
+def truncate_complete_phrase(text: str, max_chars: int = 140) -> str:
+    """Truncate text at a natural clause or word boundary without dangling/incomplete words."""
+    cleaned = clean_trailing_dangling(text.strip())
+    if len(cleaned) <= max_chars:
+        return cleaned
+    cut = cleaned[:max_chars]
+    for punct in (". ", "; ", ", ", " - ", ": "):
+        last_punct = cut.rfind(punct)
+        if last_punct >= 40:
+            return clean_trailing_dangling(cut[:last_punct])
+    last_space = cut.rfind(" ")
+    if last_space > 0:
+        return clean_trailing_dangling(cut[:last_space])
+    return clean_trailing_dangling(cleaned)
 
 
 def extract_grounded_stat(text: str, brief: Any = None) -> tuple[str, str, str] | None:
@@ -161,6 +179,7 @@ def _extract_genuine_compare(text: str) -> tuple[str, str, str, str] | None:
     """Extract two genuine opposing clauses from narration.
     
     Returns (left_title, left_text, right_title, right_text) or None if no genuine comparison exists.
+    Strictly prohibits template labels like 'Cách tiếp cận cũ', 'Cách tiếp cận mới'.
     """
     patterns = [
         r"\bthay vì\b",
@@ -178,12 +197,21 @@ def _extract_genuine_compare(text: str) -> tuple[str, str, str, str] | None:
                 right = parts[1].strip().rstrip(",;:-—").strip()
                 l_words = left.split()
                 r_words = right.split()
-                if len(l_words) >= 2 and len(r_words) >= 2:
-                    l_text = " ".join(l_words[-6:])
-                    r_text = " ".join(r_words[:6])
-                    l_title = "Cách truyền thống" if any(k in left.lower() for k in ("trước", "cũ", "truyền thống")) else "Cách tiếp cận cũ"
-                    r_title = "Công nghệ tự chủ" if any(k in right.lower() for k in ("nay", "mới", "hiện tại")) else "Cách tiếp cận mới"
-                    return l_title, l_text, r_title, r_text
+                if len(l_words) >= 3 and len(r_words) >= 3:
+                    l_clean = clean_trailing_dangling(left)
+                    r_clean = clean_trailing_dangling(right)
+                    l_t = extract_clean_headline(l_clean, max_chars=28)
+                    r_t = extract_clean_headline(r_clean, max_chars=28)
+                    # Requirement 4: Compare ONLY when both sides have genuine entity titles from the text
+                    if (
+                        l_t and r_t
+                        and len(l_t.split()) >= 2 and len(r_t.split()) >= 2
+                        and not is_incomplete_phrase(l_t) and not is_incomplete_phrase(r_t)
+                        and not l_t[0].islower() and not r_t[0].islower()
+                        and not any(tmpl in l_t.lower() for tmpl in ("cách tiếp cận", "tiếp cận", "phương án", "truyền thống"))
+                        and not any(tmpl in r_t.lower() for tmpl in ("cách tiếp cận", "tiếp cận", "phương án"))
+                    ):
+                        return l_t, l_clean[:48], r_t, r_clean[:48]
     return None
 
 
@@ -218,79 +246,97 @@ def _generate_vivid_image_prompt(
     """
     n_low = narration.lower()
 
+    angles = [
+        "cinematic establishing wide angle",
+        "dynamic close-up technical macro",
+        "aerial panoramic perspective",
+        "isometric blueprint architectural cutaway",
+        "dramatic low-angle hero framing",
+        "volumetric studio documentary lighting",
+        "holographic HUD overlay analytics",
+        "high-speed motion blur depth of field",
+        "precision cross-section engineering schematic view",
+        "atmospheric telephoto tracking shot",
+        "high-contrast dramatic rim-lit profile",
+        "futuristic forward-looking wide cinematic vista",
+    ]
+    angle_mod = f", {angles[idx % len(angles)]}" if idx is not None else ""
+
+    # Specific historical topic suite for Elon Musk videos only
+    if author and "musk" in author.lower() and idx is not None:
+        musk_prompts = [
+            f"Cinematic studio portrait of visionary tech founder Elon Musk speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field{angle_mod}, 8k octane render.",
+            f"Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams{angle_mod}, 8k hyper-detailed.",
+            f"High-precision industrial robotic arm welding futuristic quantum components in an automated Tesla Gigafactory, glowing laser beams and spark particles{angle_mod}, 8k cinematic.",
+            f"Professional multi-screen Bloomberg financial trading terminal showing candlestick price charts and macroeconomic yield curves{angle_mod}, 8k.",
+            f"High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and asset growth on right{angle_mod}, 8k.",
+            f"Official financial planning journal clipping and article citation badge on a frosted glass terminal screen{angle_mod}, 8k.",
+            f"High-tech glowing dashboard gauge showing cash buffer and liquidity reserve indicator dial in emerald green{angle_mod}, 8k.",
+            f"Futuristic glowing amber-crimson holographic cyber security shield deflecting volatile pension and market risk anomalies{angle_mod}, 8k.",
+            f"Futuristic golden mechanical balance scale in equilibrium, weighing physical gold assets against algorithmic technology capital{angle_mod}, 8k.",
+            f"Ornate 3D glowing golden key floating above a dark frosted glass pedestal with pulsing cyan circuit runes{angle_mod}, 8k.",
+            f"Vibrant glowing cybernetic neural network core pulsating with complex interconnected data nodes and synaptic fiber conduits{angle_mod}, 8k.",
+            f"Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights{angle_mod}, cinematic 8k.",
+        ]
+        if idx < len(musk_prompts):
+            return musk_prompts[idx]
+
     if layout in ("kit_outro", "lg_cta_profile") or (idx is not None and idx >= 11) or any(k in n_low for k in ("đăng ký kênh", "theo dõi kênh", "hãy đăng ký", "bấm theo dõi", "subscribe", "tự chủ hạ tầng")):
-        return "Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights, cinematic 8k."
+        return f"Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights{angle_mod}, cinematic 8k."
 
     # Domain-specific infrastructure and engineering keywords
     if any(k in n_low for k in ("singapore", "sụt lún", "địa kỹ thuật")):
-        return "Cinematic civil engineering depiction of geotechnical ground settlement monitoring and tunnel stability control during Singapore metro construction, sensor alert interface, 8k concept art."
+        return f"Cinematic civil engineering depiction of geotechnical ground settlement monitoring and tunnel stability control during Singapore metro construction, sensor alert interface{angle_mod}, 8k concept art."
 
     if any(k in n_low for k in ("đường sắt", "bắc nam", "bắc - nam", "1.541", "1541")):
-        return "Cinematic aerial perspective of sleek high-speed electric passenger train speeding through modern viaduct and underground tunnel network, 1541 km corridor, 8k concept art."
+        return f"Cinematic aerial perspective of sleek high-speed electric passenger train speeding through modern viaduct and underground tunnel network, 1541 km corridor{angle_mod}, 8k concept art."
 
     if any(k in n_low for k in ("địa chất", "nhiều tầng", "đan xen", "đất đá")):
-        return "Detailed cross-section illustration of complex multi-layered urban soil strata, underground rock formations, and diaphragm retaining walls, technical engineering 8k."
+        return f"Detailed cross-section illustration of complex multi-layered urban soil strata, underground rock formations, and diaphragm retaining walls, technical engineering{angle_mod}, 8k."
 
     if any(k in n_low for k in ("tbm", "máy đào hầm")):
-        return "Massive high-tech tunnel boring machine TBM cutterhead advancing precisely through underground urban soil, glowing hydraulic systems, industrial engineering 8k."
+        return f"Massive high-tech tunnel boring machine TBM cutterhead advancing precisely through underground urban soil, glowing hydraulic systems, industrial engineering{angle_mod}, 8k."
 
     if any(k in n_low for k in ("tiêu chuẩn", "ngôn ngữ chung", "khung kỹ thuật")):
-        return "Technical engineering blueprints and standardized infrastructure design schematics displayed on glass terminal screen, architectural precision 8k."
+        return f"Technical engineering blueprints and standardized infrastructure design schematics displayed on glass terminal screen, architectural precision{angle_mod}, 8k."
 
     if any(k in n_low for k in ("quan sát", "chướng ngại vật", "nhận biết sớm")):
-        return "Laser telemetry sensors and optical monitoring prisms mounted on tunnel walls tracking millimeter-level ground displacement, 8k cinematic."
+        return f"Laser telemetry sensors and optical monitoring prisms mounted on tunnel walls tracking millimeter-level ground displacement{angle_mod}, 8k cinematic."
 
     if any(k in n_low for k in ("kỹ sư", "năng lực tổng hợp", "khảo sát", "làm chủ")):
-        return "Vietnamese civil engineering specialists wearing safety helmets and high-visibility gear reviewing digital geotechnical blueprints inside underground transit tunnel, 8k."
+        return f"Vietnamese civil engineering specialists wearing safety helmets and high-visibility gear reviewing digital geotechnical blueprints inside underground transit tunnel{angle_mod}, 8k."
 
     if author and (idx == 0 or any(k in n_low for k in ("nói", "tuyên bố", "cho rằng", "chia sẻ", "nhấn mạnh", "phát biểu"))):
-        return f"Cinematic studio portrait of visionary tech founder {author} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field, 8k octane render."
+        return f"Cinematic studio portrait of visionary tech founder {author} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field{angle_mod}, 8k octane render."
 
     # High-priority semantic keyword checks
     if any(k in n_low for k in ("heo đất", "lợn đất", "tiết kiệm", "giữ tiền", "piggy")):
-        return "Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams, dramatic high-contrast studio rim lighting, 8k hyper-detailed."
+        return f"Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams, dramatic high-contrast studio rim lighting{angle_mod}, 8k hyper-detailed."
 
     if any(k in n_low for k in ("robot", "tự động hóa", "nhà máy", "tay máy", "gigafactory")):
-        return "High-precision industrial robotic arm welding futuristic quantum components in an automated Tesla Gigafactory, glowing laser beams and spark particles, 8k cinematic."
+        return f"High-precision industrial robotic arm welding futuristic quantum components in an automated Tesla Gigafactory, glowing laser beams and spark particles{angle_mod}, 8k cinematic."
 
     if any(k in n_low for k in ("chi phí", "về không", "bằng không", "năng suất", "300%", "giá thành", "rẻ hơn")):
-        return "Professional multi-screen Bloomberg financial trading terminal showing production cost descending to zero with vibrant green and red candlestick price charts, 8k."
+        return f"Professional multi-screen Bloomberg financial trading terminal showing production cost descending to zero with vibrant green and red candlestick price charts{angle_mod}, 8k."
 
     if any(k in n_low for k in ("rủi ro", "nguy hiểm", "cảnh báo", "bảo vệ", "lỗ hổng", "hoài nghi", "mạo hiểm")):
-        return "Futuristic glowing amber-crimson holographic cyber security shield deflecting volatile pension and market risk anomalies on an advanced tactical monitoring matrix, 8k."
+        return f"Futuristic glowing amber-crimson holographic cyber security shield deflecting volatile pension and market risk anomalies on an advanced tactical monitoring matrix{angle_mod}, 8k."
 
     if any(k in n_low for k in ("so sánh", "hai mặt", "đối lập", "thay vì", "tiền mặt")):
-        return "High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and green asset growth on right, 8k."
+        return f"High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and green asset growth on right{angle_mod}, 8k."
 
     if any(k in n_low for k in ("cân bằng", "cán cân", "phân bổ", "tỷ trọng")):
-        return "Futuristic golden mechanical balance scale in equilibrium, weighing physical gold assets against algorithmic technology capital across society, 8k octane render."
+        return f"Futuristic golden mechanical balance scale in equilibrium, weighing physical gold assets against algorithmic technology capital across society{angle_mod}, 8k octane render."
 
     if any(k in n_low for k in ("chìa khóa", "giải pháp", "dòng tiền", "bước ngoặt")):
-        return "Ornate 3D glowing golden key floating above a dark frosted glass pedestal with pulsing cyan circuit runes, representing cash flow mastery, 8k."
+        return f"Ornate 3D glowing golden key floating above a dark frosted glass pedestal with pulsing cyan circuit runes, representing cash flow mastery{angle_mod}, 8k."
 
     if any(k in n_low for k in ("trí tuệ nhân tạo", "thuật toán", "mô hình", "mạng thần kinh", "neural")) or re.search(r"\b(ai)\b", n_low):
-        return "Vibrant glowing cybernetic neural network core pulsating with complex interconnected data nodes and synaptic fiber conduits, deep indigo and cyan volumetric atmosphere, 8k."
+        return f"Vibrant glowing cybernetic neural network core pulsating with complex interconnected data nodes and synaptic fiber conduits, deep indigo and cyan volumetric atmosphere{angle_mod}, 8k."
 
-    dedicated_beat_prompts = [
-        f"Cinematic studio portrait of visionary tech founder {author or 'Elon Musk'} speaking thoughtfully in a high-tech keynote stage, dramatic volumetric rim lighting, soft cyan depth of field, 8k octane render.",
-        "Cinematic concept art of a vintage porcelain piggy bank cracking open with escaping radiant gold coins and digital energy streams, dramatic high-contrast studio rim lighting, 8k hyper-detailed.",
-        "High-precision industrial robotic arm welding futuristic quantum components in an automated Tesla Gigafactory, glowing laser beams and spark particles, 8k cinematic.",
-        "Professional multi-screen Bloomberg financial trading terminal showing production cost descending to zero with vibrant green and red candlestick price charts, 8k.",
-        "High-contrast split comparison visual: dormant cash paper stack in a dark lockbox on left versus glowing productive quantum microchip and green asset growth on right, 8k.",
-        "Ornate 3D glowing golden key floating above a dark frosted glass pedestal with pulsing cyan circuit runes, representing cash flow mastery, 8k.",
-        f"Editorial financial newspaper article clipping with large golden quotation marks, verified expert badge for {author or 'financial planner Ted Jenkin'}, and bold highlighted callout text, 8k.",
-        "Futuristic glowing amber-crimson holographic cyber security shield deflecting volatile pension and market risk anomalies on an advanced tactical monitoring matrix, 8k.",
-        "Futuristic golden mechanical balance scale in equilibrium, weighing physical gold assets against algorithmic technology capital across society, 8k octane render.",
-        "Futuristic cybernetic city skyline with autonomous humanoid robot gazing at technological horizon and neon glass skyscrapers, 8k.",
-        "Circular glowing emergency reserve gauge meter pointing to 6-month green safety zone, fortified biometric vault lock mechanism, 8k.",
-        "Modern high-end tech video creator studio setup with glowing 3D holographic community reaction spheres, neon pink and cyber blue ambient backlights, cinematic 8k.",
-    ]
-
-    if idx is not None and 0 <= idx < len(dedicated_beat_prompts):
-        return dedicated_beat_prompts[idx]
-
-    clean_topic = topic or "Urban Underground Infrastructure"
-    return f"Cinematic engineering visualization of modern urban underground infrastructure and civil technology for '{clean_topic}', 8k concept art."
+    clean_topic = topic or "Technology and Infrastructure"
+    headline_clean = extract_clean_headline(narration) or clean_topic
+    return f"Cinematic documentary photography of {headline_clean} regarding '{clean_topic}', realistic professional lighting{angle_mod}, 8k."
 
 
 def _clean_domain(url: str | None) -> str:
@@ -383,7 +429,7 @@ def create_heuristic_slide_script(
         if s_dur <= 0.0:
             s_dur = max(0.1, float(s.get("end", 0.0)) - float(s.get("start", 0.0)))
 
-        if s_dur > 7.3:
+        if s_dur > 7.5:
             s_text = s.get("text", "")
             s_start = float(s.get("start", 0.0))
             s_end = float(s.get("end", s_start + s_dur))
@@ -401,10 +447,24 @@ def create_heuristic_slide_script(
             if buf:
                 clauses.append(buf.strip())
 
+            valid_split_idx = -1
             if len(clauses) >= 2:
                 half_idx = len(clauses) // 2
-                p1 = " ".join(clauses[:half_idx]).strip()
-                p2 = " ".join(clauses[half_idx:]).strip()
+                for offset in (0, -1, 1, -2, 2):
+                    idx = half_idx + offset
+                    if 1 <= idx < len(clauses):
+                        cand_p1 = " ".join(clauses[:idx]).strip()
+                        cand_p2 = " ".join(clauses[idx:]).strip()
+                        w1 = cand_p1.split()
+                        w2 = cand_p2.split()
+                        if w1 and w2 and len(w1) >= 3 and len(w2) >= 3:
+                            if not is_compound_pair(w1[-1], w2[0]) and not cand_p2[0].islower():
+                                valid_split_idx = idx
+                                break
+
+            if valid_split_idx > 0:
+                p1 = " ".join(clauses[:valid_split_idx]).strip()
+                p2 = " ".join(clauses[valid_split_idx:]).strip()
                 w1, w2 = len(p1.split()), len(p2.split())
                 mid = s_start + s_dur * (w1 / max(1, w1 + w2))
                 normalized_sentences.append({
@@ -424,25 +484,11 @@ def create_heuristic_slide_script(
                     "duration": s_end - mid,
                 })
             else:
-                words = s_text.split()
-                half = len(words) // 2
-                mid = s_start + s_dur * 0.5
-                normalized_sentences.append({
-                    "id": len(normalized_sentences) + 1,
-                    "scene_id": s.get("scene_id"),
-                    "text": " ".join(words[:half]),
-                    "start": s_start,
-                    "end": mid,
-                    "duration": mid - s_start,
-                })
-                normalized_sentences.append({
-                    "id": len(normalized_sentences) + 1,
-                    "scene_id": s.get("scene_id"),
-                    "text": " ".join(words[half:]),
-                    "start": mid,
-                    "end": s_end,
-                    "duration": s_end - mid,
-                })
+                # If no natural clause boundary exists, DO NOT split arbitrarily by word count!
+                # Keep whole sentence intact to prevent cutting compound words.
+                s_dict = dict(s)
+                s_dict["duration"] = s_dur
+                normalized_sentences.append(s_dict)
         else:
             s_dict = dict(s)
             s_dict["duration"] = s_dur
@@ -604,11 +650,16 @@ def create_heuristic_slide_script(
             s_ref = SourceRef(url=source_url, domain=source_domain, image_kind="card")
             first_sent = group[0].get("text", "")
             title_clean = extract_clean_headline(first_sent)
+            t_final = title_clean or clean_trailing_dangling(first_sent)
+            sub_final = truncate_complete_phrase(_sanitize_metaphor(combined_text), 140)
+            if t_final and sub_final and text_similarity(t_final, sub_final) >= 0.70:
+                sub_final = ""
             slots = {
                 "pill": _safe_pill(topic_title),
-                "title": title_clean or first_sent[:42],
-                "subtitle": _sanitize_metaphor(combined_text)[:120],
+                "title": t_final,
             }
+            if sub_final:
+                slots["subtitle"] = sub_final
 
         elif layout == "kit_stat":
             # Requirement 7: kit_stat chỉ hiện khi có đủ {giá trị, đơn vị, đối tượng đo} lấy từ câu trong nguồn
@@ -626,29 +677,39 @@ def create_heuristic_slide_script(
                 # Thiếu đối tượng đo hoặc đơn vị -> KHÔNG hiện stat, chuyển sang kit_title
                 layout = "kit_title"
                 list_title = extract_clean_headline(_sanitize_metaphor(combined_text)) or "Nội Dung Trọng Tâm"
+                sub_final = truncate_complete_phrase(_sanitize_metaphor(combined_text), 140)
+                if list_title and sub_final and text_similarity(list_title, sub_final) >= 0.70:
+                    sub_final = ""
                 slots = {
                     "title": list_title,
                     "pill": _safe_pill(topic_title),
-                    "subtitle": _sanitize_metaphor(combined_text)[:120],
                 }
+                if sub_final:
+                    slots["subtitle"] = sub_final
 
         if layout == "kit_list":
             clean_combined = _sanitize_metaphor(combined_text)
             list_title = extract_clean_headline(clean_combined) or (_safe_pill(topic_title) if topic_title else "Nội Dung Trọng Tâm")
-            if any(forb in list_title.lower() for forb in ("bước đi", "làm thế nào", "cách kỹ sư", "ý chính", "phương án", "quá trình")):
+            if any(forb in list_title.lower() for forb in ("bước đi", "làm thế nào", "cách kỹ sư", "ý chính", "phương án", "quá trình", "đất phức tạp", "ý chính cần nhớ")):
                 list_title = clean_trailing_dangling(clean_combined)
 
             raw_clauses = [c.strip() for c in re.split(r"[,;.]", clean_combined) if len(c.strip()) >= 8]
             items = []
             if len(raw_clauses) <= 1:
-                # Câu đơn ngắn: tách 3-4 từ đầu làm tiêu đề, phần vị ngữ còn lại làm bullet
-                w_all = clean_combined.split()
-                if len(w_all) >= 6:
-                    split_w = min(4, max(2, len(w_all) // 3))
-                    cand_t = clean_trailing_dangling(" ".join(w_all[:split_w]))
-                    cand_it = clean_trailing_dangling(" ".join(w_all[split_w:]))
-                    cand_it = re.sub(r"^(?:với|có|là|được|và|để)\s+", "", cand_it, flags=re.I).strip()
-                    if len(cand_t.split()) >= 2 and len(cand_it.split()) >= 3 and not is_incomplete_phrase(cand_it):
+                # Chỉ tách khi có liên từ rõ ràng (nhưng, và, để, vì) tạo thành 2 mệnh đề hoàn chỉnh
+                conj_match = re.split(r"\s+(nhưng|và|để|vì|khi|trong khi)\s+", clean_combined, maxsplit=1, flags=re.I)
+                if len(conj_match) == 3:
+                    cand_t = clean_trailing_dangling(conj_match[0].strip())
+                    cand_it = clean_trailing_dangling(conj_match[2].strip())
+                    w_t = cand_t.split()
+                    w_it = cand_it.split()
+                    if (
+                        len(w_t) >= 3 and len(w_it) >= 6
+                        and not is_compound_pair(w_t[-1], conj_match[1].strip())
+                        and not is_incomplete_phrase(cand_t)
+                        and not is_incomplete_phrase(cand_it)
+                        and not cand_it[0].islower()
+                    ):
                         list_title = cand_t[0].upper() + cand_t[1:]
                         items = [cand_it[0].upper() + cand_it[1:]]
 
@@ -670,40 +731,55 @@ def create_heuristic_slide_script(
                         remainder = (clean_c[:idx] + " " + clean_c[idx + len(list_title):]).strip()
                         clean_c = remainder
 
-                    if not clean_c or len(clean_c.split()) < 3:
+                    # Requirement 4: bullet phải là mệnh đề đầy đủ >= 6 từ
+                    if not clean_c or len(clean_c.split()) < 6:
                         continue
 
                     clean_c = clean_c[0].upper() + clean_c[1:]
                     clean_c = clean_trailing_dangling(clean_c)
 
-                    if clean_c and len(clean_c) >= 10 and not is_incomplete_phrase(clean_c):
+                    if clean_c and len(clean_c) >= 15 and not is_incomplete_phrase(clean_c):
                         # Requirement 5: Bullet không được trùng >= 70% với headline
                         if text_similarity(clean_c, list_title) < 0.70:
                             items.append(clean_c)
 
-            # Requirement 5: Nếu trùng -> bỏ bullet và để headline + 1 câu bổ sung MỚI lấy từ câu kế tiếp trong narration
+            # Requirement 4 & 5: Nếu không đủ >= 6 từ hoặc trùng -> thử lấy câu bổ sung mới >= 6 từ từ narration kế tiếp
             if not items:
                 supp_text = ""
                 if s_idx + 1 < len(groups):
                     next_sent = " ".join(s.get("text", "") for s in groups[s_idx + 1]).strip()
                     next_clean = clean_trailing_dangling(_sanitize_metaphor(next_sent))
                     if next_clean and text_similarity(next_clean, list_title) < 0.70:
-                        supp_clauses = [sc.strip() for sc in re.split(r"[,;.]", next_clean) if len(sc.strip()) >= 12]
-                        cand_supp = supp_clauses[0] if supp_clauses else next_clean
-                        cand_supp = clean_trailing_dangling(cand_supp)
-                        if text_similarity(cand_supp, list_title) < 0.70 and not is_incomplete_phrase(cand_supp):
-                            supp_text = cand_supp
+                        supp_clauses = [sc.strip() for sc in re.split(r"[,;.]", next_clean) if len(sc.strip().split()) >= 6]
+                        cand_supp = supp_clauses[0] if supp_clauses else (next_clean if len(next_clean.split()) >= 6 else "")
+                        if cand_supp:
+                            cand_supp = clean_trailing_dangling(cand_supp)
+                            if len(cand_supp.split()) >= 6 and text_similarity(cand_supp, list_title) < 0.70 and not is_incomplete_phrase(cand_supp):
+                                supp_text = cand_supp
                 if supp_text:
                     items = [supp_text]
 
+            # If still no items but the sentence itself is a complete clause >= 6 words,
+            # use a concise heading and keep the full clause as the bullet item
+            if not items and len(clean_combined.split()) >= 6:
+                clean_full = clean_trailing_dangling(_sanitize_metaphor(clean_combined))
+                if len(clean_full.split()) >= 6 and not is_incomplete_phrase(clean_full):
+                    list_title = "Thông tin nổi bật"
+                    items = [clean_full]
+
+            # Requirement 4: Nếu không đủ bullet >= 6 từ -> BỎ bullet, chuyển sang layout kit_title!
             if not items:
-                # Cảnh không còn nội dung -> chuyển sang kit_title
                 layout = "kit_title"
+                clean_title = extract_clean_headline(clean_combined) or clean_trailing_dangling(clean_combined)
+                clean_sub = truncate_complete_phrase(_sanitize_metaphor(combined_text), 140)
+                if clean_title and clean_sub and text_similarity(clean_title, clean_sub) >= 0.70:
+                    clean_sub = ""
                 slots = {
                     "pill": _safe_pill(topic_title),
-                    "title": list_title,
-                    "subtitle": _sanitize_metaphor(combined_text)[:120],
+                    "title": clean_title,
                 }
+                if clean_sub:
+                    slots["subtitle"] = clean_sub
             else:
                 slots = {
                     "title": list_title,
@@ -726,8 +802,8 @@ def create_heuristic_slide_script(
                 layout = "kit_title"
                 slots = {
                     "pill": _safe_pill(topic_title),
-                    "title": extract_clean_headline(combined_text) or combined_text[:42],
-                    "subtitle": _sanitize_metaphor(combined_text)[:120],
+                    "title": extract_clean_headline(combined_text) or clean_trailing_dangling(combined_text),
+                    "subtitle": truncate_complete_phrase(_sanitize_metaphor(combined_text), 140),
                 }
 
         elif layout == "kit_quote":
@@ -735,27 +811,64 @@ def create_heuristic_slide_script(
             if quote_author_res:
                 author_name, author_role = quote_author_res
                 slots = {
-                    "quote": _sanitize_metaphor(combined_text)[:120],
+                    "quote": truncate_complete_phrase(_sanitize_metaphor(combined_text), 140),
                     "author": author_name,
                     "role": author_role,
                     "pill": "GÓC NHÌN",
                 }
             else:
                 layout = "kit_title"
+                t_final = extract_clean_headline(combined_text) or clean_trailing_dangling(combined_text)
+                sub_final = truncate_complete_phrase(_sanitize_metaphor(combined_text), 140)
+                if t_final and sub_final and text_similarity(t_final, sub_final) >= 0.70:
+                    sub_final = ""
                 slots = {
                     "pill": _safe_pill(topic_title),
-                    "title": extract_clean_headline(combined_text) or combined_text[:42],
-                    "subtitle": _sanitize_metaphor(combined_text)[:120],
+                    "title": t_final,
                 }
+                if sub_final:
+                    slots["subtitle"] = sub_final
 
         elif layout == "kit_outro":
             channel = brand_name if (brand_name and brand_name != "TIN CÔNG NGHỆ") else ""
-            outro_title = extract_clean_headline(combined_text) or "Tổng kết"
+
+            # Requirement 4: Câu kết luận cuối phải khớp ý nguồn: nếu không tìm thấy câu tương ứng trong narration/nguồn -> dùng chính câu cuối của narration
+            last_sentence_text = sentences[-1].get("text", "") if sentences else combined_text
+            brief_corpus = ""
+            if brief:
+                b_facts = getattr(brief, "facts", None) or (brief.get("facts") if isinstance(brief, dict) else [])
+                brief_corpus = " ".join(
+                    str(f.get("claim", "")) + " " + str(f.get("evidence_quote", ""))
+                    for f in b_facts if isinstance(f, dict)
+                )
+            full_ref_corpus = f"{combined_text} {last_sentence_text} {brief_corpus}".lower()
+
+            clean_conclusion = extract_clean_headline(combined_text)
+            is_matched_conclusion = False
+            if clean_conclusion and len(clean_conclusion.split()) >= 3 and not is_incomplete_phrase(clean_conclusion):
+                conclusion_tokens = [w for w in clean_conclusion.lower().split() if len(w) >= 3 and w not in STOPWORDS_VI_EXTENDED]
+                if conclusion_tokens and all(t in full_ref_corpus for t in conclusion_tokens[:3]):
+                    is_matched_conclusion = True
+
+            if is_matched_conclusion and clean_conclusion:
+                outro_title = clean_conclusion
+            else:
+                # Dùng chính câu cuối của narration (cho phép tối đa 3 dòng, <= 96 ký tự)
+                outro_title = clean_trailing_dangling(last_sentence_text)
+                if len(outro_title) > 96:
+                    lines = wrap_text_greedy(outro_title, max_chars_per_line=32, max_lines=3)
+                    outro_title = clean_trailing_dangling(" ".join(lines) if lines else truncate_complete_phrase(outro_title, 96))
+
+            outro_text = truncate_complete_phrase(_sanitize_metaphor(last_sentence_text), 140)
+            if outro_text and (text_similarity(outro_title, outro_text) >= 0.70 or outro_title.lower().strip() == outro_text.lower().strip()):
+                outro_text = ""
+
             slots = {
                 "pill": "ĐIỂM NHÌN",
                 "title": outro_title,
-                "text": _sanitize_metaphor(combined_text)[:140],
             }
+            if outro_text:
+                slots["text"] = outro_text
             if channel:
                 slots["channel_name"] = channel
             if source_domain:
@@ -830,13 +943,23 @@ def heuristic_slide_script_for_edit_plan(
         dur = dur or 5.0
         sc_id = getattr(sc, "id", 1) if not isinstance(sc, dict) else sc.get("id", 1)
         narr = getattr(sc, "narration", "") if not isinstance(sc, dict) else sc.get("narration", "")
-        sentences.append({
-            "id": sc_id,
-            "text": narr,
-            "start": t,
-            "end": t + dur,
-            "duration": dur,
-        })
+        raw_sents = [s.strip() for s in re.split(r"(?<=[.?!])\s+", narr) if s.strip()]
+        if not raw_sents:
+            raw_sents = [narr.strip()]
+        total_w = sum(max(1, len(s.split())) for s in raw_sents)
+        cur_t = t
+        for s_idx, s_text in enumerate(raw_sents):
+            w_cnt = max(1, len(s_text.split()))
+            s_dur = dur * (w_cnt / max(1, total_w))
+            sentences.append({
+                "id": len(sentences) + 1,
+                "scene_id": sc_id,
+                "text": s_text,
+                "start": round(cur_t, 3),
+                "end": round(cur_t + s_dur, 3),
+                "duration": round(s_dur, 3),
+            })
+            cur_t += s_dur
         t += dur
     if total_duration <= 0.0:
         total_duration = t

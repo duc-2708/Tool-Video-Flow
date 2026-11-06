@@ -31,7 +31,7 @@ def test_audit_passing_scenario(tmp_path):
             id="slide_3",
             layout="lg_shot_features",
             sentence_ids=[3],
-            slots={"title": "Tính năng", "items": ["Điểm nổi bật 1", "Điểm nổi bật 2"]},
+            slots={"title": "Tính năng", "items": ["Hệ thống mang lại nhiều tính năng nổi bật", "Tối ưu hóa quy trình cho người dùng"]},
             duration=5.2,
             narration="Hệ thống mang lại nhiều tính năng nổi bật cho người dùng.",
         ),
@@ -285,4 +285,75 @@ def test_audit_fails_on_cutoff_and_corrupted_date(tmp_path):
     cq = res["checks"]["content_quality_and_dedup"]
     assert cq["cut_off_strings_count"] >= 2
     assert len(cq["corrupted_dates"]) >= 1
+
+
+def test_audit_fails_on_lowercase_initial_and_compound_dangling(tmp_path):
+    """Test specifically catching the reported real-world defects:
+    - 'Điểm khác biệt cốt' (dangling compound first syllable 'cốt')
+    - 'Nước ta đặt mục' (dangling compound first syllable 'mục')
+    - 'bộ về hạ tầng tính toán' (lowercase initial)
+    - 'dùng công cụ' (lowercase initial)
+    - '...có thể nhân' (dangling compound first syllable 'nhân')
+    - Headline repeating subtitle >= 70%
+    - Template 'Cách tiếp cận cũ/mới'
+    """
+    slides = [
+        SlideItem.model_construct(
+            id="slide_1",
+            layout="kit_title",
+            sentence_ids=[1],
+            slots={"title": "Điểm khác biệt cốt", "subtitle": "Nội dung giải thích"},
+            duration=5.0,
+            narration="Điểm khác biệt cốt lõi là hệ thống tự chủ hoàn toàn.",
+        ),
+        SlideItem.model_construct(
+            id="slide_2",
+            layout="kit_title",
+            sentence_ids=[2],
+            slots={"title": "bộ về hạ tầng tính toán", "subtitle": "Phát triển hạ tầng"},
+            duration=5.0,
+            narration="Đồng bộ về hạ tầng tính toán và nhân lực.",
+        ),
+        SlideItem.model_construct(
+            id="slide_3",
+            layout="kit_list",
+            sentence_ids=[3],
+            slots={"title": "Nước ta đặt mục", "items": ["dùng công cụ để xử lý", "Sai sót nhỏ ở khâu đầu có thể nhân"]},
+            duration=5.0,
+            narration="Nước ta đặt mục tiêu tự chủ.",
+        ),
+        SlideItem.model_construct(
+            id="slide_4",
+            layout="kit_compare",
+            sentence_ids=[4],
+            slots={
+                "title": "Đối chiếu giải pháp",
+                "left": {"title": "Cách tiếp cận cũ", "text": "Làm thủ công"},
+                "right": {"title": "Cách tiếp cận mới", "text": "Dùng AI tự hành"},
+            },
+            duration=5.0,
+            narration="So sánh hai cách tiếp cận.",
+        ),
+        SlideItem.model_construct(
+            id="slide_5",
+            layout="kit_outro",
+            sentence_ids=[5],
+            slots={
+                "title": "Bạn sẽ giao những việc nào cho AI?",
+                "text": "Bạn sẽ giao những việc nào cho AI?",
+            },
+            duration=5.0,
+            narration="Bạn sẽ giao những việc nào cho AI?",
+        ),
+    ]
+    script = SlideScript.model_construct(topic="Test Compound Dangling", total_duration=25.0, slides=slides)
+    (tmp_path / "slide_script.json").write_text(json.dumps(script.model_dump(mode="json")), encoding="utf-8")
+
+    res = audit_light_glass_project(tmp_path, slide_script=script)
+    assert res["passed"] is False
+    cq = res["checks"]["content_quality_and_dedup"]
+    assert len(cq["lowercase_initial_violations"]) >= 2
+    assert len(cq["cut_off_strings"]) >= 2
+    assert len(cq["headline_subtitle_repetition_violations"]) >= 1
+    assert cq["forbidden_template_count"] >= 2
 
