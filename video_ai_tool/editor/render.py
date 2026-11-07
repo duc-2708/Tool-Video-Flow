@@ -326,7 +326,7 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
 
                         from editor.timeline import TimelineScene, TimelineShot
                         from schemas.motion_scene import MotionScenePlan
-                        from schemas.visual import VisualBeat, VisualData, Visual
+                        from schemas.visual import VisualBeat, VisualData, Visual, VisualPhoto
                         from schemas.edit_plan import Scene, Shot
                         from imageio_ffmpeg import get_ffmpeg_exe
                         from utils.word_timing import read_words
@@ -405,9 +405,22 @@ def run_render(plan_path,*,mode="preview",settings=None,progress=None,diagnostic
                                 clean_slots["winner"] = str(clean_slots["winner"])
                             if "value" in clean_slots and clean_slots["value"] is not None:
                                 try:
-                                    clean_slots["value"] = float(str(clean_slots["value"]).replace(",", "").replace("%", "").strip())
+                                    val_str = str(clean_slots["value"]).replace("%", "").strip()
+                                    if re.match(r"^-?\d+,\d+$", val_str):
+                                        val_str = val_str.replace(",", ".")
+                                    else:
+                                        val_str = val_str.replace(",", "")
+                                    clean_slots["value"] = float(val_str)
                                 except Exception:
                                     pass
+                            if "photo" in clean_slots and isinstance(clean_slots["photo"], dict):
+                                valid_pkeys = set(VisualPhoto.model_fields.keys())
+                                clean_slots["photo"] = {pk: pv for pk, pv in clean_slots["photo"].items() if pk in valid_pkeys}
+                            for side_k in ("left", "right"):
+                                if side_k in clean_slots and isinstance(clean_slots[side_k], dict):
+                                    from schemas.visual import VisualCompareSide
+                                    valid_ckeys = set(VisualCompareSide.model_fields.keys())
+                                    clean_slots[side_k] = {ck: cv for ck, cv in clean_slots[side_k].items() if ck in valid_ckeys}
 
                             shot_data = VisualData(**{key: v for key, v in clean_slots.items() if key in valid_vkeys and v is not None})
                             beats = [

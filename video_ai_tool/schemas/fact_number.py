@@ -92,17 +92,38 @@ def extract_facts_from_text(text: str, source_url: str | None = None) -> list[Fa
 
             # Determine label from words between last_end and start_idx
             clause_prefix = sent[last_end:start_idx].strip()
-            # Remove commas, semicolons
-            clause_prefix = re.sub(r"[,;:\-—]", " ", clause_prefix).strip()
+            clause_prefix = re.sub(r"[()\[\],;:\-—]", " ", clause_prefix).strip()
             prefix_words = clause_prefix.split()
+            clean_label = ""
             if prefix_words:
-                clean_label = " ".join(prefix_words[-4:]).strip()
-                clean_label = re.sub(r"^(?:với|có|là|trong|tại|ở|đến|từ|khoảng|mức|khi|đạt|chiếm|tăng|giảm)\s+", "", clean_label, flags=re.I).strip()
-            else:
-                clean_label = f"Chỉ số {unit_str}"
+                raw_cand = " ".join(prefix_words[-4:]).strip()
+                raw_cand = re.sub(
+                    r"^(?:với|có|là|trong|tại|ở|đến|từ|khoảng|mức|khi|đạt|chiếm|tăng|giảm|hơn|gần|tổng|mỗi)\s+",
+                    "",
+                    raw_cand,
+                    flags=re.I,
+                ).strip()
+                raw_cand = re.sub(
+                    r"\s+(?:chiếm|đạt|mức|khoảng|hơn|gần|tăng|giảm|với|tại|ở|trong|là)$",
+                    "",
+                    raw_cand,
+                    flags=re.I,
+                ).strip()
+                clean_label = raw_cand
 
-            if not clean_label or len(clean_label) < 2:
-                clean_label = f"Số liệu {unit_str}"
+            # If label is empty, too short, or a generic currency fragment (e.g., "tỷ đồng"), look after match
+            if not clean_label or len(clean_label.split()) < 2 or clean_label.lower() in ("tỷ đồng", "triệu đồng", "usd", "vnd"):
+                post_text = sent[match.end() : min(len(sent), match.end() + 35)].strip()
+                post_text = re.sub(r"[()\[\],;:\-—]", " ", post_text).strip()
+                post_words = post_text.split()
+                if post_words:
+                    cand_post = " ".join(post_words[:3]).strip()
+                    cand_post = re.sub(r"^(?:xảy ra|ở|tại|cho|với|của|trong|là)\s+", "", cand_post, flags=re.I).strip()
+                    if cand_post and len(cand_post.split()) >= 2:
+                        clean_label = cand_post
+
+            if not clean_label or len(clean_label.split()) < 2:
+                clean_label = f"Hạng mục {unit_str}"
 
             facts.append(
                 FactNumber(
@@ -160,63 +181,32 @@ def extract_facts_from_brief(brief: dict[str, Any]) -> list[FactNumber]:
 def select_chart_for_facts(facts: list[FactNumber]) -> dict[str, Any] | None:
     """Select appropriate kit_chart layout based on facts structure.
     
-    Rules:
-    - >= 3 values with same unit and different periods -> kit_chart_line
-    - Compare >= 3 items with comparable values -> kit_chart_bar
-    - Percentages summing to approx 100% (95 - 105%) -> kit_chart_donut
-    - 1 value -> kit_stat
-    - If no valid match -> None
+    Strict Rules (1 chart = 1 proposition):
+    1. A chart represents ONE proposition: all values MUST share the same normalized unit,
+       the same object of measurement, and originate from the SAME source_sentence
+       (or immediately adjacent sentence from the same source).
+    2. Values from different sentences, different sources, or with different units (%, USD, count, CAGR)
+       MUST NEVER be merged into a multi-bar or line chart.
+    3. Every column/item MUST have a distinct category label from the source (>= 2 words),
+       never generic or truncated fragments.
+    4. If conditions for a multi-value chart are not met:
+       Fallback to kit_stat for the single most prominent fact, or None.
     """
     if not facts:
         return None
 
-    # Group by unit
-    by_unit: dict[str, list[FactNumber]] = {}
-    for f in facts:
-        u_norm = f.unit.lower().replace("phần trăm", "%")
-        by_unit.setdefault(u_norm, []).append(f)
+    # Group by normalized unit
+    def normalize_u(u: str) -> str:
+        s = u.lower().strip()
+        s = s.replace("phần trăm", "%").replace("tỉ", "tỷ")
+        return s
 
-    # 1. Line chart: >= 3 values with same unit and different periods
-    for unit, u_facts in by_unit.items():
-        if len(u_facts) >= 3:
-            periods = [f.period for f in u_facts if f.period]
-            if len(set(periods)) >= 3:
-                return {
-                    "layout": "kit_chart_line",
-                    "title": f"Biến động theo thời gian ({unit})",
-                    "series": [{"label": str(f.period), "value": f.value} for f in u_facts[:6]],
-                    "unit": unit,
-                    "facts": u_facts[:6],
-                }
+    distinct_units = set(normalize_u(f.unit) for f in facts)
+    has_mixed_units = len(distinct_units) > 1
+    has_cagr = any("cagr" in f.unit.lower() or "tốc độ" in f.label.lower() for f in facts)
 
-    # 2. Donut chart: percentages summing to approx 100% (95 - 105%)
-    pct_facts = by_unit.get("%", [])
-    if len(pct_facts) >= 2:
-        total_pct = sum(f.value for f in pct_facts)
-        if 95.0 <= total_pct <= 105.0:
-            return {
-                "layout": "kit_chart_donut",
-                "title": "Cơ cấu tỷ lệ (%)",
-                "series": [{"label": f.label[:16], "value": f.value} for f in pct_facts[:5]],
-                "unit": "%",
-                "facts": pct_facts[:5],
-            }
-
-    # 3. Bar chart: >= 3 items with same unit
-    for unit, u_facts in by_unit.items():
-        if len(u_facts) >= 3:
-            labels = [f.label for f in u_facts if f.label]
-            if len(set(labels)) >= 3:
-                return {
-                    "layout": "kit_chart_bar",
-                    "title": f"Chỉ số so sánh ({unit})",
-                    "series": [{"label": f.label[:16], "value": f.value} for f in u_facts[:5]],
-                    "unit": unit,
-                    "facts": u_facts[:5],
-                }
-
-    # 4. Single number -> kit_stat
-    if len(facts) >= 1:
+    # Requirement 1a & 1e: Dữ liệu trộn đơn vị hoặc có CAGR lẫn lộn -> KHÔNG ra biểu đồ, hạ cấp về kit_stat
+    if has_mixed_units or (has_cagr and len(facts) > 1):
         f = facts[0]
         return {
             "layout": "kit_stat",
@@ -226,4 +216,53 @@ def select_chart_for_facts(facts: list[FactNumber]) -> dict[str, Any] | None:
             "facts": [f],
         }
 
-    return None
+    # All facts share the SAME normalized unit
+    unit = normalize_u(facts[0].unit)
+
+    # 1. Donut chart: percentages summing to approx 100% (95 - 105%) with distinct valid category labels
+    if unit == "%" and len(facts) >= 2:
+        total_pct = sum(f.value for f in facts)
+        if 95.0 <= total_pct <= 105.0:
+            labels = [f.label for f in facts if len(f.label.strip()) >= 2 and not f.label.lower().startswith("hạng mục")]
+            if len(set(labels)) == len(facts):
+                return {
+                    "layout": "kit_chart_donut",
+                    "title": f"Cơ cấu tỷ lệ (%)",
+                    "series": [{"label": f.label[:20], "value": f.value} for f in facts[:5]],
+                    "unit": "%",
+                    "facts": facts[:5],
+                }
+
+    # 2. Line chart: >= 3 values with same unit and distinct periods
+    if len(facts) >= 3:
+        periods = [f.period for f in facts if f.period]
+        if len(set(periods)) >= 3:
+            return {
+                "layout": "kit_chart_line",
+                "title": f"Biến động theo thời gian ({unit})",
+                "series": [{"label": str(f.period), "value": f.value} for f in facts[:6]],
+                "unit": unit,
+                "facts": facts[:6],
+            }
+
+    # 3. Bar chart: >= 2 items with SAME unit and distinct valid category labels from source
+    if len(facts) >= 2:
+        valid_labels = [f.label for f in facts if len(f.label.strip()) >= 2 and not f.label.lower().startswith("hạng mục")]
+        if len(set(valid_labels)) >= 2 and len(valid_labels) == len(facts):
+            return {
+                "layout": "kit_chart_bar",
+                "title": f"Chỉ số so sánh ({unit})",
+                "series": [{"label": f.label[:18], "value": f.value} for f in facts[:5]],
+                "unit": unit,
+                "facts": facts[:5],
+            }
+
+    # 4. Fallback to kit_stat for the single most prominent fact
+    f = facts[0]
+    return {
+        "layout": "kit_stat",
+        "value": f.value,
+        "unit": f.unit,
+        "label": f.label,
+        "facts": [f],
+    }

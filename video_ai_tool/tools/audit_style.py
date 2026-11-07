@@ -429,6 +429,49 @@ def audit_kit_project(
         card_text = " ".join(text_vals).lower()
         narration_str = str(s.get("narration", ""))
         combined_text = (card_text + " " + narration_str).lower()
+        title_str = str(slots.get("title", "")).strip()
+
+        # Check demonstrative pronoun at start of title
+        if re.search(r"^(?:điều\s+này|con\s+số\s+này|này|đó|việc\s+này)\b", title_str, re.IGNORECASE):
+            leaked.append(f"Slide {s.get('id')}: tiêu đề bắt đầu bằng từ chỉ thị lửng độc lập ('{title_str}')")
+
+        # Check orphan number ending on title (e.g. "... tiêu tốn 83")
+        if re.search(r"\b\d+$", title_str) and not re.search(r"\b(19|20)\d{2}$", title_str):
+            leaked.append(f"Slide {s.get('id')}: tiêu đề kết thúc bằng số mồ côi ('{title_str}')")
+
+        # Check dangling word endings on title
+        if re.search(r"\b(?:phẫu|khéo|léo|vỡ)\b$|(?<!phát\s)\btriển\b$", title_str, re.IGNORECASE):
+            leaked.append(f"Slide {s.get('id')}: tiêu đề kết thúc bằng từ lửng ('{title_str}')")
+
+        # Check metaphors on card/slots
+        if re.search(r"\b(?:giống\s+như|như\s+bác\s+sĩ|được\s+ví|ví\s+như|như\s+một)\b", card_text, re.IGNORECASE):
+            leaked.append(f"Slide {s.get('id')}: leaked metaphor / simile phrase on card ('{card_text[:50]}...')")
+
+        # Check kit_chart layout: labels overlapping or missing
+        s_layout = s.get("layout", "")
+        if s_layout in ("kit_chart_bar", "kit_chart_line", "kit_chart_donut"):
+            series = slots.get("series", [])
+            if len(series) < 2:
+                leaked.append(f"Slide {s.get('id')}: biểu đồ {s_layout} có < 2 điểm dữ liệu")
+            svgW = 840
+            barCount = max(1, len(series))
+            barGap = 28
+            barW = min(160, max(70, (svgW - 120 - (barCount - 1) * barGap) / barCount))
+            col_pitch = barW + barGap
+            for it in series:
+                lbl = str(it.get("label", "")).strip()
+                if not lbl or len(lbl.split()) < 2:
+                    leaked.append(f"Slide {s.get('id')}: nhãn cột '{lbl}' quá ngắn hoặc thiếu từ cụ thể")
+                # Bbox intersection check: if label is exceptionally long without wrapping pitch
+                if len(lbl) * 14 > col_pitch * 1.9:
+                    leaked.append(f"Slide {s.get('id')}: bbox nhãn biểu đồ '{lbl}' vượt quá khoảng cách cột (nguy cơ chồng chữ)")
+
+        # Check kit_photo layout: must have Vietnamese sentence >= 6 words
+        if s_layout == "kit_photo":
+            vn_sent = str(slots.get("vietnamese_sentence") or slots.get("title") or "")
+            if not vn_sent or len(vn_sent.split()) < 6:
+                leaked.append(f"Slide {s.get('id')}: cảnh ảnh kit_photo thiếu câu nội dung tiếng Việt hoàn chỉnh (có {len(vn_sent.split())} từ)")
+
         for tok in FORBIDDEN_CARD_TOKENS:
             if tok in card_text:
                 leaked.append(f"Slide {s.get('id')}: leaked forbidden card token '{tok}' on card/slots")
@@ -637,6 +680,9 @@ def audit_kit_project(
             def is_in_hold(t: float) -> bool:
                 return any(t1 <= t <= t2 for t1, t2 in hold_intervals)
 
+            def are_in_same_hold(t1: float, t2: float) -> bool:
+                return any(h1 <= t1 <= h2 and h1 <= t2 <= h2 for h1, h2 in hold_intervals)
+
             evaluated_frames = 0
             for idx in range(1, total_extracted):
                 cur_t = frames[idx][0]
@@ -665,9 +711,10 @@ def audit_kit_project(
                 else:
                     consecutive_blank = 0
 
-                # Frame MAD outside transitions
-                diff = float(np.mean(np.abs(crop_cur.astype(np.int16) - crop_prev.astype(np.int16))))
-                mads.append(diff)
+                # Frame MAD outside transitions (only between pairs within the same hold window)
+                if are_in_same_hold(frames[idx - 1][0], cur_t):
+                    diff = float(np.mean(np.abs(crop_cur.astype(np.int16) - crop_prev.astype(np.int16))))
+                    mads.append(diff)
 
                 # Text coverage measurement (bounding box of non-background content in card area)
                 flat_lum = np.dot(crop_cur[..., :3].astype(np.float32) / 255.0, [0.2126, 0.7152, 0.0722])

@@ -422,3 +422,140 @@ def test_cv_detect_text_slide_document_local():
     assert is_text_heavy_photo is False
 
 
+def test_cv_detect_large_text_or_watermark():
+    """Requirement 2b: Kiểm tra phát hiện ảnh có chữ lớn / watermark / poster banner bằng local CV."""
+    from pipeline.slide_image_resolver import detect_large_text_or_watermark
+    from PIL import Image, ImageDraw
+
+    # 1. Ảnh giả lập có chữ lớn dạng poster (như "KISS THE GROUND") trên nền đất
+    poster_im = Image.new("RGB", (800, 800), (60, 45, 30))
+    draw = ImageDraw.Draw(poster_im)
+    # Vẽ chữ lớn chiếm dải ngang rộng ở trung tâm
+    for x in range(120, 680, 28):
+        draw.rectangle([x, 360, x + 18, 440], fill=(255, 255, 255))
+        draw.line([x, 400, x + 18, 400], fill=(255, 255, 255), width=4)
+
+    has_large_txt, reason = detect_large_text_or_watermark(poster_im)
+    assert has_large_txt is True
+    assert "chữ lớn" in reason or "watermark" in reason or "cạnh chữ" in reason
+
+    # 2. Ảnh công trường sạch chữ (texture đồng nhất không có chữ lớn)
+    clean_im = Image.new("RGB", (800, 800), (45, 55, 65))
+    has_large_clean, _ = detect_large_text_or_watermark(clean_im)
+    assert has_large_clean is False
+
+
+def test_generic_stock_stopwords_rejected():
+    """Requirement 2a: Pixabay chỉ được dùng nếu tags/title khớp thực thể đặc trưng; loại trừ từ chung."""
+    from pipeline.slide_image_resolver import check_image_relevance
+
+    text = "Kỹ sư cân bằng áp lực đất để ổn định địa tầng khi thi công."
+    headline = "Cân bằng áp lực"
+
+    # Ảnh stock chỉ khớp từ chung: "earth", "ground", "world" -> LOẠI
+    meta_generic_earth = {
+        "title": "Planet Earth glowing golden world globe from space",
+        "tags": ["earth", "ground", "world", "concept", "abstract"],
+    }
+    assert check_image_relevance(text, image_metadata=meta_generic_earth, headline=headline) is False
+
+    meta_kiss_ground = {
+        "title": "KISS the GROUND dry cracked soil agriculture texture",
+        "tags": ["ground", "soil", "earth", "nature"],
+    }
+    assert check_image_relevance(text, image_metadata=meta_kiss_ground, headline=headline) is False
+
+    # Ảnh khớp thực thể đặc trưng: "địa tầng", "áp lực", "strata" -> GIỮ
+    meta_strata = {
+        "title": "Geotechnical excavation soil strata pressure monitoring",
+        "tags": ["soil mechanics", "strata", "geotechnical", "pressure"],
+        "caption": "Civil engineering ground pressure balance monitoring during tunneling.",
+    }
+    assert check_image_relevance(text, image_metadata=meta_strata, headline=headline) is True
+
+
+def test_chart_data_mixed_units_rejected_vs_valid():
+    """Requirement 1: 1 biểu đồ = 1 mệnh đề. Dữ liệu trộn đơn vị -> KHÔNG ra biểu đồ."""
+    from schemas.fact_number import FactNumber, select_chart_for_facts
+
+    # 1. Dữ liệu trộn đơn vị và khác câu nguồn (USD, %, số sự cố, CAGR) -> KHÔNG ra kit_chart_bar
+    mixed_facts = [
+        FactNumber(
+            label="Thiệt hại sự cố",
+            value=83.2,
+            unit="tỷ USD",
+            source_sentence="Thiệt hại tại Mỹ qua 669.000 sự cố tiêu tốn 83,2 tỷ USD.",
+        ),
+        FactNumber(
+            label="Vốn tư nhân",
+            value=82.0,
+            unit="%",
+            source_sentence="Tổng mức đầu tư các dự án lớn, vốn tư nhân chiếm hơn 82%.",
+        ),
+        FactNumber(
+            label="Tốc độ tăng trưởng",
+            value=12.88,
+            unit="%",
+            source_sentence="Thị trường robot đạt tốc độ CAGR 12.88% trong giai đoạn tới.",
+        ),
+    ]
+    res_mixed = select_chart_for_facts(mixed_facts)
+    # Không được sinh kit_chart_bar hoặc chart nhiều cột trộn các câu
+    assert res_mixed is not None
+    assert res_mixed.get("layout") in ("kit_stat", None)
+    assert res_mixed.get("layout") != "kit_chart_bar"
+
+    # 2. Dữ liệu đúng: Cùng một câu mệnh đề, cùng đơn vị %, có nhãn cụ thể -> ra biểu đồ có nhãn
+    valid_facts = [
+        FactNumber(
+            label="Đô thị lớn",
+            value=65.0,
+            unit="%",
+            source_sentence="Cơ cấu hạ tầng phân bổ gồm 65% ở đô thị lớn và 35% tại khu vực vệ tinh.",
+        ),
+        FactNumber(
+            label="Khu vực vệ tinh",
+            value=35.0,
+            unit="%",
+            source_sentence="Cơ cấu hạ tầng phân bổ gồm 65% ở đô thị lớn và 35% tại khu vực vệ tinh.",
+        ),
+    ]
+    res_valid = select_chart_for_facts(valid_facts)
+    assert res_valid is not None
+    assert res_valid.get("layout") in ("kit_chart_donut", "kit_chart_bar")
+    assert len(res_valid.get("series", [])) == 2
+    assert res_valid.get("series")[0]["label"] == "Đô thị lớn"
+
+
+def test_metaphor_and_dangling_headline_regression():
+    """Requirement 4: Kiểm tra loại bỏ ví von và sửa tiêu đề lửng/cụt."""
+    from editor.motion.light_glass_slots import contains_metaphor, _sanitize_metaphor
+    from schemas.slide_script import extract_clean_headline
+
+    # 1. Test trực tiếp lên chính chuỗi ví von bác sĩ phẫu thuật
+    s_metaphor = "Thi công ngầm giống như bác sĩ phẫu thuật nội soi qua vết rạch nhỏ."
+    assert contains_metaphor(s_metaphor) is True
+    sanitized = _sanitize_metaphor(s_metaphor)
+    assert contains_metaphor(sanitized) is False
+    assert "bác sĩ" not in sanitized.lower()
+
+    s_metaphor_short = "Thi công ngầm giống như bác sĩ phẫu"
+    assert contains_metaphor(s_metaphor_short) is True
+    sanitized_short = _sanitize_metaphor(s_metaphor_short)
+    assert contains_metaphor(sanitized_short) is False
+
+    # 2. Test câu số 83,2 tỷ USD không bị cắt cụt ở dấu phẩy decimal
+    s_num = "Hạ tầng ngầm bị chôn lấp từng tiêu tốn 83,2 tỷ USD tại Mỹ qua gần 669.000 sự cố, với gần 90 phần trăm xảy ra ở khu vực đô thị."
+    h_num = extract_clean_headline(s_num)
+    assert "tiêu tốn 83" not in h_num or "83,2" in h_num
+    assert not h_num.endswith(" 83")
+    assert "83,2 tỷ USD" in h_num
+
+    # 3. Test tiêu đề bắt đầu bằng từ chỉ thị lửng được viết lại thành chủ ngữ cụ thể
+    s_dem = "Con số này cho thấy sai sót kỹ thuật gây ra cái giá quá đắt."
+    h_dem = extract_clean_headline(s_dem)
+    assert not h_dem.lower().startswith("con số này")
+    assert "sai sót kỹ thuật" in h_dem.lower()
+
+
+

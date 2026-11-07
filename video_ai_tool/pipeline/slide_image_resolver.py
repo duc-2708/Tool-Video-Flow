@@ -628,6 +628,12 @@ GENUINE_TECH_ENTITIES = {
     "robot", "robotics", "tự động hóa", "automation", "humanoid", "thuật toán"
 }
 
+GENERIC_STOCK_STOPWORDS = {
+    "earth", "ground", "soil", "world", "technology", "concept", "abstract",
+    "background", "land", "nature", "space", "texture", "surface", "planet", "globe",
+    "đất", "thế giới", "công nghệ", "khái niệm", "hình nền", "tự nhiên", "nền"
+}
+
 DEFAULT_DOMAIN_SYNONYMS: dict[str, list[str]] = {
     "đường ống": ["pipeline", "pipe", "pipes", "plumbing", "water pipe", "drainage"],
     "đường ống ngầm": ["underground pipeline", "underground pipe", "subsurface pipe"],
@@ -635,7 +641,10 @@ DEFAULT_DOMAIN_SYNONYMS: dict[str, list[str]] = {
     "đào hầm": ["tunnel excavation", "tunnel boring", "tbm"],
     "tbm": ["tunnel boring machine", "tbm", "cutterhead", "slurry tbm", "earth pressure balance"],
     "địa chất": ["geology", "geotechnical", "soil strata", "strata"],
+    "địa tầng": ["soil strata", "strata", "geotechnical", "geology"],
     "địa kỹ thuật": ["geotechnical engineering", "geotechnical", "soil mechanics"],
+    "áp lực": ["pressure", "ground pressure", "soil mechanics"],
+    "cân bằng áp lực": ["earth pressure balance", "pressure balance"],
     "sụt lún": ["settlement", "subsidence", "ground displacement"],
     "singapore": ["singapore metro", "singapore", "nicoll highway"],
     "tường vây": ["diaphragm wall", "slurry wall", "retaining wall"],
@@ -649,7 +658,6 @@ DEFAULT_DOMAIN_SYNONYMS: dict[str, list[str]] = {
     "bác sĩ": ["doctor", "surgeon", "physician"],
     "đào đất": ["excavation", "digging", "earthmoving", "soil digging"],
     "trồng cây": ["tree planting", "planting trees", "gardening", "reforestation", "agriculture"],
-    "đất": ["soil", "ground", "earth", "land"],
     "cây": ["tree", "trees", "plant", "plants"],
     "nông nghiệp": ["agriculture", "farming", "crop"],
     "chip": ["microchip", "semiconductor", "processor", "integrated circuit", "wafer"],
@@ -856,6 +864,77 @@ def detect_text_slide_document(im_or_path: Path | Image.Image | str | Any) -> tu
         return False, 0, f"error: {e}"
 
 
+def detect_large_text_or_watermark(im_or_path: Path | Image.Image | str | Any) -> tuple[bool, str]:
+    """Detect whether an image has large bold text, logo watermark, or poster typography.
+    (such as movie poster typography 'KISS the GROUND', stock watermark, or large promotional text).
+    
+    Uses local OpenCV gradient, morphological horizontal connection, and edge contrast (no API).
+    Returns (has_large_text, reason_str).
+    """
+    try:
+        import cv2
+        import numpy as np
+
+        if isinstance(im_or_path, (str, Path)):
+            p = Path(im_or_path)
+            if not p.is_file():
+                return False, "file_missing"
+            img = cv2.imread(str(p))
+        elif isinstance(im_or_path, np.ndarray):
+            img = im_or_path
+        elif isinstance(im_or_path, Image.Image):
+            arr = np.array(im_or_path.convert("RGB"))
+            img = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+        else:
+            return False, "invalid_type"
+
+        if img is None or img.size == 0:
+            return False, "cannot_read"
+
+        h, w = img.shape[:2]
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # Morphological gradient to detect sharp stroke edges
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+        grad = cv2.morphologyEx(gray, cv2.MORPH_GRADIENT, kernel)
+        
+        # Binarize strong gradient strokes
+        _, bw = cv2.threshold(grad, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+        
+        # Horizontally dilate to connect letters within words and across titles
+        kernel_connect = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 5))
+        connected = cv2.morphologyEx(bw, cv2.MORPH_CLOSE, kernel_connect)
+        
+        contours, _ = cv2.findContours(connected, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        for cnt in contours:
+            bx, by, bw_cnt, bh_cnt = cv2.boundingRect(cnt)
+            w_ratio = bw_cnt / float(w)
+            h_ratio = bh_cnt / float(h)
+            aspect = bw_cnt / float(max(1, bh_cnt))
+            
+            # Prominent text banner / title line: width >= 20% of image, height 4% to 35%
+            if w_ratio >= 0.20 and 0.04 <= h_ratio <= 0.35 and 1.8 <= aspect <= 15.0:
+                roi = gray[by : by + bh_cnt, bx : bx + bw_cnt]
+                roi_std = float(np.std(roi))
+                roi_grad = grad[by : by + bh_cnt, bx : bx + bw_cnt]
+                roi_edge_density = float(np.mean(roi_grad > 35))
+                if roi_std >= 40 and roi_edge_density >= 0.10:
+                    return True, f"Phát hiện chữ lớn/watermark (khung {bw_cnt}x{bh_cnt}px, w={w_ratio:.1%}, contrast_std={roi_std:.1f})"
+
+        # Check for heavy typography in center region
+        center_y1, center_y2 = int(h * 0.25), int(h * 0.75)
+        center_x1, center_x2 = int(w * 0.15), int(w * 0.85)
+        center_roi_grad = grad[center_y1:center_y2, center_x1:center_x2]
+        center_edge_dense = float(np.mean(center_roi_grad > 50))
+        if center_edge_dense >= 0.25:
+            return True, f"Mật độ cạnh chữ/đồ họa vùng trung tâm quá cao ({center_edge_dense:.1%})"
+
+        return False, "clean_image"
+    except Exception as e:
+        return False, f"error: {e}"
+
+
 def extract_scene_entities(slide_text: str, headline: str = "", synonyms_map: dict[str, list[str]] | None = None) -> list[str]:
     """Extract substantive noun phrases, key entities and synonyms from slide text without stopwords."""
     combined = f"{headline} {slide_text}".lower()
@@ -869,17 +948,26 @@ def extract_scene_entities(slide_text: str, headline: str = "", synonyms_map: di
         for i in range(len(tokens) - n + 1):
             gram_tokens = tokens[i:i + n]
             phrase = " ".join(gram_tokens)
-            # Skip if whole phrase is in generic technical stoplist
-            if phrase in GENERIC_TECHNICAL_STOPWORDS_VI or phrase in GENERIC_TECHNICAL_STOPWORDS_EN:
+            # Skip if whole phrase is in generic technical or stock stoplist
+            if (
+                phrase in GENERIC_TECHNICAL_STOPWORDS_VI
+                or phrase in GENERIC_TECHNICAL_STOPWORDS_EN
+                or phrase in GENERIC_STOCK_STOPWORDS
+            ):
                 continue
             # Ensure at least 1 token is a distinctive non-stopword
-            if any(t not in STOPWORDS_VI_EXTENDED and t not in STOPWORDS_EN for t in gram_tokens):
+            if any(t not in STOPWORDS_VI_EXTENDED and t not in STOPWORDS_EN and t not in GENERIC_STOCK_STOPWORDS for t in gram_tokens):
                 if len(phrase) >= 4 and phrase not in entities:
                     entities.append(phrase)
                     
-    # 2. Single substantive words (len >= 4, not in extended stoplist)
+    # 2. Single substantive words (len >= 4, not in extended stoplist or stock stoplist)
     for t in tokens:
-        if t not in STOPWORDS_VI_EXTENDED and t not in STOPWORDS_EN and len(t) >= 4:
+        if (
+            t not in STOPWORDS_VI_EXTENDED
+            and t not in STOPWORDS_EN
+            and t not in GENERIC_STOCK_STOPWORDS
+            and len(t) >= 4
+        ):
             if t not in entities:
                 entities.append(t)
 
@@ -899,6 +987,7 @@ def extract_scene_entities(slide_text: str, headline: str = "", synonyms_map: di
                     syn_low not in expanded
                     and syn_low not in GENERIC_TECHNICAL_STOPWORDS_EN
                     and syn_low not in GENERIC_TECHNICAL_STOPWORDS_VI
+                    and syn_low not in GENERIC_STOCK_STOPWORDS
                 ):
                     expanded.append(syn_low)
 
@@ -1020,20 +1109,36 @@ def explain_image_relevance(
                     matched_fields.append(f_name)
 
     # Condition 1b: Phải khớp >= 2 thực thể/synonym đặc trưng, HOẶC >= 1 thực thể nằm trong title/caption của ảnh
-    has_valid_match = (len(matched_in_title_caption) >= 1) or (len(matched_all) >= 2)
+    # Loại bỏ các từ chung trong GENERIC_STOCK_STOPWORDS để không tính là khớp thực thể đặc trưng
+    distinctive_matched = [
+        ent for ent in matched_all
+        if ent.lower() not in GENERIC_STOCK_STOPWORDS
+        and ent.lower() not in GENERIC_TECHNICAL_STOPWORDS_EN
+        and ent.lower() not in GENERIC_TECHNICAL_STOPWORDS_VI
+        and not all(sub_t in GENERIC_STOCK_STOPWORDS for sub_t in ent.lower().split())
+    ]
+    distinctive_title_caption = [
+        ent for ent in matched_in_title_caption
+        if ent.lower() not in GENERIC_STOCK_STOPWORDS
+        and ent.lower() not in GENERIC_TECHNICAL_STOPWORDS_EN
+        and ent.lower() not in GENERIC_TECHNICAL_STOPWORDS_VI
+        and not all(sub_t in GENERIC_STOCK_STOPWORDS for sub_t in ent.lower().split())
+    ]
+
+    has_valid_match = (len(distinctive_title_caption) >= 1) or (len(distinctive_matched) >= 2)
     if not has_valid_match:
         return False, {
-            "reason": f"Chưa đạt ngưỡng khớp: khớp {len(matched_in_title_caption)} ở title/caption, {len(matched_all)} tổng cộng (yêu cầu >= 1 ở title/caption hoặc >= 2 ở toàn bộ metadata)",
-            "matched_entities": matched_all,
+            "reason": f"Chưa đạt ngưỡng khớp: khớp {len(distinctive_title_caption)} đặc trưng ở title/caption, {len(distinctive_matched)} tổng cộng (yêu cầu >= 1 ở title/caption hoặc >= 2 ở toàn bộ metadata; loại trừ từ chung: earth, ground, world, technology, concept, abstract, background)",
+            "matched_entities": distinctive_matched,
             "matched_fields": matched_fields,
-            "matched_in_title_caption": matched_in_title_caption,
+            "matched_in_title_caption": distinctive_title_caption,
         }
 
     return True, {
-        "reason": f"Khớp thực thể '{', '.join(matched_all)}' ở trường {', '.join(matched_fields)}",
-        "matched_entities": matched_all,
+        "reason": f"Khớp thực thể đặc trưng '{', '.join(distinctive_matched)}' ở trường {', '.join(matched_fields)}",
+        "matched_entities": distinctive_matched,
         "matched_fields": matched_fields,
-        "matched_in_title_caption": matched_in_title_caption,
+        "matched_in_title_caption": distinctive_title_caption,
     }
 
 
@@ -1144,6 +1249,11 @@ def download_real_web_image(
                     if is_text_heavy:
                         continue
 
+                    # RULE 2b: Cổng phát hiện chữ lớn / watermark / poster typography
+                    has_large_txt, txt_reason = detect_large_text_or_watermark(im)
+                    if has_large_txt:
+                        continue
+
                     # Center crop to 1:1 square
                     min_dim = min(w, h)
                     left = (w - min_dim) // 2
@@ -1251,6 +1361,25 @@ def resolve_images_for_slide_script(
                     elif isinstance(slide, dict):
                         slide["layout"] = "kit_photo"
 
+                # Requirement 3a: Cảnh ảnh phải có câu nội dung tiếng Việt hoàn chỉnh (>= 8 từ) từ narration
+                from schemas.slide_script import is_incomplete_phrase, clean_trailing_dangling
+                from editor.motion.light_glass_slots import _sanitize_metaphor
+                narr_sentences = [s.strip() for s in re.split(r"(?<=[.?!])\s+", slide_narr) if s.strip()]
+                valid_vn_sentence = ""
+                for ns in narr_sentences:
+                    clean_ns = clean_trailing_dangling(_sanitize_metaphor(ns))
+                    if len(clean_ns.split()) >= 8 and not is_incomplete_phrase(clean_ns):
+                        valid_vn_sentence = clean_ns
+                        break
+                if not valid_vn_sentence:
+                    clean_ns = clean_trailing_dangling(_sanitize_metaphor(slide_narr))
+                    if len(clean_ns.split()) >= 6:
+                        valid_vn_sentence = clean_ns
+
+                if valid_vn_sentence:
+                    slots["vietnamese_sentence"] = valid_vn_sentence
+                    slots["title"] = valid_vn_sentence
+
                 resolved_paths.append(str(p_path))
                 image_report.append({
                     "slide_id": slide_id,
@@ -1341,6 +1470,22 @@ def resolve_images_for_slide_script(
                 })
                 continue
 
+            has_large_txt, txt_reason = detect_large_text_or_watermark(target_path)
+            if has_large_txt:
+                target_path.unlink(missing_ok=True)
+                slots.pop("image_url", None)
+                slots.pop("photo", None)
+                image_report.append({
+                    "slide_id": slide_id,
+                    "attached": False,
+                    "source": q,
+                    "reason": f"Bị loại vì {txt_reason}",
+                    "face_count": face_cnt,
+                    "text_density": mser_cnt,
+                    "entity_matched": match_info.get("matched_entities", []),
+                })
+                continue
+
             im_hash = hashlib.sha256(target_path.read_bytes()).hexdigest()
             if im_hash in seen_image_hashes:
                 # Duplicate image hash! Remove and fall back to large text layout
@@ -1396,6 +1541,24 @@ def resolve_images_for_slide_script(
                 "text_density": 0,
                 "entity_matched": [],
             })
+
+    # Balance layout counts post-resolution so no layout exceeds 40%
+    if len(slide_script.slides) >= 5:
+        from collections import Counter
+        l_counts = Counter(s.layout for s in slide_script.slides)
+        max_allowed = int(len(slide_script.slides) * 0.40)
+        for idx in range(1, len(slide_script.slides) - 1):
+            s_item = slide_script.slides[idx]
+            if l_counts[s_item.layout] > max_allowed and s_item.layout != "kit_photo":
+                prev_l = slide_script.slides[idx - 1].layout
+                next_l = slide_script.slides[idx + 1].layout if idx + 1 < len(slide_script.slides) else None
+                avail_alt = [c for c in ("kit_title", "kit_list", "kit_quote") if c != s_item.layout and l_counts[c] < max_allowed and c != prev_l and c != next_l]
+                if avail_alt:
+                    old_l = s_item.layout
+                    new_l = avail_alt[0]
+                    s_item.layout = new_l
+                    l_counts[old_l] -= 1
+                    l_counts[new_l] += 1
 
     try:
         (p_dir / "image_relevance_report.json").write_text(

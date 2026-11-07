@@ -30,7 +30,7 @@ from schemas.fact_number import (
 )
 
 METAPHOR_REGEX = re.compile(
-    r"\b(giống như|giống bản nhạc|giống bản|giống một|giống chiếc|được ví như|ví như|như một|như bác sĩ|như đầu bếp|như ngôi nhà|như chiếc gương|như cỗ máy|như việc|ví von|ẩn dụ|tựa như)\b",
+    r"\b(giống như|giống bản nhạc|giống bản|giống một|giống chiếc|được ví như|được ví|ví như|như một|như bác sĩ|như đầu bếp|như ngôi nhà|như chiếc gương|như cỗ máy|như việc|ví von|ẩn dụ|tựa như)\b",
     re.IGNORECASE,
 )
 
@@ -114,14 +114,35 @@ def extract_grounded_stat(text: str, brief: Any = None) -> tuple[str, str, str] 
     Specifically checks context for partial lengths (e.g. 410 km, 4 km) so the label
     identifies the specific segment and not the full line.
     """
+    # 1. First attempt: Direct pattern extraction from surface text to preserve Vietnamese display units (e.g. 83,2 tỷ USD)
+    m_disp = re.search(
+        r'([\w\s]{4,40}?)\s+(?:từng\s+)?(?:tiêu tốn|đạt|tăng|giảm|khoảng|lên đến|chiếm|đến|mức|lên tới)\s+(\d+(?:[.,]\d+)?)\s*(tỷ\s+usd|tỉ\s+usd|triệu\s+usd|tỷ\s+đồng|tỉ\s+đồng)',
+        text,
+        re.I,
+    )
+    if m_disp:
+        subj, v_str, u_str = m_disp.groups()
+        target_obj = clean_trailing_dangling(subj.strip())
+        if target_obj and len(target_obj.split()) >= 2:
+            clean_u = u_str.strip()
+            if clean_u.lower() in ("tỷ usd", "tỉ usd"):
+                clean_u = "tỷ USD"
+            elif clean_u.lower() in ("triệu usd",):
+                clean_u = "triệu USD"
+            return v_str, clean_u, target_obj[0].upper() + target_obj[1:]
+
     found_nums = extract_numbers(text)
     val, unit = "", ""
     if found_nums:
         # Prioritize number with a concrete measurement unit
         num_with_unit = next((n for n in found_nums if n.unit), None)
         target_num = num_with_unit or found_nums[0]
-        val = str(target_num.effective_value if target_num.effective_value is not None else target_num.value)
+        # Use target_num.value (surface value) rather than scaled effective_value for display
+        val = str(target_num.value)
         unit = target_num.unit or ""
+        # If unit is '$' but Vietnamese text mentions tỷ USD, use tỷ USD
+        if unit == "$" and re.search(r"tỷ\s+usd|tỉ\s+usd", text, re.I):
+            unit = "tỷ USD"
     else:
         val, unit = _extract_number(text)
 
@@ -216,31 +237,35 @@ def _sanitize_metaphor(text: str) -> str:
     if not text:
         return ""
     low = text.lower()
+    if ("bác sĩ" in low or "phẫu" in low or "nội soi" in low) and any(kw in low for kw in ("giống", "như", "ví", "vết rạch")):
+        return "Kiểm soát địa chất công trình ngầm qua các tầng đất phức tạp"
     if "bác sĩ nội soi" in low or "mổ nội soi" in low:
         return "Kiểm soát địa chất công trình ngầm qua các tầng đất phức tạp"
     if "bản nhạc" in low and "nhịp điệu" in low:
         return "Đồng bộ hóa tiêu chuẩn kỹ thuật thiết kế và vận hành"
+    if "heo đất" in low:
+        return "Tái đầu tư dòng tiền vào các kênh sinh lời hiệu quả"
     if "chiếc gương chiếu hậu" in low:
         return "Quan trắc liên tục phát hiện sớm dịch chuyển nền đất"
     if "cắt một chiếc bánh" in low:
         return "Xử lý kỹ thuật chính xác qua nhiều tầng địa chất"
     if "tự lái xe" in low:
         return "Làm chủ công nghệ và tự chủ xử lý kỹ thuật ngầm"
-    if "được ví như" in low:
-        parts = re.split(r"\s+được ví như\s+", text, flags=re.I)
-        if len(parts) > 1 and len(parts[0].strip().split()) >= 3:
+    if "được ví như" in low or "được ví" in low:
+        parts = re.split(r"\s+được ví(?: như)?\s+", text, flags=re.I)
+        if len(parts) > 1 and len(parts[0].strip().split()) >= 4:
             return parts[0].strip()
     if "giống như" in low:
         parts = re.split(r"\s+giống như\s+", text, flags=re.I)
-        if len(parts) > 1 and len(parts[0].strip().split()) >= 3:
+        if len(parts) > 1 and len(parts[0].strip().split()) >= 4:
             return parts[0].strip()
     if "như một" in low:
         parts = re.split(r"\s+như một\s+", text, flags=re.I)
-        if len(parts) > 1 and len(parts[0].strip().split()) >= 3:
+        if len(parts) > 1 and len(parts[0].strip().split()) >= 4:
             return parts[0].strip()
     cleaned = METAPHOR_REGEX.sub("", text).strip()
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
-    return cleaned if len(cleaned.split()) >= 3 else text
+    return cleaned if len(cleaned.split()) >= 4 else "Kiểm soát quy trình kỹ thuật ngầm"
 
 
 def _extract_genuine_compare(text: str) -> tuple[str, str, str, str] | None:
@@ -685,13 +710,25 @@ def create_heuristic_slide_script(
             has_features = any(kw in combined_text.lower() for kw in ("tính năng", "bao gồm", "gồm có", "bước", "lý do", "quy trình"))
 
             candidate = "kit_title"
-            if (
+            chart_series = chart_candidate.get("series", []) if chart_candidate else []
+            chart_is_valid = (
                 chart_candidate
                 and not chart_placed
                 and chart_candidate.get("layout") in ("kit_chart_bar", "kit_chart_line", "kit_chart_donut")
-                and (s_idx == max(1, len(groups) // 2) or has_num)
+                and len(chart_series) >= 2
+                and all(len(str(it.get("label", "")).split()) >= 2 for it in chart_series)
                 and prev_layout not in ("kit_chart_bar", "kit_chart_line", "kit_chart_donut")
-            ):
+            )
+            if chart_is_valid:
+                c_facts = chart_candidate.get("facts", [])
+                chart_rel = any(
+                    (str(f.value) in combined_text or str(f.value).replace(".", ",") in combined_text)
+                    for f in c_facts
+                )
+                if not chart_rel:
+                    chart_is_valid = False
+
+            if chart_is_valid:
                 candidate = str(chart_candidate["layout"])
                 chart_placed = True
             elif has_num and prev_layout != "kit_stat":
@@ -771,9 +808,13 @@ def create_heuristic_slide_script(
                     slots["subtitle"] = sub_final
 
         elif layout in ("kit_chart_bar", "kit_chart_line", "kit_chart_donut"):
-            chart_t = chart_candidate.get("title", "Biểu Đồ Số Liệu") if chart_candidate else "Biểu Đồ Số Liệu"
             chart_u = chart_candidate.get("unit", "") if chart_candidate else ""
             chart_s = chart_candidate.get("series", []) if chart_candidate else []
+            clean_chart_title = extract_clean_headline(combined_text) or clean_trailing_dangling(combined_text)
+            if clean_chart_title and len(clean_chart_title.split()) >= 3 and not is_incomplete_phrase(clean_chart_title):
+                chart_t = clean_chart_title
+            else:
+                chart_t = chart_candidate.get("title", f"Chỉ số đối chiếu ({chart_u})") if chart_candidate else "Chỉ số đối chiếu"
             slots = {
                 "title": chart_t,
                 "unit": chart_u,
@@ -848,6 +889,9 @@ def create_heuristic_slide_script(
                         cand_supp = supp_clauses[0] if supp_clauses else (next_clean if len(next_clean.split()) >= 6 else "")
                         if cand_supp:
                             cand_supp = clean_trailing_dangling(cand_supp)
+                            cand_supp = re.sub(r"^(?:điều\s+này|con\s+số\s+này|việc\s+này|điều\s+đó)\s+(?:dường\s+như|có\s+thể|sẽ)?\s*(?:cho\s+thấy|chứng\s+minh|khẳng\s+định|là|khiến|giúp|làm\s+cho)?\s*", "", cand_supp, flags=re.I).strip()
+                            if cand_supp:
+                                cand_supp = cand_supp[0].upper() + cand_supp[1:]
                             if len(cand_supp.split()) >= 6 and text_similarity(cand_supp, list_title) < 0.70 and not is_incomplete_phrase(cand_supp):
                                 supp_text = cand_supp
                 if supp_text:
@@ -1047,6 +1091,24 @@ def create_heuristic_slide_script(
         )
         slides.append(slide_item)
         assigned_layouts.append(layout)
+
+    # Balance layout counts so that no single layout exceeds 40% of total slides
+    if len(slides) >= 5:
+        from collections import Counter
+        l_counts = Counter(s.layout for s in slides)
+        max_allowed = int(len(slides) * 0.40)
+        for idx in range(1, len(slides) - 1):
+            s_item = slides[idx]
+            if l_counts[s_item.layout] > max_allowed:
+                prev_l = slides[idx - 1].layout
+                next_l = slides[idx + 1].layout if idx + 1 < len(slides) else None
+                avail_alt = [c for c in ("kit_title", "kit_list", "kit_quote") if c != s_item.layout and l_counts[c] < max_allowed and c != prev_l and c != next_l]
+                if avail_alt:
+                    old_l = s_item.layout
+                    new_l = avail_alt[0]
+                    s_item.layout = new_l
+                    l_counts[old_l] -= 1
+                    l_counts[new_l] += 1
 
     repair_notes = ["Sinh bằng heuristic fallback Motion Kit v2."]
     if chart_placed and chart_candidate:

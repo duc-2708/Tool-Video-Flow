@@ -2,7 +2,9 @@
 (function() {
   function formatMonotonicValue(rawTarget, p) {
     if (rawTarget === null || rawTarget === undefined) return "";
-    var targetStr = String(rawTarget).trim().replace(/,/g, '');
+    var rawStr = String(rawTarget).trim().replace(/%/g, '');
+    var isVnDecimal = /^-?\d+,\d+$/.test(rawStr);
+    var targetStr = isVnDecimal ? rawStr.replace(',', '.') : rawStr.replace(/,/g, '');
     var num = parseFloat(targetStr);
     if (isNaN(num)) {
       return String(rawTarget);
@@ -17,7 +19,8 @@
     var currentVal = num * easeVal;
     
     if (hasDecimal && decimals > 0) {
-      return currentVal.toFixed(decimals);
+      var res = currentVal.toFixed(decimals);
+      return res.replace('.', ',');
     } else {
       return Math.round(currentVal).toLocaleString('vi-VN');
     }

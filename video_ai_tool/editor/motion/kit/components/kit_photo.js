@@ -27,12 +27,28 @@
 
       card.appendChild(img);
 
-      // Caption overlay if name, role, or credit exists
-      if (slots.name || slots.role || slots.credit || slots.caption) {
+      // Caption & Vietnamese sentence overlay
+      var vnSentence = slots.vietnamese_sentence || slots.title || "";
+      var isPerson = slots.is_person || (slots.name && slots.photo && slots.photo.type === 'person');
+      var creditText = slots.credit || slots.caption || "";
+
+      if (vnSentence || slots.name || creditText) {
         var overlay = document.createElement('div');
         overlay.className = 'kit-photo-overlay';
 
-        if (slots.name) {
+        if (isPerson && slots.name) {
+          var personEl = document.createElement('div');
+          personEl.className = 'kit-photo-person-badge';
+          personEl.textContent = String(slots.name);
+          overlay.appendChild(personEl);
+        }
+
+        if (vnSentence) {
+          var sentenceEl = document.createElement('div');
+          sentenceEl.className = 'kit-photo-sentence';
+          sentenceEl.textContent = String(vnSentence);
+          overlay.appendChild(sentenceEl);
+        } else if (slots.name && !isPerson) {
           var nameEl = document.createElement('div');
           nameEl.className = 'kit-photo-name';
           nameEl.textContent = String(slots.name);
@@ -46,8 +62,7 @@
           overlay.appendChild(roleEl);
         }
 
-        var creditText = slots.credit || slots.caption;
-        if (creditText && creditText !== slots.name) {
+        if (creditText) {
           var creditEl = document.createElement('div');
           creditEl.className = 'kit-photo-credit';
           creditEl.textContent = String(creditText);

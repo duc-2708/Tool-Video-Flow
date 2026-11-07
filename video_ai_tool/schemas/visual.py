@@ -39,6 +39,9 @@ class VisualPhoto(StrictModel):
     name: str = ""
     role: str = ""
     credit: str = ""
+    caption: str = ""
+    author: str = ""
+    license: str = ""
 
 
 class VisualData(StrictModel):

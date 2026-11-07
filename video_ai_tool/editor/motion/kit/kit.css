@@ -328,11 +328,32 @@ html, body {
   left: 0;
   bottom: 0;
   width: 100%;
-  padding: 48px 40px;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.90) 0%, rgba(15, 23, 42, 0.6) 60%, rgba(15, 23, 42, 0) 100%);
+  padding: 56px 44px;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.75) 55%, rgba(15, 23, 42, 0) 100%);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+}
+
+.kit-photo-sentence {
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #FFFFFF;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.85);
+}
+
+.kit-photo-person-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 8px 22px;
+  border-radius: 9999px;
+  background: #2563EB;
+  color: #FFFFFF;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .kit-photo-name {
@@ -343,16 +364,16 @@ html, body {
 }
 
 .kit-photo-role {
-  font-size: 44px;
+  font-size: 40px;
   font-weight: 600;
   color: #E2E8F0;
 }
 
 .kit-photo-credit {
-  font-size: 36px;
+  font-size: 26px;
   font-weight: 500;
-  color: #CBD5E1;
-  margin-top: 6px;
+  color: #94A3B8;
+  margin-top: 4px;
 }
 
 /* Component: kit_list */

@@ -75,17 +75,47 @@
         svg.appendChild(valText);
       }
 
-      // Label below baseline
-      var lblText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      lblText.setAttribute('x', curX + barW / 2);
-      lblText.setAttribute('y', baseY + 42);
-      lblText.setAttribute('text-anchor', 'middle');
-      lblText.setAttribute('font-family', 'Inter, sans-serif');
-      lblText.setAttribute('font-size', '32');
-      lblText.setAttribute('font-weight', '600');
-      lblText.setAttribute('fill', '#64748B');
-      lblText.textContent = String(item.label || '');
-      svg.appendChild(lblText);
+      // Label below baseline with controlled wrapping and auto-sizing to prevent overlaps
+      var maxLabelW = barW + barGap - 8;
+      var lblFontSize = Math.min(26, Math.max(20, Math.floor(maxLabelW / 6.5)));
+      var rawLabel = String(item.label || '');
+      var words = rawLabel.split(/\s+/);
+      var line1 = '';
+      var line2 = '';
+
+      if (rawLabel.length > 10 && words.length >= 2) {
+        var mid = Math.ceil(words.length / 2);
+        line1 = words.slice(0, mid).join(' ');
+        line2 = words.slice(mid).join(' ');
+      } else {
+        line1 = rawLabel;
+      }
+
+      var textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      textEl.setAttribute('x', curX + barW / 2);
+      textEl.setAttribute('y', baseY + 36);
+      textEl.setAttribute('text-anchor', 'middle');
+      textEl.setAttribute('font-family', 'Inter, sans-serif');
+      textEl.setAttribute('font-size', String(lblFontSize));
+      textEl.setAttribute('font-weight', '600');
+      textEl.setAttribute('fill', '#64748B');
+
+      if (line2) {
+        var tspan1 = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        tspan1.setAttribute('x', curX + barW / 2);
+        tspan1.textContent = line1;
+        textEl.appendChild(tspan1);
+
+        var tspan2 = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        tspan2.setAttribute('x', curX + barW / 2);
+        tspan2.setAttribute('dy', String(lblFontSize + 6));
+        tspan2.textContent = line2;
+        textEl.appendChild(tspan2);
+      } else {
+        textEl.textContent = line1;
+      }
+
+      svg.appendChild(textEl);
     }
 
     return svg;

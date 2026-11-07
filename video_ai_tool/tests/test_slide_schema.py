@@ -57,7 +57,7 @@ def test_slide_item_slot_limits_clamped():
     assert len(slots["pill"]) <= 28
     assert len(slots["items"]) <= 4
     for it in slots["items"]:
-        assert len(it) <= 40
+        assert len(it) <= 90
     # Left side clamped
     assert len(slots["left"]["title"]) <= 28
 

@@ -387,7 +387,18 @@ def numbers_match(n1: Any, n2: Any, tolerance: float = 0.01) -> bool:
     # Unit compatibility: None is compatible with anything; matching units are compatible
     if norm1.unit is None or norm2.unit is None:
         return True
-    return norm1.unit.lower() == norm2.unit.lower()
+    u1 = norm1.unit.lower()
+    u2 = norm2.unit.lower()
+    if u1 == u2:
+        return True
+    currency_synonyms = [
+        {"$", "usd", "dollar", "đô", "đô la"},
+        {"đ", "vnd", "đồng", "dong"},
+    ]
+    for syn in currency_synonyms:
+        if u1 in syn and u2 in syn:
+            return True
+    return False
 
 
 def normalized_numbers(text: str, *, ignore_current_year: bool = True) -> set[str]:
