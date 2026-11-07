@@ -16,6 +16,7 @@ ALLOWED_LAYOUTS = (
     "kit_compare",
     "kit_quote",
     "kit_timeline",
+    "kit_route",
     "kit_outro",
     # Legacy aliases mapped to kit equivalents
     "lg_source_headline",
@@ -37,6 +38,7 @@ LayoutType = Literal[
     "kit_compare",
     "kit_quote",
     "kit_timeline",
+    "kit_route",
     "kit_outro",
     "lg_source_headline",
     "lg_stat_hero",
@@ -120,7 +122,11 @@ VIETNAMESE_COMPOUND_WORDS = {
     "nội địa", "nguồn lực", "máy móc", "chủ thể", "quyết định", "con người", "nhúng tay",
     "nhân lên", "bước đầu", "khâu đầu", "cuối cùng", "nghiên cứu", "phức tạp",
     "hoàn toàn", "hoàn chỉnh", "hoàn thành", "hoàn mỹ", "mở rộng", "dẫn đầu", "từng bước",
-    "dựa trên", "nguồn dữ", "dữ liệu", "khác biệt", "dường như"
+    "dựa trên", "nguồn dữ", "dữ liệu", "khác biệt", "dường như",
+    "tấn công", "bảo mật", "hợp đồng", "thông minh", "thử nghiệm", "giao dịch",
+    "lỗ hổng", "khóa riêng", "tài sản", "đột nhập", "liên tiếp", "kiểm soát",
+    "xâm nhập", "máy tính", "danh sách", "phát hành", "dự phòng", "tổn thất",
+    "cá nhân", "thiết bị", "hệ thống", "thực sự", "nền tảng", "sự cố"
 }
 
 COMPOUND_WORD_FIRST_SYLLABLES = {
@@ -190,6 +196,11 @@ def clean_trailing_dangling(text: str) -> str:
         if len(words) >= 2 and is_compound_pair(words[-2], words[-1]):
             break
         clean_last = re.sub(r"[^\w]", "", words[-1].lower()).strip()
+        # Keep full date/year context: do not strip year (e.g. "năm 2026", "2026")
+        if len(words) >= 2 and re.sub(r"[^\w]", "", words[-2].lower()) in {"năm", "tháng", "ngày", "quý"}:
+            break
+        if re.match(r"^(19|20)\d{2}$", clean_last):
+            break
         # Orphan number at the end of phrase (e.g. "tiêu tốn 83", "triển khai 5")
         if re.match(r"^\d+$", clean_last):
             words.pop()
@@ -377,9 +388,11 @@ def extract_clean_headline(sentence: str, max_chars: int = 96) -> str:
             return False
         first_clean = re.sub(r"[^\w]", "", w[0].lower()).strip()
         last_clean = re.sub(r"[^\w]", "", w[-1].lower()).strip()
-        # Cannot end with a bare number (orphan number)
+        # Cannot end with a bare number (orphan number) UNLESS it is a year or date context
         if re.match(r"^\d+$", last_clean):
-            return False
+            is_date_context = (len(w) >= 2 and re.sub(r"[^\w]", "", w[-2].lower()) in {"năm", "tháng", "ngày", "quý"}) or bool(re.match(r"^(19|20)\d{2}$", last_clean))
+            if not is_date_context:
+                return False
         if len(w) >= 2 and is_compound_pair(w[0], w[1]):
             pass
         elif first_clean in COMPOUND_WORD_SECOND_SYLLABLES or cand[0].islower():
@@ -408,7 +421,7 @@ def extract_clean_headline(sentence: str, max_chars: int = 96) -> str:
                 return second_part
 
     # 2. Split on common predicate/verb connectors to extract full subject noun phrase
-    verb_parts = re.split(r"\s+(?:đòi hỏi|yêu cầu|cho thấy|đóng vai trò|giúp|khiến|nhằm|mang lại)\s+", clean, flags=re.I)
+    verb_parts = re.split(r"\s+(?:đòi hỏi|yêu cầu|cho thấy|đóng vai trò|giúp|khiến|nhằm|mang lại|mở ra)\s+", clean, flags=re.I)
     if verb_parts:
         subj = clean_trailing_dangling(verb_parts[0].strip())
         if subj:
@@ -514,7 +527,7 @@ class SlideItem(StrictModel):
                     if val_h and len(val_h) <= 96:
                         val = val_h
                     else:
-                        lines = wrap_text_greedy(val, max_chars_per_line=32, max_lines=3)
+                        lines = wrap_text_greedy(val, max_chars_per_line=32, max_lines=4)
                         val = clean_trailing_dangling(" ".join(lines) if lines else val[:96])
                 else:
                     val = clean_trailing_dangling(val)

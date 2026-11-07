@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 USER_AGENT = "VideoAITool/1.0"
 DEFAULT_TIMEOUT = 8.0
-MAX_PHOTOS_PER_VIDEO = 4
+MAX_PHOTOS_PER_VIDEO = 3
 
 # Rate limiter: max 3 requests / second
 _request_timestamps: list[float] = []
@@ -548,10 +548,12 @@ class PhotoFinder:
         narr_low = narr_full.lower()
 
         # Specific machinery and civil engineering mappings
+        if any(kw in narr_low for kw in ("nhổn", "ga hà nội", "hanoi metro", "metro hà nội", "tuyến số 3", "tuyến 3")):
+            object_queries.extend(["Hanoi Metro", "Nhon", "Hanoi Metro Line 3", "Ga Hà Nội"])
         if any(kw in narr_low for kw in ("tbm", "máy đào hầm", "máy đào", "khiên đào")):
-            object_queries.extend(["tunnel boring machine", "tunnel boring machine cutterhead"])
+            object_queries.extend(["tunnel boring machine", "Herrenknecht TBM", "tunnel boring machine cutterhead"])
         if any(kw in narr_low for kw in ("đường hầm", "hầm metro", "ga ngầm", "công trình ngầm", "long do thi", "dưới lòng đô thị", "hầm ngầm", "thi công ngầm")):
-            object_queries.extend(["tunnel boring machine", "tunnel construction", "metro tunnel construction", "underground tunnel"])
+            object_queries.extend(["metro tunnel construction", "tunnel construction", "underground tunnel", "tunnel boring machine"])
         if any(kw in narr_low for kw in ("tường vây", "cọc khoan", "địa chất", "sụt lún", "địa kỹ thuật")):
             object_queries.extend(["diaphragm wall", "deep excavation construction", "tunnel construction"])
         if any(kw in narr_low for kw in ("đường sắt", "đường sắt bắc nam", "đường sắt cao tốc", "tàu cao tốc")):

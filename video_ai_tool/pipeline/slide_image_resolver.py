@@ -1324,7 +1324,7 @@ def resolve_images_for_slide_script(
 
         # 1. Try finding authentic photo via PhotoFinder (Wikidata person or Wikimedia Commons landmark/machine)
         photo_res = None
-        if allow_web_search and photo_finder.resolved_count < 4:
+        if allow_web_search and photo_finder.resolved_count < 3:
             photo_res = photo_finder.find_photo_for_scene(
                 slide_id=slide_id,
                 narration=slide_narr,

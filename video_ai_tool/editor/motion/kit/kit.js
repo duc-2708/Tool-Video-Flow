@@ -275,6 +275,8 @@
         inner.innerHTML = '';
         window.KitTitle.render(inner, slots, tau, duration);
       }
+    } else if (layout === 'kit_route') {
+      window.KitRoute.render(inner, slots, tau, duration);
     } else if (layout === 'kit_list') {
       window.KitContent.renderList(inner, slots, tau, duration);
     } else if (layout === 'kit_compare') {

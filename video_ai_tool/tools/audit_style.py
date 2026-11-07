@@ -249,7 +249,7 @@ def audit_kit_project(
         float(s.get("duration", 0.0)) or (float(s.get("t_end", 0.0)) - float(s.get("t_start", 0.0))) or 5.0
         for s in slides_data
     ]
-    dur_violations = [round(d, 2) for d in durations if d < 2.5 or d > 9.0]
+    dur_violations = [round(d, 2) for d in durations if d < 3.5 or d > 6.5]
     total_dur_calc = sum(durations)
     max_count = 15 if total_dur_calc > 45.0 else 10
     slide_count_violation = None
@@ -259,7 +259,7 @@ def audit_kit_project(
     c1_passed = len(durations) > 0 and len(dur_violations) == 0 and slide_count_violation is None
     c1_score = 15 if c1_passed else max(0, 15 - len(dur_violations) * 5 - (5 if slide_count_violation else 0))
     total_score += c1_score
-    check1_violations = [f"Duration {v}s outside [2.5, 9.0]s" for v in dur_violations]
+    check1_violations = [f"Duration {v}s outside [3.5, 6.5]s" for v in dur_violations]
     if slide_count_violation:
         check1_violations.append(slide_count_violation)
 
@@ -268,7 +268,7 @@ def audit_kit_project(
         "score": c1_score,
         "max_score": 15,
         "durations": [round(d, 2) for d in durations],
-        "allowed_range": [2.5, 9.0],
+        "allowed_range": [3.5, 6.5],
         "violations": check1_violations,
     }
     if not c1_passed:
@@ -352,12 +352,13 @@ def audit_kit_project(
     # Headline font measurement: Kit v2 design tokens enforce hero >= 96px, lg >= 80px
     HEADLINE_FONT_TOKENS = {
         "kit_title": 104,
-        "kit_stat": 148,
+        "kit_stat": 240,
         "kit_photo": 88,
         "kit_list": 88,
         "kit_compare": 88,
         "kit_quote": 88,
         "kit_timeline": 88,
+        "kit_route": 88,
         "kit_outro": 88,
         "lg_source_headline": 104,
         "lg_stat_hero": 148,
@@ -987,7 +988,10 @@ def audit_kit_project(
             s2 = re.sub(r"[^\w\s]", "", sub.lower()).strip()
             if s1 and s2:
                 sim = SequenceMatcher(None, s1, s2).ratio()
-                if sim >= 0.70 or s1 == s2:
+                w1_set = set(s1.split())
+                w2_set = set(s2.split())
+                word_overlap = len(w1_set & w2_set) / max(1, len(w2_set))
+                if word_overlap >= 0.60 or sim >= 0.60 or s1 == s2:
                     headline_subtitle_repetition_violations.append(
                         f"Slide {s_id}: headline '{hl}' repeats {sim:.1%} (>= 70%) with subtitle '{sub}'"
                     )
@@ -1067,6 +1071,12 @@ def audit_kit_project(
                         stat_grounding_violations.append(
                             f"Slide {s_id}: 4 km must explicitly label the specific segment (e.g. đoạn hầm ngầm đô thị), got '{lbl}'"
                         )
+                from schemas.fact_number import validate_unit_quantity
+                is_valid_q, q_err = validate_unit_quantity(str(lbl), str(unit), val)
+                if not is_valid_q:
+                    stat_grounding_violations.append(
+                        f"Slide {s_id}: kit_stat semantic inconsistency: {q_err}"
+                        )
 
     c9_passed = (
         (dup_image_count == 0)
@@ -1124,6 +1134,19 @@ def audit_kit_project(
 
     results["total_score"] = min(100, total_score)
     results["passed"] = (results["total_score"] >= 90) and (len(results["violations"]) == 0)
+    from schemas.fact_number import extract_facts_from_brief
+    extracted_facts = extract_facts_from_brief(brief_data) if brief_data else []
+    results["grounded_facts"] = [
+        {
+            "label": f.label,
+            "value": f.value,
+            "unit": f.unit,
+            "start_offset": f.start_offset,
+            "end_offset": f.end_offset,
+            "source_sentence": f.source_sentence,
+        }
+        for f in extracted_facts
+    ]
     if p_dir.is_dir():
         if video_path and Path(video_path).is_file():
             cs_path = p_dir / "contact_sheet.jpg"

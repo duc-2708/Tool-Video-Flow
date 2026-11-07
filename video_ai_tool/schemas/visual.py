@@ -103,6 +103,8 @@ class VisualData(StrictModel):
     source_date: str = ""
     caption: str = ""
     credit: str = ""
+    stations: list[str] = Field(default_factory=list)
+    distance: str = ""
     repair_notes: list[str] = Field(default_factory=list, exclude_if=lambda v: not v)
 
 

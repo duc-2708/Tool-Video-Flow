@@ -76,13 +76,11 @@
 
       statContainer.appendChild(row);
 
-      // 3. Caption / Label
+      // 3. Caption / Label (font-size >= 52px, centered)
       var labelText = slots.label || slots.title || slots.note || slots.text;
       if (labelText) {
         var labelEl = document.createElement('div');
-        labelEl.className = 'kit-body';
-        labelEl.style.fontSize = '52px';
-        labelEl.style.fontWeight = '600';
+        labelEl.className = 'kit-stat-label';
         labelEl.textContent = String(labelText);
         statContainer.appendChild(labelEl);
       }
