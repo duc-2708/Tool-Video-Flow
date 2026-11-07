@@ -16,6 +16,7 @@ ALLOWED_LAYOUTS = (
     "kit_compare",
     "kit_quote",
     "kit_timeline",
+    "kit_route",
     "kit_outro",
     # Legacy aliases mapped to kit equivalents
     "lg_source_headline",
@@ -37,6 +38,7 @@ LayoutType = Literal[
     "kit_compare",
     "kit_quote",
     "kit_timeline",
+    "kit_route",
     "kit_outro",
     "lg_source_headline",
     "lg_stat_hero",
@@ -120,7 +122,11 @@ VIETNAMESE_COMPOUND_WORDS = {
     "nội địa", "nguồn lực", "máy móc", "chủ thể", "quyết định", "con người", "nhúng tay",
     "nhân lên", "bước đầu", "khâu đầu", "cuối cùng", "nghiên cứu", "phức tạp",
     "hoàn toàn", "hoàn chỉnh", "hoàn thành", "hoàn mỹ", "mở rộng", "dẫn đầu", "từng bước",
-    "dựa trên", "nguồn dữ", "dữ liệu", "khác biệt", "dường như"
+    "dựa trên", "nguồn dữ", "dữ liệu", "khác biệt", "dường như",
+    "tấn công", "bảo mật", "hợp đồng", "thông minh", "thử nghiệm", "giao dịch",
+    "lỗ hổng", "khóa riêng", "tài sản", "đột nhập", "liên tiếp", "kiểm soát",
+    "xâm nhập", "máy tính", "danh sách", "phát hành", "dự phòng", "tổn thất",
+    "cá nhân", "thiết bị", "hệ thống", "thực sự", "nền tảng", "sự cố"
 }
 
 COMPOUND_WORD_FIRST_SYLLABLES = {
@@ -175,12 +181,13 @@ DANGLING_END_WORDS = {
     "tầm", "mức", "chủ", "hỏi", "nhận", "đặt", "tạo", "mang", "coi", "tính", "biết",
     "thấy", "khiến", "nhằm", "gồm", "thuộc", "cần", "phía", "vận", "độ", "bậc", "đằng",
     "nhưng", "song", "tuy", "dù", "nếu", "vì",
-    "thể", "nhiều", "ít", "đang", "sẽ", "đã", "tự", "bộ", "điều", "này", "kia", "đó", "nguồn", "lõi", "tiêu", "dường"
+    "thể", "nhiều", "ít", "đang", "sẽ", "đã", "tự", "bộ", "điều", "này", "kia", "đó", "nguồn", "lõi", "tiêu", "dường",
+    "phẫu", "triển", "khéo", "léo", "vỡ", "số", "con"
 }
 
 
 def clean_trailing_dangling(text: str) -> str:
-    """Trim any trailing dangling words or incomplete particles from text."""
+    """Trim any trailing dangling words, orphan numbers, or incomplete particles from text."""
     if not text:
         return ""
     stripped = text.strip()
@@ -189,8 +196,17 @@ def clean_trailing_dangling(text: str) -> str:
         if len(words) >= 2 and is_compound_pair(words[-2], words[-1]):
             break
         clean_last = re.sub(r"[^\w]", "", words[-1].lower()).strip()
+        # Keep full date/year context: do not strip year (e.g. "năm 2026", "2026")
+        if len(words) >= 2 and re.sub(r"[^\w]", "", words[-2].lower()) in {"năm", "tháng", "ngày", "quý"}:
+            break
+        if re.match(r"^(19|20)\d{2}$", clean_last):
+            break
+        # Orphan number at the end of phrase (e.g. "tiêu tốn 83", "triển khai 5")
+        if re.match(r"^\d+$", clean_last):
+            words.pop()
+            continue
         if clean_last in DANGLING_END_WORDS or clean_last in COMPOUND_WORD_FIRST_SYLLABLES:
-            if words[-1][-1] in (".", "?", "!") and clean_last not in {"và", "là", "để", "với", "cho", "của", "trong", "khi", "tại", "nhưng", "vì"}:
+            if words[-1][-1] in (".", "?", "!") and clean_last not in {"và", "là", "để", "với", "cho", "của", "trong", "khi", "tại", "nhưng", "vì", "phẫu", "triển", "khéo", "léo"}:
                 break
             words.pop()
         else:
@@ -292,6 +308,12 @@ INCOMPLETE_HEADLINE_PATTERNS = [
     r"^phương\s+án(?:\s+\d+|\s+1/2)?$",
     r"^ý\s+chính(?:\s+cần\s+nhớ)?$",
     r"^điều\s+này(?:\s+dường(?:\s+như)?)?$",
+    r"^sự\s+khéo\s+léo$",
+    r"^triển\s+khai(?:\s+\d+)?$",
+    r"^bác\s+sĩ\s+phẫu$",
+    r"^con\s+số\s+này$",
+    r"^việc\s+này$",
+    r".*tiêu\s+tốn\s+\d+$",
 ]
 
 
@@ -304,7 +326,7 @@ def is_incomplete_phrase(phrase: str) -> bool:
     return False
 
 
-def extract_clean_headline(sentence: str, max_chars: int = 56) -> str:
+def extract_clean_headline(sentence: str, max_chars: int = 96) -> str:
     """Extract a complete, grammatically sound headline phrase from a sentence without cutting words.
     
     If text cannot be cleanly shortened to a complete grammatical clause, returns the full sentence.
@@ -312,6 +334,25 @@ def extract_clean_headline(sentence: str, max_chars: int = 56) -> str:
     if not sentence:
         return ""
     clean = re.sub(r"\s+", " ", sentence.strip())
+
+    # 0. If multiple sentences exist, extract headline from the first complete sentence
+    sents = [s.strip() for s in re.split(r"(?<=[.?!])\s+", clean) if s.strip()]
+    if len(sents) > 1:
+        first_s = sents[0]
+        first_h = extract_clean_headline(first_s, max_chars=max_chars)
+        if first_h and len(first_h.split()) >= 3 and not is_incomplete_phrase(first_h):
+            return first_h
+        return clean_trailing_dangling(first_s)
+
+    # Strip dangling demonstrative clause prefixes so titles are substantive independent statements
+    m_dem = re.match(
+        r"^(?:con\s+số\s+này|điều\s+này|việc\s+này|điều\s+đó|này|đó)\s+(?:dường\s+như|có\s+thể|sẽ)?\s*(?:cho\s+thấy|chứng\s+minh|khẳng\s+định|là|khiến|giúp|làm\s+cho|đưa\s+đến|dẫn\s+đến)?\s*(.+)",
+        clean,
+        re.I,
+    )
+    if m_dem and len(m_dem.group(1).strip().split()) >= 3:
+        clean = m_dem.group(1).strip()
+        clean = clean[0].upper() + clean[1:]
 
     # Special handling for questions: "Làm sao để ... giúp Việt Nam tự chủ hạ tầng hoàn toàn?"
     if re.search(r"làm sao để|làm thế nào để", clean, re.I):
@@ -342,11 +383,21 @@ def extract_clean_headline(sentence: str, max_chars: int = 56) -> str:
             return False
         if is_incomplete_phrase(cand):
             return False
+        # Cannot begin with a subordinate conjunction, preposition, or dangling demonstrative
+        if re.match(r"^(?:này|đó|điều này|con số này|việc này|điều đó|khi|nếu|dù|mặc dù|trong khi|bởi vì|với|tại|theo|do|bởi)\b", cand, re.I):
+            return False
         first_clean = re.sub(r"[^\w]", "", w[0].lower()).strip()
         last_clean = re.sub(r"[^\w]", "", w[-1].lower()).strip()
-        if first_clean in COMPOUND_WORD_SECOND_SYLLABLES or cand[0].islower():
+        # Cannot end with a bare number (orphan number) UNLESS it is a year or date context
+        if re.match(r"^\d+$", last_clean):
+            is_date_context = (len(w) >= 2 and re.sub(r"[^\w]", "", w[-2].lower()) in {"năm", "tháng", "ngày", "quý"}) or bool(re.match(r"^(19|20)\d{2}$", last_clean))
+            if not is_date_context:
+                return False
+        if len(w) >= 2 and is_compound_pair(w[0], w[1]):
+            pass
+        elif first_clean in COMPOUND_WORD_SECOND_SYLLABLES or cand[0].islower():
             return False
-        if cand[-1] in (".", "?", "!") and last_clean not in {"và", "là", "để", "với", "cho", "của", "trong", "khi", "tại", "nhưng", "vì", "cốt", "mục", "đồng", "tự", "hạ"}:
+        if cand[-1] in (".", "?", "!") and last_clean not in {"và", "là", "để", "với", "cho", "của", "trong", "khi", "tại", "nhưng", "vì", "cốt", "mục", "đồng", "tự", "hạ", "phẫu", "triển", "khéo", "léo"}:
             pass
         elif len(w) >= 2 and is_compound_pair(w[-2], w[-1]):
             pass
@@ -354,26 +405,38 @@ def extract_clean_headline(sentence: str, max_chars: int = 56) -> str:
             return False
         return True
 
-    # 1. Check natural punctuation clause boundary (comma, semicolon, dash, colon)
-    parts = re.split(r"[,;:\-—]", clean)
+    # 1. Check natural punctuation clause boundary (do not split on comma between digits like 83,2)
+    parts = re.split(r"(?<!\d)[,;:\-—](?!\d)", clean)
     if parts:
         first_part = clean_trailing_dangling(parts[0].strip())
+        if first_part:
+            first_part = first_part[0].upper() + first_part[1:]
         if is_valid_headline(first_part):
-            return first_part[0].upper() + first_part[1:]
+            return first_part
+        elif len(parts) > 1:
+            second_part = clean_trailing_dangling(parts[1].strip())
+            if second_part:
+                second_part = second_part[0].upper() + second_part[1:]
+            if is_valid_headline(second_part):
+                return second_part
 
     # 2. Split on common predicate/verb connectors to extract full subject noun phrase
-    verb_parts = re.split(r"\s+(?:đòi hỏi|yêu cầu|cho thấy|đóng vai trò|giúp|khiến|nhằm|mang lại)\s+", clean, flags=re.I)
+    verb_parts = re.split(r"\s+(?:đòi hỏi|yêu cầu|cho thấy|đóng vai trò|giúp|khiến|nhằm|mang lại|mở ra)\s+", clean, flags=re.I)
     if verb_parts:
         subj = clean_trailing_dangling(verb_parts[0].strip())
+        if subj:
+            subj = subj[0].upper() + subj[1:]
         if is_valid_headline(subj):
-            return subj[0].upper() + subj[1:]
+            return subj
 
     # 3. Split on common subordinate connectors (nhưng, và, để, vì, khi, nếu, trong khi, cho thấy, nhằm, giúp)
     sub_parts = re.split(r"\s+(?:nhưng|cho thấy|nhằm|để|giúp|khiến|trong khi)\s+", clean, flags=re.I)
     if sub_parts:
         cand = clean_trailing_dangling(sub_parts[0].strip())
+        if cand:
+            cand = cand[0].upper() + cand[1:]
         if is_valid_headline(cand):
-            return cand[0].upper() + cand[1:]
+            return cand
 
     # If shortening breaks clause completeness or yields a cut-off phrase, USE THE FULL SENTENCE!
     full_clean = clean_trailing_dangling(clean)
@@ -452,9 +515,20 @@ class SlideItem(StrictModel):
         for title_key in ("title", "headline"):
             if title_key in cleaned and cleaned[title_key]:
                 val = str(cleaned[title_key]).strip()
+                sents = [s.strip() for s in re.split(r"(?<=[.?!])\s+", val) if s.strip()]
+                if len(sents) > 1 and len(val) > 96:
+                    first_s = sents[0]
+                    if len(first_s) <= 96:
+                        val = first_s
+                    else:
+                        val = extract_clean_headline(first_s, max_chars=96)
                 if len(val) > 96:
-                    lines = wrap_text_greedy(val, max_chars_per_line=32, max_lines=3)
-                    val = clean_trailing_dangling(" ".join(lines) if lines else val[:96])
+                    val_h = extract_clean_headline(val, max_chars=96)
+                    if val_h and len(val_h) <= 96:
+                        val = val_h
+                    else:
+                        lines = wrap_text_greedy(val, max_chars_per_line=32, max_lines=4)
+                        val = clean_trailing_dangling(" ".join(lines) if lines else val[:96])
                 else:
                     val = clean_trailing_dangling(val)
                 if val:
@@ -470,14 +544,18 @@ class SlideItem(StrictModel):
                     s_val = s_val[0].upper() + s_val[1:]
                 cleaned[sub_key] = s_val
 
-        # Features items: max 4 items, each <= 40 chars
+        # Features items: max 4 items, each <= 90 chars, full clause without premature cutting
         if "items" in cleaned and isinstance(cleaned["items"], list):
             items_list = []
             for item in cleaned["items"][:4]:
                 item_str = str(item).strip()
-                if len(item_str) > 40:
-                    wrapped = wrap_text_greedy(item_str, max_chars_per_line=40, max_lines=1)
-                    item_str = clean_trailing_dangling(wrapped[0] if wrapped else item_str[:40])
+                if len(item_str) > 90:
+                    cand = extract_clean_headline(item_str, max_chars=90)
+                    if cand and len(cand) <= 90 and not is_incomplete_phrase(cand):
+                        item_str = cand
+                    else:
+                        wrapped = wrap_text_greedy(item_str, max_chars_per_line=45, max_lines=2)
+                        item_str = clean_trailing_dangling(" ".join(wrapped) if wrapped else item_str[:90])
                 else:
                     item_str = clean_trailing_dangling(item_str)
                 if item_str:

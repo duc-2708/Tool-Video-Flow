@@ -159,6 +159,12 @@ def rerender_project_with_theme(
     render_out.mkdir(parents=True, exist_ok=True)
     video_dest = render_out / f"{p_dir.name}_{theme}.mp4"
 
+    # Clean motion cache to avoid stale frames / cache mismatch
+    motion_cache = p_dir / "render" / "motion_cache"
+    if motion_cache.is_dir():
+        import shutil
+        shutil.rmtree(motion_cache, ignore_errors=True)
+
     logger.info("Starting render (scale=%.2f, fps=%d)", scale, fps)
     render_result = run_render(
         plan_path=plan_file,

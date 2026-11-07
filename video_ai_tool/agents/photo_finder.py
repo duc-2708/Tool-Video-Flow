@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 USER_AGENT = "VideoAITool/1.0"
 DEFAULT_TIMEOUT = 8.0
-MAX_PHOTOS_PER_VIDEO = 4
+MAX_PHOTOS_PER_VIDEO = 3
 
 # Rate limiter: max 3 requests / second
 _request_timestamps: list[float] = []
@@ -303,35 +303,59 @@ def search_wikimedia_commons(
     return results
 
 
+COMMONS_NATURE_BLACKLIST = {
+    "landscape", "nature", "mine", "mining", "quarry", "lake", "river", "mountain",
+    "forest", "scenery", "scenic", "park", "garden", "sea", "ocean", "beach", "pond", "waterfall"
+}
+
+
 def rank_wikimedia_candidates(
     candidates: list[dict[str, Any]],
     scene_entities: list[str],
 ) -> list[dict[str, Any]]:
     """Rank Wikimedia candidates based on match with characteristic entities of the scene.
     
-    Must match >= 1 characteristic entity in title or categories.
+    Must match >= 2 characteristic entities in title or categories (or >= 1 exact 2-word engineering entity).
+    Rejects generic nature, landscapes, mines, lakes, and quarries.
     Sorts by match score descending.
     """
     ranked = []
     for cand in candidates:
         t_low = cand.get("title", "").lower()
         c_low = cand.get("categories", "").lower()
+
+        # Reject landscape / nature / mining / lake / quarry photos for technical scenes
+        has_blacklisted = False
+        for b_word in COMMONS_NATURE_BLACKLIST:
+            if re.search(rf"\b{re.escape(b_word)}\b", t_low) or re.search(rf"\b{re.escape(b_word)}\b", c_low):
+                if not any(b_word in ent.lower() for ent in scene_entities):
+                    has_blacklisted = True
+                    break
+        if has_blacklisted:
+            continue
+
         matched = []
+        has_exact_multiword = False
         for ent in scene_entities:
             e_norm = ent.lower().strip()
             if len(e_norm) >= 3 and (e_norm in t_low or e_norm in c_low):
                 if ent not in matched:
                     matched.append(ent)
+                if " " in e_norm:
+                    has_exact_multiword = True
             elif " " in e_norm:
                 for sub_tok in e_norm.split():
                     if len(sub_tok) >= 4 and (sub_tok in t_low or sub_tok in c_low):
                         if sub_tok not in matched:
                             matched.append(sub_tok)
-        if matched:
+
+        # Requirement 1b & 3b: Phải khớp >= 2 thực thể đặc trưng, hoặc >= 1 cụm thực thể 2 từ chính xác (vd diaphragm wall), HOẶC >= 1 thực thể nằm trong title
+        has_title_match = any(e.lower() in t_low for e in matched)
+        if len(matched) >= 2 or has_exact_multiword or (len(matched) >= 1 and has_title_match):
             cand_copy = dict(cand)
             cand_copy["matched_entities"] = matched
             # Title match gives bonus score over category match
-            cand_copy["score"] = len(matched) + (3 if any(e.lower() in t_low for e in matched) else 0)
+            cand_copy["score"] = len(matched) + (3 if has_title_match else 0)
             ranked.append(cand_copy)
     ranked.sort(key=lambda x: x.get("score", 0), reverse=True)
     return ranked
@@ -382,6 +406,12 @@ def download_and_verify_photo(
             # Landmark / machine / tunnel photo should NOT be a portrait/person
             if face_cnt > 0:
                 return False
+
+        # Gate 4: Large text / watermark check
+        from pipeline.slide_image_resolver import detect_large_text_or_watermark
+        has_large_txt, _ = detect_large_text_or_watermark(im)
+        if has_large_txt:
+            return False
 
         target_path.parent.mkdir(parents=True, exist_ok=True)
         # Center crop or save full
@@ -518,10 +548,12 @@ class PhotoFinder:
         narr_low = narr_full.lower()
 
         # Specific machinery and civil engineering mappings
+        if any(kw in narr_low for kw in ("nhổn", "ga hà nội", "hanoi metro", "metro hà nội", "tuyến số 3", "tuyến 3")):
+            object_queries.extend(["Hanoi Metro", "Nhon", "Hanoi Metro Line 3", "Ga Hà Nội"])
         if any(kw in narr_low for kw in ("tbm", "máy đào hầm", "máy đào", "khiên đào")):
-            object_queries.extend(["tunnel boring machine", "tunnel boring machine cutterhead"])
+            object_queries.extend(["tunnel boring machine", "Herrenknecht TBM", "tunnel boring machine cutterhead"])
         if any(kw in narr_low for kw in ("đường hầm", "hầm metro", "ga ngầm", "công trình ngầm", "long do thi", "dưới lòng đô thị", "hầm ngầm", "thi công ngầm")):
-            object_queries.extend(["tunnel boring machine", "tunnel construction", "metro tunnel construction", "underground tunnel"])
+            object_queries.extend(["metro tunnel construction", "tunnel construction", "underground tunnel", "tunnel boring machine"])
         if any(kw in narr_low for kw in ("tường vây", "cọc khoan", "địa chất", "sụt lún", "địa kỹ thuật")):
             object_queries.extend(["diaphragm wall", "deep excavation construction", "tunnel construction"])
         if any(kw in narr_low for kw in ("đường sắt", "đường sắt bắc nam", "đường sắt cao tốc", "tàu cao tốc")):

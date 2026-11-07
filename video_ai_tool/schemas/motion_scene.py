@@ -98,6 +98,7 @@ SceneType=Literal[
     'kit_compare',
     'kit_quote',
     'kit_timeline',
+    'kit_route',
     'kit_outro'
 ]
 

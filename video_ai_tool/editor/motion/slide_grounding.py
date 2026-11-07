@@ -19,6 +19,7 @@ from schemas.slide_script import (
     wrap_text_greedy,
     extract_clean_headline,
     clean_trailing_dangling,
+    is_incomplete_phrase,
 )
 from editor.motion.light_glass_slots import (
     truncate_complete_phrase,
@@ -274,9 +275,17 @@ def verify_and_ground_slides(
                 str_x = str(x)
                 if contains_metaphor(str_x):
                     str_x = _sanitize_metaphor(str_x)
-                if str_x and not contains_metaphor(str_x):
+                if (
+                    str_x
+                    and not contains_metaphor(str_x)
+                    and len(str_x.split()) >= 6
+                    and not is_incomplete_phrase(str_x)
+                ):
                     clean_items.append(str_x)
             s_slots["items"] = clean_items
+            if not clean_items and s_layout == "kit_list":
+                s_layout = "kit_title"
+                s_slots.pop("items", None)
 
         # Grounding Rule Bullet: Bullet cannot overlap >= 70% with title/headline
         if s_slots.get("title") and s_slots.get("items") and isinstance(s_slots["items"], list):
