@@ -65,7 +65,21 @@
         if (creditText) {
           var creditEl = document.createElement('div');
           creditEl.className = 'kit-photo-credit';
-          creditEl.textContent = String(creditText);
+          var isIllustration = slots.is_illustration || (slots.photo && slots.photo.is_illustration) || creditText.indexOf('Ảnh minh họa') === 0;
+          if (isIllustration) {
+            var chip = document.createElement('span');
+            chip.className = 'kit-photo-illustration-chip';
+            chip.textContent = 'Ảnh minh họa';
+            creditEl.appendChild(chip);
+
+            var cleanCredit = creditText.replace(/^Ảnh minh họa\s*[·•-]?\s*/i, '');
+            if (cleanCredit) {
+              var sep = document.createTextNode(' · ' + cleanCredit);
+              creditEl.appendChild(sep);
+            }
+          } else {
+            creditEl.textContent = String(creditText);
+          }
           overlay.appendChild(creditEl);
         }
 

@@ -1343,6 +1343,7 @@ def resolve_images_for_slide_script(
                 slots["caption"] = photo_res.get("caption", "")
                 slots["credit"] = photo_res.get("caption", "")
                 slots["author"] = photo_res.get("author", "")
+                slots["is_illustration"] = photo_res.get("is_illustration", False)
                 if photo_res.get("name"):
                     slots["name"] = photo_res["name"]
                 slots["photo"] = {
@@ -1350,6 +1351,8 @@ def resolve_images_for_slide_script(
                     "caption": photo_res.get("caption", ""),
                     "author": photo_res.get("author", ""),
                     "license": photo_res.get("license", ""),
+                    "is_illustration": photo_res.get("is_illustration", False),
+                    "file_page_url": photo_res.get("file_page_url", ""),
                 }
                 match_reason_str = photo_res.get("reason", "Khớp ảnh thật có bản quyền mở")
                 slots["image_match_reason"] = match_reason_str

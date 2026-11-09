@@ -31,11 +31,12 @@ from schemas.fact_number import (
     extract_facts_from_brief,
     select_chart_for_facts,
 )
+from agents.proper_names import normalize_proper_names
 
 METAPHOR_REGEX = re.compile(
-    r"\b(giống như|giống bản nhạc|giống bản|giống một|giống chiếc|được ví như|được ví|ví như|như một|"
-    r"như bác sĩ|như đầu bếp|như ngôi nhà|như chiếc gương|như cỗ máy|như việc|ví von|ẩn dụ|tựa như|"
-    r"chẳng khác gì|không khác gì|đồ chơi|lắp ráp.*trong hộp|hộp kín|bánh kem|ống hút)\b",
+    r"\b(hoạt động như|như đôi mắt|như đôi tai|như bộ não|như người|giống như|giống bản nhạc|giống bản|giống một|giống chiếc|"
+    r"được ví như|được ví|ví như|như một|như bác sĩ|như đầu bếp|như ngôi nhà|như chiếc gương|như cỗ máy|như việc|"
+    r"ví von|ẩn dụ|tựa như|chẳng khác gì|không khác gì|đồ chơi|lắp ráp.*trong hộp|hộp kín|bánh kem|ống hút)\b",
     re.IGNORECASE,
 )
 
@@ -253,9 +254,13 @@ def _sanitize_metaphor(text: str) -> str:
         return ""
     low = text.lower()
     if ("bác sĩ" in low or "phẫu" in low or "nội soi" in low) and any(kw in low for kw in ("giống", "như", "ví", "vết rạch")):
-        return "Kiểm soát địa chất công trình ngầm qua các tầng đất phức tạp"
+        if any(k in low for k in ("hầm", "tbm", "khoan", "công trình", "địa chất")):
+            return "Kiểm soát địa chất công trình ngầm qua các tầng đất phức tạp"
+        return "Kiểm soát kỹ thuật chính xác qua các phân đoạn phức tạp"
     if "bác sĩ nội soi" in low or "mổ nội soi" in low:
-        return "Kiểm soát địa chất công trình ngầm qua các tầng đất phức tạp"
+        if any(k in low for k in ("hầm", "tbm", "khoan", "công trình", "địa chất")):
+            return "Kiểm soát địa chất công trình ngầm qua các tầng đất phức tạp"
+        return "Kiểm soát kỹ thuật chính xác qua các phân đoạn phức tạp"
     if "bản nhạc" in low and "nhịp điệu" in low:
         return "Đồng bộ hóa tiêu chuẩn kỹ thuật thiết kế và vận hành"
     if "heo đất" in low:
@@ -263,15 +268,29 @@ def _sanitize_metaphor(text: str) -> str:
     if "chiếc gương chiếu hậu" in low:
         return "Quan trắc liên tục phát hiện sớm dịch chuyển nền đất"
     if "cắt một chiếc bánh" in low:
-        return "Xử lý kỹ thuật chính xác qua nhiều tầng địa chất"
+        if any(k in low for k in ("hầm", "tbm", "khoan", "công trình", "địa chất")):
+            return "Xử lý kỹ thuật chính xác qua nhiều tầng địa chất"
+        return "Xử lý kỹ thuật chính xác và phân tầng cẩn trọng"
     if "tự lái xe" in low:
-        return "Làm chủ công nghệ và tự chủ xử lý kỹ thuật ngầm"
+        if any(k in low for k in ("hầm", "tbm", "khoan", "công trình", "địa chất")):
+            return "Làm chủ công nghệ và tự chủ xử lý kỹ thuật ngầm"
+        return "Làm chủ công nghệ và tự chủ quy trình vận hành"
     if "đồ chơi" in low or ("lắp ráp" in low and "hộp" in low) or "hộp kín" in low:
-        return "Thi công công trình ngầm đòi hỏi độ chính xác tuyệt đối trong không gian hạn chế"
+        return "Thi công lắp ráp đòi hỏi độ chính xác tuyệt đối trong không gian hạn chế"
     if "bánh kem" in low or "ống hút" in low:
-        return "Kiểm soát mũi khoan TBM giữ nguyên vẹn cảnh quan và kết cấu bề mặt"
+        if any(k in low for k in ("hầm", "tbm", "khoan", "công trình", "địa chất")):
+            return "Kiểm soát mũi khoan TBM giữ nguyên vẹn cảnh quan và kết cấu bề mặt"
+        return "Kiểm soát thi công giữ nguyên vẹn cảnh quan và kết cấu bề mặt"
     if ("ngôi nhà" in low or "đột nhập" in low) and any(kw in low for kw in ("trinh sát", "ban đêm", "giống", "như", "trước khi")):
         return "Rà soát lỗ hổng hợp đồng thông minh và thử nghiệm giao dịch trước khi tấn công"
+    if "hoạt động như" in low:
+        parts = re.split(r"\s+hoạt động như\s+", text, flags=re.I)
+        if len(parts) > 1 and len(parts[0].strip().split()) >= 4:
+            return parts[0].strip()
+    if any(kw in low for kw in ("như đôi mắt", "như đôi tai", "như bộ não", "như người")):
+        parts = re.split(r"\s+như\s+(?:đôi mắt|đôi tai|bộ não|người)\b", text, flags=re.I)
+        if len(parts) > 1 and len(parts[0].strip().split()) >= 4:
+            return parts[0].strip()
     if "tựa như" in low:
         parts = re.split(r"\s+tựa như\s+", text, flags=re.I)
         if len(parts) > 1 and len(parts[0].strip().split()) >= 4:
@@ -294,12 +313,12 @@ def _sanitize_metaphor(text: str) -> str:
             return parts[0].strip()
     cleaned = METAPHOR_REGEX.sub("", text).strip()
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
-    return cleaned if len(cleaned.split()) >= 4 else "Kiểm soát quy trình kỹ thuật ngầm"
+    return cleaned if cleaned else text.strip()
 
 
 def _extract_genuine_compare(text: str) -> tuple[str, str, str, str] | None:
     """Extract two genuine opposing clauses from narration.
-    
+
     Returns (left_title, left_text, right_title, right_text) or None if no genuine comparison exists.
     Strictly prohibits template labels like 'Cách tiếp cận cũ', 'Cách tiếp cận mới'.
     """
@@ -338,20 +357,62 @@ def _extract_genuine_compare(text: str) -> tuple[str, str, str, str] | None:
 
 
 def _find_quote_author(text: str, brief: Any = None) -> tuple[str, str] | None:
-    """Find specific person or organization name for quote."""
+    """Find specific person or organization name for a VERBATIM quote only.
+
+    Requirements:
+    1. Quote MUST be verbatim: enclosed in quotation marks ("...", “...”, '...') OR
+       directly following an explicit speech reporting verb ('cho biết', 'nói', 'khẳng định', 'chia sẻ', 'nhấn mạnh', 'tuyên bố').
+    2. Speaker/org name MUST appear in the SAME sentence/clause as the quote.
+    3. Editorial/paraphrasing sentences (e.g. 'Việt Nam vươn lên nhóm quốc gia...')
+       MUST NOT be attributed to a company/person (Herrenknecht, etc.).
+    If conditions not met -> returns None.
+    """
+    if not text:
+        return None
+
+    SPEECH_VERBS = ("cho biết", "khẳng định", "chia sẻ", "nhấn mạnh", "tuyên bố", "phát biểu", "nhận định", "nói rằng", "nói:")
+    has_speech_verb = any(v in text.lower() for v in SPEECH_VERBS)
+    has_quotes = bool(re.search(r'["“\'«][^"”\'»]{6,}["”\'»]', text))
+
+    b_facts = []
     if brief:
         b_facts = getattr(brief, "facts", None) or (brief.get("facts") if isinstance(brief, dict) else [])
-        for f in b_facts:
-            src_name = getattr(f, "source_name", "") or (f.get("source_name") if isinstance(f, dict) else "")
-            claim = getattr(f, "claim", "") or (f.get("claim") if isinstance(f, dict) else "")
-            quote = getattr(f, "evidence_quote", "") or (f.get("evidence_quote") if isinstance(f, dict) else "")
-            for org in ("Bộ Xây dựng", "TS Phùng Đức Long", "TS. Phùng Đức Long", "Fecon", "Herrenknecht", "Elon Musk", "Ted Jenkin", "Vietstock"):
-                if org.lower() in text.lower() or (org.lower() in claim.lower() and any(w in text.lower() for w in quote.lower().split()[:3])):
-                    return org, src_name or "Tổ chức chuyên môn"
 
+    matched_brief_quote = False
+    speaker_from_fact = None
+    src_from_fact = None
+    for f in b_facts:
+        ev_q = getattr(f, "evidence_quote", "") or (f.get("evidence_quote") if isinstance(f, dict) else "")
+        src = getattr(f, "source_name", "") or (f.get("source_name") if isinstance(f, dict) else "")
+        claim = getattr(f, "claim", "") or (f.get("claim") if isinstance(f, dict) else "")
+        if ev_q and len(ev_q.split()) >= 4:
+            clean_q = re.sub(r'["“\'»«]', '', ev_q).lower()
+            clean_t = re.sub(r'["“\'»«]', '', text).lower()
+            if clean_q in clean_t:
+                for org in ("Bộ Xây dựng", "TS Phùng Đức Long", "TS. Phùng Đức Long", "Fecon", "Herrenknecht", "Elon Musk", "Ted Jenkin", "Vietstock"):
+                    if (org.lower() in ev_q.lower() or org.lower() in claim.lower()) and any(v in ev_q.lower() or v in claim.lower() for v in SPEECH_VERBS):
+                        matched_brief_quote = True
+                        speaker_from_fact = org
+                        src_from_fact = src
+                        break
+
+    if not has_quotes and not has_speech_verb and not matched_brief_quote:
+        return None
+
+    # Check for speaker in the SAME sentence/clause of text
+    for org in ("Bộ Xây dựng", "TS Phùng Đức Long", "TS. Phùng Đức Long", "Fecon", "Herrenknecht", "Elon Musk", "Ted Jenkin", "Vietstock"):
+        if org.lower() in text.lower():
+            if has_quotes or any(v in text.lower() for v in SPEECH_VERBS):
+                return org, "Tổ chức chuyên môn"
+
+    # Regex for formal authority / title in text
     m = re.search(r"\b(Bộ\s+[A-ZĐÁÀẢÃẠÉÈẺẼẸÍÌỈĨỊÓÒỎÕỌÚÙỦŨỤÝỲỶỸỴ][a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ]+|TS\.?\s+[A-ZĐÁÀẢÃẠÉÈẺẼẸÍÌỈĨỊÓÒỎÕỌÚÙỦŨỤÝỲỶỸỴ][a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ]+(?:\s+[A-ZĐÁÀẢÃẠÉÈẺẼẸÍÌỈĨỊÓÒỎÕỌÚÙỦŨỤÝỲỶỸỴ][a-zđáàảãạéèẻẽẹíìỉĩịóòỏõọúùủũụýỳỷỹỵ]+)+)\b", text)
-    if m:
+    if m and (has_quotes or has_speech_verb):
         return m.group(1), "Đại diện cơ quan"
+
+    if matched_brief_quote and speaker_from_fact:
+        return speaker_from_fact, src_from_fact or "Tổ chức chuyên môn"
+
     return None
 
 
@@ -830,23 +891,27 @@ def create_heuristic_slide_script(
     # Balance group durations so that every single slide is within [3.5, 6.5]s
     N = len(groups)
     group_durs = [max(0.1, sum(float(s.get("duration", 0.0)) for s in g)) for g in groups]
-    for i in range(N):
-        if group_durs[i] < 3.5:
-            needed = 3.5 - group_durs[i]
-            for j in (i - 1, i + 1):
-                if 0 <= j < N and group_durs[j] - needed >= 3.5:
-                    group_durs[j] -= needed
-                    group_durs[i] += needed
-                    needed = 0.0
-                    break
-        elif group_durs[i] > 6.5:
-            excess = group_durs[i] - 6.5
-            for j in (i - 1, i + 1):
-                if 0 <= j < N and group_durs[j] + excess <= 6.5:
-                    group_durs[j] += excess
-                    group_durs[i] -= excess
-                    excess = 0.0
-                    break
+    for _ in range(5):
+        for i in range(N):
+            if group_durs[i] < 3.5:
+                needed = 3.5 - group_durs[i]
+                for j in (i - 1, i + 1):
+                    if 0 <= j < N and group_durs[j] - needed >= 3.5:
+                        group_durs[j] -= needed
+                        group_durs[i] += needed
+                        needed = 0.0
+                        break
+            elif group_durs[i] > 6.5:
+                excess = group_durs[i] - 6.5
+                for j in (i - 1, i + 1):
+                    if 0 <= j < N and group_durs[j] + excess <= 6.5:
+                        group_durs[j] += excess
+                        group_durs[i] -= excess
+                        excess = 0.0
+                        break
+
+    # Strictly enforce [3.5, 6.5]s ceiling and floor on ALL layouts
+    group_durs = [round(min(6.5, max(3.5, float(d))), 3) for d in group_durs]
 
     slides: list[SlideItem] = []
     prev_layout: str | None = None
@@ -1227,15 +1292,33 @@ def create_heuristic_slide_script(
                         slots["pill"] = "NGUỒN CŨ"
                         slots["note"] = f"Nguồn cũ ({d:02d}/{m:02d}/{y:04d})"
 
-        # Enforce anti-boilerplate, metaphor filtering, and subsequence check on slots
+        # Proper name normalization across slots
+        for slot_k in ("title", "subtitle", "text", "quote", "author"):
+            if slot_k in slots and isinstance(slots[slot_k], str) and slots[slot_k]:
+                norm_v, _ = normalize_proper_names(slots[slot_k])
+                slots[slot_k] = norm_v
+        if "items" in slots and isinstance(slots["items"], list):
+            slots["items"] = [normalize_proper_names(str(it))[0] for it in slots["items"]]
+
+        # Enforce anti-boilerplate, metaphor filtering, and demonstrative prefix check on slots
         if "title" in slots and slots["title"]:
             t_str = str(slots["title"]).strip()
+            # Cấm tiêu đề bắt đầu bằng 'Tùy biến này', 'Điều này', 'Việc này', 'Con số này', 'Phương pháp này'
+            m_dem = re.match(r"^(?:tùy\s+biến\s+này|phương\s+pháp\s+này|con\s+số\s+này|điều\s+này|việc\s+này)\s*(?:cho\s+thấy|chứng\s+minh|khẳng\s+định|là|khiến|giúp|làm\s+cho|đưa\s+đến|dẫn\s+đến|dường\s+như|có\s+thể|sẽ)?\s*(.*)", t_str, re.I)
+            if m_dem:
+                rest = m_dem.group(1).strip()
+                if len(rest.split()) >= 3 and not is_incomplete_phrase(rest):
+                    slots["title"] = rest[0].upper() + rest[1:]
+                else:
+                    slots["title"] = extract_clean_headline(_sanitize_metaphor(combined_text)) or clean_trailing_dangling(combined_text) or (_safe_pill(topic_title) if topic_title else "Nội Dung Trọng Tâm")
+                t_str = str(slots["title"]).strip()
+
             if t_str.lower() in FORBIDDEN_BOILERPLATE_LABELS or contains_metaphor(t_str):
                 clean_t = _sanitize_metaphor(combined_text)
                 clean_h = extract_clean_headline(clean_trailing_dangling(clean_t))
                 if contains_metaphor(clean_h):
                     clean_h = _sanitize_metaphor(clean_h)
-                slots["title"] = clean_h or "Kiểm Soát Địa Chất Ngầm"
+                slots["title"] = clean_h or clean_trailing_dangling(clean_t) or (_safe_pill(topic_title) if topic_title else "Nội Dung Trọng Tâm")
             if contains_metaphor(str(slots["title"])):
                 slots["title"] = _sanitize_metaphor(str(slots["title"]))
 

@@ -346,7 +346,7 @@ def extract_clean_headline(sentence: str, max_chars: int = 96) -> str:
 
     # Strip dangling demonstrative clause prefixes so titles are substantive independent statements
     m_dem = re.match(
-        r"^(?:con\s+số\s+này|điều\s+này|việc\s+này|điều\s+đó|này|đó)\s+(?:dường\s+như|có\s+thể|sẽ)?\s*(?:cho\s+thấy|chứng\s+minh|khẳng\s+định|là|khiến|giúp|làm\s+cho|đưa\s+đến|dẫn\s+đến)?\s*(.+)",
+        r"^(?:tùy\s+biến\s+này|phương\s+pháp\s+này|con\s+số\s+này|điều\s+này|việc\s+này|điều\s+đó|này|đó)\s+(?:dường\s+như|có\s+thể|sẽ)?\s*(?:cho\s+thấy|chứng\s+minh|khẳng\s+định|là|khiến|giúp|làm\s+cho|đưa\s+đến|dẫn\s+đến)?\s*(.+)",
         clean,
         re.I,
     )

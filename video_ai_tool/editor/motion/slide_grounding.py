@@ -28,7 +28,9 @@ from editor.motion.light_glass_slots import (
     is_valid_subsequence_of_narration,
     FORBIDDEN_BOILERPLATE_LABELS,
     _sanitize_metaphor,
+    _find_quote_author,
 )
+from agents.proper_names import normalize_proper_names
 
 
 def normalize_text(text: str) -> str:
@@ -478,44 +480,87 @@ def verify_and_ground_slides(
                 if counts[cur_l] > 1:
                     prev_l = healed_slides[i - 1].layout
                     next_l = healed_slides[i + 1].layout
-                    alt = "kit_quote" if str(cur_l).startswith("kit_") else "lg_note_card"
-                    if alt not in (prev_l, next_l, cur_l):
+
+                    # Only use kit_quote if genuine verbatim quote and speaker exist
+                    q_auth = _find_quote_author(healed_slides[i].narration, brief=brief)
+                    if q_auth and "kit_quote" not in (prev_l, next_l, cur_l):
+                        alt = "kit_quote" if str(cur_l).startswith("kit_") else "lg_note_card"
                         c_slots = dict(healed_slides[i].slots or {})
-                        q_text = clean_trailing_dangling(truncate_complete_phrase(healed_slides[i].narration, 88))
+                        q_text = clean_trailing_dangling(truncate_complete_phrase(_sanitize_metaphor(healed_slides[i].narration), 88))
                         c_slots["quote"] = q_text
                         c_slots["title"] = q_text
-                        c_slots["author"] = c_slots.get("author") or "Chuyên gia phân tích"
-                        c_slots["pill"] = "NHẬN ĐỊNH"
+                        c_slots["author"], c_slots["role"] = q_auth
+                        c_slots["pill"] = "GÓC NHÌN"
                         healed_slides[i] = healed_slides[i].model_copy(update={"layout": alt, "slots": c_slots})
                         counts[cur_l] -= 1
                         distinct_layouts.add(alt)
                         repair_notes.append(f"[layout_diversity, nhóm 2] Slide {healed_slides[i].id}: đổi sang '{alt}' để đạt >= {target_distinct} layout khác biệt.")
                         if len(distinct_layouts) >= target_distinct:
                             break
+                    else:
+                        cand_alt = "kit_list" if cur_l != "kit_list" else "kit_title"
+                        if cand_alt not in (prev_l, next_l, cur_l):
+                            alt = cand_alt if str(cur_l).startswith("kit_") else "lg_note_card"
+                            c_slots = dict(healed_slides[i].slots or {})
+                            clean_n = clean_trailing_dangling(_sanitize_metaphor(healed_slides[i].narration))
+                            if alt == "kit_list":
+                                c_slots["title"] = extract_clean_headline(clean_n) or "Thông tin cốt lõi"
+                                c_slots["items"] = [clean_n[:88]]
+                                c_slots["pill"] = "CHI TIẾT"
+                            else:
+                                c_slots["title"] = extract_clean_headline(clean_n) or clean_n
+                                c_slots["pill"] = "TIÊU ĐIỂM"
+                            c_slots.pop("quote", None)
+                            c_slots.pop("author", None)
+                            healed_slides[i] = healed_slides[i].model_copy(update={"layout": alt, "slots": c_slots})
+                            counts[cur_l] -= 1
+                            distinct_layouts.add(alt)
+                            repair_notes.append(f"[layout_diversity, nhóm 2] Slide {healed_slides[i].id}: đổi sang '{alt}' để đạt >= {target_distinct} layout khác biệt.")
+                            if len(distinct_layouts) >= target_distinct:
+                                break
 
-    # Final completeness and non-empty slot guarantee for all layouts
+    # Final completeness, quote verification, and non-empty slot guarantee for all layouts
     for s_idx, sl in enumerate(healed_slides):
         s_slots = dict(sl.slots or {})
+        # Proper name normalization across all slots
+        for sk in ("title", "subtitle", "text", "quote", "author"):
+            if sk in s_slots and isinstance(s_slots[sk], str) and s_slots[sk]:
+                s_slots[sk] = normalize_proper_names(s_slots[sk])[0]
+        if "items" in s_slots and isinstance(s_slots["items"], list):
+            s_slots["items"] = [normalize_proper_names(str(it))[0] for it in s_slots["items"]]
+
         if sl.layout in ("kit_title", "lg_note_card", "lg_source_headline"):
             if not s_slots.get("title") and not s_slots.get("headline"):
                 src_txt = s_slots.get("quote") or s_slots.get("subtitle") or sl.narration
-                s_slots["title"] = extract_clean_headline(src_txt) or clean_trailing_dangling(truncate_complete_phrase(src_txt, 88))
+                s_slots["title"] = extract_clean_headline(_sanitize_metaphor(src_txt)) or clean_trailing_dangling(truncate_complete_phrase(_sanitize_metaphor(src_txt), 88))
             if s_slots.get("title") and s_slots.get("subtitle"):
                 if text_similarity(str(s_slots["title"]), str(s_slots["subtitle"])) >= 0.70:
                     s_slots["subtitle"] = ""
+            if contains_metaphor(str(s_slots.get("title", ""))):
+                s_slots["title"] = _sanitize_metaphor(str(s_slots["title"]))
             healed_slides[s_idx] = sl.model_copy(update={"slots": s_slots})
         elif sl.layout in ("kit_list", "lg_shot_features"):
             if not s_slots.get("title"):
-                s_slots["title"] = extract_clean_headline(sl.narration) or "Thông tin nổi bật"
+                s_slots["title"] = extract_clean_headline(_sanitize_metaphor(sl.narration)) or "Thông tin nổi bật"
             if not s_slots.get("items"):
-                s_slots["items"] = [clean_trailing_dangling(truncate_complete_phrase(sl.narration, 88))]
+                s_slots["items"] = [clean_trailing_dangling(truncate_complete_phrase(_sanitize_metaphor(sl.narration), 88))]
+            s_slots["items"] = [_sanitize_metaphor(str(it)) if contains_metaphor(str(it)) else str(it) for it in s_slots["items"]]
+            if contains_metaphor(str(s_slots.get("title", ""))):
+                s_slots["title"] = _sanitize_metaphor(str(s_slots["title"]))
             healed_slides[s_idx] = sl.model_copy(update={"slots": s_slots})
         elif sl.layout == "kit_quote":
-            if not s_slots.get("quote"):
-                s_slots["quote"] = clean_trailing_dangling(truncate_complete_phrase(sl.narration, 88))
-            if not s_slots.get("author"):
-                s_slots["author"] = "Chuyên gia phân tích"
-            healed_slides[s_idx] = sl.model_copy(update={"slots": s_slots})
+            q_auth = _find_quote_author(sl.narration, brief=brief)
+            if not q_auth or not s_slots.get("author") or s_slots.get("author") == "Chuyên gia phân tích":
+                downgraded_layout = "kit_title" if str(sl.layout).startswith("kit_") else "lg_note_card"
+                s_slots.pop("quote", None)
+                s_slots.pop("author", None)
+                s_slots["pill"] = "TIÊU ĐIỂM"
+                s_slots["title"] = extract_clean_headline(_sanitize_metaphor(sl.narration)) or clean_trailing_dangling(_sanitize_metaphor(sl.narration))
+                healed_slides[s_idx] = sl.model_copy(update={"layout": downgraded_layout, "slots": s_slots})
+            else:
+                s_slots["author"], s_slots["role"] = q_auth
+                s_slots["quote"] = clean_trailing_dangling(truncate_complete_phrase(_sanitize_metaphor(sl.narration), 140))
+                healed_slides[s_idx] = sl.model_copy(update={"slots": s_slots})
 
     return SlideScript(
         topic=slide_script.topic,

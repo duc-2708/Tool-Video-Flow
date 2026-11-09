@@ -8,6 +8,7 @@ Never forces images when no grounded photo is found.
 """
 from __future__ import annotations
 
+import html
 import io
 import json
 import logging
@@ -15,6 +16,7 @@ import re
 import time
 from pathlib import Path
 from typing import Any, Optional
+from urllib.parse import quote
 
 import requests
 from PIL import Image
@@ -72,19 +74,55 @@ def is_license_allowed(license_str: str) -> bool:
     return False
 
 
-def clean_artist_name(raw_artist: str) -> str:
-    """Strip HTML tags and URLs from artist field to produce clean attribution text."""
-    if not raw_artist:
-        return "Wikimedia Commons"
-    # Remove HTML tags
-    cleaned = re.sub(r"<[^>]+>", "", raw_artist).strip()
-    # Remove URL or brackets
-    cleaned = re.sub(r"https?://\S+", "", cleaned).strip()
-    # Normalize whitespace
-    cleaned = re.sub(r"\s+", " ", cleaned).strip()
-    if not cleaned or len(cleaned) < 2 or "user:" in cleaned.lower():
-        cleaned = "Wikimedia Commons"
-    return cleaned
+def clean_artist_name(
+    raw_artist: str,
+    meta: dict[str, Any] | None = None,
+    info: dict[str, Any] | None = None,
+) -> str:
+    """Extract and sanitize author name from extmetadata and imageinfo.
+
+    Strips HTML tags, unescapes entities, removes URLs.
+    If Artist is empty -> checks Credit, AttributionRequired, or uploader username.
+    If still empty or generic placeholder -> returns "" (fail-closed, no author).
+    """
+    candidates: list[str] = []
+    if raw_artist:
+        candidates.append(raw_artist)
+    if meta and isinstance(meta, dict):
+        credit = meta.get("Credit", {}).get("value", "")
+        if credit:
+            candidates.append(credit)
+        attr_req = meta.get("AttributionRequired", {}).get("value", "")
+        if attr_req:
+            candidates.append(attr_req)
+    if info and isinstance(info, dict):
+        uploader = info.get("user", "")
+        if uploader:
+            candidates.append(uploader)
+
+    for cand in candidates:
+        if not cand or not isinstance(cand, str):
+            continue
+        # Unescape HTML entities (e.g. &amp;, &#39;)
+        text = html.unescape(cand)
+        # Strip HTML tags
+        text = re.sub(r"<[^>]+>", "", text).strip()
+        # Strip URLs
+        text = re.sub(r"https?://\S+", "", text).strip()
+        # Remove User: or user: prefix
+        text = re.sub(r"^User:\s*", "", text, flags=re.I).strip()
+        # Normalize whitespace
+        text = re.sub(r"\s+", " ", text).strip()
+
+        # Reject generic or placeholder strings
+        cand_low = text.lower()
+        if not text or len(text) < 2:
+            continue
+        if any(g in cand_low for g in ("unknown", "anonymous", "không rõ", "chưa rõ", "n/a", "wikimedia commons")):
+            continue
+        return text
+
+    return ""
 
 
 def search_wikidata_person(person_name: str, timeout: float = DEFAULT_TIMEOUT) -> Optional[str]:
@@ -194,7 +232,7 @@ def get_wikimedia_image_info(image_title: str, timeout: float = DEFAULT_TIMEOUT)
         "action": "query",
         "titles": clean_title,
         "prop": "imageinfo",
-        "iiprop": "url|size|extmetadata",
+        "iiprop": "url|size|extmetadata|user",
         "iiurlwidth": 1280,
         "format": "json",
     }
@@ -208,17 +246,20 @@ def get_wikimedia_image_info(image_title: str, timeout: float = DEFAULT_TIMEOUT)
             if infos:
                 info = infos[0]
                 meta = info.get("extmetadata", {})
-                artist = meta.get("Artist", {}).get("value", "")
+                artist_raw = meta.get("Artist", {}).get("value", "")
+                artist = clean_artist_name(artist_raw, meta=meta, info=info)
                 license_name = meta.get("LicenseShortName", {}).get("value", "") or meta.get("UsageTerms", {}).get("value", "")
+                file_page_url = info.get("descriptionurl") or f"https://commons.wikimedia.org/wiki/{clean_title}"
                 return {
                     "title": page.get("title", clean_title),
                     "url": info.get("url"),
                     "thumburl": info.get("thumburl") or info.get("url"),
                     "width": int(info.get("width") or 0),
                     "height": int(info.get("height") or 0),
-                    "artist": clean_artist_name(artist),
+                    "artist": artist,
                     "license": license_name,
                     "categories": meta.get("Categories", {}).get("value", ""),
+                    "file_page_url": file_page_url,
                 }
     except Exception as err:
         logger.warning("Wikimedia imageinfo error for %s: %s", image_title, err)
@@ -244,7 +285,7 @@ def search_wikimedia_commons(
         "gsrnamespace": 6,
         "gsrlimit": limit,
         "prop": "imageinfo",
-        "iiprop": "url|size|extmetadata",
+        "iiprop": "url|size|extmetadata|user",
         "iiurlwidth": 1280,
         "format": "json",
     }
@@ -284,8 +325,13 @@ def search_wikimedia_commons(
             if not is_license_allowed(license_name):
                 continue
 
-            artist = clean_artist_name(meta.get("Artist", {}).get("value", ""))
+            artist = clean_artist_name(meta.get("Artist", {}).get("value", ""), meta=meta, info=info)
+            # FAIL-CLOSED: CC BY / CC BY-SA legally requires author attribution
+            if not artist:
+                continue
+
             categories = meta.get("Categories", {}).get("value", "")
+            file_page_url = info.get("descriptionurl") or f"https://commons.wikimedia.org/wiki/{title_str}"
 
             results.append({
                 "title": title_str,
@@ -296,6 +342,7 @@ def search_wikimedia_commons(
                 "artist": artist,
                 "license": license_name,
                 "categories": categories,
+                "file_page_url": file_page_url,
             })
     except Exception as err:
         logger.warning("Wikimedia search error for %s: %s", query, err)
@@ -305,34 +352,69 @@ def search_wikimedia_commons(
 
 COMMONS_NATURE_BLACKLIST = {
     "landscape", "nature", "mine", "mining", "quarry", "lake", "river", "mountain",
-    "forest", "scenery", "scenic", "park", "garden", "sea", "ocean", "beach", "pond", "waterfall"
+    "forest", "scenery", "scenic", "park", "garden", "sea", "ocean", "beach", "pond", "waterfall",
+    "cave", "cavern",
+}
+
+FOREIGN_LOCATIONS = {
+    "melbourne", "victoria", "sydney", "adelaide", "perth", "canberra", "gold coast",
+    "london", "tokyo", "paris", "new york", "berlin", "munich", "madrid", "toronto", "chicago",
 }
 
 
 def rank_wikimedia_candidates(
     candidates: list[dict[str, Any]],
     scene_entities: list[str],
+    narration: str = "",
 ) -> list[dict[str, Any]]:
     """Rank Wikimedia candidates based on match with characteristic entities of the scene.
-    
-    Must match >= 2 characteristic entities in title or categories (or >= 1 exact 2-word engineering entity).
-    Rejects generic nature, landscapes, mines, lakes, and quarries.
-    Sorts by match score descending.
+
+    Rules:
+    - Rejects foreign locations (e.g. Melbourne, Sydney, London) unless mentioned in narration.
+    - Rejects generic nature, landscapes, mines, quarries, caves unless mentioned in narration.
+    - Rejects illustrative photos when narration makes concrete assertions about a specific project
+      (only exact project photos allowed for concrete claims; illustrations only for general descriptions).
+    - Must match >= 2 characteristic entities in title or categories (or >= 1 exact 2-word engineering entity).
+    - Sorts by match score descending.
     """
     ranked = []
+    narr_low = narration.lower()
     for cand in candidates:
         t_low = cand.get("title", "").lower()
         c_low = cand.get("categories", "").lower()
 
-        # Reject landscape / nature / mining / lake / quarry photos for technical scenes
+        # Reject foreign locations unless the narration specifically discusses that foreign location
+        has_foreign = False
+        for fl in FOREIGN_LOCATIONS:
+            if re.search(rf"\b{re.escape(fl)}\b", t_low) or re.search(rf"\b{re.escape(fl)}\b", c_low):
+                if fl not in narr_low:
+                    has_foreign = True
+                    break
+        if has_foreign:
+            continue
+
+        # Reject landscape / nature / mining / lake / quarry / cave photos for technical scenes
         has_blacklisted = False
         for b_word in COMMONS_NATURE_BLACKLIST:
             if re.search(rf"\b{re.escape(b_word)}\b", t_low) or re.search(rf"\b{re.escape(b_word)}\b", c_low):
-                if not any(b_word in ent.lower() for ent in scene_entities):
+                if b_word not in narr_low and not any(b_word in ent.lower() for ent in scene_entities):
                     has_blacklisted = True
                     break
         if has_blacklisted:
             continue
+
+        # Check if narration is asserting a concrete Vietnamese project/station/location
+        is_concrete_project = any(kw in narr_low for kw in ("nhổn", "ga hà nội", "kim mã", "cát linh", "văn miếu", "fecon", "tuyến số 3", "tuyến 3", "ga s9", "bến thành"))
+        is_exact_photo = any(kw in t_low or kw in c_low for kw in ("nhon", "nhổn", "hanoi metro", "ga hà nội", "kim mã", "cát linh", "văn miếu", "fecon", "line 3"))
+
+        if is_concrete_project and not is_exact_photo:
+            # Concrete assertion requires exact photo; generic photo only allowed for general descriptive sentence
+            is_general_descriptive = any(kw in narr_low for kw in ("máy đào hầm tbm là gì", "nguyên lý hoạt động", "cấu tạo", "định nghĩa", "khái niệm", "tbm hoạt động", "khiên đào"))
+            if not is_general_descriptive:
+                continue
+            is_illustration = True
+        else:
+            is_illustration = not is_exact_photo
 
         matched = []
         has_exact_multiword = False
@@ -349,14 +431,16 @@ def rank_wikimedia_candidates(
                         if sub_tok not in matched:
                             matched.append(sub_tok)
 
-        # Requirement 1b & 3b: Phải khớp >= 2 thực thể đặc trưng, hoặc >= 1 cụm thực thể 2 từ chính xác (vd diaphragm wall), HOẶC >= 1 thực thể nằm trong title
+        # Requirement: Phải khớp >= 2 thực thể đặc trưng, hoặc >= 1 cụm thực thể 2 từ chính xác, HOẶC >= 1 thực thể nằm trong title
         has_title_match = any(e.lower() in t_low for e in matched)
         if len(matched) >= 2 or has_exact_multiword or (len(matched) >= 1 and has_title_match):
             cand_copy = dict(cand)
             cand_copy["matched_entities"] = matched
+            cand_copy["is_illustration"] = is_illustration
             # Title match gives bonus score over category match
-            cand_copy["score"] = len(matched) + (3 if has_title_match else 0)
+            cand_copy["score"] = len(matched) + (3 if has_title_match else 0) + (5 if is_exact_photo else 0)
             ranked.append(cand_copy)
+
     ranked.sort(key=lambda x: x.get("score", 0), reverse=True)
     return ranked
 
@@ -489,33 +573,38 @@ class PhotoFinder:
         if target_person:
             cached_path = self.photos_dir / f"person_{re.sub(r'[^\w]', '_', target_person.lower())}.jpg"
             if cached_path.is_file() and cached_path.stat().st_size > 15000:
-                attribution = "Ảnh: Wikimedia Commons · CC BY-SA"
-                author = "Wikimedia Commons"
+                attribution = ""
+                author = ""
                 license_val = "CC BY-SA"
+                file_page_url = ""
                 attr_file = self.project_dir / "photo_attributions.json"
                 if attr_file.is_file():
                     try:
                         attrs = json.loads(attr_file.read_text(encoding="utf-8"))
                         for item in attrs:
                             if item.get("name") == target_person or item.get("image_path") == str(cached_path):
-                                attribution = item.get("caption", attribution)
-                                author = item.get("author", author)
+                                author = item.get("author", "")
+                                attribution = item.get("caption", "")
                                 license_val = item.get("license", license_val)
+                                file_page_url = item.get("file_page_url", "")
                                 break
                     except Exception:
                         pass
-                res_dict = {
-                    "name": target_person,
-                    "image_path": str(cached_path),
-                    "caption": attribution,
-                    "author": author,
-                    "license": license_val,
-                    "entity": target_person,
-                    "type": "person",
-                    "reason": f"Khớp người thật '{target_person}' xuất hiện nguyên văn trong lời dẫn",
-                }
-                self.resolved_count += 1
-                return res_dict
+                if author and author != "Wikimedia Commons":
+                    res_dict = {
+                        "name": target_person,
+                        "image_path": str(cached_path),
+                        "caption": attribution or f"Ảnh: {author} / Wikimedia Commons · {license_val}",
+                        "author": author,
+                        "license": license_val,
+                        "entity": target_person,
+                        "type": "person",
+                        "is_illustration": False,
+                        "file_page_url": file_page_url,
+                        "reason": f"Khớp người thật '{target_person}' xuất hiện nguyên văn trong lời dẫn",
+                    }
+                    self.resolved_count += 1
+                    return res_dict
 
             # Query Wikidata
             entity_id = search_wikidata_person(target_person, timeout=self.timeout)
@@ -524,8 +613,11 @@ class PhotoFinder:
                 if img_title:
                     info = get_wikimedia_image_info(img_title, timeout=self.timeout)
                     if info and is_license_allowed(info.get("license", "")):
+                        artist = info.get("artist", "")
+                        # FAIL-CLOSED: Author is legally mandatory
+                        if not artist or artist == "Wikimedia Commons":
+                            return None
                         if download_and_verify_photo(info, cached_path, is_person=True, timeout=self.timeout):
-                            artist = info.get("artist") or "Wikimedia Commons"
                             lic = info.get("license") or "CC BY-SA"
                             caption = f"Ảnh: {artist} / Wikimedia Commons · {lic}"
                             res_dict = {
@@ -536,6 +628,8 @@ class PhotoFinder:
                                 "license": lic,
                                 "entity": target_person,
                                 "type": "person",
+                                "is_illustration": False,
+                                "file_page_url": info.get("file_page_url", ""),
                                 "reason": f"Khớp người thật '{target_person}' (Wikidata {entity_id}=Q5)",
                             }
                             self.attributions.append(res_dict)
@@ -578,32 +672,58 @@ class PhotoFinder:
         for q in unique_queries[:2]:
             cached_path = self.photos_dir / f"obj_{re.sub(r'[^\w]', '_', q.lower())}.jpg"
             if cached_path.is_file() and cached_path.stat().st_size > 15000:
-                attribution = f"Ảnh: Wikimedia Commons · CC BY-SA"
-                res_dict = {
-                    "name": q.title(),
-                    "image_path": str(cached_path),
-                    "caption": attribution,
-                    "author": "Wikimedia Commons",
-                    "license": "CC BY-SA",
-                    "entity": q,
-                    "type": "landmark_or_machine",
-                    "reason": f"Khớp thực thể công trình/máy móc '{q}'",
-                }
-                self.resolved_count += 1
-                return res_dict
+                attribution = ""
+                author = ""
+                license_val = "CC BY-SA"
+                is_illus = False
+                file_page_url = ""
+                attr_file = self.project_dir / "photo_attributions.json"
+                if attr_file.is_file():
+                    try:
+                        attrs = json.loads(attr_file.read_text(encoding="utf-8"))
+                        for item in attrs:
+                            if item.get("name") == q.title() or item.get("image_path") == str(cached_path):
+                                author = item.get("author", "")
+                                attribution = item.get("caption", "")
+                                license_val = item.get("license", license_val)
+                                is_illus = item.get("is_illustration", False)
+                                file_page_url = item.get("file_page_url", "")
+                                break
+                    except Exception:
+                        pass
+                if author and author != "Wikimedia Commons":
+                    res_dict = {
+                        "name": q.title(),
+                        "image_path": str(cached_path),
+                        "caption": attribution or (f"{'Ảnh minh họa · Ảnh: ' if is_illus else 'Ảnh: '}{author} / Wikimedia Commons · {license_val}"),
+                        "author": author,
+                        "license": license_val,
+                        "entity": q,
+                        "type": "landmark_or_machine",
+                        "is_illustration": is_illus,
+                        "file_page_url": file_page_url,
+                        "reason": f"Khớp thực thể công trình/máy móc '{q}'",
+                    }
+                    self.resolved_count += 1
+                    return res_dict
 
             candidates = search_wikimedia_commons(q, limit=6, timeout=self.timeout)
             # Rank candidates by matching scene entities in title or categories
             q_tokens = [tok for tok in q.lower().split() if len(tok) >= 3]
             target_scene_entities = list(set(entities + q_tokens))
-            ranked_candidates = rank_wikimedia_candidates(candidates, target_scene_entities)
+            ranked_candidates = rank_wikimedia_candidates(candidates, target_scene_entities, narration=narr_full)
             cands_to_check = ranked_candidates if ranked_candidates else candidates
 
             for cand in cands_to_check[:3]:
+                artist = cand.get("artist", "")
+                # FAIL-CLOSED: Author is legally mandatory
+                if not artist or artist == "Wikimedia Commons":
+                    continue
                 if download_and_verify_photo(cand, cached_path, is_person=False, timeout=self.timeout):
-                    artist = cand.get("artist") or "Wikimedia Commons"
                     lic = cand.get("license") or "CC BY-SA"
-                    caption = f"Ảnh: {artist} / Wikimedia Commons · {lic}"
+                    is_illus = cand.get("is_illustration", False)
+                    caption_prefix = "Ảnh minh họa · Ảnh: " if is_illus else "Ảnh: "
+                    caption = f"{caption_prefix}{artist} / Wikimedia Commons · {lic}"
                     res_dict = {
                         "name": q.title(),
                         "image_path": str(cached_path),
@@ -612,7 +732,9 @@ class PhotoFinder:
                         "license": lic,
                         "entity": q,
                         "type": "landmark_or_machine",
-                        "reason": f"Khớp ảnh thực tế Wikimedia Commons '{cand.get('title')}' cho thực thể '{q}'",
+                        "is_illustration": is_illus,
+                        "file_page_url": cand.get("file_page_url", ""),
+                        "reason": f"Khớp ảnh thực tế Wikimedia Commons '{cand.get('title')}' cho thực thể '{q}'" + (" (minh họa)" if is_illus else ""),
                     }
                     self.attributions.append(res_dict)
                     self._save_attributions()
@@ -632,7 +754,8 @@ class PhotoFinder:
             lines = [existing.strip()] if existing.strip() else []
             lines.append("\n--- HÌNH ẢNH WIKIMEDIA COMMONS & BẢN QUYỀN MỞ ---")
             for item in self.attributions:
-                lines.append(f"- {item.get('entity')}: {item.get('caption')} ({item.get('license')})")
+                page_link = f" - {item.get('file_page_url')}" if item.get('file_page_url') else ""
+                lines.append(f"- {item.get('entity')}: {item.get('caption')} ({item.get('license')}){page_link}")
             credits_file.write_text("\n".join(lines).strip() + "\n", encoding="utf-8")
         except Exception as err:
             logger.warning("Could not save photo attributions: %s", err)

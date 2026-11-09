@@ -73,8 +73,11 @@ def test_forbidden_licenses():
 def test_clean_artist_name():
     assert clean_artist_name('<a href="https://example.com">John Doe</a>') == "John Doe"
     assert clean_artist_name('<bdi>Gage Skidmore</bdi>') == "Gage Skidmore"
-    assert clean_artist_name("User:WikimediaContributor") == "Wikimedia Commons"
-    assert clean_artist_name("") == "Wikimedia Commons"
+    assert clean_artist_name('&lt;bdi&gt;Gage Skidmore&amp;Co&lt;/bdi&gt;') == "Gage Skidmore&Co"
+    assert clean_artist_name("User:WikimediaContributor") == "WikimediaContributor"
+    assert clean_artist_name("") == ""
+    assert clean_artist_name("Unknown") == ""
+    assert clean_artist_name("Anonymous") == ""
 
 
 # -------------------------------------------------------------
@@ -351,3 +354,114 @@ def test_subsequence_ratio_check():
     # Out of order or fabricated words
     displayed_bad = "Doanh nhân nước ngoài đầu tư bất động sản đô thị"
     assert is_valid_subsequence_of_narration(displayed_bad, narration, min_ratio=0.80) is False
+
+
+# -------------------------------------------------------------
+# 7. Additional Legal & Technical Integrity Tests
+# -------------------------------------------------------------
+def test_photo_without_author_rejected(temp_project):
+    """Photos lacking author in Artist, Credit, AttributionRequired, and user MUST be rejected."""
+    finder = PhotoFinder(temp_project)
+    with patch("agents.photo_finder.search_wikimedia_commons") as mock_search:
+        # Candidate has no author information
+        mock_search.return_value = [
+            {
+                "title": "File:Tunnel_boring_machine_1.jpg",
+                "url": "https://upload.wikimedia.org/TBM.jpg",
+                "thumburl": "https://upload.wikimedia.org/TBM.jpg",
+                "width": 1920,
+                "height": 1080,
+                "artist": "",  # Empty author!
+                "license": "CC BY-SA 4.0",
+                "categories": "Tunnel boring machines",
+            }
+        ]
+        res = finder.find_photo_for_scene(
+            slide_id="slide_1",
+            narration="Máy đào hầm TBM vận hành dưới lòng đất.",
+            brief={},
+            headline="Máy đào hầm TBM",
+            scene_entities=["TBM", "máy đào hầm"],
+        )
+        assert res is None, "Photo without author must be rejected (fail-closed)"
+
+
+def test_foreign_location_photo_rejected_for_hanoi():
+    """Photos with foreign cities (Melbourne, Sydney, London...) must be rejected for Hanoi project."""
+    candidates = [
+        {
+            "title": "File:Melbourne_Metro_Tunnel_construction.jpg",
+            "categories": "Melbourne Metro Tunnel; Victoria railway",
+            "artist": "John Smith",
+            "license": "CC BY-SA 4.0",
+        },
+        {
+            "title": "File:Hanoi_Metro_Line_3_Nhon_station.jpg",
+            "categories": "Hanoi Metro Line 3; Nhon station",
+            "artist": "Nguyen Van A",
+            "license": "CC BY-SA 4.0",
+        },
+    ]
+    ranked = rank_wikimedia_candidates(
+        candidates,
+        scene_entities=["Hanoi Metro", "Nhổn", "ga ngầm"],
+        narration="Dự án metro Nhổn - Ga Hà Nội thi công đoạn ngầm.",
+    )
+    # Melbourne photo must be rejected
+    assert all("melbourne" not in c.get("title", "").lower() for c in ranked)
+    assert len(ranked) >= 1
+    assert "hanoi" in ranked[0].get("title", "").lower()
+
+
+def test_quote_author_not_attributed_without_verbatim_quote():
+    """Herrenknecht must NOT be attributed as author for a paraphrased editorial sentence."""
+    from editor.motion.light_glass_slots import _find_quote_author
+
+    brief_with_herrenknecht = {
+        "facts": [
+            {
+                "claim": "Tập đoàn Herrenknecht cung cấp máy đào hầm TBM cho dự án.",
+                "evidence_quote": "Herrenknecht chế tạo robot đào hầm.",
+                "source_name": "VnExpress",
+            }
+        ]
+    }
+    # Paraphrased sentence without quotation marks or speech verbs
+    paraphrased = "Việt Nam vươn lên nhóm quốc gia sở hữu công nghệ thi công ngầm tiên tiến."
+    assert _find_quote_author(paraphrased, brief=brief_with_herrenknecht) is None
+
+    # Verbatim quote with speech verb
+    verbatim = 'Herrenknecht khẳng định: "Đây là bước tiến vượt bậc của hạ tầng Việt Nam."'
+    res = _find_quote_author(verbatim, brief=brief_with_herrenknecht)
+    assert res is not None
+    assert res[0] == "Herrenknecht"
+
+
+def test_normalize_proper_names():
+    """Vietnamese place names with typos (e.g. Nhồn) must be normalized with a recorded warning."""
+    from agents.proper_names import normalize_proper_names
+
+    text_typo = "Đoàn tàu tuyến Nhồn - Ga Hà Nội chuẩn bị vận hành thử nghiệm."
+    normalized, warnings = normalize_proper_names(text_typo)
+    assert "Nhổn" in normalized
+    assert "Nhồn" not in normalized
+    assert any("Nhồn" in w and "Nhổn" in w for w in warnings)
+
+
+def test_metaphor_and_demonstrative_filters():
+    """Extended metaphors and demonstrative titles must be filtered and sanitized."""
+    from editor.motion.light_glass_slots import contains_metaphor, _sanitize_metaphor
+    from schemas.slide_script import extract_clean_headline
+
+    for phrase in ("hoạt động như", "như đôi mắt", "như đôi tai", "như bộ não", "như người", "tựa như", "chẳng khác gì"):
+        test_s = f"Hệ thống cảm biến {phrase} định hướng thi công hầm."
+        assert contains_metaphor(test_s) is True
+        san = _sanitize_metaphor(test_s)
+        assert phrase not in san
+
+    # Demonstrative title prefix removal
+    dem_title = "Tùy biến này giúp Việt Nam tự chủ hạ tầng hoàn toàn trong tương lai."
+    clean_h = extract_clean_headline(dem_title)
+    assert not clean_h.lower().startswith("tùy biến này")
+    assert "Việt Nam tự chủ" in clean_h
+

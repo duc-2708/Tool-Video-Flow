@@ -61,3 +61,58 @@ def proper_names(text):
             # Match anchored at the actual offset; repeated names keep correct spans.
             yield re.compile(re.escape(text[first.start():tokens[last].end()])).match(text,first.start())
         index=last+1
+
+
+PROPER_NAME_CANONICAL_TABLE: dict[str, str] = {
+    "nhồn": "Nhổn",
+    "nhon": "Nhổn",
+    "cát linh hà đông": "Cát Linh – Hà Đông",
+    "cát linh - hà đông": "Cát Linh – Hà Đông",
+    "cát linh – hà đông": "Cát Linh – Hà Đông",
+    "cat linh ha dong": "Cát Linh – Hà Đông",
+    "bến thành suối tiên": "Bến Thành – Suối Tiên",
+    "bến thành - suối tiên": "Bến Thành – Suối Tiên",
+    "bến thành – suối tiên": "Bến Thành – Suối Tiên",
+    "ben thanh suoi tien": "Bến Thành – Suối Tiên",
+    "ga hà nội": "Ga Hà Nội",
+    "ga ha noi": "Ga Hà Nội",
+    "kim mã": "Kim Mã",
+    "kim ma": "Kim Mã",
+    "cầu giấy": "Cầu Giấy",
+    "cau giay": "Cầu Giấy",
+    "văn miếu": "Văn Miếu",
+    "van mieu": "Văn Miếu",
+    "chùa hà": "Chùa Hà",
+    "chua ha": "Chùa Hà",
+}
+
+
+def normalize_proper_names(text: str) -> tuple[str, list[str]]:
+    """Normalize common Vietnamese proper names and project locations.
+
+    If source contains a typo (e.g. 'Nhồn'), corrects to canonical form (e.g. 'Nhổn')
+    and records a warning instead of silently changing.
+    Returns (normalized_text, warnings).
+    """
+    if not text:
+        return text, []
+    warnings: list[str] = []
+    norm_text = text
+    # Match longest patterns first
+    sorted_patterns = sorted(PROPER_NAME_CANONICAL_TABLE.keys(), key=lambda x: len(x), reverse=True)
+    for pat in sorted_patterns:
+        canonical = PROPER_NAME_CANONICAL_TABLE[pat]
+        # Word boundary match case-insensitively
+        regex = re.compile(rf"\b{re.escape(pat)}\b", re.IGNORECASE)
+        matches = list(regex.finditer(norm_text))
+        if matches:
+            for m in reversed(matches):
+                orig = m.group(0)
+                if orig != canonical:
+                    start, end = m.span()
+                    norm_text = norm_text[:start] + canonical + norm_text[end:]
+                    warn_msg = f"Chuẩn hóa tên riêng từ '{orig}' sang '{canonical}'"
+                    if warn_msg not in warnings:
+                        warnings.append(warn_msg)
+    return norm_text, warnings
+
